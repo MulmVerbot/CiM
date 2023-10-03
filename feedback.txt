@@ -1,0 +1,48 @@
+=============================
+21:04:27
+Kunde: asdf
+Problem: asdf
+Lösung: asdf
+
+=============================
+21:08:30
+Kunde: asdfas
+Problem: afdgdafgdas
+Lösung: fgsdgsdfgsd
+
+=============================
+21:08:30
+Kunde: asdfas
+Problem: afdgdafgdas
+Lösung: fgsdgsdfgsd
+
+=============================
+21:12:19
+Kunde: asdf
+Problem: asdf
+Lösung: asdf
+
+=============================
+21:12:19
+Kunde: sadfsa
+Problem: dfas
+Lösung: df
+
+=============================
+21:13:08
+Kunde: asdf
+Problem: asdf
+Lösung: asdf
+
+=============================
+22:09:21
+Kunde: 
+Problem: 
+Lösung: 
+
+=============================
+22:09:21
+Kunde: Dings
+Problem: ddnnn
+Lösung: mmmmm
+
