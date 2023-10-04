@@ -23,7 +23,7 @@ class FeedbackForm:
         print(self.tag_string)
 
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 0.1"
+        self.Version = "Alpha 0.1.1"
         master.title(self.Programm_Name + " " + self.Version)
 
         # Labels für Textfelder
@@ -104,8 +104,10 @@ class FeedbackForm:
                 with open("liste.txt", "a") as f:
                     f.write(f"=============================\n")
                     f.write(self.zeit_string)
+                    
                     f.write("\n")
-                    f.write(f"Kunde: {kunde}\nProblem: {problem}\nLösung: {loesung}\n\n")
+                    f.write(f"Kunde: {kunde}\n----------------\nProblem: {problem}\n----------------\nLösung: {loesung}\n\n")
+                    print("----------------\n")
                     # Ausgabe-Textfeld aktualisieren
                 with open("liste.txt", "r") as f:
                     feedback_text = f.read()
