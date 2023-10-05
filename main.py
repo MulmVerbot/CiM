@@ -21,6 +21,9 @@ class FeedbackForm:
         self.zeit_string = time.strftime("%H:%M:%S")
         self.tag_string = str(time.strftime("%d %m %Y"))
         print(self.tag_string)
+        
+
+
 
         self.Programm_Name = "ListenDings"
         self.Version = "Alpha 0.1.1"
@@ -41,6 +44,9 @@ class FeedbackForm:
         self.senden_button = tk.Button(master, text="Senden", command="")
         self.senden_button.bind('<Button-1>', self.senden)
         root.bind('<Return>', self.senden)
+
+        self.beb_knopp = tk.Button(master, text="Bearbeiten", command=self.beb)
+        self.beb_knopp.grid(row=3, column=2)
 
         # Ausgabe-Textfeld
         self.ausgabe_text = tk.Text(master)
@@ -63,6 +69,7 @@ class FeedbackForm:
         self.menudings = Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label=self.Programm_Name + self.Version, menu=self.menudings)
         self.menudings.add_command(label="Info", command=self.info)
+        self.beb = "0"
 
         try:
             # Ausgabe-Textfeld aktualisieren
@@ -95,6 +102,7 @@ class FeedbackForm:
         problem = self.problem_entry.get()
         loesung = self.loesung_entry.get()
         self.ausgabe_text.config(state='normal')
+        self.zeit_string = time.strftime("%H:%M:%S")
         
         if kunde or problem or loesung != "":
             print("(INFO) Enter gedrückt obwohl etwas geschrieben wurde.")
@@ -136,6 +144,19 @@ class FeedbackForm:
         self.kunde_entry.delete(0, tk.END)
         self.problem_entry.delete(0, tk.END)
         self.loesung_entry.delete(0, tk.END)
+    
+    def beb(self):
+        if self.beb == "0":
+            print("beb is jetzt = 1")
+            self.ausgabe_text.config(state='normal')
+            self.beb_knopp.config(text="Fertig")
+            self.beb = "1"
+        else:
+            print("beb = 0")
+            self.ausgabe_text.config(state='disabled')
+            self.beb_knopp.config(text="Bearbeiten")
+            self.beb = "0"
+
        
 
         
