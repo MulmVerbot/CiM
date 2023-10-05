@@ -122,6 +122,7 @@ class FeedbackForm:
                     self.ausgabe_text.delete("1.0", tk.END)
                     self.ausgabe_text.insert(tk.END, feedback_text)
                 self.ausgabe_text.config(state='disabled')
+                self.ausgabe_text.see(tk.END)
             else:
                 print("(INFO) Liste zum beschreiben existiert bereits.")
                 with open("liste.txt", "w+") as f:
@@ -135,6 +136,8 @@ class FeedbackForm:
                     self.ausgabe_text.delete("1.0", tk.END)
                     self.ausgabe_text.insert(tk.END, feedback_text)
                     self.ausgabe_text.config(state='disabled')
+
+            
         else:
             print("(ERR) Da hat wer Enter gedrückt obwohl noch nicht geschrieben war.")
             messagebox.showinfo(title="Fehler", message="Bitte geben Sie zuerst in wenigsten eine Spalte etwas ein.")
@@ -146,6 +149,7 @@ class FeedbackForm:
         self.loesung_entry.delete(0, tk.END)
     
     def beb(self):
+        self.text_tk_text = self.ausgabe_text.get("1.0", "end-1c")
         if self.beb == "0":
             print("beb is jetzt = 1")
             self.ausgabe_text.config(state='normal')
@@ -156,6 +160,10 @@ class FeedbackForm:
             self.ausgabe_text.config(state='disabled')
             self.beb_knopp.config(text="Bearbeiten")
             self.beb = "0"
+            with open("liste.txt", "w+") as f:
+                f.write(self.text_tk_text)
+                print("das beb wurde geschrieben.")
+            
 
        
 
@@ -166,11 +174,12 @@ def bye():
     zeit_string = time.strftime("%H:%M:%S")
     tag_string = str(time.strftime("%d %m %Y"))
     print(zeit_string , tag_string)
+    
     print("/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/")
     sys.exit()
 
 # Hauptprogramm
-root.resizable(False,False)
+#root.resizable(False,False)
 feedback_form = FeedbackForm(root)
 root.protocol("WM_DELETE_WINDOW", bye)
 root.mainloop()
