@@ -7,6 +7,8 @@ try:
     import time
     import os
     import sys
+    import csv
+    import ctypes
 except:
     print("(FATAL) Konnte die wichtigen Bilbioteken nicht Laden!")
     messagebox.showerror(title="Kritischer Fehler", message="(FATAL) Konnte die wichtigen Bilbioteken nicht Laden! Das Programm wird nun Beendet.")
@@ -26,18 +28,18 @@ class FeedbackForm:
 
 
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 0.1.1"
+        self.Version = "Alpha 1.0"
         master.title(self.Programm_Name + " " + self.Version)
 
         # Labels für Textfelder
         self.kunde_label = tk.Label(master, text="Kunde:")
         self.problem_label = tk.Label(master, text="Problem:")
-        self.loesung_label = tk.Label(master, text="Lösung:")        
+        self.loesung_label = tk.Label(master, text="Info:")        
 
         # Textfelder
-        self.kunde_entry = tk.Entry(master)
-        self.problem_entry = tk.Entry(master)
-        self.loesung_entry = tk.Entry(master)
+        self.kunde_entry = tk.Entry(master,width="150")
+        self.problem_entry = tk.Entry(master,width="150")
+        self.loesung_entry = tk.Entry(master,width="150")
         
 
         # "Senden" Knopf
@@ -49,7 +51,7 @@ class FeedbackForm:
         self.beb_knopp.grid(row=3, column=2)
 
         # Ausgabe-Textfeld
-        self.ausgabe_text = tk.Text(master)
+        self.ausgabe_text = tk.Text(master, width="160")
         self.ausgabe_text.config(highlightthickness=0)
         self.ausgabe_text.config(state='disabled')
 
@@ -69,7 +71,20 @@ class FeedbackForm:
         self.menudings = Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label=self.Programm_Name + self.Version, menu=self.menudings)
         self.menudings.add_command(label="Info", command=self.info)
+        self.menudings.add_command(label="Liste als CSV Speichern...", command=self.als_csv_speichern)
+        self.menudings.add_command(label="Admin rechte", command=self.Admin_rechte)
         self.beb = "0"
+        #response = ctypes.windll.user32.MessageBoxW(None, "Möchten Sie Administratorrechte anfordern? Dies wird das Programm mit Adminrechten neustarten.", "Administratorrechte erforderlich", 4)
+        #if response == 6:  # Wert 6 entspricht dem Klick auf "Ja"
+        #    try:
+        #        # Hier führen wir die Funktion mit Administratorrechten aus
+        #        print("Instanz mit Admin Rechten gestartet")
+        #        ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
+        #        sys.exit()
+        #    except Exception as e:
+        #        print("Fehler beim Ausführen der 'Admin_Rechte'-Funktion:", e)
+        #else:
+        #    print("Administratorrechte wurden nicht angefordert.")
 
         try:
             # Ausgabe-Textfeld aktualisieren
@@ -95,6 +110,18 @@ class FeedbackForm:
     def info(self):
         print("(INFO) Info(def)")
         messagebox.showinfo(title="Info", message=self.Programm_Name + " " + self.Version + "\n Programmiert von Maximilian Becker, \n https://dings.systems für mehr Informationen")
+    def Admin_rechte(self):
+        response = ctypes.windll.user32.MessageBoxW(None, "Möchten Sie Administratorrechte anfordern? Dies wird das Programm mit Adminrechten neustarten.", "Administratorrechte erforderlich", 4)
+        if response == 6:  # Wert 6 entspricht dem Klick auf "Ja"
+            try:
+                # Hier führen wir die Funktion mit Administratorrechten aus
+                print("Instanz mit Admin Rechten gestartet")
+                ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
+                sys.exit()
+            except Exception as e:
+                print("Fehler beim Ausführen der 'Admin_Rechte'-Funktion:", e)
+        else:
+            print("Administratorrechte wurden nicht angefordert.")
     def senden(self, event):
         print("(DEV) senden(def)")
         # Textfeld-Inhalte lesen
@@ -105,17 +132,18 @@ class FeedbackForm:
         self.zeit_string = time.strftime("%H:%M:%S")
         
         if kunde or problem or loesung != "":
-            print("(INFO) Enter gedrückt obwohl etwas geschrieben wurde.")
+            #print("(INFO) Enter gedrückt obwohl etwas geschrieben wurde.")
 
             # Inhalte in Textdatei speichern
             if os.path.exists("liste.txt"):
                 with open("liste.txt", "a") as f:
-                    f.write(f"=============================\n")
-                    f.write(self.zeit_string)
+                    #f.write(f"=============================\n")
+                    ##f.write(self.zeit_string)
                     
-                    f.write("\n")
-                    f.write(f"Kunde: {kunde}\n----------------\nProblem: {problem}\n----------------\nLösung: {loesung}\n\n")
-                    print("----------------\n")
+                    ##f.write("\n")
+                    #f.write(f"Kunde: {kunde}\n----------------\nProblem: {problem}\n----------------\nLösung: {loesung}\n\n ----------------\n")
+                    f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {loesung}\n\n")
+                    ##print("----------------\n")
                     # Ausgabe-Textfeld aktualisieren
                 with open("liste.txt", "r") as f:
                     feedback_text = f.read()
@@ -126,10 +154,11 @@ class FeedbackForm:
             else:
                 print("(INFO) Liste zum beschreiben existiert bereits.")
                 with open("liste.txt", "w+") as f:
-                    f.write(f"=============================\n")
-                    f.write(self.zeit_string)
-                    f.write("\n")
-                    f.write(f"Kunde: {kunde}\nProblem: {problem}\nLösung: {loesung}\n\n")
+                    #f.write(f"=============================\n")
+                    #f.write(self.zeit_string)
+                    #f.write("\n")
+                    #f.write(f"Kunde: {kunde}\nProblem: {problem}\nLösung: {loesung}\n\n")
+                    f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {loesung}\n\n")
                     # Ausgabe-Textfeld aktualisieren
                 with open("liste.txt", "r") as f:
                     feedback_text = f.read()
@@ -155,15 +184,123 @@ class FeedbackForm:
             self.ausgabe_text.config(state='normal')
             self.beb_knopp.config(text="Fertig")
             self.beb = "1"
+            root.unbind('<Return>')
         else:
             print("beb = 0")
             self.ausgabe_text.config(state='disabled')
+            root.bind('<Return>', self.senden)
             self.beb_knopp.config(text="Bearbeiten")
             self.beb = "0"
             with open("liste.txt", "w+") as f:
                 f.write(self.text_tk_text)
                 print("das beb wurde geschrieben.")
-            
+
+    def als_csv_speichern(self):
+        print("Als CSV speichern")
+        self.csv_datei_pfad = filedialog.askdirectory()
+
+        if self.csv_datei_pfad:
+            # Öffnen der Textdatei zum Lesen
+            with open("liste.txt", 'r') as text_datei:
+                daten = text_datei.read()
+
+            # Aufteilen des Texts in Zeilen
+            zeilen = daten.strip().split('\n')
+
+            # Initialisieren einer Liste für die Datensätze
+            datensaetze = []
+
+            # Initialisieren der Variablen für Kundeninformationen
+            kunde, problem, loesung, uhrzeit = "", "", "", ""
+
+            # Durchlaufen der Zeilen und Extrahieren der Informationen
+            for zeile in zeilen:
+                print(zeilen)
+                print("=")
+                print(zeile)
+                if zeile.startswith("Kunde:"):
+                    kunde = zeile.replace("Kunde:", "").strip()
+                elif zeile.startswith("Problem:"):
+                    problem = zeile.replace("Problem:", "").strip()
+                elif zeile.startswith("Info:"):
+                    loesung = zeile.replace("Info:", "").strip()
+                elif zeile.startswith("Uhrzeit:"):
+                    uhrzeit = zeile.replace("Uhrzeit:", "").strip()
+                    
+                if kunde and problem and loesung and uhrzeit:
+                    datensaetze.append([kunde, problem, loesung, uhrzeit])
+                    kunde, problem, loesung, uhrzeit = "", "", "", ""
+
+            if datensaetze:
+                # Schreiben der Daten in die CSV-Datei
+                with open(self.csv_datei_pfad + "/Daten.csv", 'w', newline='') as datei:
+                    schreiber = csv.writer(datei)
+                    schreiber.writerow(["Kunde", "Problem", "Info", "Uhrzeit"])
+                    schreiber.writerows(datensaetze)
+                    self.zeit_string = time.strftime("%H:%M:%S")
+                    self.tag_string = str(time.strftime("%d %m %Y"))
+                    schreiber.writerow(["Ende der Datensätze, Exportiert am " + self.tag_string + "um " + self.zeit_string])
+                print("Daten wurden in die CSV-Datei gespeichert.")
+            #else:
+            #    print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
+
+    ##def als_csv_speichern(self):
+    ##    print("Als CSV speichern")
+    ##    self.csv_datei_pfad = filedialog.askdirectory()
+    ##
+    ##    if self.csv_datei_pfad:
+    ##        # Öffnen der Textdatei zum Lesen
+    ##        with open("liste.txt", 'r') as text_datei:
+    ##            daten = text_datei.read()
+    ##
+    ##        # Aufteilen des Texts in Zeilen
+    ##        zeilen = daten.strip().split('\n')
+    ##
+    ##        # Initialisieren einer Liste für die Datensätze
+    ##        datensaetze = []
+    ##
+    ##        # Durchlaufen der Zeilen und Extrahieren der Informationen
+    ##        kunde, problem, loesung, uhrzeit = "", "", "", ""
+    ##        x = int(0)
+    ##        for zeile in zeilen:
+    ##            x += 1
+    ##            print(x)
+    ##            if zeile.startswith("Kunde:"):
+    ##                kunde = zeile.replace("Kunde:", "").strip()
+    ##            elif zeile.startswith("Problem:"):
+    ##                problem = zeile.replace("Problem:", "").strip()
+    ##            elif zeile.startswith("Lösung:"):
+    ##                loesung = zeile.replace("Lösung:", "").strip()
+    ##            elif zeile.startswith("Uhrzeit:"):
+    ##                uhrzeit = zeile.replace("Uhrzeit:", "").strip()
+    ##                # Überprüfen, ob die Variablen leer sind und "Keine Daten" hinzufügen
+    ##            #if not kunde:
+    ##            #    kunde = "Keine Daten"
+    ##            #if not problem:
+    ##            #    problem = "Keine Daten"
+    ##            #if not loesung:
+    ##            #    loesung = "Keine Daten"
+    ##            #if not uhrzeit:
+    ##            #    uhrzeit = "Keine Daten"
+    ##                
+    ##                # Hinzufügen des Datensatzes
+    ##                datensaetze.append([kunde, problem, loesung, uhrzeit])
+    ##
+    ##        if datensaetze:
+    ##            # Schreiben der Daten in die CSV-Datei
+    ##            with open(self.csv_datei_pfad + "/Daten.csv", 'w', newline='') as datei:
+    ##                schreiber = csv.writer(datei)
+    ##                schreiber.writerow(["Kunde", "Problem", "Lösung", "Uhrzeit"])
+    ##                schreiber.writerows(datensaetze)
+    ##                self.zeit_string = time.strftime("%H:%M:%S")
+    ##                self.tag_string = str(time.strftime("%d %m %Y"))
+    ##                schreiber.writerow(["Ende der Datensätze, Exportiert am " + self.tag_string + "um " + self.zeit_string])
+    ##            print("Daten wurden in die CSV-Datei gespeichert.")
+    ##        #else:
+    ##        #    print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
+
+
+
 
        
 
