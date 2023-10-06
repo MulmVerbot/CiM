@@ -239,10 +239,10 @@ class FeedbackForm:
                     schreiber.writerows(datensaetze)
                     self.zeit_string = time.strftime("%H:%M:%S")
                     self.tag_string = str(time.strftime("%d %m %Y"))
-                    schreiber.writerow(["Ende der Datensätze, Exportiert am " + self.tag_string + "um " + self.zeit_string])
+                    schreiber.writerow(["Ende der Datensätze, Exportiert am " + self.tag_string + "um " + self.zeit_string], "Diese Liste wird jeden Tag neu Angelegt.")
                 print("Daten wurden in die CSV-Datei gespeichert.")
-            #else:
-            #    print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
+            else:
+                print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
 
     ##def als_csv_speichern(self):
     ##    print("Als CSV speichern")
