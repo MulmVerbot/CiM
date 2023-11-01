@@ -19,6 +19,7 @@ root = tk.Tk()
 class FeedbackForm:
     def __init__(self, master):
         self.master = master
+        self.DB = "liste.txt"
         
         self.zeit_string = time.strftime("%H:%M:%S")
         self.tag_string = str(time.strftime("%d %m %Y"))
@@ -47,6 +48,10 @@ class FeedbackForm:
         self.senden_button.bind('<Button-1>', self.senden)
         root.bind('<Return>', self.senden)
 
+        # Alles löschen knopf
+        self.alles_löschen = tk.Button(master, text="Alle Eintrage löschen", command=self.alles_löschen)
+        self.alles_löschen.grid(row=3, column=1)
+
         self.beb_knopp = tk.Button(master, text="Bearbeiten", command=self.beb)
         self.beb_knopp.grid(row=3, column=2)
 
@@ -73,6 +78,7 @@ class FeedbackForm:
         self.menudings.add_command(label="Info", command=self.info)
         self.menudings.add_command(label="Liste als CSV Speichern...", command=self.als_csv_speichern)
         self.menudings.add_command(label="Admin rechte", command=self.Admin_rechte)
+        
         self.beb = "0"
         #response = ctypes.windll.user32.MessageBoxW(None, "Möchten Sie Administratorrechte anfordern? Dies wird das Programm mit Adminrechten neustarten.", "Administratorrechte erforderlich", 4)
         #if response == 6:  # Wert 6 entspricht dem Klick auf "Ja"
@@ -110,6 +116,29 @@ class FeedbackForm:
     def info(self):
         print("(INFO) Info(def)")
         messagebox.showinfo(title="Info", message=self.Programm_Name + " " + self.Version + "\n Programmiert von Maximilian Becker, \n https://dings.systems für mehr Informationen")
+
+    def Neuladen_der_Liste(self):
+        try:
+            # Ausgabe-Textfeld aktualisieren
+            print("(INFO) versuche die alten Aufzeichenungen zu Laden")
+            self.ausgabe_text.config(state='normal')
+            with open("liste.txt", "r") as f:
+                feedback_text = f.read()
+                self.ausgabe_text.delete("1.0", tk.END)
+                self.ausgabe_text.insert(tk.END, feedback_text)
+                self.ausgabe_text.config(state='disabled')
+                print("-----------------------------------------")
+                print("(DEV) Hier ist nun das geladene aus der bisherigen Liste:")
+                print(feedback_text)
+                print("(DEV) Das War das geladene aus der bisherigen Liste.")
+                print("-----------------------------------------")
+        except FileNotFoundError:
+            print("(INFO) Die Datei Liste.txt gibts net")
+            self.ausgabe_text.config(state='disabled')
+        except:
+            messagebox.showinfo(title="Fehler", message="Ein Unbekannter Fehler ist aufgetreten beim Versuch während des Programmstarts die bisherigen aufzeichnungen zu laden, es könnte sein dass das Programm trotzdem fehlerfrei funktioniert.")
+            self.ausgabe_text.config(state='disabled')
+
     def Admin_rechte(self):
         response = ctypes.windll.user32.MessageBoxW(None, "Möchten Sie Administratorrechte anfordern? Dies wird das Programm mit Adminrechten neustarten.", "Administratorrechte erforderlich", 4)
         if response == 6:  # Wert 6 entspricht dem Klick auf "Ja"
@@ -200,6 +229,40 @@ class FeedbackForm:
             with open("liste.txt", "w+") as f:
                 f.write(self.text_tk_text)
                 print("das beb wurde geschrieben.")
+
+    def alles_löschen(self):
+        print("alles_löschen(def)")
+        
+        abfrage_wegen_löschen_db = messagebox.askquestion(title='Information', message="möchten Sie wirklich die gesamte Kontaktliste unwiderruflich löschen?")
+        if abfrage_wegen_löschen_db == "yes":  
+            print("löschen der db vom Nutzer bestätigt")
+            self.tag_und_zeit_string = time.strftime("%m/%d/%Y, %H:%M:%S")
+            print(self.tag_und_zeit_string)
+            try:
+                if os.path.exists(self.DB):
+                    print("Liste existiert")
+                    os.remove(self.DB)
+                    self.ausgabe_text.delete("1.0", tk.END)
+                    #self.ausgabe_text.insert(tk.END, "")
+                    try:
+                        with open ("liste.txt", "w+") as a:
+                            self.Neuladen_der_Liste
+                            messagebox.showinfo(title="Info", message="Alle vorehigen einträge wurden gelöscht.")
+                    except:
+                        print("Beim Erstellen der neuen Liste ist ein Fehler aufgetreten")
+                else:
+                    messagebox.showerror(title="Fehler", message="Es gab keine alten Einträge zum löschen.")
+            except:
+                messagebox.showerror(title="Fehler", message="Es ist ein unbekannter Fehler beim Löschen der alten Einträge aufgetreten, Fehlercode: 0")
+        elif abfrage_wegen_löschen_db == "no":
+            print("löschen der db vom Nutzer abgerbrochen.")
+        else:
+            print("db löschen fehler.")
+            messagebox.showerror(title="Fehler", message="Kaputt")
+
+
+            
+
 
     def als_csv_speichern(self):
         print("Als CSV speichern")
