@@ -1,0 +1,10 @@
+Uhrzeit: 07:47:41
+Kunde: -
+Problem: d
+Info: -
+
+Uhrzeit: 07:47:51
+Kunde: -
+Problem: -
+Info: e
+

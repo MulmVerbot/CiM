@@ -50,7 +50,7 @@ class FeedbackForm:
 
         # Alles löschen knopf
         self.alles_löschen = tk.Button(master, text="Alle Eintrage löschen", command=self.alles_löschen)
-        self.alles_löschen.grid(row=3, column=1)
+        self.alles_löschen.place(x=0,y=400)
 
         self.beb_knopp = tk.Button(master, text="Bearbeiten", command=self.beb)
         self.beb_knopp.grid(row=3, column=2)
