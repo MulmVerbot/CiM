@@ -77,7 +77,7 @@ class FeedbackForm:
         self.menu.add_cascade(label=self.Programm_Name + self.Version, menu=self.menudings)
         self.menudings.add_command(label="Info", command=self.info)
         self.menudings.add_command(label="Liste als CSV Speichern...", command=self.als_csv_speichern)
-        self.menudings.add_command(label="Admin rechte", command=self.Admin_rechte)
+        self.menudings.add_command(label="Admin rechte aktivieren", command=self.Admin_rechte)
         
         self.beb = "0"
         #response = ctypes.windll.user32.MessageBoxW(None, "Möchten Sie Administratorrechte anfordern? Dies wird das Programm mit Adminrechten neustarten.", "Administratorrechte erforderlich", 4)
@@ -238,6 +238,9 @@ class FeedbackForm:
             print("löschen der db vom Nutzer bestätigt")
             self.tag_und_zeit_string = time.strftime("%m/%d/%Y, %H:%M:%S")
             print(self.tag_und_zeit_string)
+            self.ausgabe_text.config(state='normal')
+            self.ausgabe_text.delete("1.0", tk.END)  # Hier wird der Inhalt des Textfelds gelöscht
+            self.ausgabe_text.config(state='disabled')
             try:
                 if os.path.exists(self.DB):
                     print("Liste existiert")
@@ -304,7 +307,7 @@ class FeedbackForm:
             if datensaetze:
                 self.tag_string = str(time.strftime("%d %m %Y"))
                 # Schreiben der Daten in die CSV-Datei
-                with open(self.csv_datei_pfad + "/Daten.csv" + self.tag_string , 'w', newline='') as datei:
+                with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
                     schreiber = csv.writer(datei)
                     schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info"])
                     schreiber.writerows(datensaetze)
