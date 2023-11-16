@@ -302,8 +302,9 @@ class FeedbackForm:
                     uhrzeit, kunde, problem, info  = "", "", "", ""
 
             if datensaetze:
+                self.tag_string = str(time.strftime("%d %m %Y"))
                 # Schreiben der Daten in die CSV-Datei
-                with open(self.csv_datei_pfad + "/Daten.csv", 'w', newline='') as datei:
+                with open(self.csv_datei_pfad + "/Daten.csv" + self.tag_string , 'w', newline='') as datei:
                     schreiber = csv.writer(datei)
                     schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info"])
                     schreiber.writerows(datensaetze)
