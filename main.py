@@ -9,6 +9,7 @@ try:
     import sys
     import csv
     import ctypes
+    import json
 except:
     print("(FATAL) Konnte die wichtigen Bilbioteken nicht Laden!")
     messagebox.showerror(title="Kritischer Fehler", message="(FATAL) Konnte die wichtigen Bilbioteken nicht Laden! Das Programm wird nun Beendet.")
@@ -16,7 +17,7 @@ except:
 
 root = tk.Tk()
 
-class FeedbackForm:
+class Listendings:
     def __init__(self, master):
         self.master = master
         self.DB = "liste.txt"
@@ -24,12 +25,22 @@ class FeedbackForm:
         self.zeit_string = time.strftime("%H:%M:%S")
         self.tag_string = str(time.strftime("%d %m %Y"))
         print(self.tag_string)
+
+        try:
+            with open("Listendingsspeicherort.json" , "r") as Liste_Speicherort_data:
+                self.Listen_Speicherort = json.load(Liste_Speicherort_data)
+                self.Listen_Speicherort_geladen = (self.Listen_Speicherort["ListenDings_Speicherort"])
+        except PermissionError:
+                messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Die Kontakliste konnte nicht aufgerufen werden.")
+        except:
+            messagebox.showerror(title="Listendings Speicherort", message="Der Pfad konnte zwar gelesen werden, allerdings scheint der Ausgewählte Ordner nicht zu existieren.")
+
         
 
 
 
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.1"
+        self.Version = "Alpha 1.1.2"
         master.title(self.Programm_Name + " " + self.Version)
 
         # Labels für Textfelder
@@ -71,27 +82,25 @@ class FeedbackForm:
         self.senden_button.grid(row=3, column=1)
         self.ausgabe_text.grid(row=4, column=0, columnspan=2)
 
+        # erschaffen des Column Menü Dings
         self.menu = Menu(root)
         root.config(menu=self.menu)
         self.menudings = Menu(self.menu, tearoff=0)
+        self.Einstellungen = Menu(self.menu, tearoff=0)
+        self.Speichern_Menu = Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label=self.Programm_Name + self.Version, menu=self.menudings)
+        self.menu.add_cascade(label="Einstellungen", menu=self.Einstellungen)
+        self.menu.add_cascade(label="Speichern", menu=self.Speichern_Menu)
         self.menudings.add_command(label="Info", command=self.info)
-        self.menudings.add_command(label="Liste als CSV Speichern...", command=self.als_csv_speichern)
         self.menudings.add_command(label="Admin rechte aktivieren", command=self.Admin_rechte)
+        self.Einstellungen.add_command(label="Speicherort des ListenDings ändern...", command=self.ListenDings_speicherort_ändern)
+        self.Speichern_Menu.add_command(label="Speichern...", command=self.als_csv_speichern_eigener_ort)
+        self.Speichern_Menu.add_command(label="Speichern als...", command=self.als_csv_speichern)
         
-        self.beb = "0"
-        #response = ctypes.windll.user32.MessageBoxW(None, "Möchten Sie Administratorrechte anfordern? Dies wird das Programm mit Adminrechten neustarten.", "Administratorrechte erforderlich", 4)
-        #if response == 6:  # Wert 6 entspricht dem Klick auf "Ja"
-        #    try:
-        #        # Hier führen wir die Funktion mit Administratorrechten aus
-        #        print("Instanz mit Admin Rechten gestartet")
-        #        ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
-        #        sys.exit()
-        #    except Exception as e:
-        #        print("Fehler beim Ausführen der 'Admin_Rechte'-Funktion:", e)
-        #else:
-        #    print("Administratorrechte wurden nicht angefordert.")
+        # Initialisierung wichtiger Variablen
 
+        self.beb = "0"
+        
         try:
             # Ausgabe-Textfeld aktualisieren
             print("(INFO) versuche die alten Aufzeichenungen zu Laden")
@@ -140,7 +149,7 @@ class FeedbackForm:
             self.ausgabe_text.config(state='disabled')
 
     def Admin_rechte(self):
-        response = ctypes.windll.user32.MessageBoxW(None, "Möchten Sie Administratorrechte anfordern? Dies wird das Programm mit Adminrechten neustarten.", "Administratorrechte erforderlich", 4)
+        response = ctypes.windll.user32.MessageBoxW(None, "Möchten Sie Administratorrechte anfordern? Dies wird das Programm mit Adminrechten neustarten. Das funktioniert auch glaube nur auf Windows.", "Administratorrechte erforderlich", 4)
         if response == 6:  # Wert 6 entspricht dem Klick auf "Ja"
             try:
                 # Hier führen wir die Funktion mit Administratorrechten aus
@@ -148,6 +157,7 @@ class FeedbackForm:
                 ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
                 sys.exit()
             except Exception as e:
+                messagebox.showerror(title="ich sagte doch das geht nicht...", message=e)
                 print("Fehler beim Ausführen der 'Admin_Rechte'-Funktion:", e)
         else:
             print("Administratorrechte wurden nicht angefordert.")
@@ -217,14 +227,14 @@ class FeedbackForm:
         if self.beb == "0":
             print("beb is jetzt = 1")
             self.ausgabe_text.config(state='normal')
-            self.beb_knopp.config(text="Fertig")
+            self.beb_knopp.config(text="Fertig", fg="red")
             self.beb = "1"
             root.unbind('<Return>')
         else:
             print("beb = 0")
             self.ausgabe_text.config(state='disabled')
             root.bind('<Return>', self.senden)
-            self.beb_knopp.config(text="Bearbeiten")
+            self.beb_knopp.config(text="Bearbeiten", fg="black")
             self.beb = "0"
             with open("liste.txt", "w+") as f:
                 f.write(self.text_tk_text)
@@ -318,7 +328,74 @@ class FeedbackForm:
                 messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich gespeichert.")
             else:
                 print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
-                messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")        
+                messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
+
+    def als_csv_speichern_eigener_ort(self):
+        print("Als CSV speichern, im Standard Ort")
+        self.csv_datei_pfad = self.Listen_Speicherort_geladen
+
+        if self.csv_datei_pfad:
+            # Öffnen der Textdatei zum Lesen
+            with open("liste.txt", 'r') as text_datei:
+                daten = text_datei.read()
+
+            # Aufteilen des Texts in Zeilen
+            zeilen = daten.strip().split('\n')
+
+            # Initialisieren einer Liste für die Datensätze
+            datensaetze = []
+
+            # Initialisieren der Variablen für Kundeninformationen
+            uhrzeit, kunde, problem, info = "", "", "", ""
+
+            # Durchlaufen der Zeilen und Extrahieren der Informationen
+            for zeile in zeilen:
+                print(zeilen)
+                print("=")
+                print(zeile)
+                if zeile.startswith("Uhrzeit:"):
+                    uhrzeit = zeile.replace("Uhrzeit:", "").strip()
+                elif zeile.startswith("Kunde:"):
+                    kunde = zeile.replace("Kunde:", "").strip()
+                elif zeile.startswith("Problem:"):
+                    problem = zeile.replace("Problem:", "").strip()
+                elif zeile.startswith("Info:"):
+                    info = zeile.replace("Info:", "").strip()
+                
+                    
+                if kunde and problem and info and uhrzeit:
+                    datensaetze.append([ uhrzeit,kunde, problem, info])
+                    uhrzeit, kunde, problem, info  = "", "", "", ""
+
+            if datensaetze:
+                self.tag_string = str(time.strftime("%d %m %Y"))
+                # Schreiben der Daten in die CSV-Datei
+                with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
+                    schreiber = csv.writer(datei)
+                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info"])
+                    schreiber.writerows(datensaetze)
+                    self.zeit_string = time.strftime("%H:%M:%S")
+                    self.tag_string = str(time.strftime("%d %m %Y"))
+                    #schreiber.writerow(["Ende der Datensätze, Exportiert am " + self.tag_string + "um " + self.zeit_string], "Diese Liste wird jeden Tag neu Angelegt.")
+                print("Daten wurden in die CSV-Datei gespeichert.")
+                messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich gespeichert.")
+            else:
+                print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
+                messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
+
+    def ListenDings_speicherort_ändern(self):
+        messagebox.showinfo(title="Anleitung", message="Bitte wähle nun den Ort aus in welchem das ListenDings automatisch gespeichert werden soll.")
+        self.gewählter_ListenDings_Ort = filedialog.askdirectory()
+        self.gewählter_ListenDings_Ort = self.gewählter_ListenDings_Ort + "/"
+        print("Der vom Nutzer gewählte Ort für das ListenDings lautet: ", self.gewählter_ListenDings_Ort)
+        self.zu_speichernder_Ort_des_ListenDings = {"ListenDings_Speicherort": self.gewählter_ListenDings_Ort}
+        try:
+            with open("Listendingsspeicherort.json", "w+" ) as fn:
+                json.dump(self.zu_speichernder_Ort_des_ListenDings, fn)
+                messagebox.showinfo(title="Erfolg", message="Der Pfad des Listendings wurde erfolgreich geändert und wird beim nächsten Programmstart aktiv.")
+        except Exception as e:
+            ei = "Das ändern des ListenDings Pfades hat nicht geklappt, ich hab aber auch keine Ahnung wieso, versuch mal den Text hier zu entziffern: " , e
+            messagebox.showerror(title="Fehler", message=ei)
 
 def bye():
     print("(ENDE) Das Programm wurde Beendet, auf wiedersehen! \^_^/ ")
@@ -331,6 +408,6 @@ def bye():
 
 # Hauptprogramm
 #root.resizable(False,False)
-feedback_form = FeedbackForm(root)
+Listendings = Listendings(root)
 root.protocol("WM_DELETE_WINDOW", bye)
 root.mainloop()
