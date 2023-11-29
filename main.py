@@ -40,7 +40,7 @@ class Listendings:
 
 
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.1.2"
+        self.Version = "Alpha 1.1.3"
         master.title(self.Programm_Name + " " + self.Version)
 
         # Labels für Textfelder
@@ -228,6 +228,8 @@ class Listendings:
             print("beb is jetzt = 1")
             self.ausgabe_text.config(state='normal')
             self.beb_knopp.config(text="Fertig", fg="red")
+            self.alles_löschen.place_forget()
+            self.senden_button.grid_forget()
             self.beb = "1"
             root.unbind('<Return>')
         else:
@@ -235,6 +237,8 @@ class Listendings:
             self.ausgabe_text.config(state='disabled')
             root.bind('<Return>', self.senden)
             self.beb_knopp.config(text="Bearbeiten", fg="black")
+            self.senden_button.grid(row=3, column=1)
+            self.alles_löschen.place(x=0,y=400)
             self.beb = "0"
             with open("liste.txt", "w+") as f:
                 f.write(self.text_tk_text)
