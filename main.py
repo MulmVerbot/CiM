@@ -13,7 +13,7 @@ try:
 except:
     print("(FATAL) Konnte die wichtigen Bilbioteken nicht Laden!")
     messagebox.showerror(title="Kritischer Fehler", message="(FATAL) Konnte die wichtigen Bilbioteken nicht Laden! Das Programm wird nun Beendet.")
-    sys.extit
+    sys.exit
 
 root = tk.Tk()
 
@@ -124,7 +124,7 @@ class Listendings:
 
     def info(self):
         print("(INFO) Info(def)")
-        messagebox.showinfo(title="Info", message=self.Programm_Name + " " + self.Version + "\n Programmiert von Maximilian Becker, \n https://dings.systems für mehr Informationen")
+        messagebox.showinfo(title="Info", message=self.Programm_Name + " " + self.Version + "\n Programmiert von Maximilian Becker, \n https://dings.software für mehr Informationen")
 
     def Neuladen_der_Liste(self):
         try:
