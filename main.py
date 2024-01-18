@@ -60,8 +60,8 @@ class Listendings:
         root.bind('<Return>', self.senden)
 
         # Alles löschen knopf
-        self.alles_löschen = tk.Button(master, text="Alle Eintrage löschen", command=self.alles_löschen)
-        self.alles_löschen.place(x=0,y=400)
+        self.alles_löschen_knopp = tk.Button(master, text="Alle Eintrage löschen", command=self.alles_löschen)
+        self.alles_löschen_knopp.place(x=0,y=400)
 
         self.beb_knopp = tk.Button(master, text="Bearbeiten", command=self.beb)
         self.beb_knopp.grid(row=3, column=2)
@@ -88,14 +88,17 @@ class Listendings:
         self.menudings = Menu(self.menu, tearoff=0)
         self.Einstellungen = Menu(self.menu, tearoff=0)
         self.Speichern_Menu = Menu(self.menu, tearoff=0)
+        self.test_Menu = Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label=self.Programm_Name + self.Version, menu=self.menudings)
         self.menu.add_cascade(label="Einstellungen", menu=self.Einstellungen)
         self.menu.add_cascade(label="Speichern", menu=self.Speichern_Menu)
+        self.menu.add_cascade(label="Test", menu=self.test_Menu)
         self.menudings.add_command(label="Info", command=self.info)
         self.menudings.add_command(label="Admin rechte aktivieren", command=self.Admin_rechte)
         self.Einstellungen.add_command(label="Speicherort des ListenDings ändern...", command=self.ListenDings_speicherort_ändern)
-        self.Speichern_Menu.add_command(label="Speichern...", command=self.als_csv_speichern_eigener_ort)
+        self.Speichern_Menu.add_command(label="Speichern", command=self.als_csv_speichern_eigener_ort)
         self.Speichern_Menu.add_command(label="Speichern als...", command=self.als_csv_speichern)
+        self.test_Menu.add_command(label="Neue GUI starten...", command=self.neue_GUI)
         
         # Initialisierung wichtiger Variablen
 
@@ -228,7 +231,7 @@ class Listendings:
             print("beb is jetzt = 1")
             self.ausgabe_text.config(state='normal')
             self.beb_knopp.config(text="Fertig", fg="red")
-            self.alles_löschen.place_forget()
+            self.alles_löschen_knopp.place_forget()
             self.senden_button.grid_forget()
             self.beb = "1"
             root.unbind('<Return>')
@@ -238,7 +241,7 @@ class Listendings:
             root.bind('<Return>', self.senden)
             self.beb_knopp.config(text="Bearbeiten", fg="black")
             self.senden_button.grid(row=3, column=1)
-            self.alles_löschen.place(x=0,y=400)
+            self.alles_löschen_knopp.place(x=0,y=400)
             self.beb = "0"
             with open("liste.txt", "w+") as f:
                 f.write(self.text_tk_text)
@@ -401,6 +404,96 @@ class Listendings:
             ei = "Das ändern des ListenDings Pfades hat nicht geklappt, ich hab aber auch keine Ahnung wieso, versuch mal den Text hier zu entziffern: " , e
             messagebox.showerror(title="Fehler", message=ei)
 
+    def neue_GUI(self):
+        print("neue_GUI (def)")
+        self.senden_button.unbind('<Button-1>')
+        root.unbind('<Return>')
+        self.alles_löschen_knopp.place_forget()
+        self.beb_knopp.grid_forget()
+        self.kunde_label.grid_forget()
+        self.problem_label.grid_forget()
+        self.info_label.grid_forget()
+        self.kunde_entry.grid_forget()
+        self.problem_entry.grid_forget()
+        self.info_entry.grid_forget()
+        self.senden_button.grid_forget()
+        self.ausgabe_text.grid_forget()
+
+        self.kunde_label.place(x=5,y=10)
+        self.problem_label.place(x=5,y=40)
+        self.info_label.place(x=5,y=70)
+        self.kunde_entry.place(x=60,y=10)
+        self.problem_entry.place(x=60,y=40)
+        self.info_entry.place(x=60,y=70)
+        self.container = ttk.Frame(self.serverliste_bearbeiten_F)
+        self.container.place(x=10,y=200)
+        aussehen_des_ttks = ttk.Style(self.serverliste_bearbeiten_F)
+        
+        self.msg = ttk.Label(self.serverliste_bearbeiten_F, wraplength="4i", justify="left", anchor="n",  text="Vorschau", foreground="White",background="Black")
+        self.msg.place(x=350,y=170)
+        try:
+            aussehen_des_ttks.theme_use("winnative")
+        except:
+            print("[-INFO-] Die Kontaktliste konnte nicht im Design 'Winnative' geladen werden, nutze nun den Standard.")
+
+            # wenn das ding voll7text zu lang, dann werden scrollbars erstellt
+        self.Kopfzeile = ['Lizenzträger', 'Status', 'Lizenzschlüssel (Key)', 'Version', 'Notizen']
+        self.tree = ttk.Treeview(self.serverliste_bearbeiten_F, columns=self.Kopfzeile, show="headings")
+        vsb = ttk.Scrollbar(self.serverliste_bearbeiten_F,orient="vertical", command=self.tree.yview)
+        hsb = ttk.Scrollbar(self.serverliste_bearbeiten_F,orient="horizontal", command=self.tree.xview)
+        self.tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
+        self.tree.grid(column=100, row=0, sticky='nsew', in_=self.container)
+        aussehen_des_ttks.configure('Treeview.Heading', foreground="White",background="Black", bordercolor="Red")
+        aussehen_des_ttks.configure('Treeview.cell', foreground="yellow",background="red")
+        aussehen_des_ttks.configure("Treeview", foreground="White",background="Black", highlightedbackground="Orange", bordercolor="Red")
+
+        def item_selected(event):
+            print("[-DEV-] def item_selected(event):")
+            #item = self.tree.item(self.tree.selection())
+            for selected_item in self.tree.selection():
+                item = self.tree.item(selected_item)
+                values = item["values"]
+                print(item)
+                self.Lzenz_owner , self.Lzenz_status , self.Lzenz_schluessel, self.neuste_Client_Version, self.Notizen_var = values
+
+        for col in self.Kopfzeile:
+                self.tree.heading(col, text=col.title(),
+                    command=lambda c=col: sortby(self.tree, c, 0))
+                # Spaltenbreite an schriftart anpassen
+                self.tree.column(col, width=tkFont.Font().measure(col.title())) ### das ist noch nicht angepasst, ich muss noch die spaltenbreiten fixen, also ersteinmal standard Werte.
+        try:
+            self.kontakte = bestehende_kontakte  
+            for item in self.kontakte:
+                self.tree.insert('', 'end', values=[item['Lizenzträger'], item['Status'], item['Key'], item['Version'], item['Notizen']])
+                print("Eintrag zur Treeview hinzugefügt.")
+        except Exception as exi:
+            print("fehler: ", exi)
+            pass
+        
+        try:    # Spaltenbreite anpassen wenn nötig
+            for ix, val in enumerate(item):
+                col_w = tkFont.Font().measure(val)
+                col_w = 150
+                if self.tree.column(self.Kopfzeile[ix],width=None)<col_w:
+                    self.tree.column(self.Kopfzeile[ix], width=col_w)
+        except Exception as exs:
+            print("[-ERR-] Fehler beim Berechnen der Spaltenbreiten.", exs)
+
+        def sortby(tree, col, descending):
+            print("[-DEV-] Liste sortiert.")
+
+            # wert zum sortieren wählen
+            data = [(tree.set(child, col), child) \
+                for child in tree.get_children('')]
+            # wenn die Daten zum sortieren zahlen sind, dann die untere Gleitkomma funktion nutzen
+            #data =  change_numeric(data)
+            # sortieren
+            data.sort(reverse=descending)
+            for ix, item in enumerate(data):
+                tree.move(item[1], '', ix)
+            # das selbe in rückwärts
+            tree.heading(col, command=lambda col=col: sortby(tree, col, \
+                int(not descending)))
 def bye():
     print("(ENDE) Das Programm wurde Beendet, auf wiedersehen! \^_^/ ")
     zeit_string = time.strftime("%H:%M:%S")
