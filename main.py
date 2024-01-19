@@ -425,75 +425,8 @@ class Listendings:
         self.kunde_entry.place(x=60,y=10)
         self.problem_entry.place(x=60,y=40)
         self.info_entry.place(x=60,y=70)
-        self.container = ttk.Frame(self.serverliste_bearbeiten_F)
-        self.container.place(x=10,y=200)
-        aussehen_des_ttks = ttk.Style(self.serverliste_bearbeiten_F)
         
-        self.msg = ttk.Label(self.serverliste_bearbeiten_F, wraplength="4i", justify="left", anchor="n",  text="Vorschau", foreground="White",background="Black")
-        self.msg.place(x=350,y=170)
-        try:
-            aussehen_des_ttks.theme_use("winnative")
-        except:
-            print("[-INFO-] Die Kontaktliste konnte nicht im Design 'Winnative' geladen werden, nutze nun den Standard.")
-
-            # wenn das ding voll7text zu lang, dann werden scrollbars erstellt
-        self.Kopfzeile = ['Lizenzträger', 'Status', 'Lizenzschlüssel (Key)', 'Version', 'Notizen']
-        self.tree = ttk.Treeview(self.serverliste_bearbeiten_F, columns=self.Kopfzeile, show="headings")
-        vsb = ttk.Scrollbar(self.serverliste_bearbeiten_F,orient="vertical", command=self.tree.yview)
-        hsb = ttk.Scrollbar(self.serverliste_bearbeiten_F,orient="horizontal", command=self.tree.xview)
-        self.tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
-        self.tree.grid(column=100, row=0, sticky='nsew', in_=self.container)
-        aussehen_des_ttks.configure('Treeview.Heading', foreground="White",background="Black", bordercolor="Red")
-        aussehen_des_ttks.configure('Treeview.cell', foreground="yellow",background="red")
-        aussehen_des_ttks.configure("Treeview", foreground="White",background="Black", highlightedbackground="Orange", bordercolor="Red")
-
-        def item_selected(event):
-            print("[-DEV-] def item_selected(event):")
-            #item = self.tree.item(self.tree.selection())
-            for selected_item in self.tree.selection():
-                item = self.tree.item(selected_item)
-                values = item["values"]
-                print(item)
-                self.Lzenz_owner , self.Lzenz_status , self.Lzenz_schluessel, self.neuste_Client_Version, self.Notizen_var = values
-
-        for col in self.Kopfzeile:
-                self.tree.heading(col, text=col.title(),
-                    command=lambda c=col: sortby(self.tree, c, 0))
-                # Spaltenbreite an schriftart anpassen
-                self.tree.column(col, width=tkFont.Font().measure(col.title())) ### das ist noch nicht angepasst, ich muss noch die spaltenbreiten fixen, also ersteinmal standard Werte.
-        try:
-            self.kontakte = bestehende_kontakte  
-            for item in self.kontakte:
-                self.tree.insert('', 'end', values=[item['Lizenzträger'], item['Status'], item['Key'], item['Version'], item['Notizen']])
-                print("Eintrag zur Treeview hinzugefügt.")
-        except Exception as exi:
-            print("fehler: ", exi)
-            pass
-        
-        try:    # Spaltenbreite anpassen wenn nötig
-            for ix, val in enumerate(item):
-                col_w = tkFont.Font().measure(val)
-                col_w = 150
-                if self.tree.column(self.Kopfzeile[ix],width=None)<col_w:
-                    self.tree.column(self.Kopfzeile[ix], width=col_w)
-        except Exception as exs:
-            print("[-ERR-] Fehler beim Berechnen der Spaltenbreiten.", exs)
-
-        def sortby(tree, col, descending):
-            print("[-DEV-] Liste sortiert.")
-
-            # wert zum sortieren wählen
-            data = [(tree.set(child, col), child) \
-                for child in tree.get_children('')]
-            # wenn die Daten zum sortieren zahlen sind, dann die untere Gleitkomma funktion nutzen
-            #data =  change_numeric(data)
-            # sortieren
-            data.sort(reverse=descending)
-            for ix, item in enumerate(data):
-                tree.move(item[1], '', ix)
-            # das selbe in rückwärts
-            tree.heading(col, command=lambda col=col: sortby(tree, col, \
-                int(not descending)))
+       
 def bye():
     print("(ENDE) Das Programm wurde Beendet, auf wiedersehen! \^_^/ ")
     zeit_string = time.strftime("%H:%M:%S")
