@@ -113,6 +113,9 @@ class Listendings:
         self.test_Menu.add_command(label="Neue GUI starten...", command=self.neue_GUI)
         self.Speichern_Menu.add_command(label="auf dem Netzlaufwerk als CSV Speichern", command=self.Netzlaufwerk_speichern)
         self.Einstellungen.add_command(label="Netzlaufwerk einstellen", command=self.ListenDings_speicherort_Netzwerk_ändern)
+
+        self.Einstellungen.add_command(label="Auto Speichern ändern (Beim schließen)", command=self.Auto_sp_ändern)
+
         
         # Initialisierung wichtiger Variablen
 
@@ -142,6 +145,48 @@ class Listendings:
     def info(self):
         print("(INFO) Info(def)")
         messagebox.showinfo(title="Info", message=self.Programm_Name + " " + self.Version + "\n Programmiert von Maximilian Becker, \n https://dings.software für mehr Informationen")
+
+    def Auto_sp_ändern(self):
+        print("auto_speichern(def)")
+        try:
+            with open("auto_speichern.txt", "r") as r_gel:
+                self.aSp_var = r_gel.read()
+            if self.aSp_var == "Ja":
+                self.aSp_var = "Nein"
+                with open("auto_speichern.txt", "wb+") as nsp:
+                    nsp.write(self.aSp_var)
+                    nsp.close()
+                    messagebox.showinfo(title="CiM Info", message="Das automatische Speichern wurde deaktiviert.")
+            elif self.aSp_var == "Nein":
+                self.aSp_var = "Ja"
+                with open("auto_speichern.txt", "wb+") as nsp:
+                    nsp.write(self.aSp_var)
+                    nsp.close()
+                    messagebox.showinfo(title="CiM Info", message="Das automatische Speichern wurde aktiviert.")
+            else:
+                self.aSp_var = "Nein"
+                messagebox.showerror(title="CiM", message="Herzlichen Glückwunsch! Du hast das ganze Speicher Dings Kaputt gemacht! Das Automatische speichern wurde deaktiviert. Versuche nun nochmal, diese Funktion zu nutzen.")
+                with open("auto_speichern.txt", "wb+") as nsp:
+                    nsp.write(self.aSp_var)
+                    nsp.close()
+                    messagebox.showinfo(title="CiM Info", message="Das automatische Speichern wurde aktiviert.")
+        except FileNotFoundError:
+            print("Die Datei gabs nicht.")
+            self.aSp_var = "Nein"
+            with open("auto_speichern.txt", "wb+") as nsp:
+                    nsp.write(self.aSp_var)
+                    nsp.close()
+                    messagebox.showinfo(title="CiM Info", message="Das automatische Speichern wurde aktiviert.")
+        except Exception as E:
+            Esxi = "Es ist irgendwas Kaputt gegangen, keine Ahnung was. Viel Spaß: ", E
+            messagebox.showerror(title="CiM Fehler", message=Esxi)
+
+            
+
+
+        
+        
+
 
     def Neuladen_der_Liste(self):
         try:
@@ -508,7 +553,7 @@ class Listendings:
                 print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
                 messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
 
-def bye():
+def bye(auto_speichern):
     print("(ENDE) Das Programm wurde Beendet, auf wiedersehen! \^_^/ ")
     zeit_string = time.strftime("%H:%M:%S")
     tag_string = str(time.strftime("%d %m %Y"))
@@ -524,54 +569,65 @@ def bye():
         messagebox.showerror(title="Listendings Speicherort", message=ex)
     print("ende des Programms, fange nun an zu speichern")
     try:
-        csv_datei_pfad_Netzwerk = Listen_Speicherort_Netzwerk_geladen
-        if csv_datei_pfad_Netzwerk:
-            # Öffnen der Textdatei zum Lesen
-            with open("liste.txt", 'r') as text_datei:
-                daten = text_datei.read()
+        try:
+            auto_speichern = "Ja"
+            with open("auto_speichern.txt", "r") as aSp:
+                dings_aSp = aSp.read()
+                auto_speichern = dings_aSp
+        except:
+            auto_speichern = "Nein"
 
-            zeilen = daten.strip().split('\n')
+        if auto_speichern == "Ja":
+            csv_datei_pfad_Netzwerk = Listen_Speicherort_Netzwerk_geladen
+            if csv_datei_pfad_Netzwerk:
+                # Öffnen der Textdatei zum Lesen
+                with open("liste.txt", 'r') as text_datei:
+                    daten = text_datei.read()
 
-            # Initialisieren einer Liste für die Datensätze
-            datensaetze = []
+                zeilen = daten.strip().split('\n')
 
-            # Initialisieren der Variablen für Kundeninformationen
-            uhrzeit, kunde, problem, info = "", "", "", ""
+                # Initialisieren einer Liste für die Datensätze
+                datensaetze = []
 
-            # Durchlaufen der Zeilen und Extrahieren der Informationen
-            for zeile in zeilen:
-                print(zeilen)
-                print("=")
-                print(zeile)
-                if zeile.startswith("Uhrzeit:"):
-                    uhrzeit = zeile.replace("Uhrzeit:", "").strip()
-                elif zeile.startswith("Kunde:"):
-                    kunde = zeile.replace("Kunde:", "").strip()
-                elif zeile.startswith("Problem:"):
-                    problem = zeile.replace("Problem:", "").strip()
-                elif zeile.startswith("Info:"):
-                    info = zeile.replace("Info:", "").strip()
-                
+                # Initialisieren der Variablen für Kundeninformationen
+                uhrzeit, kunde, problem, info = "", "", "", ""
+
+                # Durchlaufen der Zeilen und Extrahieren der Informationen
+                for zeile in zeilen:
+                    print(zeilen)
+                    print("=")
+                    print(zeile)
+                    if zeile.startswith("Uhrzeit:"):
+                        uhrzeit = zeile.replace("Uhrzeit:", "").strip()
+                    elif zeile.startswith("Kunde:"):
+                        kunde = zeile.replace("Kunde:", "").strip()
+                    elif zeile.startswith("Problem:"):
+                        problem = zeile.replace("Problem:", "").strip()
+                    elif zeile.startswith("Info:"):
+                        info = zeile.replace("Info:", "").strip()
                     
-                if kunde and problem and info and uhrzeit:
-                    datensaetze.append([ uhrzeit,kunde, problem, info])
-                    uhrzeit, kunde, problem, info  = "", "", "", ""
+                        
+                    if kunde and problem and info and uhrzeit:
+                        datensaetze.append([ uhrzeit,kunde, problem, info])
+                        uhrzeit, kunde, problem, info  = "", "", "", ""
 
-            if datensaetze:
-                tag_string = str(time.strftime("%d %m %Y"))
-                # Schreiben der Daten in die CSV-Datei
-                with open(csv_datei_pfad_Netzwerk + "/AnruferlistenDings" + tag_string + ".csv" , 'w', newline='') as datei:
-                    schreiber = csv.writer(datei)
-                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info"])
-                    schreiber.writerows(datensaetze)
-                    zeit_string = time.strftime("%H:%M:%S")
+                if datensaetze:
                     tag_string = str(time.strftime("%d %m %Y"))
-                    #schreiber.writerow(["Ende der Datensätze, Exportiert am " + self.tag_string + "um " + self.zeit_string], "Diese Liste wird jeden Tag neu Angelegt.")
-                print("Daten wurden in die CSV-Datei gespeichert.")
-                messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich auf dem Netzlaufwerk gespeichert.")
-            else:
-                print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
-                messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
+                    # Schreiben der Daten in die CSV-Datei
+                    with open(csv_datei_pfad_Netzwerk + "/AnruferlistenDings" + tag_string + ".csv" , 'w', newline='') as datei:
+                        schreiber = csv.writer(datei)
+                        schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info"])
+                        schreiber.writerows(datensaetze)
+                        zeit_string = time.strftime("%H:%M:%S")
+                        tag_string = str(time.strftime("%d %m %Y"))
+                        #schreiber.writerow(["Ende der Datensätze, Exportiert am " + self.tag_string + "um " + self.zeit_string], "Diese Liste wird jeden Tag neu Angelegt.")
+                    print("Daten wurden in die CSV-Datei gespeichert.")
+                    messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich auf dem Netzlaufwerk gespeichert.")
+                else:
+                    print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
+                    messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
+        else:
+            print("die var zum auto_speichern lag bei was anderem als 1")
     except Exception as e:
         ei = "Es ein Fehler beim Speichern aufgetreten, keine Ahnung was passiert ist wahrscheinlich fehlt nur das Laufwerk. Hier ist noch ein Code mit dem Du nicht anfangen kannst: ", e
         messagebox.showerror(title="CiM Fehler", message=ei)
