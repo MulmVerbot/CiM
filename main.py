@@ -21,6 +21,7 @@ class Listendings:
     def __init__(self, master):
         self.master = master
         self.DB = "liste.txt"
+        self.Listen_Speicherort_Netzwerk_geladen = None
         
         self.zeit_string = time.strftime("%H:%M:%S")
         self.tag_string = str(time.strftime("%d %m %Y"))
@@ -30,17 +31,28 @@ class Listendings:
             with open("Listendingsspeicherort.json" , "r") as Liste_Speicherort_data:
                 self.Listen_Speicherort = json.load(Liste_Speicherort_data)
                 self.Listen_Speicherort_geladen = (self.Listen_Speicherort["ListenDings_Speicherort"])
+                Listen_Speicherort_Netzwerk_geladen = self.Listen_Speicherort_Netzwerk_geladen
         except PermissionError:
                 messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Die Kontakliste konnte nicht aufgerufen werden.")
         except:
             messagebox.showerror(title="Listendings Speicherort", message="Der Pfad konnte zwar gelesen werden, allerdings scheint der Ausgewählte Ordner nicht zu existieren.")
 
+        try:
+            with open("Listendingsspeicherort_Netzwerk.json" , "r") as Liste_Speicherort_Netzwerk_data:
+                self.Listen_Speicherort_Netzwerk = json.load(Liste_Speicherort_Netzwerk_data)
+                self.Listen_Speicherort_Netzwerk_geladen = (self.Listen_Speicherort_Netzwerk["ListenDings_Speicherort_Netzwerk"])
+        except PermissionError:
+                messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Der Gespeicherte Netzwerkpfad konnte nicht aufgerufen werden.")
+        except Exception as e:
+            ex = "Irgendwas ist passiert: ", e
+            messagebox.showerror(title="Listendings Speicherort", message=ex)
+        Listen_Speicherort_Netzwerk_geladen = self.Listen_Speicherort_Netzwerk_geladen
         
 
 
 
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.1.3"
+        self.Version = "Alpha 1.1.4"
         master.title(self.Programm_Name + " " + self.Version)
 
         # Labels für Textfelder
@@ -96,9 +108,11 @@ class Listendings:
         self.menudings.add_command(label="Info", command=self.info)
         self.menudings.add_command(label="Admin rechte aktivieren", command=self.Admin_rechte)
         self.Einstellungen.add_command(label="Speicherort des ListenDings ändern...", command=self.ListenDings_speicherort_ändern)
-        self.Speichern_Menu.add_command(label="Speichern", command=self.als_csv_speichern_eigener_ort)
+        self.Speichern_Menu.add_command(label="als CSV Speichern", command=self.als_csv_speichern_eigener_ort)
         self.Speichern_Menu.add_command(label="Speichern als...", command=self.als_csv_speichern)
         self.test_Menu.add_command(label="Neue GUI starten...", command=self.neue_GUI)
+        self.Speichern_Menu.add_command(label="auf dem Netzlaufwerk als CSV Speichern", command=self.Netzlaufwerk_speichern)
+        self.Einstellungen.add_command(label="Netzlaufwerk einstellen", command=self.ListenDings_speicherort_Netzwerk_ändern)
         
         # Initialisierung wichtiger Variablen
 
@@ -404,6 +418,20 @@ class Listendings:
             ei = "Das ändern des ListenDings Pfades hat nicht geklappt, ich hab aber auch keine Ahnung wieso, versuch mal den Text hier zu entziffern: " , e
             messagebox.showerror(title="Fehler", message=ei)
 
+    def ListenDings_speicherort_Netzwerk_ändern(self):
+        messagebox.showinfo(title="Anleitung", message="Bitte wähle nun den Ort aus in welchem das ListenDings automatisch im Netzwerk gespeichert werden soll.")
+        self.gewählter_ListenDings_Netzwerk_Ort = filedialog.askdirectory()
+        self.gewählter_ListenDings_Netzwerk_Ort = self.gewählter_ListenDings_Netzwerk_Ort + "/"
+        print("Der vom Nutzer gewählte Ort für das ListenDings Netzwerk lautet: ", self.gewählter_ListenDings_Netzwerk_Ort)
+        self.zu_speichernder_Ort_des_ListenDings_Netzwerk = {"ListenDings_Speicherort_Netzwerk": self.gewählter_ListenDings_Netzwerk_Ort}
+        try:
+            with open("Listendingsspeicherort_Netzwerk.json", "w+" ) as fn:
+                json.dump(self.zu_speichernder_Ort_des_ListenDings_Netzwerk, fn)
+                messagebox.showinfo(title="Erfolg", message="Der Pfad des Listendings wurde erfolgreich geändert und wird beim nächsten Programmstart aktiv.")
+        except Exception as e:
+            ei = "Das ändern des ListenDings Pfades hat nicht geklappt, ich hab aber auch keine Ahnung wieso, versuch mal den Text hier zu entziffern: " , e
+            messagebox.showerror(title="Fehler", message=ei)
+
     def neue_GUI(self):
         print("neue_GUI (def)")
         self.senden_button.unbind('<Button-1>')
@@ -425,13 +453,128 @@ class Listendings:
         self.kunde_entry.place(x=60,y=10)
         self.problem_entry.place(x=60,y=40)
         self.info_entry.place(x=60,y=70)
-        
-       
+    
+    def Netzlaufwerk_speichern(self):
+        print("Netzlaufwerk_speichern(def)")
+        print("Als CSV speichern, im Standard Ort")
+        self.csv_datei_pfad_Netzwerk = self.Listen_Speicherort_Netzwerk_geladen
+        Listen_Speicherort_Netzwerk_geladen = self.Listen_Speicherort_Netzwerk_geladen
+
+        if self.csv_datei_pfad_Netzwerk:
+            # Öffnen der Textdatei zum Lesen
+            with open("liste.txt", 'r') as text_datei:
+                daten = text_datei.read()
+
+            zeilen = daten.strip().split('\n')
+
+            # Initialisieren einer Liste für die Datensätze
+            datensaetze = []
+
+            # Initialisieren der Variablen für Kundeninformationen
+            uhrzeit, kunde, problem, info = "", "", "", ""
+
+            # Durchlaufen der Zeilen und Extrahieren der Informationen
+            for zeile in zeilen:
+                print(zeilen)
+                print("=")
+                print(zeile)
+                if zeile.startswith("Uhrzeit:"):
+                    uhrzeit = zeile.replace("Uhrzeit:", "").strip()
+                elif zeile.startswith("Kunde:"):
+                    kunde = zeile.replace("Kunde:", "").strip()
+                elif zeile.startswith("Problem:"):
+                    problem = zeile.replace("Problem:", "").strip()
+                elif zeile.startswith("Info:"):
+                    info = zeile.replace("Info:", "").strip()
+                
+                    
+                if kunde and problem and info and uhrzeit:
+                    datensaetze.append([ uhrzeit,kunde, problem, info])
+                    uhrzeit, kunde, problem, info  = "", "", "", ""
+
+            if datensaetze:
+                self.tag_string = str(time.strftime("%d %m %Y"))
+                # Schreiben der Daten in die CSV-Datei
+                with open(self.csv_datei_pfad_Netzwerk + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
+                    schreiber = csv.writer(datei)
+                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info"])
+                    schreiber.writerows(datensaetze)
+                    self.zeit_string = time.strftime("%H:%M:%S")
+                    self.tag_string = str(time.strftime("%d %m %Y"))
+                    #schreiber.writerow(["Ende der Datensätze, Exportiert am " + self.tag_string + "um " + self.zeit_string], "Diese Liste wird jeden Tag neu Angelegt.")
+                print("Daten wurden in die CSV-Datei gespeichert.")
+                messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich auf dem Netzlaufwerk gespeichert.")
+            else:
+                print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
+                messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
+
 def bye():
     print("(ENDE) Das Programm wurde Beendet, auf wiedersehen! \^_^/ ")
     zeit_string = time.strftime("%H:%M:%S")
     tag_string = str(time.strftime("%d %m %Y"))
     print(zeit_string , tag_string)
+    try:
+        with open("Listendingsspeicherort_Netzwerk.json" , "r") as Liste_Speicherort_Netzwerk_data:
+            Listen_Speicherort_Netzwerk = json.load(Liste_Speicherort_Netzwerk_data)
+            Listen_Speicherort_Netzwerk_geladen = (Listen_Speicherort_Netzwerk["ListenDings_Speicherort_Netzwerk"])
+    except PermissionError:
+            messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Der Gespeicherte Netzwerkpfad konnte nicht aufgerufen werden.")
+    except Exception as e:
+        ex = "Irgendwas ist passiert: ", e
+        messagebox.showerror(title="Listendings Speicherort", message=ex)
+    print("ende des Programms, fange nun an zu speichern")
+    try:
+        csv_datei_pfad_Netzwerk = Listen_Speicherort_Netzwerk_geladen
+        if csv_datei_pfad_Netzwerk:
+            # Öffnen der Textdatei zum Lesen
+            with open("liste.txt", 'r') as text_datei:
+                daten = text_datei.read()
+
+            zeilen = daten.strip().split('\n')
+
+            # Initialisieren einer Liste für die Datensätze
+            datensaetze = []
+
+            # Initialisieren der Variablen für Kundeninformationen
+            uhrzeit, kunde, problem, info = "", "", "", ""
+
+            # Durchlaufen der Zeilen und Extrahieren der Informationen
+            for zeile in zeilen:
+                print(zeilen)
+                print("=")
+                print(zeile)
+                if zeile.startswith("Uhrzeit:"):
+                    uhrzeit = zeile.replace("Uhrzeit:", "").strip()
+                elif zeile.startswith("Kunde:"):
+                    kunde = zeile.replace("Kunde:", "").strip()
+                elif zeile.startswith("Problem:"):
+                    problem = zeile.replace("Problem:", "").strip()
+                elif zeile.startswith("Info:"):
+                    info = zeile.replace("Info:", "").strip()
+                
+                    
+                if kunde and problem and info and uhrzeit:
+                    datensaetze.append([ uhrzeit,kunde, problem, info])
+                    uhrzeit, kunde, problem, info  = "", "", "", ""
+
+            if datensaetze:
+                tag_string = str(time.strftime("%d %m %Y"))
+                # Schreiben der Daten in die CSV-Datei
+                with open(csv_datei_pfad_Netzwerk + "/AnruferlistenDings" + tag_string + ".csv" , 'w', newline='') as datei:
+                    schreiber = csv.writer(datei)
+                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info"])
+                    schreiber.writerows(datensaetze)
+                    zeit_string = time.strftime("%H:%M:%S")
+                    tag_string = str(time.strftime("%d %m %Y"))
+                    #schreiber.writerow(["Ende der Datensätze, Exportiert am " + self.tag_string + "um " + self.zeit_string], "Diese Liste wird jeden Tag neu Angelegt.")
+                print("Daten wurden in die CSV-Datei gespeichert.")
+                messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich auf dem Netzlaufwerk gespeichert.")
+            else:
+                print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
+                messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
+    except Exception as e:
+        ei = "Es ein Fehler beim Speichern aufgetreten, keine Ahnung was passiert ist wahrscheinlich fehlt nur das Laufwerk. Hier ist noch ein Code mit dem Du nicht anfangen kannst: ", e
+        messagebox.showerror(title="CiM Fehler", message=ei)
     
     print("======================================")
     sys.exit()
