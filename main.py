@@ -10,6 +10,7 @@ try:
     import csv
     import ctypes
     import json
+    from csv2pdf import convert as c2p_convert
 except:
     print("(FATAL) Konnte die wichtigen Bilbioteken nicht Laden!")
     messagebox.showerror(title="Kritischer Fehler", message="(FATAL) Konnte die wichtigen Bilbioteken nicht Laden! Das Programm wird nun Beendet.")
@@ -114,9 +115,7 @@ class Listendings:
         self.test_Menu.add_command(label="Neue GUI starten...", command=self.neue_GUI)
         self.Speichern_Menu.add_command(label="auf dem Netzlaufwerk als CSV Speichern", command=self.Netzlaufwerk_speichern)
         self.Einstellungen.add_command(label="Netzlaufwerk einstellen", command=self.ListenDings_speicherort_Netzwerk_ändern)
-
         self.Einstellungen.add_command(label="Auto Speichern ändern (Beim schließen)", command=self.Auto_sp_ändern)
-
         
         # Initialisierung wichtiger Variablen
 
@@ -290,7 +289,7 @@ class Listendings:
             root.bind('<Return>', self.senden)
             self.beb_knopp.config(text="Bearbeiten", fg="black")
             self.senden_button.grid(row=3, column=1)
-            self.alles_löschen_knopp.place(x=0,y=400)
+            self.alles_löschen_knopp.place(x=1350,y=400)
             self.beb = "0"
             with open("liste.txt", "w+") as f:
                 f.write(self.text_tk_text)
@@ -426,6 +425,7 @@ class Listendings:
             if datensaetze:
                 self.tag_string = str(time.strftime("%d %m %Y"))
                 # Schreiben der Daten in die CSV-Datei
+                self.der_richtige_pdf_pfad = self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv"
                 with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
                     schreiber = csv.writer(datei)
                     schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info"])
@@ -434,7 +434,9 @@ class Listendings:
                     self.tag_string = str(time.strftime("%d %m %Y"))
                     #schreiber.writerow(["Ende der Datensätze, Exportiert am " + self.tag_string + "um " + self.zeit_string], "Diese Liste wird jeden Tag neu Angelegt.")
                 print("Daten wurden in die CSV-Datei gespeichert.")
-                messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich gespeichert.")
+                messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich gespeichert. Wandle nun in PDF um...")
+                ###c2p_convert(self.der_richtige_pdf_pfad,"Datensätze.pdf")
+                ###messagebox.showinfo(title="Dings", message="PDF Fertig erstellt.")
             else:
                 print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
                 messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
@@ -539,6 +541,7 @@ class Listendings:
                     #schreiber.writerow(["Ende der Datensätze, Exportiert am " + self.tag_string + "um " + self.zeit_string], "Diese Liste wird jeden Tag neu Angelegt.")
                 print("Daten wurden in die CSV-Datei gespeichert.")
                 messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich auf dem Netzlaufwerk gespeichert.")
+                
             else:
                 print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
                 messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
