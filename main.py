@@ -52,7 +52,7 @@ class Listendings:
 
 
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.1.4"
+        self.Version = "Alpha 1.1.5"
         master.title(self.Programm_Name + " " + self.Version)
 
         # Labels für Textfelder
@@ -73,7 +73,7 @@ class Listendings:
 
         # Alles löschen knopf
         self.alles_löschen_knopp = tk.Button(master, text="Alle Eintrage löschen", command=self.alles_löschen)
-        self.alles_löschen_knopp.place(x=0,y=400)
+        self.alles_löschen_knopp.place(x=1350,y=400)
 
         self.beb_knopp = tk.Button(master, text="Bearbeiten", command=self.beb)
         self.beb_knopp.grid(row=3, column=2)
@@ -82,6 +82,7 @@ class Listendings:
         self.ausgabe_text = tk.Text(master, width="160")
         self.ausgabe_text.config(highlightthickness=0)
         self.ausgabe_text.config(state='disabled')
+        self.ausgabe_text.config(font=("Helvetica", "14"))
 
         # Positionierung von Labels und Textfeldern
         self.kunde_label.grid(row=0, column=0)
@@ -244,14 +245,7 @@ class Listendings:
             # Inhalte in Textdatei speichern
             if os.path.exists("liste.txt"):
                 with open("liste.txt", "a") as f:
-                    #f.write(f"=============================\n")
-                    ##f.write(self.zeit_string)
-                    
-                    ##f.write("\n")
-                    #f.write(f"Kunde: {kunde}\n----------------\nProblem: {problem}\n----------------\nLösung: {info}\n\n ----------------\n")
                     f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\n\n")
-                    ##print("----------------\n")
-                    # Ausgabe-Textfeld aktualisieren
                 with open("liste.txt", "r") as f:
                     feedback_text = f.read()
                     self.ausgabe_text.delete("1.0", tk.END)
@@ -261,10 +255,6 @@ class Listendings:
             else:
                 print("(INFO) Liste zum beschreiben existiert bereits.")
                 with open("liste.txt", "w+") as f:
-                    #f.write(f"=============================\n")
-                    #f.write(self.zeit_string)
-                    #f.write("\n")
-                    #f.write(f"Kunde: {kunde}\nProblem: {problem}\nLösung: {info}\n\n")
                     f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\n\n")
                     # Ausgabe-Textfeld aktualisieren
                 with open("liste.txt", "r") as f:
