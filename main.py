@@ -116,6 +116,7 @@ class Listendings:
         self.Speichern_Menu.add_command(label="auf dem Netzlaufwerk als CSV Speichern", command=self.Netzlaufwerk_speichern)
         self.Einstellungen.add_command(label="Netzlaufwerk einstellen", command=self.ListenDings_speicherort_Netzwerk_ändern)
         self.Einstellungen.add_command(label="Auto Speichern ändern (Beim schließen)", command=self.Auto_sp_ändern)
+        self.test_Menu.add_command(label="Pause", command=self.pause)
         
         # Initialisierung wichtiger Variablen
 
@@ -327,6 +328,25 @@ class Listendings:
         else:
             print("db löschen fehler.")
             messagebox.showerror(title="Fehler", message="Kaputt")
+
+    def pause(self):
+        print("pause(def)")
+        try:
+            self.alles_löschen_knopp.place_forget()
+            self.beb_knopp.grid_forget()
+            self.kunde_label.grid_forget()
+            self.problem_label.grid_forget()
+            self.info_label.grid_forget()
+            self.kunde_entry.grid_forget()
+            self.problem_entry.grid_forget()
+            self.info_entry.grid_forget()
+            self.senden_button.grid_forget()
+            self.ausgabe_text.grid_forget()
+        except:
+            pass
+        self.p_text = tk.Label(root, text="Dings")
+        self.p_text.config(font=("Helvetica", "24"))
+        self.p_text.place(x=300,y=100)
 
 
             
@@ -545,6 +565,10 @@ class Listendings:
             else:
                 print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
                 messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
+
+    
+
+
 
 def bye(auto_speichern):
     print("(ENDE) Das Programm wurde Beendet, auf wiedersehen! \^_^/ ")
