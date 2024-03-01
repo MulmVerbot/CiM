@@ -1,5 +1,6 @@
 try:
-    import tkinter as tk
+    import customtkinter as tk
+    ###import tkinter as tk
     from tkinter import ttk
     from tkinter import messagebox
     from tkinter import filedialog
@@ -14,9 +15,9 @@ try:
 except:
     print("(FATAL) Konnte die wichtigen Bilbioteken nicht Laden!")
     messagebox.showerror(title="Kritischer Fehler", message="(FATAL) Konnte die wichtigen Bilbioteken nicht Laden! Das Programm wird nun Beendet.")
-    sys.exit
+    sys.exit()
 
-root = tk.Tk()
+root = tk.CTk()
 
 class Listendings:
     def __init__(self, master):
@@ -57,33 +58,33 @@ class Listendings:
         master.title(self.Programm_Name + " " + self.Version)
 
         # Labels für Textfelder
-        self.kunde_label = tk.Label(master, text="Kunde:")
-        self.problem_label = tk.Label(master, text="Problem:")
-        self.info_label = tk.Label(master, text="Info:")        
+        self.kunde_label = tk.CTkLabel(master, text="Kunde:")
+        self.problem_label = tk.CTkLabel(master, text="Problem:")
+        self.info_label = tk.CTkLabel(master, text="Info:")        
 
         # Textfelder
-        self.kunde_entry = tk.Entry(master,width="150")
-        self.problem_entry = tk.Entry(master,width="150")
-        self.info_entry = tk.Entry(master,width="150")
+        self.kunde_entry = tk.CTkEntry(master,width=1200)
+        self.problem_entry = tk.CTkEntry(master,width=1200)
+        self.info_entry = tk.CTkEntry(master,width=1200)
         
 
         # "Senden" Knopf
-        self.senden_button = tk.Button(master, text="Senden", command="")
+        self.senden_button = tk.CTkButton(master, text="Senden", command="")
         self.senden_button.bind('<Button-1>', self.senden)
         root.bind('<Return>', self.senden)
 
         # Alles löschen knopf
-        self.alles_löschen_knopp = tk.Button(master, text="Alle Eintrage löschen", command=self.alles_löschen)
-        self.alles_löschen_knopp.place(x=1350,y=400)
+        self.alles_löschen_knopp = tk.CTkButton(master, text="Alle Eintrage löschen", command=self.alles_löschen)
+        #self.alles_löschen_knopp.place(x=1250,y=400)
 
-        self.beb_knopp = tk.Button(master, text="Bearbeiten", command=self.beb)
-        self.beb_knopp.grid(row=3, column=2)
+        #self.beb_knopp = tk.CTkButton(master, text="Bearbeiten", command=self.beb)
+        ##self.beb_knopp.grid(row=3, column=2)
 
         # Ausgabe-Textfeld
-        self.ausgabe_text = tk.Text(master, width="160")
-        self.ausgabe_text.config(highlightthickness=0)
-        self.ausgabe_text.config(state='disabled')
-        self.ausgabe_text.config(font=("Helvetica", "14"))
+        self.ausgabe_text = tk.CTkTextbox(master, width=1250, height=400)
+        ###self.ausgabe_text.configure(highlightthickness=0)
+        self.ausgabe_text.configure(state='disabled')
+        #self.ausgabe_text.configure(font=("Helvetica", "14"))
 
         # Positionierung von Labels und Textfeldern
         self.kunde_label.grid(row=0, column=0)
@@ -98,7 +99,7 @@ class Listendings:
 
         # erschaffen des Column Menü Dings
         self.menu = Menu(root)
-        root.config(menu=self.menu)
+        root.configure(menu=self.menu)
         self.menudings = Menu(self.menu, tearoff=0)
         self.Einstellungen = Menu(self.menu, tearoff=0)
         self.Speichern_Menu = Menu(self.menu, tearoff=0)
@@ -125,12 +126,12 @@ class Listendings:
         try:
             # Ausgabe-Textfeld aktualisieren
             print("(INFO) versuche die alten Aufzeichenungen zu Laden")
-            self.ausgabe_text.config(state='normal')
+            self.ausgabe_text.configure(state='normal')
             with open("liste.txt", "r") as f:
                 feedback_text = f.read()
                 self.ausgabe_text.delete("1.0", tk.END)
                 self.ausgabe_text.insert(tk.END, feedback_text)
-                self.ausgabe_text.config(state='disabled')
+                self.ausgabe_text.configure(state='disabled')
                 print("-----------------------------------------")
                 print("(DEV) Hier ist nun das geladene aus der bisherigen Liste:")
                 print(feedback_text)
@@ -138,11 +139,41 @@ class Listendings:
                 print("-----------------------------------------")
         except FileNotFoundError:
             print("(INFO) Die Datei Liste.txt gibts net")
-            self.ausgabe_text.config(state='disabled')
+            self.ausgabe_text.configure(state='disabled')
         except:
             messagebox.showinfo(title="Fehler", message="Ein Unbekannter Fehler ist aufgetreten beim Versuch während des Programmstarts die bisherigen aufzeichnungen zu laden, es könnte sein dass das Programm trotzdem fehlerfrei funktioniert.")
-            self.ausgabe_text.config(state='disabled')
+            self.ausgabe_text.configure(state='disabled')
 
+
+    ###### Hier kommt das animations dings der seitenleiste #####
+        self.menu_frame = tk.CTkFrame(master, width=200, height=400)  # Adjust size as needed
+        self.menu_frame.place(x=master.winfo_width(), y=50)  # Position it outside the visible area to the right
+
+        # Add buttons to the menu frame
+        self.beb_knopp = tk.CTkButton(self.menu_frame, text="Bearbeiten", command=self.beb_c)
+        self.beb_knopp.pack(pady=10)  # Add more buttons as needed
+        self.alles_löschen_knopp = tk.CTkButton(self.menu_frame, text="Alle Eintrage löschen", command=self.alles_löschen)
+        self.alles_löschen_knopp.pack(pady=10)
+
+        # Initially, the menu is hidden
+        self.menu_visible = False
+
+        self.toggle_menu_button = tk.CTkButton(master, text="Menü umklappen", command=self.toggle_menu)
+        self.toggle_menu_button.place(x=master.winfo_width() - 200, y=90)  # Adjust position as needed
+
+    def toggle_menu(self):
+        start_x = self.master.winfo_width() if self.menu_visible else self.master.winfo_width() - 200  # Assume menu width is 200
+        end_x = self.master.winfo_width() - 200 if self.menu_visible else self.master.winfo_width()
+        delta_x = -10 if self.menu_visible else 10
+        
+        for x in range(start_x, end_x, delta_x):
+            self.menu_frame.place(x=x, y=50)
+            self.menu_frame.update()
+            time.sleep(0.01)  # Adjust for smoother animation
+        
+        self.menu_visible = not self.menu_visible
+    
+    #### emde der werbung #######
     def info(self):
         print("(INFO) Info(def)")
         messagebox.showinfo(title="Info", message=self.Programm_Name + " " + self.Version + "\n Programmiert von Maximilian Becker, \n https://dings.software für mehr Informationen")
@@ -193,12 +224,12 @@ class Listendings:
         try:
             # Ausgabe-Textfeld aktualisieren
             print("(INFO) versuche die alten Aufzeichenungen zu Laden")
-            self.ausgabe_text.config(state='normal')
+            self.ausgabe_text.configure(state='normal')
             with open("liste.txt", "r") as f:
                 feedback_text = f.read()
                 self.ausgabe_text.delete("1.0", tk.END)
                 self.ausgabe_text.insert(tk.END, feedback_text)
-                self.ausgabe_text.config(state='disabled')
+                self.ausgabe_text.configure(state='disabled')
                 print("-----------------------------------------")
                 print("(DEV) Hier ist nun das geladene aus der bisherigen Liste:")
                 print(feedback_text)
@@ -206,10 +237,10 @@ class Listendings:
                 print("-----------------------------------------")
         except FileNotFoundError:
             print("(INFO) Die Datei Liste.txt gibts net")
-            self.ausgabe_text.config(state='disabled')
+            self.ausgabe_text.configure(state='disabled')
         except:
             messagebox.showinfo(title="Fehler", message="Ein Unbekannter Fehler ist aufgetreten beim Versuch während des Programmstarts die bisherigen aufzeichnungen zu laden, es könnte sein dass das Programm trotzdem fehlerfrei funktioniert.")
-            self.ausgabe_text.config(state='disabled')
+            self.ausgabe_text.configure(state='disabled')
 
     def Admin_rechte(self):
         response = ctypes.windll.user32.MessageBoxW(None, "Möchten Sie Administratorrechte anfordern? Dies wird das Programm mit Adminrechten neustarten. Das funktioniert auch glaube nur auf Windows.", "Administratorrechte erforderlich", 4)
@@ -230,7 +261,7 @@ class Listendings:
         kunde = self.kunde_entry.get()
         problem = self.problem_entry.get()
         info = self.info_entry.get()
-        self.ausgabe_text.config(state='normal')
+        self.ausgabe_text.configure(state='normal')
         self.zeit_string = time.strftime("%H:%M:%S")
         
         if kunde or problem or info != "":
@@ -250,7 +281,7 @@ class Listendings:
                     feedback_text = f.read()
                     self.ausgabe_text.delete("1.0", tk.END)
                     self.ausgabe_text.insert(tk.END, feedback_text)
-                self.ausgabe_text.config(state='disabled')
+                self.ausgabe_text.configure(state='disabled')
                 self.ausgabe_text.see(tk.END)
             else:
                 print("(INFO) Liste zum beschreiben existiert bereits.")
@@ -261,36 +292,38 @@ class Listendings:
                     feedback_text = f.read()
                     self.ausgabe_text.delete("1.0", tk.END)
                     self.ausgabe_text.insert(tk.END, feedback_text)
-                    self.ausgabe_text.config(state='disabled')
+                    self.ausgabe_text.configure(state='disabled')
 
             
         else:
             print("(ERR) Da hat wer Enter gedrückt obwohl noch nicht geschrieben war.")
             messagebox.showinfo(title="Fehler", message="Bitte geben Sie zuerst in wenigsten eine Spalte etwas ein.")
-            self.ausgabe_text.config(state='disabled')
+            self.ausgabe_text.configure(state='disabled')
             return
         
         self.kunde_entry.delete(0, tk.END)
         self.problem_entry.delete(0, tk.END)
         self.info_entry.delete(0, tk.END)
     
-    def beb(self):
+    def beb_c(self):
         self.text_tk_text = self.ausgabe_text.get("1.0", "end-1c")
         if self.beb == "0":
             print("beb is jetzt = 1")
-            self.ausgabe_text.config(state='normal')
-            self.beb_knopp.config(text="Fertig", fg="red")
-            self.alles_löschen_knopp.place_forget()
+            self.ausgabe_text.configure(state='normal')
+            self.beb_knopp.configure(text="Fertig")# , fg="red"
+            #self.alles_löschen_knopp.place_forget()
+            self.alles_löschen_knopp.pack_forget()
             self.senden_button.grid_forget()
             self.beb = "1"
             root.unbind('<Return>')
         else:
             print("beb = 0")
-            self.ausgabe_text.config(state='disabled')
+            self.ausgabe_text.configure(state='disabled')
             root.bind('<Return>', self.senden)
-            self.beb_knopp.config(text="Bearbeiten", fg="black")
+            self.beb_knopp.configure(text="Bearbeiten") # , fg="black"
             self.senden_button.grid(row=3, column=1)
-            self.alles_löschen_knopp.place(x=1350,y=400)
+            #self.alles_löschen_knopp.place(x=1350,y=400)
+            self.alles_löschen_knopp.pack(pady=10)
             self.beb = "0"
             with open("liste.txt", "w+") as f:
                 f.write(self.text_tk_text)
@@ -304,9 +337,9 @@ class Listendings:
             print("löschen der db vom Nutzer bestätigt")
             self.tag_und_zeit_string = time.strftime("%m/%d/%Y, %H:%M:%S")
             print(self.tag_und_zeit_string)
-            self.ausgabe_text.config(state='normal')
+            self.ausgabe_text.configure(state='normal')
             self.ausgabe_text.delete("1.0", tk.END)  # Hier wird der Inhalt des Textfelds gelöscht
-            self.ausgabe_text.config(state='disabled')
+            self.ausgabe_text.configure(state='disabled')
             try:
                 if os.path.exists(self.DB):
                     print("Liste existiert")
@@ -332,8 +365,8 @@ class Listendings:
     def pause(self):
         print("pause(def)")
         try:
-            self.alles_löschen_knopp.place_forget()
-            self.beb_knopp.grid_forget()
+            self.alles_löschen_knopp.pack_forget()
+            #self.beb_knopp.grid_forget()
             self.kunde_label.grid_forget()
             self.problem_label.grid_forget()
             self.info_label.grid_forget()
@@ -344,8 +377,8 @@ class Listendings:
             self.ausgabe_text.grid_forget()
         except:
             pass
-        self.p_text = tk.Label(root, text="Dings")
-        self.p_text.config(font=("Helvetica", "24"))
+        self.p_text = tk.CTkLabel(root, text="Dings")
+        self.p_text.configure(font=("Helvetica", "24"))
         self.p_text.place(x=300,y=100)
 
 
@@ -494,7 +527,7 @@ class Listendings:
         self.senden_button.unbind('<Button-1>')
         root.unbind('<Return>')
         self.alles_löschen_knopp.place_forget()
-        self.beb_knopp.grid_forget()
+        #self.beb_knopp.grid_forget()
         self.kunde_label.grid_forget()
         self.problem_label.grid_forget()
         self.info_label.grid_forget()
