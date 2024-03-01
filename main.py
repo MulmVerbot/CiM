@@ -598,6 +598,12 @@ class Listendings:
             else:
                 print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
                 messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
+    
+    
+    optionmenu = customtkinter.CTkOptionMenu(app, values=["option 1", "option 2"], command=self.weiterleitung_an)
+    optionmenu.set("option 2")
+
+    def weiterleitung_an(self):
 
     
 
