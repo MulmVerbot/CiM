@@ -600,8 +600,11 @@ class Listendings:
                 messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
     
     
-    optionmenu = customtkinter.CTkOptionMenu(app, values=["option 1", "option 2"], command=self.weiterleitung_an)
-    optionmenu.set("option 2")
+    optionmenu = tk.CTkOptionMenu(root, values=["option 1", "option 2"], command=self.weiterleitung_an)
+
+    def change_scaling_event(self):
+        new_scaling_float = int(new_scaling.replace("%", "")) / 100
+        tk.set_widget_scaling(new_scaling_float)
 
     def weiterleitung_an(self):
 
