@@ -32,7 +32,6 @@ class Listendings:
         print(self.tag_string)
         self.T1 = Thread(target = self.Uhr)
         self.T1.start()
-        self.T1._stop()
 
         try:
             with open("Listendingsspeicherort.json" , "r") as Liste_Speicherort_data:
@@ -385,10 +384,13 @@ class Listendings:
         except:
             pass
         self.p_text = tk.CTkLabel(root, text="Jetzt ist gerade Pause und mit vollem Mund spricht man nicht!")
-        self.Zeit_text = tk.CTkLabel(root, text="Hier sollte eigentlich die Uhrzeit stehen..")
-        D = '"Helevetica", 16'
-        self.Zeit_text.configure(font=D)
+        self.Zeit_text = tk.CTkLabel(root, text=" ")
+        custom_font = ("Helvetica", 64)
+        self.Zeit_text.configure(font=custom_font)
         self.pause_ende = tk.CTkButton(root, text="Pause beenden", command=self.pause_beenden_c)
+        self.zeit_string = time.strftime("%H:%M:%S")
+        self.start_der_pause = tk.CTkLabel(root, text=self.zeit_string, font=("Helvetica", 12))
+        self.start_der_pause.place(x=100,y=350)
 
         self.p_text.place(x=300,y=100)
         self.pause_ende.place(x=100,y=300)
