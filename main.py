@@ -12,6 +12,7 @@ try:
     import ctypes
     import json
     from csv2pdf import convert as c2p_convert
+    from threading import Thread
 except:
     print("(FATAL) Konnte die wichtigen Bilbioteken nicht Laden!")
     messagebox.showerror(title="Kritischer Fehler", message="(FATAL) Konnte die wichtigen Bilbioteken nicht Laden! Das Programm wird nun Beendet.")
@@ -24,10 +25,14 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Listen_Speicherort_Netzwerk_geladen = None
+        self.Zeit_text = None
         
         self.zeit_string = time.strftime("%H:%M:%S")
         self.tag_string = str(time.strftime("%d %m %Y"))
         print(self.tag_string)
+        self.T1 = Thread(target = self.Uhr)
+        self.T1.start()
+        self.T1._stop()
 
         try:
             with open("Listendingsspeicherort.json" , "r") as Liste_Speicherort_data:
@@ -54,7 +59,7 @@ class Listendings:
 
 
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.1.5"
+        self.Version = "Alpha 1.2.0"
         master.title(self.Programm_Name + " " + self.Version)
 
         # Labels für Textfelder
@@ -96,6 +101,7 @@ class Listendings:
         self.info_entry.grid(row=2, column=1)
         self.senden_button.grid(row=3, column=1)
         self.ausgabe_text.grid(row=4, column=0, columnspan=2)
+
 
         # erschaffen des Column Menü Dings
         self.menu = Menu(root)
@@ -364,6 +370,7 @@ class Listendings:
 
     def pause(self):
         print("pause(def)")
+        self.Pause = True
         try:
             self.alles_löschen_knopp.pack_forget()
             #self.beb_knopp.grid_forget()
@@ -377,9 +384,33 @@ class Listendings:
             self.ausgabe_text.grid_forget()
         except:
             pass
-        self.p_text = tk.CTkLabel(root, text="Dings")
-        self.p_text.configure(font=("Helvetica", "24"))
+        self.p_text = tk.CTkLabel(root, text="Jetzt ist gerade Pause und mit vollem Mund spricht man nicht!")
+        self.Zeit_text = tk.CTkLabel(root, text="Hier sollte eigentlich die Uhrzeit stehen..")
+        D = '"Helevetica", 16'
+        self.Zeit_text.configure(font=D)
+        self.pause_ende = tk.CTkButton(root, text="Pause beenden", command=self.pause_beenden_c)
+
         self.p_text.place(x=300,y=100)
+        self.pause_ende.place(x=100,y=300)
+        self.Zeit_text.place(x=420,y=420)
+
+
+    def Uhr(self):
+        self.Pause = True
+        while self.Pause == True:
+            lokaler_zeit_string = time.strftime("%H:%M")
+            print("Uhrzeit: ", lokaler_zeit_string)
+            if self.Zeit_text:
+                self.Zeit_text.configure(text=lokaler_zeit_string)
+            time.sleep(10)
+            
+
+    
+    def pause_beenden_c(self):
+        print("pause_beenden(def)")
+        self.Pause = False
+        
+        
 
 
             
@@ -600,19 +631,19 @@ class Listendings:
                 messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
     
     
-    optionmenu = tk.CTkOptionMenu(root, values=["option 1", "option 2"], command=self.weiterleitung_an)
+    '''optionmenu = tk.CTkOptionMenu(root, values=["option 1", "option 2"], command=self.weiterleitung_an)
 
     def change_scaling_event(self):
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
         tk.set_widget_scaling(new_scaling_float)
 
-    def weiterleitung_an(self):
+    def weiterleitung_an(self):'''
 
     
 
 
 
-def bye(auto_speichern):
+def bye():
     print("(ENDE) Das Programm wurde Beendet, auf wiedersehen! \^_^/ ")
     zeit_string = time.strftime("%H:%M:%S")
     tag_string = str(time.strftime("%d %m %Y"))
