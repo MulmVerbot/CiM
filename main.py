@@ -57,7 +57,7 @@ class Listendings:
 
 
 
-        self.Programm_Name = "ListenDings"
+        self.Programm_Name = "Flimmerchen"
         self.Version = "Alpha 1.2.0"
         master.title(self.Programm_Name + " " + self.Version)
 
@@ -346,17 +346,26 @@ class Listendings:
             self.ausgabe_text.delete("1.0", tk.END)  # Hier wird der Inhalt des Textfelds gelöscht
             self.ausgabe_text.configure(state='disabled')
             try:
+                print("try1")
                 if os.path.exists(self.DB):
                     print("Liste existiert")
                     os.remove(self.DB)
+                    print("datei gelöscht")
                     self.ausgabe_text.delete("1.0", tk.END)
+                    print("textfeld gelöscht")
                     #self.ausgabe_text.insert(tk.END, "")
-                    try:
-                        with open ("liste.txt", "w+") as a:
-                            self.Neuladen_der_Liste
-                            messagebox.showinfo(title="Info", message="Alle vorehigen einträge wurden gelöscht.")
-                    except:
-                        print("Beim Erstellen der neuen Liste ist ein Fehler aufgetreten")
+                   # try:                                                                   # aus irgendeinem Grund kackt das Ding bei dem Abschnitt wenn es mehrere einträge gibt ABOSLUT UND KATASTROHPAL AB-> objc[3945]: autorelease pool page 0x7fb7e9b26000 corrupted
+                                                                                                                                                                                                                #'''magic     0x00000000 0x00000000 0x00000000 0x00000000
+                                                                                                                                                                                                                #should be 0xa1a1a1a1 0x4f545541 0x454c4552 0x21455341
+                                                                                                                                                                                                                #pthread   0x10e65e600
+                                                                                                                                                                                                                #should be 0x10e65e600'''
+                    #    print("try2")
+                        #with open ("liste.txt", "w+") as a:
+                            #self.Neuladen_der_Liste()
+                     #   messagebox.showinfo(title="Info", message="Alle vorehigen einträge wurden gelöscht.")
+                      #  print("datei geöffnet")
+                    #except:
+                     #   print("Beim Erstellen der neuen Liste ist ein Fehler aufgetreten")
                 else:
                     messagebox.showerror(title="Fehler", message="Es gab keine alten Einträge zum löschen.")
             except:
