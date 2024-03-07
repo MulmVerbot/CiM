@@ -21,17 +21,42 @@ except:
 root = tk.CTk()
 
 class Listendings:
+    class Logger(object):
+        def __init__(self): #eine init welche nur das "unwichtige" vorgeplänkel macht
+            self.tag_und_zeit_string = time.strftime("%m/%d/%Y, %H:%M:%S")
+            self.tag_string = str(time.strftime("%d %m %Y"))
+            print("[-INFO-] ", self.tag_und_zeit_string)
+            try:
+                log_pfad = ("CiM Logs/" + self.tag_string + ".log")
+                self.terminal = sys.stdout
+                self.log = open(log_pfad, "w")
+            except:
+                try:
+                    log_pfad = ("CiM Logs/" + self.tag_string + ".log")
+                    self.terminal = sys.stdout
+                    self.log = open(log_pfad, "w+")
+                except:
+                    print("heute keine Logs")
+        def write(self, message):
+            self.terminal.write(message)
+            self.log.write(message)
+        def flush(self):
+            #für Python 3 wichtig wegen kompatibilität, hab aber keine wirkliche ahnung was das macht
+            pass    
+    sys.stdout = Logger()
+
     def __init__(self, master):
         self.master = master
         self.DB = "liste.txt"
         self.Listen_Speicherort_Netzwerk_geladen = None
         self.Zeit_text = None
+        Pause = True
         
         self.zeit_string = time.strftime("%H:%M:%S")
         self.tag_string = str(time.strftime("%d %m %Y"))
         print(self.tag_string)
-        self.T1 = Thread(target = self.Uhr)
-        self.T1.start()
+        
+        
 
         try:
             with open("Listendingsspeicherort.json" , "r") as Liste_Speicherort_data:
@@ -164,7 +189,8 @@ class Listendings:
         self.menu_visible = False
 
         self.toggle_menu_button = tk.CTkButton(master, text="Menü umklappen", command=self.toggle_menu)
-        self.toggle_menu_button.place(x=master.winfo_width() - 200, y=90)  # Adjust position as needed
+        #self.toggle_menu_button.place(x=master.winfo_width() - 200, y=90)  # Adjust position as needed
+        self.toggle_menu_button.grid(row=3, column=1)
 
     def toggle_menu(self):
         start_x = self.master.winfo_width() if self.menu_visible else self.master.winfo_width() - 200  # Assume menu width is 200
@@ -376,9 +402,8 @@ class Listendings:
             print("db löschen fehler.")
             messagebox.showerror(title="Fehler", message="Kaputt")
 
-    def pause(self):
+    def pause(self,Pause):
         print("pause(def)")
-        self.Pause = True
         try:
             self.alles_löschen_knopp.pack_forget()
             #self.beb_knopp.grid_forget()
@@ -392,6 +417,7 @@ class Listendings:
             self.ausgabe_text.grid_forget()
         except:
             pass
+        T1 = Thread(target = self.Uhr(Pause))
         self.p_text = tk.CTkLabel(root, text="Jetzt ist gerade Pause und mit vollem Mund spricht man nicht!")
         self.Zeit_text = tk.CTkLabel(root, text=" ")
         custom_font = ("Helvetica", 64)
@@ -406,20 +432,26 @@ class Listendings:
         self.Zeit_text.place(x=420,y=420)
 
 
-    def Uhr(self):
-        self.Pause = True
-        while self.Pause == True:
+    def Uhr(self, Pause):
+        print(Pause)
+        while Pause:
             lokaler_zeit_string = time.strftime("%H:%M")
-            print("Uhrzeit: ", lokaler_zeit_string)
+            self.Zeit = time.strftime("%H:%M")
+            print(Pause)
+            #print("Uhrzeit: ", lokaler_zeit_string)
             if self.Zeit_text:
                 self.Zeit_text.configure(text=lokaler_zeit_string)
-            time.sleep(10)
+            time.sleep(1)
+        else:
+            print("Thread und Programm wird beendet. Weil die var 'Pause' nicht bei 'ja' lag.")
+            sys.exit()
             
 
     
-    def pause_beenden_c(self):
+    def pause_beenden_c(self,T1,Pause):
         print("pause_beenden(def)")
-        self.Pause = False
+        T1.join()
+        Pause = False
         
         
 
