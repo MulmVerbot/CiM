@@ -51,10 +51,21 @@ class Listendings:
         self.Listen_Speicherort_Netzwerk_geladen = None
         self.Zeit_text = None
         Pause = True
+        self.tag_string = str(time.strftime("%d %m %Y"))
+        self.Benutzerordner = os.path.expanduser('~')
+        self.Listen_Speicherort_standard = os.path.join(self.Benutzerordner, 'CiM', 'Listen')
+        self.Monat = time.strftime("%m")
+        
+        
         
         self.zeit_string = time.strftime("%H:%M:%S")
         self.tag_string = str(time.strftime("%d %m %Y"))
+        self.Tag_und_Liste = self.tag_string + " Dateien.txt"
+        self.Liste_mit_datum = os.path.join(self.Listen_Speicherort_standard, self.Monat, self.Tag_und_Liste)
+        self.Monat_ordner_pfad = os.path.join(self.Listen_Speicherort_standard, self.Monat)
         print(self.tag_string)
+        if not os.path.exists(self.Monat_ordner_pfad):
+            os.makedirs(self.Monat_ordner_pfad)
         
         
 
@@ -157,7 +168,7 @@ class Listendings:
             # Ausgabe-Textfeld aktualisieren
             print("(INFO) versuche die alten Aufzeichenungen zu Laden")
             self.ausgabe_text.configure(state='normal')
-            with open("liste.txt", "r") as f:
+            with open(self.Liste_mit_datum, "r") as f:
                 feedback_text = f.read()
                 self.ausgabe_text.delete("1.0", tk.END)
                 self.ausgabe_text.insert(tk.END, feedback_text)
@@ -256,7 +267,7 @@ class Listendings:
             # Ausgabe-Textfeld aktualisieren
             print("(INFO) versuche die alten Aufzeichenungen zu Laden")
             self.ausgabe_text.configure(state='normal')
-            with open("liste.txt", "r") as f:
+            with open(self.Liste_mit_datum, "r") as f:
                 feedback_text = f.read()
                 self.ausgabe_text.delete("1.0", tk.END)
                 self.ausgabe_text.insert(tk.END, feedback_text)
@@ -305,10 +316,10 @@ class Listendings:
                 info = "-"
 
             # Inhalte in Textdatei speichern
-            if os.path.exists("liste.txt"):
-                with open("liste.txt", "a") as f:
+            if os.path.exists(self.Liste_mit_datum):
+                with open(self.Liste_mit_datum, "a") as f:
                     f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\n\n")
-                with open("liste.txt", "r") as f:
+                with open(self.Liste_mit_datum, "r") as f:
                     feedback_text = f.read()
                     self.ausgabe_text.delete("1.0", tk.END)
                     self.ausgabe_text.insert(tk.END, feedback_text)
@@ -316,10 +327,10 @@ class Listendings:
                 self.ausgabe_text.see(tk.END)
             else:
                 print("(INFO) Liste zum beschreiben existiert bereits.")
-                with open("liste.txt", "w+") as f:
+                with open(self.Liste_mit_datum, "w+") as f:
                     f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\n\n")
                     # Ausgabe-Textfeld aktualisieren
-                with open("liste.txt", "r") as f:
+                with open(self.Liste_mit_datum, "r") as f:
                     feedback_text = f.read()
                     self.ausgabe_text.delete("1.0", tk.END)
                     self.ausgabe_text.insert(tk.END, feedback_text)
@@ -356,7 +367,7 @@ class Listendings:
             #self.alles_löschen_knopp.place(x=1350,y=400)
             self.alles_löschen_knopp.pack(pady=10)
             self.beb = "0"
-            with open("liste.txt", "w+") as f:
+            with open(self.Liste_mit_datum, "w+") as f:
                 f.write(self.text_tk_text)
                 print("das beb wurde geschrieben.")
 
@@ -465,7 +476,7 @@ class Listendings:
 
         if self.csv_datei_pfad:
             # Öffnen der Textdatei zum Lesen
-            with open("liste.txt", 'r') as text_datei:
+            with open(self.Liste_mit_datum, 'r') as text_datei:
                 daten = text_datei.read()
 
             # Aufteilen des Texts in Zeilen
@@ -518,7 +529,7 @@ class Listendings:
 
         if self.csv_datei_pfad:
             # Öffnen der Textdatei zum Lesen
-            with open("liste.txt", 'r') as text_datei:
+            with open(self.Liste_mit_datum, 'r') as text_datei:
                 daten = text_datei.read()
 
             # Aufteilen des Texts in Zeilen
@@ -626,7 +637,7 @@ class Listendings:
 
         if self.csv_datei_pfad_Netzwerk:
             # Öffnen der Textdatei zum Lesen
-            with open("liste.txt", 'r') as text_datei:
+            with open(self.Liste_mit_datum, 'r') as text_datei:
                 daten = text_datei.read()
 
             zeilen = daten.strip().split('\n')
