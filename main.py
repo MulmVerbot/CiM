@@ -65,7 +65,11 @@ class Listendings:
         self.Monat_ordner_pfad = os.path.join(self.Listen_Speicherort_standard, self.Monat)
         print(self.tag_string)
         if not os.path.exists(self.Monat_ordner_pfad):
-            os.makedirs(self.Monat_ordner_pfad)
+            try:
+                os.makedirs(self.Monat_ordner_pfad)
+                print("Ordner ", {self.Monat_ordner_pfad}, "Erfolgreich erstellt.")
+            except:
+                print("Fehler beim erstellen der Ordner")
         
         
 
@@ -94,7 +98,7 @@ class Listendings:
 
 
         self.Programm_Name = "Flimmerchen"
-        self.Version = "Alpha 1.2.0"
+        self.Version = "Alpha 1.2.1"
         master.title(self.Programm_Name + " " + self.Version)
 
         # Labels für Textfelder
