@@ -13,6 +13,9 @@ try:
     import json
     from csv2pdf import convert as c2p_convert
     from threading import Thread
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    import urllib.parse
+    import threading
 except:
     print("(FATAL) Konnte die wichtigen Bilbioteken nicht Laden!")
     messagebox.showerror(title="Kritischer Fehler", message="(FATAL) Konnte die wichtigen Bilbioteken nicht Laden! Das Programm wird nun Beendet.")
@@ -21,6 +24,36 @@ except:
 root = tk.CTk()
 
 class Listendings:
+    class RequestHandler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            parsed_path = urllib.parse.urlparse(self.path)
+            print("Angeforderter Pfad:", parsed_path.path)
+            besserer_pfad = parsed_path.path.replace("/", "")
+            print("Nummer die angerufen hat/wurde: ", besserer_pfad)
+            try:
+                with open ("tmp.txt", "w+") as tmp:
+                    tmp.write(besserer_pfad)
+                    tmp.close()
+            except:
+                print("Konnte nicht die vars tmpen")
+            self.wfile.write(b"<html><head><title>CiM Modul</title></head>")
+            self.wfile.write(b"<body><h1></h1></body></html>")
+
+    class WebServerThread(threading.Thread):
+        def run(self):
+            port = 8080
+            server_address = ('', port)
+            httpd = HTTPServer(server_address, Listendings.RequestHandler)
+            print(f'Ich horche mal auf diesem {port}...')
+            try:
+                httpd.serve_forever()
+            except KeyboardInterrupt:
+                httpd.server_close()
+                print(f'Server auf Port {port} gestoppt.')
+
     class Logger(object):
         def __init__(self): #eine init welche nur das "unwichtige" vorgeplänkel macht
             self.tag_und_zeit_string = time.strftime("%m/%d/%Y, %H:%M:%S")
@@ -45,6 +78,10 @@ class Listendings:
             pass    
     sys.stdout = Logger()
 
+    
+
+        
+
     def __init__(self, master):
         self.master = master
         self.DB = "liste.txt"
@@ -55,7 +92,9 @@ class Listendings:
         self.Benutzerordner = os.path.expanduser('~')
         self.Listen_Speicherort_standard = os.path.join(self.Benutzerordner, 'CiM', 'Listen')
         self.Monat = time.strftime("%m")
-        
+        threading.Timer(1, self.Kunde_ruft_an).start()
+        Listendings.WebServerThread().start()
+        print("Threads gestartet.")
         
         
         self.zeit_string = time.strftime("%H:%M:%S")
@@ -97,8 +136,8 @@ class Listendings:
 
 
 
-        self.Programm_Name = "Flimmerchen"
-        self.Version = "Alpha 1.2.1"
+        self.Programm_Name = "ListenDings"
+        self.Version = "Alpha 1.2.2"
         master.title(self.Programm_Name + " " + self.Version)
 
         # Labels für Textfelder
@@ -107,7 +146,9 @@ class Listendings:
         self.info_label = tk.CTkLabel(master, text="Info:")        
 
         # Textfelder
-        self.kunde_entry = tk.CTkEntry(master,width=1200)
+
+        self.kunde_entry = tk.CTkEntry(master,width=600)
+        self.t_nummer = tk.CTkEntry(master, width=600)
         self.problem_entry = tk.CTkEntry(master,width=1200)
         self.info_entry = tk.CTkEntry(master,width=1200)
         
@@ -132,10 +173,12 @@ class Listendings:
 
         # Positionierung von Labels und Textfeldern
         self.kunde_label.grid(row=0, column=0)
+        self.t_nummer.place(x=655,y=0)
         self.problem_label.grid(row=1, column=0)
         self.info_label.grid(row=2, column=0)
 
-        self.kunde_entry.grid(row=0, column=1)
+        #self.kunde_entry.grid(row=0, column=1)
+        self.kunde_entry.place(x=55,y=0)
         self.problem_entry.grid(row=1, column=1)
         self.info_entry.grid(row=2, column=1)
         self.senden_button.grid(row=3, column=1)
@@ -218,6 +261,25 @@ class Listendings:
             time.sleep(0.01)  # Adjust for smoother animation
         
         self.menu_visible = not self.menu_visible
+
+    def Kunde_ruft_an(self):
+        print("Kunde_ruft_an (def)")
+        while True:
+            try:
+                with open("tmp.txt", "r") as tmp_ld:
+                    gel_tmp = tmp_ld.read()
+                    self.Anruf_Telefonnummer = gel_tmp
+                    print("HABS GELADEN:::: ", self.Anruf_Telefonnummer)
+                    tmp_ld.close()
+                    os.remove("tmp.txt")
+                    if self.Anruf_Telefonnummer:
+                        self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                        self.Anruf_Telefonnummer = None
+            except Exception as eld:
+                #print("bsrfp failed,", eld)
+                pass
+            time.sleep(1)
+            
     
     #### emde der werbung #######
     def info(self):
@@ -307,6 +369,7 @@ class Listendings:
         kunde = self.kunde_entry.get()
         problem = self.problem_entry.get()
         info = self.info_entry.get()
+        T_Nummer = self.t_nummer.get()
         self.ausgabe_text.configure(state='normal')
         self.zeit_string = time.strftime("%H:%M:%S")
         
@@ -318,11 +381,13 @@ class Listendings:
                 problem = "-"
             if self.info_entry.get() == "":
                 info = "-"
+            if self.t_nummer.get == "":
+                T_Nummer = "-"
 
             # Inhalte in Textdatei speichern
             if os.path.exists(self.Liste_mit_datum):
                 with open(self.Liste_mit_datum, "a") as f:
-                    f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\n\n")
+                    f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\n\n")
                 with open(self.Liste_mit_datum, "r") as f:
                     feedback_text = f.read()
                     self.ausgabe_text.delete("1.0", tk.END)
@@ -332,7 +397,7 @@ class Listendings:
             else:
                 print("(INFO) Liste zum beschreiben existiert bereits.")
                 with open(self.Liste_mit_datum, "w+") as f:
-                    f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\n\n")
+                    f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\n\n")
                     # Ausgabe-Textfeld aktualisieren
                 with open(self.Liste_mit_datum, "r") as f:
                     feedback_text = f.read()
@@ -346,7 +411,7 @@ class Listendings:
             messagebox.showinfo(title="Fehler", message="Bitte geben Sie zuerst in wenigsten eine Spalte etwas ein.")
             self.ausgabe_text.configure(state='disabled')
             return
-        
+        self.t_nummer.delete(0,tk.END)
         self.kunde_entry.delete(0, tk.END)
         self.problem_entry.delete(0, tk.END)
         self.info_entry.delete(0, tk.END)
@@ -394,19 +459,6 @@ class Listendings:
                     print("datei gelöscht")
                     self.ausgabe_text.delete("1.0", tk.END)
                     print("textfeld gelöscht")
-                    #self.ausgabe_text.insert(tk.END, "")
-                   # try:                                                                   # aus irgendeinem Grund kackt das Ding bei dem Abschnitt wenn es mehrere einträge gibt ABOSLUT UND KATASTROHPAL AB-> objc[3945]: autorelease pool page 0x7fb7e9b26000 corrupted
-                                                                                                                                                                                                                #'''magic     0x00000000 0x00000000 0x00000000 0x00000000
-                                                                                                                                                                                                                #should be 0xa1a1a1a1 0x4f545541 0x454c4552 0x21455341
-                                                                                                                                                                                                                #pthread   0x10e65e600
-                                                                                                                                                                                                                #should be 0x10e65e600'''
-                    #    print("try2")
-                        #with open ("liste.txt", "w+") as a:
-                            #self.Neuladen_der_Liste()
-                     #   messagebox.showinfo(title="Info", message="Alle vorehigen einträge wurden gelöscht.")
-                      #  print("datei geöffnet")
-                    #except:
-                     #   print("Beim Erstellen der neuen Liste ist ein Fehler aufgetreten")
                 else:
                     messagebox.showerror(title="Fehler", message="Es gab keine alten Einträge zum löschen.")
             except:
@@ -505,11 +557,13 @@ class Listendings:
                     problem = zeile.replace("Problem:", "").strip()
                 elif zeile.startswith("Info:"):
                     info = zeile.replace("Info:", "").strip()
+                elif zeile.startswith("Telefonnummer:"):
+                    Telefonnummer = zeile.replace("Telefonnummer:", "").strip()
                 
                     
-                if kunde and problem and info and uhrzeit:
-                    datensaetze.append([ uhrzeit,kunde, problem, info])
-                    uhrzeit, kunde, problem, info  = "", "", "", ""
+                if kunde and problem and info and uhrzeit and Telefonnummer:
+                    datensaetze.append([ uhrzeit,kunde, problem, info, Telefonnummer])
+                    uhrzeit, kunde, problem, info, Telefonnummer  = "", "", "", ""
 
             if datensaetze:
                 self.tag_string = str(time.strftime("%d %m %Y"))
@@ -558,11 +612,13 @@ class Listendings:
                     problem = zeile.replace("Problem:", "").strip()
                 elif zeile.startswith("Info:"):
                     info = zeile.replace("Info:", "").strip()
+                elif zeile.startswith("Telefonnummer:"):
+                    Telefonnummer = zeile.replace("Telefonnummer:", "").strip()
                 
                     
                 if kunde and problem and info and uhrzeit:
                     datensaetze.append([ uhrzeit,kunde, problem, info])
-                    uhrzeit, kunde, problem, info  = "", "", "", ""
+                    uhrzeit, kunde, problem, info, Telefonnummer  = "", "", "", ""
 
             if datensaetze:
                 self.tag_string = str(time.strftime("%d %m %Y"))
