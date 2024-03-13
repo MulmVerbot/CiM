@@ -147,10 +147,10 @@ class Listendings:
 
         # Textfelder
 
-        self.kunde_entry = tk.CTkEntry(master,width=600)
-        self.t_nummer = tk.CTkEntry(master, width=600)
-        self.problem_entry = tk.CTkEntry(master,width=1200)
-        self.info_entry = tk.CTkEntry(master,width=1200)
+        self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Kunde")
+        self.t_nummer = tk.CTkEntry(master, width=600, placeholder_text="Telefonnummer")
+        self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem")
+        self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info")
         
 
         # "Senden" Knopf
