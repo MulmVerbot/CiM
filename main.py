@@ -17,6 +17,7 @@ try:
     import urllib.parse
     import threading
     from customtkinter import ThemeManager
+    import datetime
 except:
     print("(FATAL) Konnte die wichtigen Bilbioteken nicht Laden!")
     messagebox.showerror(title="Kritischer Fehler", message="(FATAL) Konnte die wichtigen Bilbioteken nicht Laden! Das Programm wird nun Beendet.")
@@ -95,23 +96,25 @@ class Listendings:
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
         self.Version = "Alpha 1.2.3"
+        self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + " " + self.Zeit)
+        root.configure(resizeable=False)
         self.Programm_läuft = True
+        self.Uhr_läuft = True
         root.protocol("WM_DELETE_WINDOW", self.bye)
         self.Listen_Speicherort_Netzwerk_geladen = None
         self.Zeit_text = None
         self.Pause = True
         self.tag_string = str(time.strftime("%d %m %Y"))
-        self.Zeit = "Lade Uhrzeit..."
         self.Benutzerordner = os.path.expanduser('~')
         self.Listen_Speicherort_standard = os.path.join(self.Benutzerordner, 'CiM', 'Listen')
         self.Monat = time.strftime("%m")
         threading.Timer(2, self.Kunde_ruft_an).start()
-        threading.Timer(3, self.Uhr).start()
+        threading.Timer(1, self.Uhr).start()
         Listendings.WebServerThread().start()
         self.Hintergrund_farbe = "SteelBlue4"
         root.configure(fg_color=self.Hintergrund_farbe)
-        root.configure(resizeable=False)
+        root.resizable(False, False)
         
         
         
@@ -576,14 +579,21 @@ class Listendings:
 
     def Uhr(self):
         print("Thread gestartet: Uhr(def)")
-        while self.Programm_läuft == True:
+        while self.Uhr_läuft == True:
             lokaler_zeit_string = time.strftime("%H:%M:%S")
             self.Zeit = time.strftime("%H:%M:%S")
+            #echtzeit = datetime.datetime.strptime(lokaler_zeit_string, "%H:%M:%S")
+            #self.Aktiv_seit = int(self.Start_Zeit) - str(echtzeit)
             try:
                 self.Zhe_Clock.configure(text=self.Zeit)
                 root.title(self.Programm_Name + " " + self.Version + " " + self.Zeit)
-            except:
-                pass
+                if self.Zeit == "17:30:00":
+                    root.title(self.Programm_Name + " " + self.Version + " FEIERABEND!!")
+                elif self.Zeit == "17:31:00":
+                    root.title(self.Programm_Name + " " + self.Version + " FEIERABEND!! (eigentlich)")
+                    self.Uhr_läuft = False
+            except Exception as e:
+                print(e)
             if self.Zeit_text:
                 self.Zeit_text.configure(text=lokaler_zeit_string)
                 
@@ -839,6 +849,7 @@ class Listendings:
         print("(ENDE) Das Programm wurde Beendet, auf wiedersehen! \^_^/ ")
         self.Programm_läuft = False
         Listendings.Programm_läuft = False
+        self.Uhr_läuft = False
         zeit_string = time.strftime("%H:%M:%S")
         tag_string = str(time.strftime("%d %m %Y"))
         print(zeit_string , tag_string)
