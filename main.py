@@ -97,14 +97,16 @@ class Listendings:
         self.Programm_Name = "ListenDings"
         self.Version = "Alpha 1.2.3"
         self.Zeit = "Lädt.."
-        master.title(self.Programm_Name + " " + self.Version + " " + self.Zeit)
+        master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
+        root.geometry("1420x520")
         self.Programm_läuft = True
         self.Uhr_läuft = True
         root.protocol("WM_DELETE_WINDOW", self.bye)
         self.Listen_Speicherort_Netzwerk_geladen = None
         self.Zeit_text = None
         self.Pause = True
+        self.Menü_da = False
         self.tag_string = str(time.strftime("%d %m %Y"))
         self.Benutzerordner = os.path.expanduser('~')
         self.Listen_Speicherort_standard = os.path.join(self.Benutzerordner, 'CiM', 'Listen')
@@ -112,7 +114,7 @@ class Listendings:
         threading.Timer(2, self.Kunde_ruft_an).start()
         threading.Timer(1, self.Uhr).start()
         Listendings.WebServerThread().start()
-        self.Hintergrund_farbe = "SteelBlue4"
+        self.Hintergrund_farbe = "SlateGrey"
         root.configure(fg_color=self.Hintergrund_farbe)
         root.resizable(False, False)
         
@@ -190,17 +192,17 @@ class Listendings:
         #self.ausgabe_text.configure(font=("Helvetica", "14"))
 
         # Positionierung von Labels und Textfeldern
-        self.kunde_label.grid(row=0, column=0)
-        self.t_nummer.place(x=655,y=0)
-        self.problem_label.grid(row=1, column=0)
-        self.info_label.grid(row=2, column=0)
+        #self.kunde_label.grid(row=0, column=0)
+        #self.problem_label.grid(row=1, column=0)
+        #self.info_label.grid(row=2, column=0)
 
         #self.kunde_entry.grid(row=0, column=1)
-        self.kunde_entry.place(x=55,y=0)
-        self.problem_entry.grid(row=1, column=1)
-        self.info_entry.grid(row=2, column=1)
-        self.senden_button.grid(row=3, column=1)
-        self.ausgabe_text.grid(row=4, column=0, columnspan=2)
+        self.kunde_entry.place(x=5,y=0)
+        self.problem_entry.place(x=5,y=30)
+        self.info_entry.place(x=5,y=60)
+        self.t_nummer.place(x=605,y=0)
+        #self.senden_button.grid(row=3, column=1)
+        self.ausgabe_text.place(x=5,y=110)
 
 
         # erschaffen des Column Menü Dings
@@ -223,15 +225,12 @@ class Listendings:
         self.Einstellungen.add_command(label="Speicherort des ListenDings ändern...", command=self.ListenDings_speicherort_ändern)
         self.Speichern_Menu.add_command(label="als CSV Speichern", command=self.als_csv_speichern_eigener_ort)
         self.Speichern_Menu.add_command(label="Speichern als...", command=self.als_csv_speichern)
-        self.test_Menu.add_command(label="Neue GUI starten...", command=self.neue_GUI)
         self.Speichern_Menu.add_command(label="auf dem Netzlaufwerk als CSV Speichern", command=self.Netzlaufwerk_speichern)
         self.Einstellungen.add_command(label="Netzlaufwerk einstellen", command=self.ListenDings_speicherort_Netzwerk_ändern)
         self.Einstellungen.add_command(label="Auto Speichern ändern (Beim schließen)", command=self.Auto_sp_ändern)
         self.test_Menu.add_command(label="Pause", command=self.pause)
         self.Bearbeiten_Menu.add_command(label="Bearbeiten Umschalten", command=self.beb_c)
         self.Bearbeiten_Menu.add_command(label="Alle Einträge löschen", command=self.alles_löschen)
-        self.Menü.add_command(label="Pause Menü öffnen", command=self.Pause_menu_da)
-        self.Menü.add_command(label="Pause Menü schließen", command=self.Pause_menu_weg)
         
         # Initialisierung wichtiger Variablen
 
@@ -261,28 +260,26 @@ class Listendings:
 
     ###### Hier kommt das animations dings der seitenleiste #####
         self.menu_frame = tk.CTkFrame(master, width=200, height=400)  # Adjust size as needed
-        self.menu_frame.place(x=1100, y=50)  # Position it outside the visible area to the right
+        #self.menu_frame.place(x=1100, y=50)  # Position it outside the visible area to the right
 
         # Add buttons to the menu frame
-        self.beb_knopp = tk.CTkButton(self.menu_frame, text="Bearbeiten", command=self.beb_c)
-        self.beb_knopp.pack(pady=10)  # Add more buttons as needed
-        self.alles_löschen_knopp = tk.CTkButton(self.menu_frame, text="Alle Eintrage löschen", command=self.alles_löschen)
-        #self.alles_löschen_knopp.pack(pady=10)
-
-        # Initially, the menu is hidden
-        self.menu_visible = False
-
-        self.toggle_menu_button = tk.CTkButton(master, text="Menü umklappen", command=self.toggle_menu)
-        #self.toggle_menu_button.place(x=master.winfo_width() - 200, y=90)  # Adjust position as needed
-        #self.toggle_menu_button.grid(row=3, column=1)
+        #self.beb_knopp = tk.CTkButton(self.menu_frame, text="Bearbeiten", command=self.beb_c)
+        self.beb_knopp = tk.CTkButton(master, text="Bearbeiten", command=self.beb_c, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.beb_knopp.place(x=1260, y=100)  # Add more buttons as needed
+        self.alles_löschen_knopp = tk.CTkButton(master, text="Alle Eintrage löschen", command=self.alles_löschen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.alles_löschen_knopp.place(x=1260, y=130)
+        self.Menü_Knopp = tk.CTkButton(master, text="Menü Anzeigen", command=self.Menu_anzeige_wechseln, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.Menü_Knopp.place(x=1260, y=160)
 
 
         self.Pause_menu = tk.CTkFrame(master, width=420, height=300, fg_color="gray42", border_color="White", border_width=10)
         #self.Pause_menu.place(x=300,y=10)
         self.Zhe_Clock = tk.CTkLabel(self.Pause_menu, text=self.Zeit)
         self.Zhe_Clock.place(x=0,y=0)
-        
-        
+
+        optionmenu_var = tk.StringVar(value="Keine Weiterleitung")
+        self.optionmenu = tk.CTkOptionMenu(master,values=["An Chefe gegeben", "An Christian gegeben", "An Mike gegeben", "An Frau Tarnath gegeben"], command=self.auswahl_gedingst, variable=optionmenu_var)
+        self.optionmenu.place(x=1260,y=190)
 
 
 
@@ -298,15 +295,28 @@ class Listendings:
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
         
-    def Pause_menu_weg(self):
-        print("Pause_menu_weg")
-        self.Pause = False
-        self.Pause_menu.place_forget()
-
-    def Pause_menu_da(self):
-        print("Pause_menu_da")
-        self.Pause = True
-        self.Pause_menu.place(x=300,y=10)
+    def auswahl_gedingst(optionmenu_var, self):
+        print("s")
+        print(optionmenu_var)
+        if optionmenu_var == "An Chefe gegeben":
+            print("Option 1 ausgewählt!")
+        elif optionmenu_var == "An Christian gegeben":
+            print("Option 2 ausgewählt!")
+        elif optionmenu_var == "An Mike gegeben":
+            print("Option 3 ausgewählt!")
+        elif optionmenu_var == "An Frau Tarnath gegeben":
+            print("Option 3 ausgewählt!")
+    
+    def Menu_anzeige_wechseln(self):
+        print("Menu_anzeige_wechseln(def)")
+        if self.Menü_da == True:
+            self.Pause_menu.place_forget()
+            self.Menü_da = False
+            self.Menü_Knopp.configure(text="Menü Anzeigen")
+        elif self.Menü_da == False:
+            self.Pause_menu.place(x=300,y=10)
+            self.Menü_da = True
+            self.Menü_Knopp.configure(text="Menü schließen")
 
 
     def toggle_menu(self):
@@ -503,7 +513,7 @@ class Listendings:
             self.beb_knopp.configure(text="Fertig")# , fg="red"
             #self.alles_löschen_knopp.place_forget()
             #self.alles_löschen_knopp.pack_forget()
-            self.senden_button.grid_forget()
+            #self.senden_button.grid_forget()
             self.beb = "1"
             root.unbind('<Return>')
         else:
@@ -511,7 +521,7 @@ class Listendings:
             self.ausgabe_text.configure(state='disabled')
             root.bind('<Return>', self.senden)
             self.beb_knopp.configure(text="Bearbeiten") # , fg="black"
-            self.senden_button.grid(row=3, column=1)
+            #self.senden_button.grid(row=3, column=1)
             #self.alles_löschen_knopp.place(x=1350,y=400)
             #self.alles_löschen_knopp.pack(pady=10)
             self.beb = "0"
@@ -586,9 +596,10 @@ class Listendings:
             #self.Aktiv_seit = int(self.Start_Zeit) - str(echtzeit)
             try:
                 self.Zhe_Clock.configure(text=self.Zeit)
-                root.title(self.Programm_Name + " " + self.Version + " " + self.Zeit)
+                root.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
                 if self.Zeit == "17:30:00":
                     root.title(self.Programm_Name + " " + self.Version + " FEIERABEND!!")
+                    messagebox.showinfo(title="Fertsch", message="Dings, es ist Feierabend.")
                 elif self.Zeit == "17:31:00":
                     root.title(self.Programm_Name + " " + self.Version + " FEIERABEND!! (eigentlich)")
                     self.Uhr_läuft = False
@@ -629,7 +640,7 @@ class Listendings:
             datensaetze = []
 
             # Initialisieren der Variablen für Kundeninformationen
-            uhrzeit, kunde, problem, info = "", "", "", ""
+            uhrzeit, kunde, problem, info, Telefonnummer = "", "", "", "", ""
 
             # Durchlaufen der Zeilen und Extrahieren der Informationen
             for zeile in zeilen:
@@ -657,7 +668,7 @@ class Listendings:
                 # Schreiben der Daten in die CSV-Datei
                 with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
                     schreiber = csv.writer(datei)
-                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info"])
+                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer"])
                     schreiber.writerows(datensaetze)
                     self.zeit_string = time.strftime("%H:%M:%S")
                     self.tag_string = str(time.strftime("%d %m %Y"))
@@ -684,7 +695,7 @@ class Listendings:
             datensaetze = []
 
             # Initialisieren der Variablen für Kundeninformationen
-            uhrzeit, kunde, problem, info = "", "", "", ""
+            uhrzeit, kunde, problem, info, Telefonnummer = "", "", "", "", ""
 
             # Durchlaufen der Zeilen und Extrahieren der Informationen
             for zeile in zeilen:
@@ -705,7 +716,7 @@ class Listendings:
                     
                 if kunde and problem and info and uhrzeit:
                     datensaetze.append([ uhrzeit,kunde, problem, info])
-                    uhrzeit, kunde, problem, info, Telefonnummer  = "", "", "", ""
+                    uhrzeit, kunde, problem, info, Telefonnummer  = "", "", "", "",""
 
             if datensaetze:
                 self.tag_string = str(time.strftime("%d %m %Y"))
@@ -811,8 +822,8 @@ class Listendings:
                 
                     
                 if kunde and problem and info and uhrzeit:
-                    datensaetze.append([ uhrzeit,kunde, problem, info, Telefonnummer])
-                    uhrzeit, kunde, problem, info  = "", "", "", "", ""
+                    datensaetze.append([ uhrzeit, kunde, problem, info, Telefonnummer])
+                    uhrzeit, kunde, problem, info, Telefonnummer  = "", "", "", "", ""
 
             if datensaetze:
                 self.tag_string = str(time.strftime("%d %m %Y"))
