@@ -16,6 +16,7 @@ try:
     from http.server import BaseHTTPRequestHandler, HTTPServer
     import urllib.parse
     import threading
+    from customtkinter import ThemeManager
 except:
     print("(FATAL) Konnte die wichtigen Bilbioteken nicht Laden!")
     messagebox.showerror(title="Kritischer Fehler", message="(FATAL) Konnte die wichtigen Bilbioteken nicht Laden! Das Programm wird nun Beendet.")
@@ -23,7 +24,10 @@ except:
 
 root = tk.CTk()
 
+
+
 class Listendings:
+    Programm_läuft = True
     class RequestHandler(BaseHTTPRequestHandler):
         def do_GET(self):
             self.send_response(200)
@@ -34,11 +38,10 @@ class Listendings:
             besserer_pfad = parsed_path.path.replace("/", "")
             print("Nummer die angerufen hat/wurde: ", besserer_pfad)
             try:
-                with open ("tmp.txt", "w+") as tmp:
+                with open("tmp.txt", "w+") as tmp:
                     tmp.write(besserer_pfad)
-                    tmp.close()
-            except:
-                print("Konnte nicht die vars tmpen")
+            except Exception as e:
+                print(f"Fehler beim Schreiben in tmp.txt: {e}")
             self.wfile.write(b"<html><head><title>CiM Modul</title></head>")
             self.wfile.write(b"<body><h1></h1></body></html>")
 
@@ -47,15 +50,20 @@ class Listendings:
             port = 8080
             server_address = ('', port)
             httpd = HTTPServer(server_address, Listendings.RequestHandler)
-            print(f'Ich horche mal auf diesem {port}...')
             try:
-                httpd.serve_forever()
+                while Listendings.Programm_läuft == True:
+                    print(f'Ich horche mal auf Port {port}...')  
+                    httpd.handle_request()
+                    if Listendings.Programm_läuft == False:
+                        httpd.server_close()
+                        print(f'Server auf Port {port} gestoppt.')
+                        sys.exit()
             except KeyboardInterrupt:
                 httpd.server_close()
                 print(f'Server auf Port {port} gestoppt.')
 
     class Logger(object):
-        def __init__(self): #eine init welche nur das "unwichtige" vorgeplänkel macht
+        def __init__(self): #eine init welche nur das "unwichtige" vorgeplänkel macht (Logs und so)
             self.tag_und_zeit_string = time.strftime("%m/%d/%Y, %H:%M:%S")
             self.tag_string = str(time.strftime("%d %m %Y"))
             print("[-INFO-] ", self.tag_und_zeit_string)
@@ -85,16 +93,26 @@ class Listendings:
     def __init__(self, master):
         self.master = master
         self.DB = "liste.txt"
+        self.Programm_Name = "ListenDings"
+        self.Version = "Alpha 1.2.3"
+        master.title(self.Programm_Name + " " + self.Version + " " + self.Zeit)
+        self.Programm_läuft = True
+        root.protocol("WM_DELETE_WINDOW", self.bye)
         self.Listen_Speicherort_Netzwerk_geladen = None
         self.Zeit_text = None
-        Pause = True
+        self.Pause = True
         self.tag_string = str(time.strftime("%d %m %Y"))
+        self.Zeit = "Lade Uhrzeit..."
         self.Benutzerordner = os.path.expanduser('~')
         self.Listen_Speicherort_standard = os.path.join(self.Benutzerordner, 'CiM', 'Listen')
         self.Monat = time.strftime("%m")
-        threading.Timer(1, self.Kunde_ruft_an).start()
+        threading.Timer(2, self.Kunde_ruft_an).start()
+        threading.Timer(3, self.Uhr).start()
         Listendings.WebServerThread().start()
-        print("Threads gestartet.")
+        self.Hintergrund_farbe = "SteelBlue4"
+        root.configure(fg_color=self.Hintergrund_farbe)
+        root.configure(resizeable=False)
+        
         
         
         self.zeit_string = time.strftime("%H:%M:%S")
@@ -131,14 +149,11 @@ class Listendings:
         except Exception as e:
             ex = "Irgendwas ist passiert: ", e
             messagebox.showerror(title="Listendings Speicherort", message=ex)
-        Listen_Speicherort_Netzwerk_geladen = self.Listen_Speicherort_Netzwerk_geladen
         
 
 
 
-        self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.2.2"
-        master.title(self.Programm_Name + " " + self.Version)
+        
 
         # Labels für Textfelder
         self.kunde_label = tk.CTkLabel(master, text="Kunde:")
@@ -192,10 +207,14 @@ class Listendings:
         self.Einstellungen = Menu(self.menu, tearoff=0)
         self.Speichern_Menu = Menu(self.menu, tearoff=0)
         self.test_Menu = Menu(self.menu, tearoff=0)
+        self.Bearbeiten_Menu = Menu(self.menu, tearoff=0)
+        self.Menü = Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label=self.Programm_Name + self.Version, menu=self.menudings)
         self.menu.add_cascade(label="Einstellungen", menu=self.Einstellungen)
         self.menu.add_cascade(label="Speichern", menu=self.Speichern_Menu)
         self.menu.add_cascade(label="Test", menu=self.test_Menu)
+        self.menu.add_cascade(label="Bearbeiten", menu=self.Bearbeiten_Menu)
+        self.menu.add_cascade(label="Menü", menu=self.Menü)
         self.menudings.add_command(label="Info", command=self.info)
         self.menudings.add_command(label="Admin rechte aktivieren", command=self.Admin_rechte)
         self.Einstellungen.add_command(label="Speicherort des ListenDings ändern...", command=self.ListenDings_speicherort_ändern)
@@ -206,6 +225,10 @@ class Listendings:
         self.Einstellungen.add_command(label="Netzlaufwerk einstellen", command=self.ListenDings_speicherort_Netzwerk_ändern)
         self.Einstellungen.add_command(label="Auto Speichern ändern (Beim schließen)", command=self.Auto_sp_ändern)
         self.test_Menu.add_command(label="Pause", command=self.pause)
+        self.Bearbeiten_Menu.add_command(label="Bearbeiten Umschalten", command=self.beb_c)
+        self.Bearbeiten_Menu.add_command(label="Alle Einträge löschen", command=self.alles_löschen)
+        self.Menü.add_command(label="Pause Menü öffnen", command=self.Pause_menu_da)
+        self.Menü.add_command(label="Pause Menü schließen", command=self.Pause_menu_weg)
         
         # Initialisierung wichtiger Variablen
 
@@ -235,20 +258,53 @@ class Listendings:
 
     ###### Hier kommt das animations dings der seitenleiste #####
         self.menu_frame = tk.CTkFrame(master, width=200, height=400)  # Adjust size as needed
-        self.menu_frame.place(x=master.winfo_width(), y=50)  # Position it outside the visible area to the right
+        self.menu_frame.place(x=1100, y=50)  # Position it outside the visible area to the right
 
         # Add buttons to the menu frame
         self.beb_knopp = tk.CTkButton(self.menu_frame, text="Bearbeiten", command=self.beb_c)
         self.beb_knopp.pack(pady=10)  # Add more buttons as needed
         self.alles_löschen_knopp = tk.CTkButton(self.menu_frame, text="Alle Eintrage löschen", command=self.alles_löschen)
-        self.alles_löschen_knopp.pack(pady=10)
+        #self.alles_löschen_knopp.pack(pady=10)
 
         # Initially, the menu is hidden
         self.menu_visible = False
 
         self.toggle_menu_button = tk.CTkButton(master, text="Menü umklappen", command=self.toggle_menu)
         #self.toggle_menu_button.place(x=master.winfo_width() - 200, y=90)  # Adjust position as needed
-        self.toggle_menu_button.grid(row=3, column=1)
+        #self.toggle_menu_button.grid(row=3, column=1)
+
+
+        self.Pause_menu = tk.CTkFrame(master, width=420, height=300, fg_color="gray42", border_color="White", border_width=10)
+        #self.Pause_menu.place(x=300,y=10)
+        self.Zhe_Clock = tk.CTkLabel(self.Pause_menu, text=self.Zeit)
+        self.Zhe_Clock.place(x=0,y=0)
+        
+        
+
+
+
+
+
+
+
+
+
+    ####### ======================== init ende ======================== #######
+    ####### ======================== init ende ======================== #######
+    ####### ======================== init ende ======================== #######
+    ####### ======================== init ende ======================== #######
+    ####### ======================== init ende ======================== #######
+        
+    def Pause_menu_weg(self):
+        print("Pause_menu_weg")
+        self.Pause = False
+        self.Pause_menu.place_forget()
+
+    def Pause_menu_da(self):
+        print("Pause_menu_da")
+        self.Pause = True
+        self.Pause_menu.place(x=300,y=10)
+
 
     def toggle_menu(self):
         start_x = self.master.winfo_width() if self.menu_visible else self.master.winfo_width() - 200  # Assume menu width is 200
@@ -263,8 +319,8 @@ class Listendings:
         self.menu_visible = not self.menu_visible
 
     def Kunde_ruft_an(self):
-        print("Kunde_ruft_an (def)")
-        while True:
+        print("Thread gestartet: Kunde_ruft_an (def)")
+        while self.Programm_läuft == True:
             try:
                 with open("tmp.txt", "r") as tmp_ld:
                     gel_tmp = tmp_ld.read()
@@ -272,13 +328,33 @@ class Listendings:
                     print("HABS GELADEN:::: ", self.Anruf_Telefonnummer)
                     tmp_ld.close()
                     os.remove("tmp.txt")
-                    if self.Anruf_Telefonnummer:
-                        self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                        self.Anruf_Telefonnummer = None
+                    if self.t_nummer.get() == "":
+                        if self.Anruf_Telefonnummer:
+                            self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                            self.Anruf_Telefonnummer = None
+
+                        elif self.Anruf_Telefonnummer == "00491772446952": #chefe
+                            self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                            chefe = "Holger Beese aka el Chefe"
+                            self.kunde_entry.insert(1,chefe)
+                            self.Anruf_Telefonnummer = None
+
+                        elif self.Anruf_Telefonnummer == "004915233836862": #Christian
+                            self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                            Christian = "Christian Melges"
+                            self.kunde_entry.insert(1,Christian)
+                            self.Anruf_Telefonnummer = None
+
+                        elif self.Anruf_Telefonnummer == "004915229048779": #Mike
+                            self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                            Mike = "Mike Bosse"
+                            self.kunde_entry.insert(1,Mike)
+                            self.Anruf_Telefonnummer = None
             except Exception as eld:
                 #print("bsrfp failed,", eld)
                 pass
             time.sleep(1)
+        print("Thread beendet: Kunde_ruft_an (def")
             
     
     #### emde der werbung #######
@@ -381,13 +457,13 @@ class Listendings:
                 problem = "-"
             if self.info_entry.get() == "":
                 info = "-"
-            if self.t_nummer.get == "":
+            if self.t_nummer.get() == "":
                 T_Nummer = "-"
 
             # Inhalte in Textdatei speichern
             if os.path.exists(self.Liste_mit_datum):
                 with open(self.Liste_mit_datum, "a") as f:
-                    f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\n\n")
+                    f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\n==================================\n")
                 with open(self.Liste_mit_datum, "r") as f:
                     feedback_text = f.read()
                     self.ausgabe_text.delete("1.0", tk.END)
@@ -397,7 +473,7 @@ class Listendings:
             else:
                 print("(INFO) Liste zum beschreiben existiert bereits.")
                 with open(self.Liste_mit_datum, "w+") as f:
-                    f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\n\n")
+                    f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\n==================================\n")
                     # Ausgabe-Textfeld aktualisieren
                 with open(self.Liste_mit_datum, "r") as f:
                     feedback_text = f.read()
@@ -423,7 +499,7 @@ class Listendings:
             self.ausgabe_text.configure(state='normal')
             self.beb_knopp.configure(text="Fertig")# , fg="red"
             #self.alles_löschen_knopp.place_forget()
-            self.alles_löschen_knopp.pack_forget()
+            #self.alles_löschen_knopp.pack_forget()
             self.senden_button.grid_forget()
             self.beb = "1"
             root.unbind('<Return>')
@@ -434,7 +510,7 @@ class Listendings:
             self.beb_knopp.configure(text="Bearbeiten") # , fg="black"
             self.senden_button.grid(row=3, column=1)
             #self.alles_löschen_knopp.place(x=1350,y=400)
-            self.alles_löschen_knopp.pack(pady=10)
+            #self.alles_löschen_knopp.pack(pady=10)
             self.beb = "0"
             with open(self.Liste_mit_datum, "w+") as f:
                 f.write(self.text_tk_text)
@@ -469,10 +545,10 @@ class Listendings:
             print("db löschen fehler.")
             messagebox.showerror(title="Fehler", message="Kaputt")
 
-    def pause(self,Pause):
+    def pause(self):
         print("pause(def)")
         try:
-            self.alles_löschen_knopp.pack_forget()
+            #self.alles_löschen_knopp.pack_forget()
             #self.beb_knopp.grid_forget()
             self.kunde_label.grid_forget()
             self.problem_label.grid_forget()
@@ -484,7 +560,6 @@ class Listendings:
             self.ausgabe_text.grid_forget()
         except:
             pass
-        T1 = Thread(target = self.Uhr(Pause))
         self.p_text = tk.CTkLabel(root, text="Jetzt ist gerade Pause und mit vollem Mund spricht man nicht!")
         self.Zeit_text = tk.CTkLabel(root, text=" ")
         custom_font = ("Helvetica", 64)
@@ -499,26 +574,28 @@ class Listendings:
         self.Zeit_text.place(x=420,y=420)
 
 
-    def Uhr(self, Pause):
-        print(Pause)
-        while Pause:
-            lokaler_zeit_string = time.strftime("%H:%M")
-            self.Zeit = time.strftime("%H:%M")
-            print(Pause)
-            #print("Uhrzeit: ", lokaler_zeit_string)
+    def Uhr(self):
+        print("Thread gestartet: Uhr(def)")
+        while self.Programm_läuft == True:
+            lokaler_zeit_string = time.strftime("%H:%M:%S")
+            self.Zeit = time.strftime("%H:%M:%S")
+            try:
+                self.Zhe_Clock.configure(text=self.Zeit)
+                root.title(self.Programm_Name + " " + self.Version + " " + self.Zeit)
+            except:
+                pass
             if self.Zeit_text:
                 self.Zeit_text.configure(text=lokaler_zeit_string)
+                
             time.sleep(1)
-        else:
-            print("Thread und Programm wird beendet. Weil die var 'Pause' nicht bei 'ja' lag.")
-            sys.exit()
+        print("Thread Beendet: Uhr(def)")
+        
             
 
     
-    def pause_beenden_c(self,T1,Pause):
+    def pause_beenden_c(self):
         print("pause_beenden(def)")
-        T1.join()
-        Pause = False
+        self.Pause = False
         
         
 
@@ -563,7 +640,7 @@ class Listendings:
                     
                 if kunde and problem and info and uhrzeit and Telefonnummer:
                     datensaetze.append([ uhrzeit,kunde, problem, info, Telefonnummer])
-                    uhrzeit, kunde, problem, info, Telefonnummer  = "", "", "", ""
+                    uhrzeit, kunde, problem, info, Telefonnummer  = "", "", "", "", ""
 
             if datensaetze:
                 self.tag_string = str(time.strftime("%d %m %Y"))
@@ -626,13 +703,13 @@ class Listendings:
                 self.der_richtige_pdf_pfad = self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv"
                 with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
                     schreiber = csv.writer(datei)
-                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info"])
+                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer"])
                     schreiber.writerows(datensaetze)
                     self.zeit_string = time.strftime("%H:%M:%S")
                     self.tag_string = str(time.strftime("%d %m %Y"))
                     #schreiber.writerow(["Ende der Datensätze, Exportiert am " + self.tag_string + "um " + self.zeit_string], "Diese Liste wird jeden Tag neu Angelegt.")
                 print("Daten wurden in die CSV-Datei gespeichert.")
-                messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich gespeichert. Wandle nun in PDF um...")
+                messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich gespeichert.")
                 ###c2p_convert(self.der_richtige_pdf_pfad,"Datensätze.pdf")
                 ###messagebox.showinfo(title="Dings", message="PDF Fertig erstellt.")
             else:
@@ -671,7 +748,7 @@ class Listendings:
         print("neue_GUI (def)")
         self.senden_button.unbind('<Button-1>')
         root.unbind('<Return>')
-        self.alles_löschen_knopp.place_forget()
+        #self.alles_löschen_knopp.place_forget()
         #self.beb_knopp.grid_forget()
         self.kunde_label.grid_forget()
         self.problem_label.grid_forget()
@@ -706,7 +783,7 @@ class Listendings:
             datensaetze = []
 
             # Initialisieren der Variablen für Kundeninformationen
-            uhrzeit, kunde, problem, info = "", "", "", ""
+            uhrzeit, kunde, problem, info, Telefonnummer = "", "", "", "", ""
 
             # Durchlaufen der Zeilen und Extrahieren der Informationen
             for zeile in zeilen:
@@ -724,15 +801,15 @@ class Listendings:
                 
                     
                 if kunde and problem and info and uhrzeit:
-                    datensaetze.append([ uhrzeit,kunde, problem, info])
-                    uhrzeit, kunde, problem, info  = "", "", "", ""
+                    datensaetze.append([ uhrzeit,kunde, problem, info, Telefonnummer])
+                    uhrzeit, kunde, problem, info  = "", "", "", "", ""
 
             if datensaetze:
                 self.tag_string = str(time.strftime("%d %m %Y"))
                 # Schreiben der Daten in die CSV-Datei
                 with open(self.csv_datei_pfad_Netzwerk + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
                     schreiber = csv.writer(datei)
-                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info"])
+                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer"])
                     schreiber.writerows(datensaetze)
                     self.zeit_string = time.strftime("%H:%M:%S")
                     self.tag_string = str(time.strftime("%d %m %Y"))
@@ -757,90 +834,93 @@ class Listendings:
 
 
 
-def bye():
-    print("(ENDE) Das Programm wurde Beendet, auf wiedersehen! \^_^/ ")
-    zeit_string = time.strftime("%H:%M:%S")
-    tag_string = str(time.strftime("%d %m %Y"))
-    print(zeit_string , tag_string)
-    try:
-        with open("Listendingsspeicherort_Netzwerk.json" , "r") as Liste_Speicherort_Netzwerk_data:
-            Listen_Speicherort_Netzwerk = json.load(Liste_Speicherort_Netzwerk_data)
-            Listen_Speicherort_Netzwerk_geladen = (Listen_Speicherort_Netzwerk["ListenDings_Speicherort_Netzwerk"])
-    except PermissionError:
-            messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Der Gespeicherte Netzwerkpfad konnte nicht aufgerufen werden.")
-    except Exception as e:
-        ex = "Irgendwas ist passiert: ", e
-        messagebox.showerror(title="Listendings Speicherort", message=ex)
-    print("ende des Programms, fange nun an zu speichern")
-    try:
+
+    def bye(self):
+        print("(ENDE) Das Programm wurde Beendet, auf wiedersehen! \^_^/ ")
+        self.Programm_läuft = False
+        Listendings.Programm_läuft = False
+        zeit_string = time.strftime("%H:%M:%S")
+        tag_string = str(time.strftime("%d %m %Y"))
+        print(zeit_string , tag_string)
         try:
-            auto_speichern = "Ja"
-            with open("auto_speichern.txt", "r") as aSp:
-                dings_aSp = aSp.read()
-                auto_speichern = dings_aSp
-        except:
-            auto_speichern = "Nein"
+            with open("Listendingsspeicherort_Netzwerk.json" , "r") as Liste_Speicherort_Netzwerk_data:
+                Listen_Speicherort_Netzwerk = json.load(Liste_Speicherort_Netzwerk_data)
+                Listen_Speicherort_Netzwerk_geladen = (Listen_Speicherort_Netzwerk["ListenDings_Speicherort_Netzwerk"])
+        except PermissionError:
+                messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Der Gespeicherte Netzwerkpfad konnte nicht aufgerufen werden.")
+        except Exception as e:
+            ex = "Irgendwas ist passiert: ", e
+            messagebox.showerror(title="Listendings Speicherort", message=ex)
+        print("ende des Programms, fange nun an zu speichern")
+        try:
+            try:
+                auto_speichern = "Ja"
+                with open("auto_speichern.txt", "r") as aSp:
+                    dings_aSp = aSp.read()
+                    auto_speichern = dings_aSp
+            except:
+                auto_speichern = "Nein"
 
-        if auto_speichern == "Ja":
-            csv_datei_pfad_Netzwerk = Listen_Speicherort_Netzwerk_geladen
-            if csv_datei_pfad_Netzwerk:
-                # Öffnen der Textdatei zum Lesen
-                with open("liste.txt", 'r') as text_datei:
-                    daten = text_datei.read()
+            if auto_speichern == "Ja":
+                csv_datei_pfad_Netzwerk = Listen_Speicherort_Netzwerk_geladen
+                if csv_datei_pfad_Netzwerk:
+                    # Öffnen der Textdatei zum Lesen
+                    with open("liste.txt", 'r') as text_datei:
+                        daten = text_datei.read()
 
-                zeilen = daten.strip().split('\n')
+                    zeilen = daten.strip().split('\n')
 
-                # Initialisieren einer Liste für die Datensätze
-                datensaetze = []
+                    # Initialisieren einer Liste für die Datensätze
+                    datensaetze = []
 
-                # Initialisieren der Variablen für Kundeninformationen
-                uhrzeit, kunde, problem, info = "", "", "", ""
+                    # Initialisieren der Variablen für Kundeninformationen
+                    uhrzeit, kunde, problem, info = "", "", "", "", ""
 
-                # Durchlaufen der Zeilen und Extrahieren der Informationen
-                for zeile in zeilen:
-                    print(zeilen)
-                    print("=")
-                    print(zeile)
-                    if zeile.startswith("Uhrzeit:"):
-                        uhrzeit = zeile.replace("Uhrzeit:", "").strip()
-                    elif zeile.startswith("Kunde:"):
-                        kunde = zeile.replace("Kunde:", "").strip()
-                    elif zeile.startswith("Problem:"):
-                        problem = zeile.replace("Problem:", "").strip()
-                    elif zeile.startswith("Info:"):
-                        info = zeile.replace("Info:", "").strip()
-                    
+                    # Durchlaufen der Zeilen und Extrahieren der Informationen
+                    for zeile in zeilen:
+                        print(zeilen)
+                        print("=")
+                        print(zeile)
+                        if zeile.startswith("Uhrzeit:"):
+                            uhrzeit = zeile.replace("Uhrzeit:", "").strip()
+                        elif zeile.startswith("Kunde:"):
+                            kunde = zeile.replace("Kunde:", "").strip()
+                        elif zeile.startswith("Problem:"):
+                            problem = zeile.replace("Problem:", "").strip()
+                        elif zeile.startswith("Info:"):
+                            info = zeile.replace("Info:", "").strip()
                         
-                    if kunde and problem and info and uhrzeit:
-                        datensaetze.append([ uhrzeit,kunde, problem, info])
-                        uhrzeit, kunde, problem, info  = "", "", "", ""
+                            
+                        if kunde and problem and info and uhrzeit:
+                            datensaetze.append([ uhrzeit,kunde, problem, info])
+                            uhrzeit, kunde, problem, info  = "", "", "", ""
 
-                if datensaetze:
-                    tag_string = str(time.strftime("%d %m %Y"))
-                    # Schreiben der Daten in die CSV-Datei
-                    with open(csv_datei_pfad_Netzwerk + "/AnruferlistenDings" + tag_string + ".csv" , 'w', newline='') as datei:
-                        schreiber = csv.writer(datei)
-                        schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info"])
-                        schreiber.writerows(datensaetze)
-                        zeit_string = time.strftime("%H:%M:%S")
+                    if datensaetze:
                         tag_string = str(time.strftime("%d %m %Y"))
-                        #schreiber.writerow(["Ende der Datensätze, Exportiert am " + self.tag_string + "um " + self.zeit_string], "Diese Liste wird jeden Tag neu Angelegt.")
-                    print("Daten wurden in die CSV-Datei gespeichert.")
-                    messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich auf dem Netzlaufwerk gespeichert.")
-                else:
-                    print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
-                    messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
-        else:
-            print("die var zum auto_speichern lag bei was anderem als 1")
-    except Exception as e:
-        ei = "Es ein Fehler beim Speichern aufgetreten, keine Ahnung was passiert ist wahrscheinlich fehlt nur das Laufwerk. Hier ist noch ein Code mit dem Du nicht anfangen kannst: ", e
-        messagebox.showerror(title="CiM Fehler", message=ei)
-    
-    print("======================================")
-    sys.exit()
+                        # Schreiben der Daten in die CSV-Datei
+                        with open(csv_datei_pfad_Netzwerk + "/AnruferlistenDings" + tag_string + ".csv" , 'w', newline='') as datei:
+                            schreiber = csv.writer(datei)
+                            schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info"])
+                            schreiber.writerows(datensaetze)
+                            zeit_string = time.strftime("%H:%M:%S")
+                            tag_string = str(time.strftime("%d %m %Y"))
+                            #schreiber.writerow(["Ende der Datensätze, Exportiert am " + self.tag_string + "um " + self.zeit_string], "Diese Liste wird jeden Tag neu Angelegt.")
+                        print("Daten wurden in die CSV-Datei gespeichert.")
+                        messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich auf dem Netzlaufwerk gespeichert.")
+                    else:
+                        print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
+                        messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
+            else:
+                print("die var zum auto_speichern lag bei was anderem als 1")
+        except Exception as e:
+            ei = "Es ein Fehler beim Speichern aufgetreten, keine Ahnung was passiert ist wahrscheinlich fehlt nur das Laufwerk. Hier ist noch ein Code mit dem Du nicht anfangen kannst: ", e
+            messagebox.showerror(title="CiM Fehler", message=ei)
+        
+        print("======================================")
+        sys.exit()
 
 # Hauptprogramm
 #root.resizable(False,False)
 Listendings = Listendings(root)
-root.protocol("WM_DELETE_WINDOW", bye)
+#root.protocol("WM_DELETE_WINDOW", bye)
 root.mainloop()
