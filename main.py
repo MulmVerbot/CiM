@@ -95,7 +95,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.2.3"
+        self.Version = "Alpha 1.2.4"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -111,9 +111,13 @@ class Listendings:
         self.Benutzerordner = os.path.expanduser('~')
         self.Listen_Speicherort_standard = os.path.join(self.Benutzerordner, 'CiM', 'Listen')
         self.Monat = time.strftime("%m")
-        threading.Timer(2, self.Kunde_ruft_an).start()
-        threading.Timer(1, self.Uhr).start()
-        Listendings.WebServerThread().start()
+        self.Thread_Kunderuftan = threading.Timer(2, self.Kunde_ruft_an)
+        self.thread_uhr = threading.Timer(1, self.Uhr)
+        self.thread_webserver = Listendings.WebServerThread()
+        self.thread_uhr.start()
+        self.Thread_Kunderuftan.start()
+        self.thread_webserver.start()
+        
         self.Hintergrund_farbe = "SlateGrey"
         root.configure(fg_color=self.Hintergrund_farbe)
         root.resizable(False, False)
@@ -212,15 +216,15 @@ class Listendings:
         self.menudings = Menu(self.menu, tearoff=0)
         self.Einstellungen = Menu(self.menu, tearoff=0)
         self.Speichern_Menu = Menu(self.menu, tearoff=0)
-        self.test_Menu = Menu(self.menu, tearoff=0)
+        #self.test_Menu = Menu(self.menu, tearoff=0)
         self.Bearbeiten_Menu = Menu(self.menu, tearoff=0)
         self.Menü = Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label=self.Programm_Name + self.Version, menu=self.menudings)
+        #self.menu.add_cascade(label="Menü", menu=self.Menü)
         self.menu.add_cascade(label="Einstellungen", menu=self.Einstellungen)
-        self.menu.add_cascade(label="Speichern", menu=self.Speichern_Menu)
-        self.menu.add_cascade(label="Test (keine Ahnung mehr was das macht)", menu=self.test_Menu)
         self.menu.add_cascade(label="Bearbeiten", menu=self.Bearbeiten_Menu)
-        self.menu.add_cascade(label="Menü", menu=self.Menü)
+        self.menu.add_cascade(label="Speichern", menu=self.Speichern_Menu)
+        #self.menu.add_cascade(label="Test", menu=self.test_Menu)
         self.menudings.add_command(label="Info", command=self.info)
         self.menudings.add_command(label="Admin rechte aktivieren", command=self.Admin_rechte)
         self.Einstellungen.add_command(label="Speicherort des ListenDings ändern...", command=self.ListenDings_speicherort_ändern)
@@ -229,7 +233,7 @@ class Listendings:
         self.Speichern_Menu.add_command(label="auf dem Netzlaufwerk als CSV Speichern", command=self.Netzlaufwerk_speichern)
         self.Einstellungen.add_command(label="Netzlaufwerk einstellen", command=self.ListenDings_speicherort_Netzwerk_ändern)
         self.Einstellungen.add_command(label="Auto Speichern ändern (Beim schließen) (Kaputt)", command=self.Auto_sp_ändern)
-        self.test_Menu.add_command(label="Pause", command=self.pause)
+        #self.test_Menu.add_command(label="Pause", command=self.pause)
         self.Bearbeiten_Menu.add_command(label="Bearbeiten Umschalten", command=self.beb_c)
         self.Bearbeiten_Menu.add_command(label="Alle Einträge löschen", command=self.alles_löschen)
         
@@ -287,8 +291,10 @@ class Listendings:
                 self.Weiterleitung_an = "An Mike Bosse weitergeleitet."
             elif choice == "An Frau Tarnath gegeben":
                 self.Weiterleitung_an = "An Frau Tarnath weitergeleitet"
+            elif choice == "Keine Weiterleitung":
+                self.Weiterleitung_an = ""
 
-        self.optionmenu = tk.CTkOptionMenu(root, values=["An Chefe gegeben", "An Christian gegeben", "An Mike gegeben", "An Frau Tarnath gegeben"], command=auswahl_gedingst)
+        self.optionmenu = tk.CTkOptionMenu(root, values=["An Chefe gegeben", "An Christian gegeben", "An Mike gegeben", "An Frau Tarnath gegeben","Keine Weiterleitung"], command=auswahl_gedingst)
         self.optionmenu.set("Keine Weiterleitung")
         self.optionmenu.place(x=1260,y=190)
 
@@ -884,6 +890,9 @@ class Listendings:
         self.Programm_läuft = False
         Listendings.Programm_läuft = False
         self.Uhr_läuft = False
+        self.thread_uhr.cancel()
+        ##self.Thread_Kunderuftan.cancel()
+        ##self.thread_webserver.cancel()
         zeit_string = time.strftime("%H:%M:%S")
         tag_string = str(time.strftime("%d %m %Y"))
         print(zeit_string , tag_string)
