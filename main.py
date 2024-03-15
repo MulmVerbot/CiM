@@ -117,6 +117,7 @@ class Listendings:
         self.Hintergrund_farbe = "SlateGrey"
         root.configure(fg_color=self.Hintergrund_farbe)
         root.resizable(False, False)
+        self.Weiterleitung_an = ""
         
         
         
@@ -277,9 +278,42 @@ class Listendings:
         self.Zhe_Clock = tk.CTkLabel(self.Pause_menu, text=self.Zeit)
         self.Zhe_Clock.place(x=0,y=0)
 
-        optionmenu_var = tk.StringVar(value="Keine Weiterleitung")
-        self.optionmenu = tk.CTkOptionMenu(master,values=["An Chefe gegeben", "An Christian gegeben", "An Mike gegeben", "An Frau Tarnath gegeben"], command=self.auswahl_gedingst, variable=optionmenu_var)
+        def auswahl_gedingst(choice):
+            if choice == "An Chefe gegeben":
+                self.Weiterleitung_an = "An Holger Beese weitergeleitet."
+            elif choice == "An Christian gegeben":
+                self.Weiterleitung_an = "An Christian Melges weitergeleitet."
+            elif choice == "An Mike gegeben":
+                self.Weiterleitung_an = "An Mike Bosse weitergeleitet."
+            elif choice == "An Frau Tarnath gegeben":
+                self.Weiterleitung_an = "An Frau Tarnath weitergeleitet"
+
+        self.optionmenu = tk.CTkOptionMenu(root, values=["An Chefe gegeben", "An Christian gegeben", "An Mike gegeben", "An Frau Tarnath gegeben"], command=auswahl_gedingst)
+        self.optionmenu.set("Keine Weiterleitung")
         self.optionmenu.place(x=1260,y=190)
+
+       
+
+        '''optionmenu_var = tk.StringVar(value="option 2")
+        optionmenu = tk.CTkOptionMenu(master,values=["option 1", "option 2"],command=self.optionmenu_callback,variable=optionmenu_var)
+        optionmenu.pack()
+
+    def optionmenu_callback(choice,self):
+        print("optionmenu dropdown clicked:", choice)
+        
+        
+        
+
+       def optionmenu_callback(choice):
+            print("optionmenu dropdown clicked:", choice)
+
+        combobox = tk.CTkOptionMenu(root, values=["option 1", "option 2"], command=optionmenu_callback)
+        combobox.pack(padx=20, pady=10)
+        combobox.set("option 2")
+        self.my_option = tk.CTkOptionMenu(root, values=["Dings", "Bums"], command=optionmenu_callback)
+        self.my_option.pack()
+        self.my_option.set("Nix")'''
+
 
 
 
@@ -295,17 +329,7 @@ class Listendings:
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
         
-    def auswahl_gedingst(optionmenu_var, self):
-        print("s")
-        print(optionmenu_var)
-        if optionmenu_var == "An Chefe gegeben":
-            print("Option 1 ausgewählt!")
-        elif optionmenu_var == "An Christian gegeben":
-            print("Option 2 ausgewählt!")
-        elif optionmenu_var == "An Mike gegeben":
-            print("Option 3 ausgewählt!")
-        elif optionmenu_var == "An Frau Tarnath gegeben":
-            print("Option 3 ausgewählt!")
+    
     
     def Menu_anzeige_wechseln(self):
         print("Menu_anzeige_wechseln(def)")
@@ -472,38 +496,48 @@ class Listendings:
                 info = "-"
             if self.t_nummer.get() == "":
                 T_Nummer = "-"
+            if self.Weiterleitung_an == "":
+                self.Weiterleitung_an = "Keine Weiterleitung"
 
             # Inhalte in Textdatei speichern
             if os.path.exists(self.Liste_mit_datum):
                 with open(self.Liste_mit_datum, "a") as f:
-                    f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\n==================================\n")
+                    f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nWeiterleitung: {self.Weiterleitung_an}\n==================================\n")
                 with open(self.Liste_mit_datum, "r") as f:
                     feedback_text = f.read()
                     self.ausgabe_text.delete("1.0", tk.END)
                     self.ausgabe_text.insert(tk.END, feedback_text)
                 self.ausgabe_text.configure(state='disabled')
                 self.ausgabe_text.see(tk.END)
+                self.Weiterleitung_an = ""
+                self.optionmenu.set("Keine Weiterleitung")
             else:
                 print("(INFO) Liste zum beschreiben existiert bereits.")
                 with open(self.Liste_mit_datum, "w+") as f:
-                    f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\n==================================\n")
+                    f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nWeiterleitung: {self.Weiterleitung_an}\n==================================\n")
                     # Ausgabe-Textfeld aktualisieren
                 with open(self.Liste_mit_datum, "r") as f:
                     feedback_text = f.read()
                     self.ausgabe_text.delete("1.0", tk.END)
                     self.ausgabe_text.insert(tk.END, feedback_text)
                     self.ausgabe_text.configure(state='disabled')
+                    self.Weiterleitung_an = ""
+                    self.optionmenu.set("Keine Weiterleitung")
 
             
         else:
             print("(ERR) Da hat wer Enter gedrückt obwohl noch nicht geschrieben war.")
             messagebox.showinfo(title="Fehler", message="Bitte geben Sie zuerst in wenigsten eine Spalte etwas ein.")
             self.ausgabe_text.configure(state='disabled')
+            self.Weiterleitung_an = ""
+            self.optionmenu.set("Keine Weiterleitung")
             return
         self.t_nummer.delete(0,tk.END)
         self.kunde_entry.delete(0, tk.END)
         self.problem_entry.delete(0, tk.END)
         self.info_entry.delete(0, tk.END)
+        self.Weiterleitung_an = ""
+        self.optionmenu.set("Keine Weiterleitung")
     
     def beb_c(self):
         self.text_tk_text = self.ausgabe_text.get("1.0", "end-1c")
@@ -624,7 +658,7 @@ class Listendings:
             
 
 
-    def als_csv_speichern(self):
+    def als_csv_speichern(self): #das ist das speicher unter... dings
         print("Als CSV speichern")
         self.csv_datei_pfad = filedialog.askdirectory()
 
@@ -640,7 +674,7 @@ class Listendings:
             datensaetze = []
 
             # Initialisieren der Variablen für Kundeninformationen
-            uhrzeit, kunde, problem, info, Telefonnummer = "", "", "", "", ""
+            uhrzeit, kunde, problem, info, Telefonnummer,Weiterleitung = "", "", "", "", "",""
 
             # Durchlaufen der Zeilen und Extrahieren der Informationen
             for zeile in zeilen:
@@ -657,18 +691,20 @@ class Listendings:
                     info = zeile.replace("Info:", "").strip()
                 elif zeile.startswith("Telefonnummer:"):
                     Telefonnummer = zeile.replace("Telefonnummer:", "").strip()
+                elif zeile.startswith("Weiterleitung an:"):
+                    Weiterleitung = zeile.replace("Weiterleitung:", "").strip()
                 
                     
-                if kunde and problem and info and uhrzeit and Telefonnummer:
-                    datensaetze.append([ uhrzeit,kunde, problem, info, Telefonnummer])
-                    uhrzeit, kunde, problem, info, Telefonnummer  = "", "", "", "", ""
+                if kunde and problem and info and uhrzeit and Telefonnummer and Weiterleitung:
+                    datensaetze.append([ uhrzeit,kunde, problem, info, Telefonnummer, Weiterleitung])
+                    uhrzeit, kunde, problem, info, Telefonnummer,Weiterleitung  = "", "", "", "", "",""
 
             if datensaetze:
                 self.tag_string = str(time.strftime("%d %m %Y"))
-                # Schreiben der Daten in die CSV-Datei
+            
                 with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
                     schreiber = csv.writer(datei)
-                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer"])
+                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer", "Weiterleitung"])
                     schreiber.writerows(datensaetze)
                     self.zeit_string = time.strftime("%H:%M:%S")
                     self.tag_string = str(time.strftime("%d %m %Y"))
@@ -684,24 +720,23 @@ class Listendings:
         self.csv_datei_pfad = self.Listen_Speicherort_geladen
 
         if self.csv_datei_pfad:
-            # Öffnen der Textdatei zum Lesen
             with open(self.Liste_mit_datum, 'r') as text_datei:
                 daten = text_datei.read()
 
-            # Aufteilen des Texts in Zeilen
+          
             zeilen = daten.strip().split('\n')
 
-            # Initialisieren einer Liste für die Datensätze
+            
             datensaetze = []
 
-            # Initialisieren der Variablen für Kundeninformationen
-            uhrzeit, kunde, problem, info, Telefonnummer = "", "", "", "", ""
+            
+            uhrzeit, kunde, problem, info, Telefonnummer, Weiterleitung = "", "", "", "", "", ""
 
-            # Durchlaufen der Zeilen und Extrahieren der Informationen
+            
             for zeile in zeilen:
-                print(zeilen)
-                print("=")
-                print(zeile)
+                #print(zeilen)
+                #print("=")
+                #print(zeile)
                 if zeile.startswith("Uhrzeit:"):
                     uhrzeit = zeile.replace("Uhrzeit:", "").strip()
                 elif zeile.startswith("Kunde:"):
@@ -712,27 +747,26 @@ class Listendings:
                     info = zeile.replace("Info:", "").strip()
                 elif zeile.startswith("Telefonnummer:"):
                     Telefonnummer = zeile.replace("Telefonnummer:", "").strip()
+                elif zeile.startswith("Weiterleitung an:"):
+                    Weiterleitung = zeile.replace("Weiterleitung:", "").strip()
                 
                     
-                if kunde and problem and info and uhrzeit:
-                    datensaetze.append([ uhrzeit,kunde, problem, info])
-                    uhrzeit, kunde, problem, info, Telefonnummer  = "", "", "", "",""
+                if kunde and problem and info and uhrzeit and Telefonnummer and Weiterleitung:
+                    datensaetze.append([ uhrzeit,kunde, problem, info, Telefonnummer, Weiterleitung])
+                    uhrzeit, kunde, problem, info, Telefonnummer,Weiterleitung  = "", "", "", "", "", ""
 
             if datensaetze:
                 self.tag_string = str(time.strftime("%d %m %Y"))
                 # Schreiben der Daten in die CSV-Datei
-                self.der_richtige_pdf_pfad = self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv"
                 with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
                     schreiber = csv.writer(datei)
-                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer"])
+                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer", "Weiterleitung"])
                     schreiber.writerows(datensaetze)
                     self.zeit_string = time.strftime("%H:%M:%S")
                     self.tag_string = str(time.strftime("%d %m %Y"))
                     #schreiber.writerow(["Ende der Datensätze, Exportiert am " + self.tag_string + "um " + self.zeit_string], "Diese Liste wird jeden Tag neu Angelegt.")
                 print("Daten wurden in die CSV-Datei gespeichert.")
                 messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich gespeichert.")
-                ###c2p_convert(self.der_richtige_pdf_pfad,"Datensätze.pdf")
-                ###messagebox.showinfo(title="Dings", message="PDF Fertig erstellt.")
             else:
                 print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
                 messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
@@ -793,24 +827,24 @@ class Listendings:
         self.csv_datei_pfad_Netzwerk = self.Listen_Speicherort_Netzwerk_geladen
         Listen_Speicherort_Netzwerk_geladen = self.Listen_Speicherort_Netzwerk_geladen
 
-        if self.csv_datei_pfad_Netzwerk:
-            # Öffnen der Textdatei zum Lesen
+        if self.csv_datei_pfad:
             with open(self.Liste_mit_datum, 'r') as text_datei:
                 daten = text_datei.read()
 
+          
             zeilen = daten.strip().split('\n')
 
-            # Initialisieren einer Liste für die Datensätze
+            
             datensaetze = []
 
-            # Initialisieren der Variablen für Kundeninformationen
-            uhrzeit, kunde, problem, info, Telefonnummer = "", "", "", "", ""
+            
+            uhrzeit, kunde, problem, info, Telefonnummer, Weiterleitung = "", "", "", "", "", ""
 
-            # Durchlaufen der Zeilen und Extrahieren der Informationen
+            
             for zeile in zeilen:
-                print(zeilen)
-                print("=")
-                print(zeile)
+                #print(zeilen)
+                #print("=")
+                #print(zeile)
                 if zeile.startswith("Uhrzeit:"):
                     uhrzeit = zeile.replace("Uhrzeit:", "").strip()
                 elif zeile.startswith("Kunde:"):
@@ -819,42 +853,31 @@ class Listendings:
                     problem = zeile.replace("Problem:", "").strip()
                 elif zeile.startswith("Info:"):
                     info = zeile.replace("Info:", "").strip()
+                elif zeile.startswith("Telefonnummer:"):
+                    Telefonnummer = zeile.replace("Telefonnummer:", "").strip()
+                elif zeile.startswith("Weiterleitung an:"):
+                    Weiterleitung = zeile.replace("Weiterleitung:", "").strip()
                 
                     
-                if kunde and problem and info and uhrzeit:
-                    datensaetze.append([ uhrzeit, kunde, problem, info, Telefonnummer])
-                    uhrzeit, kunde, problem, info, Telefonnummer  = "", "", "", "", ""
+                if kunde and problem and info and uhrzeit and Telefonnummer and Weiterleitung:
+                    datensaetze.append([ uhrzeit,kunde, problem, info, Telefonnummer, Weiterleitung])
+                    uhrzeit, kunde, problem, info, Telefonnummer,Weiterleitung  = "", "", "", "", "", ""
 
             if datensaetze:
                 self.tag_string = str(time.strftime("%d %m %Y"))
                 # Schreiben der Daten in die CSV-Datei
-                with open(self.csv_datei_pfad_Netzwerk + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
+                with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
                     schreiber = csv.writer(datei)
-                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer"])
+                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer", "Weiterleitung"])
                     schreiber.writerows(datensaetze)
                     self.zeit_string = time.strftime("%H:%M:%S")
                     self.tag_string = str(time.strftime("%d %m %Y"))
                     #schreiber.writerow(["Ende der Datensätze, Exportiert am " + self.tag_string + "um " + self.zeit_string], "Diese Liste wird jeden Tag neu Angelegt.")
                 print("Daten wurden in die CSV-Datei gespeichert.")
-                messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich auf dem Netzlaufwerk gespeichert.")
-                
+                messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich gespeichert.")
             else:
                 print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
                 messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
-    
-    
-    '''optionmenu = tk.CTkOptionMenu(root, values=["option 1", "option 2"], command=self.weiterleitung_an)
-
-    def change_scaling_event(self):
-        new_scaling_float = int(new_scaling.replace("%", "")) / 100
-        tk.set_widget_scaling(new_scaling_float)
-
-    def weiterleitung_an(self):'''
-
-    
-
-
-
 
     def bye(self):
         print("(ENDE) Das Programm wurde Beendet, auf wiedersehen! \^_^/ ")
