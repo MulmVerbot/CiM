@@ -298,23 +298,18 @@ class Listendings:
         def auswahl_gedingst_sprechen(choice):
             if choice == "Mit Chefe sprechen":
                 self.wollte_sprechen = "Mit Chefe sprechen"
-                self.optionmenu1.set("Mit Wem sprechen?")
-                
+
             elif choice == "Mit Christian sprechen":
                 self.wollte_sprechen = "Mit Christian sprechen"
-                self.optionmenu1.set("Mit Wem sprechen?")
 
             elif choice == "Mit Mike sprechen":
                 self.wollte_sprechen = "Mit Mike spreche"
-                self.optionmenu1.set("Mit Wem sprechen?")
 
             elif choice == "Mit Frau Tarnath sprechen":
                 self.wollte_sprechen = "Mit Frau Tarnath sprechen"
-                self.optionmenu1.set("Mit Wem sprechen?")
 
             elif choice == "Keine Weiterleitung":
                 self.wollte_sprechen = "-"
-                self.optionmenu1.set("Mit Wem sprechen?")
 
 
         self.optionmenu = tk.CTkOptionMenu(root, values=["An Chefe gegeben", "An Christian gegeben", "An Mike gegeben", "An Frau Tarnath gegeben","Keine Weiterleitung"], command=auswahl_gedingst)
@@ -522,6 +517,7 @@ class Listendings:
                 self.ausgabe_text.see(tk.END)
                 self.Weiterleitung_an = ""
                 self.optionmenu.set("Keine Weiterleitung")
+                self.optionmenu1.set("Mit Wem sprechen?")
             else:
                 print("(INFO) Liste zum beschreiben existiert bereits.")
                 with open(self.Liste_mit_datum, "w+") as f:
@@ -534,6 +530,7 @@ class Listendings:
                     self.ausgabe_text.configure(state='disabled')
                     self.Weiterleitung_an = ""
                     self.optionmenu.set("Keine Weiterleitung")
+                    self.optionmenu1.set("Mit Wem sprechen?")
 
             
         else:
@@ -541,12 +538,15 @@ class Listendings:
             messagebox.showinfo(title="Fehler", message="Bitte geben Sie zuerst in wenigsten eine Spalte etwas ein.")
             self.ausgabe_text.configure(state='disabled')
             self.Weiterleitung_an = ""
+            self.Weiterleitung_an = ""
             self.optionmenu.set("Keine Weiterleitung")
+            self.optionmenu1.set("Mit Wem sprechen?")
             return
         self.t_nummer.delete(0,tk.END)
         self.kunde_entry.delete(0, tk.END)
         self.problem_entry.delete(0, tk.END)
         self.info_entry.delete(0, tk.END)
+        self.Weiterleitung_an = ""
         self.Weiterleitung_an = ""
         self.optionmenu.set("Keine Weiterleitung")
     
