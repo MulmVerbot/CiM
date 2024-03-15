@@ -529,6 +529,7 @@ class Listendings:
                     self.ausgabe_text.insert(tk.END, feedback_text)
                     self.ausgabe_text.configure(state='disabled')
                     self.Weiterleitung_an = ""
+                    self.wollte_sprechen = ""
                     self.optionmenu.set("Keine Weiterleitung")
                     self.optionmenu1.set("Mit Wem sprechen?")
 
@@ -538,7 +539,7 @@ class Listendings:
             messagebox.showinfo(title="Fehler", message="Bitte geben Sie zuerst in wenigsten eine Spalte etwas ein.")
             self.ausgabe_text.configure(state='disabled')
             self.Weiterleitung_an = ""
-            self.Weiterleitung_an = ""
+            self.wollte_sprechen = ""
             self.optionmenu.set("Keine Weiterleitung")
             self.optionmenu1.set("Mit Wem sprechen?")
             return
@@ -547,7 +548,7 @@ class Listendings:
         self.problem_entry.delete(0, tk.END)
         self.info_entry.delete(0, tk.END)
         self.Weiterleitung_an = ""
-        self.Weiterleitung_an = ""
+        self.wollte_sprechen = ""
         self.optionmenu.set("Keine Weiterleitung")
     
     def beb_c(self):
