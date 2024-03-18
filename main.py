@@ -174,7 +174,7 @@ class Listendings:
         # Textfelder
 
         self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Kunde")
-        self.t_nummer = tk.CTkEntry(master, width=600, placeholder_text="Telefonnummer")
+        self.t_nummer = tk.CTkEntry(master, width=600, placeholder_text="Telefonnummer", state="disabled")
         self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem")
         self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info")
         
@@ -192,7 +192,7 @@ class Listendings:
         ##self.beb_knopp.grid(row=3, column=2)
 
         # Ausgabe-Textfeld
-        self.ausgabe_text = tk.CTkTextbox(master, width=1250, height=400)
+        self.ausgabe_text = tk.CTkTextbox(master, width=1250, height=400, wrap="word")
         ###self.ausgabe_text.configure(highlightthickness=0)
         self.ausgabe_text.configure(state='disabled')
         #self.ausgabe_text.configure(font=("Helvetica", "14"))
@@ -303,7 +303,7 @@ class Listendings:
                 self.wollte_sprechen = "Mit Christian sprechen"
 
             elif choice == "Mit Mike sprechen":
-                self.wollte_sprechen = "Mit Mike spreche"
+                self.wollte_sprechen = "Mit Mike sprechen"
 
             elif choice == "Mit Frau Tarnath sprechen":
                 self.wollte_sprechen = "Mit Frau Tarnath sprechen"
@@ -314,11 +314,10 @@ class Listendings:
 
         self.optionmenu = tk.CTkOptionMenu(root, values=["An Chefe gegeben", "An Christian gegeben", "An Mike gegeben", "An Frau Tarnath gegeben","Keine Weiterleitung"], command=auswahl_gedingst)
         self.optionmenu.set("Keine Weiterleitung")
-        self.optionmenu.place(x=1260,y=190)
-
+        self.optionmenu.place(x=1260,y=220)
         self.optionmenu1 = tk.CTkOptionMenu(root, values=["Mit Chefe sprechen", "Mit Christian sprechen", "Mit Mike sprechen", "Mit Frau Tarnath sprechen","Keine Anfrage"], command=auswahl_gedingst_sprechen)
         self.optionmenu1.set("Mit Wem sprechen?")
-        self.optionmenu1.place(x=1260,y=220)
+        self.optionmenu1.place(x=1260,y=190)
 
        
 
@@ -556,20 +555,16 @@ class Listendings:
         if self.beb == "0":
             print("beb is jetzt = 1")
             self.ausgabe_text.configure(state='normal')
-            self.beb_knopp.configure(text="Fertig")# , fg="red"
-            #self.alles_löschen_knopp.place_forget()
-            #self.alles_löschen_knopp.pack_forget()
-            #self.senden_button.grid_forget()
+            self.t_nummer.configure(state="normal")
+            self.beb_knopp.configure(text="Fertig", fg_color="aquamarine", hover_color="aquamarine3")
             self.beb = "1"
             root.unbind('<Return>')
         else:
             print("beb = 0")
             self.ausgabe_text.configure(state='disabled')
+            self.t_nummer.configure(state="disabled")
             root.bind('<Return>', self.senden)
-            self.beb_knopp.configure(text="Bearbeiten") # , fg="black"
-            #self.senden_button.grid(row=3, column=1)
-            #self.alles_löschen_knopp.place(x=1350,y=400)
-            #self.alles_löschen_knopp.pack(pady=10)
+            self.beb_knopp.configure(text="Bearbeiten", fg_color="white", hover_color="pink")
             self.beb = "0"
             with open(self.Liste_mit_datum, "w+") as f:
                 f.write(self.text_tk_text)
@@ -638,8 +633,6 @@ class Listendings:
         while self.Uhr_läuft == True:
             lokaler_zeit_string = time.strftime("%H:%M:%S")
             self.Zeit = time.strftime("%H:%M:%S")
-            #echtzeit = datetime.datetime.strptime(lokaler_zeit_string, "%H:%M:%S")
-            #self.Aktiv_seit = int(self.Start_Zeit) - str(echtzeit)
             try:
                 self.Zhe_Clock.configure(text=self.Zeit)
                 root.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -686,7 +679,7 @@ class Listendings:
             datensaetze = []
 
             # Initialisieren der Variablen für Kundeninformationen
-            uhrzeit, kunde, problem, info, Telefonnummer, Weiterleitung, wollte_sprechen = "", "", "", "", "", "", ""
+            uhrzeit, kunde, problem, info, Telefonnummer, wollte_sprechen, Weiterleitung  = "", "", "", "", "", "", ""
 
             # Durchlaufen der Zeilen und Extrahieren der Informationen
             for zeile in zeilen:
@@ -704,19 +697,21 @@ class Listendings:
                 elif zeile.startswith("Telefonnummer:"):
                     Telefonnummer = zeile.replace("Telefonnummer:", "").strip()
                 elif zeile.startswith("Weiterleitung an:"):
+                    wollte_sprechen = zeile.replace("Jemand bestimmtes sprechen:", "").strip()
+                elif zeile.startswith("Weiterleitung an:"):
                     Weiterleitung = zeile.replace("Weiterleitung:", "").strip()
                 
                     
-                if kunde and problem and info and uhrzeit and Telefonnummer and Weiterleitung and wollte_sprechen:
-                    datensaetze.append([ uhrzeit,kunde, problem, info, Telefonnummer, Weiterleitung,wollte_sprechen])
-                    uhrzeit, kunde, problem, info, Telefonnummer, Weiterleitung, wollte_sprechen  = "", "", "", "", "", "", ""
+                if kunde and problem and info and uhrzeit and Telefonnummer and wollte_sprechen and Weiterleitung:
+                    datensaetze.append([ uhrzeit,kunde, problem, info, Telefonnummer, wollte_sprechen, Weiterleitung])
+                    uhrzeit, kunde, problem, info, Telefonnummer, wollte_sprechen, Weiterleitung  = "", "", "", "", "", "", ""
 
             if datensaetze:
                 self.tag_string = str(time.strftime("%d %m %Y"))
             
                 with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
                     schreiber = csv.writer(datei)
-                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer", "Weiterleitung"])
+                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer", "Weiterleitung", "Wollte Sprechen"])
                     schreiber.writerows(datensaetze)
                     self.zeit_string = time.strftime("%H:%M:%S")
                     self.tag_string = str(time.strftime("%d %m %Y"))
