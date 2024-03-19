@@ -95,7 +95,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.2.4"
+        self.Version = "Alpha 1.2.4.1"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -206,10 +206,10 @@ class Listendings:
         #self.info_label.grid(row=2, column=0)
 
         #self.kunde_entry.grid(row=0, column=1)
-        self.kunde_entry.place(x=5,y=0)
-        self.problem_entry.place(x=5,y=30)
-        self.info_entry.place(x=5,y=60)
-        self.t_nummer.place(x=605,y=0)
+        self.kunde_entry.place(x=5,y=5)
+        self.problem_entry.place(x=5,y=35)
+        self.info_entry.place(x=5,y=65)
+        self.t_nummer.place(x=605,y=5)
         #self.senden_button.grid(row=3, column=1)
         self.ausgabe_text.place(x=5,y=110)
 
@@ -222,6 +222,7 @@ class Listendings:
         self.Speichern_Menu = Menu(self.menu, tearoff=0)
         #self.test_Menu = Menu(self.menu, tearoff=0)
         self.Bearbeiten_Menu = Menu(self.menu, tearoff=0)
+        self.Suchen_Menu = Menu(self.menu, tearoff=0)
         self.Menü = Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label=self.Programm_Name + self.Version, menu=self.menudings)
         #self.menu.add_cascade(label="Menü", menu=self.Menü)
@@ -229,6 +230,7 @@ class Listendings:
         self.menu.add_cascade(label="Bearbeiten", menu=self.Bearbeiten_Menu)
         self.menu.add_cascade(label="Speichern", menu=self.Speichern_Menu)
         #self.menu.add_cascade(label="Test", menu=self.test_Menu)
+        self.menu.add_cascade(label="Suchen", menu=self.Suchen_Menu)
         self.menudings.add_command(label="Info", command=self.info)
         self.menudings.add_command(label="Admin rechte aktivieren", command=self.Admin_rechte)
         self.Einstellungen.add_command(label="Speicherort des ListenDings ändern...", command=self.ListenDings_speicherort_ändern)
@@ -240,6 +242,7 @@ class Listendings:
         #self.test_Menu.add_command(label="Pause", command=self.pause)
         self.Bearbeiten_Menu.add_command(label="Bearbeiten Umschalten", command=self.beb_c)
         self.Bearbeiten_Menu.add_command(label="Alle Einträge löschen", command=self.alles_löschen)
+        self.Suchen_Menu.add_command(label="Nach alten Eintrag suchen", command=self.Suche)
         
         # Initialisierung wichtiger Variablen
 
@@ -345,6 +348,8 @@ class Listendings:
     
     def Menu_anzeige_wechseln(self):
         print("Menu_anzeige_wechseln(def)")
+        self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche)
+        self.Suche_knopp.place(x=200,y=100)
         if self.Menü_da == True:
             self.Pause_menu.place_forget()
             self.Menü_da = False
@@ -353,6 +358,56 @@ class Listendings:
             self.Pause_menu.place(x=300,y=10)
             self.Menü_da = True
             self.Menü_Knopp.configure(text="Menü schließen")
+    def Suchen_thread_aktivieren(self):
+        try:
+            self.Suche_thread.start()
+        except:
+            print("Thread konnte nicht gestartet werden, vielleicht läuft er bereits.")
+        
+
+    def Suche(self):
+        print("Suchen(def)")
+        Suche_suche = ""
+        such_dialog = tk.CTkInputDialog(text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht.", title="CiM Suche")
+        Suche_suche = such_dialog.get_input()
+        if Suche_suche:
+            def read_text_file(file_path):
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as file:
+                        return file.read()
+                except Exception as e:
+                    print(f"Fehler: {e}")
+                    return ""
+            folder_path = self.Listen_Speicherort_standard
+            content_to_search = Suche_suche
+            results = []
+            try:
+                for root, dirs, files in os.walk(folder_path):
+                    for file_name in files:
+                        try:
+                            if file_name.endswith('.txt'):
+                                file_path = os.path.join(root, file_name)
+                                file_content = read_text_file(file_path)
+                                if content_to_search in file_content:
+                                    results.append(file_path)
+                        except Exception as e:
+                            print(f"irgendwas ging nicht: {file_name}: {e}")
+            except Exception as e:
+                print(f"konnte den pfad nicht öffnen: {e}")
+
+            if results:
+                print("Das hab ich gefunden:")
+                for file_path in results:
+                    print(file_path)
+                    ganzes_ergebnis = f"Hier nun das gefundene: {results}" 
+                messagebox.showinfo(title="CiM Suche", message=ganzes_ergebnis)
+                self.Suche_thread.cancel()
+            else:
+                print("gab nüscht")
+                dmsg = "Dazu konnte ich leider nichts finden."
+                messagebox.showinfo(title="CiM Suche", message=dmsg)
+                self.Suche_thread.cancel()
+
 
     def Kunde_ruft_an(self):
         chefe_nummer = "00491772446952"
@@ -369,6 +424,9 @@ class Listendings:
                         print("HABS GELADEN:::: ", self.Anruf_Telefonnummer)
                         tmp_ld.close()
                         os.remove("tmp.txt")
+                        self.t_nummer.configure(state="normal")
+                        self.t_nummer.delete(0,tk.END)
+                        self.t_nummer.configure(state="disabled")
                         if self.t_nummer.get() == "":
                             if self.Anruf_Telefonnummer == chefe_nummer: #chefe
                                 self.t_nummer.insert(1,self.Anruf_Telefonnummer)
