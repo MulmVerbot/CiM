@@ -11,7 +11,6 @@ try:
     import csv
     import ctypes
     import json
-    from csv2pdf import convert as c2p_convert
     from threading import Thread
     from http.server import BaseHTTPRequestHandler, HTTPServer
     import urllib.parse
@@ -123,6 +122,7 @@ class Listendings:
         root.resizable(False, False)
         self.Weiterleitung_an = ""
         self.wollte_sprechen = ""
+        self.Starface_Farbe = "#4d4d4d"
         
         
         
@@ -411,6 +411,7 @@ class Listendings:
         ich_nummer = "004915758382618"
         print("Thread gestartet: Kunde_ruft_an (def)")
         while self.Programm_läuft == True:
+            self.t_nummer.configure(state="normal")
             try:
                 if self.kunde_entry.get() == "" or self.kunde_entry.get() == "Kunde":
                     if self.t_nummer.get() != "":
