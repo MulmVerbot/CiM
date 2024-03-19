@@ -174,9 +174,12 @@ class Listendings:
         # Textfelder
 
         self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Kunde")
-        self.t_nummer = tk.CTkEntry(master, width=600, placeholder_text="Telefonnummer", state="disabled")
+        self.t_nummer = tk.CTkEntry(master, width=600, placeholder_text="Telefonnummer")
+        self.t_nummer.configure(state="disabled")
         self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem")
         self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info")
+
+        
         
 
         # "Senden" Knopf
@@ -352,46 +355,104 @@ class Listendings:
             self.Menü_Knopp.configure(text="Menü schließen")
 
     def Kunde_ruft_an(self):
+        chefe_nummer = "00491772446952"
+        christian_nummer = "004915233836862"
+        mike_nummer = "004915229048779"
+        ich_nummer = "004915758382618"
         print("Thread gestartet: Kunde_ruft_an (def)")
         while self.Programm_läuft == True:
             try:
-                with open("tmp.txt", "r") as tmp_ld:
-                    gel_tmp = tmp_ld.read()
-                    self.Anruf_Telefonnummer = gel_tmp
-                    print("HABS GELADEN:::: ", self.Anruf_Telefonnummer)
-                    tmp_ld.close()
-                    os.remove("tmp.txt")
-                    if self.t_nummer.get() == "":
-                        if self.Anruf_Telefonnummer == "00491772446952": #chefe
-                            self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                            chefe = "Holger Beese aka el Chefe"
-                            self.kunde_entry.insert(tk.END,chefe)
-                            self.Anruf_Telefonnummer = None
+                if self.t_nummer.get() != "" and self.kunde_entry.get() == "":
+                    with open("tmp.txt", "r") as tmp_ld:
+                        gel_tmp = tmp_ld.read()
+                        self.Anruf_Telefonnummer = gel_tmp
+                        print("HABS GELADEN:::: ", self.Anruf_Telefonnummer)
+                        tmp_ld.close()
+                        os.remove("tmp.txt")
+                        if self.t_nummer.get() == "":
+                            if self.Anruf_Telefonnummer == chefe_nummer: #chefe
+                                self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                                chefe = "Holger Beese aka el Chefe"
+                                self.t_nummer.configure(state="normal")
+                                self.kunde_entry.insert(tk.END,chefe)
+                                self.t_nummer.configure(state="disabled")
+                                self.Anruf_Telefonnummer = None
 
-                        elif self.Anruf_Telefonnummer == "004915233836862": #Christian
-                            self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                            Christian = "Christian Melges"
-                            self.kunde_entry.insert(tk.END,Christian)
-                            self.Anruf_Telefonnummer = None
+                            elif self.Anruf_Telefonnummer == christian_nummer: #Christian
+                                self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                                Christian = "Christian Melges"
+                                self.t_nummer.configure(state="normal")
+                                self.kunde_entry.insert(tk.END,Christian)
+                                self.t_nummer.configure(state="disabled")
+                                self.Anruf_Telefonnummer = None
 
-                        elif self.Anruf_Telefonnummer == "004915229048779": #Mike
-                            self.t_nummer.insert(tk.END,self.Anruf_Telefonnummer)
-                            Mike = "Mike Bosse"
-                            self.kunde_entry.insert(1,Mike)
-                            self.Anruf_Telefonnummer = None
+                            elif self.Anruf_Telefonnummer == mike_nummer: #Mike
+                                self.t_nummer.insert(tk.END,self.Anruf_Telefonnummer)
+                                Mike = "Mike Bosse"
+                                self.t_nummer.configure(state="normal")
+                                self.kunde_entry.insert(1,Mike)
+                                self.t_nummer.configure(state="disabled")
+                                self.Anruf_Telefonnummer = None
 
-                        elif self.Anruf_Telefonnummer == "004915758382618": #Ich
-                            self.t_nummer.insert(tk.END,self.Anruf_Telefonnummer)
-                            Mike = "Ich"
-                            self.kunde_entry.insert(1,Mike)
-                            self.Anruf_Telefonnummer = None
+                            elif self.Anruf_Telefonnummer == ich_nummer: #Ich
+                                self.t_nummer.insert(tk.END,self.Anruf_Telefonnummer)
+                                ich = "Ich"
+                                self.t_nummer.configure(state="normal")
+                                self.kunde_entry.insert(1,ich)
+                                self.t_nummer.configure(state="disabled")
+                                self.Anruf_Telefonnummer = None
 
-                        elif self.Anruf_Telefonnummer:
-                            self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                            self.Anruf_Telefonnummer = None
+                            elif self.Anruf_Telefonnummer:
+                                self.t_nummer.configure(state="normal")
+                                self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                                self.t_nummer.configure(state="disabled")
+                                self.Anruf_Telefonnummer = None
+                else:
+                    with open("tmp.txt", "r") as tmp_ld:
+                        gel_tmp = tmp_ld.read()
+                        self.Anruf_Telefonnummer = gel_tmp
+                        print("HABS GELADEN:::: ", self.Anruf_Telefonnummer)
+                        tmp_ld.close()
+                        os.remove("tmp.txt")
+                        if self.t_nummer.get() == "":
+                            if self.Anruf_Telefonnummer == chefe_nummer: #chefe
+                                self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                                chefe = "Holger Beese aka el Chefe"
+                                self.t_nummer.configure(state="normal")
+                                self.kunde_entry.insert(tk.END,chefe)
+                                self.t_nummer.configure(state="disabled")
+                                self.Anruf_Telefonnummer = None
 
+                            elif self.Anruf_Telefonnummer == christian_nummer: #Christian
+                                self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                                Christian = "Christian Melges"
+                                self.t_nummer.configure(state="normal")
+                                self.kunde_entry.insert(tk.END,Christian)
+                                self.t_nummer.configure(state="disabled")
+                                self.Anruf_Telefonnummer = None
+
+                            elif self.Anruf_Telefonnummer == mike_nummer: #Mike
+                                self.t_nummer.insert(tk.END,self.Anruf_Telefonnummer)
+                                Mike = "Mike Bosse"
+                                self.t_nummer.configure(state="normal")
+                                self.kunde_entry.insert(1,Mike)
+                                self.t_nummer.configure(state="disabled")
+                                self.Anruf_Telefonnummer = None
+
+                            elif self.Anruf_Telefonnummer == ich_nummer: #Ich
+                                self.t_nummer.insert(tk.END,self.Anruf_Telefonnummer)
+                                ich = "Ich"
+                                self.t_nummer.configure(state="normal")
+                                self.kunde_entry.insert(1,ich)
+                                self.t_nummer.configure(state="disabled")
+                                self.Anruf_Telefonnummer = None
+
+                            elif self.Anruf_Telefonnummer:
+                                self.t_nummer.configure(state="normal")
+                                self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                                self.t_nummer.configure(state="disabled")
+                                self.Anruf_Telefonnummer = None
             except Exception as eld:
-                #print("bsrfp failed,", eld)
                 pass
             time.sleep(1)
         print("Thread beendet: Kunde_ruft_an (def")
@@ -542,10 +603,12 @@ class Listendings:
             self.optionmenu.set("Keine Weiterleitung")
             self.optionmenu1.set("Mit Wem sprechen?")
             return
+        self.t_nummer.configure(state="normal")
         self.t_nummer.delete(0,tk.END)
         self.kunde_entry.delete(0, tk.END)
         self.problem_entry.delete(0, tk.END)
         self.info_entry.delete(0, tk.END)
+        self.t_nummer.configure(state="disabled")
         self.Weiterleitung_an = ""
         self.wollte_sprechen = ""
         self.optionmenu.set("Keine Weiterleitung")
