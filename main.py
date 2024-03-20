@@ -109,13 +109,15 @@ class Listendings:
         self.tag_string = str(time.strftime("%d %m %Y"))
         self.Benutzerordner = os.path.expanduser('~')
         self.Listen_Speicherort_standard = os.path.join(self.Benutzerordner, 'CiM', 'Listen')
+        self.Einstellungen_ordner = os.path.join(self.Benutzerordner, 'CiM', "Einstellungen")
+        self.Starface_Einstellungsdatei = os.path.join(self.Einstellungen_ordner , "Starface_Modul.txt")
+        
         self.Monat = time.strftime("%m")
         self.Thread_Kunderuftan = threading.Timer(2, self.Kunde_ruft_an)
         self.thread_uhr = threading.Timer(1, self.Uhr)
         self.thread_webserver = Listendings.WebServerThread()
         self.thread_uhr.start()
         self.Thread_Kunderuftan.start()
-        self.thread_webserver.start()
         
         self.Hintergrund_farbe = "SlateGrey"
         root.configure(fg_color=self.Hintergrund_farbe)
@@ -140,6 +142,40 @@ class Listendings:
                 print("Fehler beim erstellen der Ordner")
         
         
+        try:
+            if not os.path.exists(self.Einstellungen_ordner):
+                try:
+                    print("Der Einstellungsordner scheint nicht zu existieren. Erstelle ihn nun.")
+                    os.mkdir(self.Einstellungen_ordner)
+                    print("Der Einstellungsornder wurde erfolgreich erstellt.")
+                except Exception as ex_einst:
+                    print("Fehler beim Erstellen des Einstellungsordners. Fehlercode:", ex_einst)
+                    messagebox.showerror(title="CiM Fehler", message=ex_einst)
+                    try:
+                        with open(self.Starface_Einstellungsdatei, "r") as SternGesicht_data:
+                            self.Starface_Modul = SternGesicht_data.read()
+                            if self.Starface_Modul == "1":
+                                print("Starface Modul wird aktiviert.")
+                                self.thread_webserver.start()
+                            else:
+                                print("Das Starface Modul ist nicht aktiviert: self.Starface_Modul == ", self.Starface_Modul)
+                    except Exception as Exp:
+                        print("Konnte die Einstellungsdatei nicht öffnen. Fehlercode: ", Exp)
+                        messagebox.showerror(title="CiM Fehler", message="Konnte die Einstellungsdatei nicht öffnen. Bitte in die Logs schauen.")
+            else:
+                try:
+                    with open(self.Starface_Einstellungsdatei, "r") as SternGesicht_data:
+                        self.Starface_Modul = SternGesicht_data.read()
+                        if self.Starface_Modul == "1":
+                            print("Starface Modul wird aktiviert.")
+                            self.thread_webserver.start()
+                        else:
+                            print("Das Starface Modul ist nicht aktiviert: self.Starface_Modul == ", self.Starface_Modul)
+                except Exception as Exp:
+                    print("Konnte die Einstellungsdatei nicht öffnen. Fehlercode: ", Exp)
+                    messagebox.showerror(title="CiM Fehler", message="Konnte die Einstellungsdatei nicht öffnen. Bitte in die Logs schauen.")
+        except Exception as ex_stern:
+            print("Die Starface Moduleinstelllungen konten nicht überprüft werden.")
 
         try:
             with open("Listendingsspeicherort.json" , "r") as Liste_Speicherort_data:
@@ -304,19 +340,14 @@ class Listendings:
         def auswahl_gedingst_sprechen(choice):
             if choice == "Mit Chefe sprechen":
                 self.wollte_sprechen = "Mit Chefe sprechen"
-
             elif choice == "Mit Christian sprechen":
                 self.wollte_sprechen = "Mit Christian sprechen"
-
             elif choice == "Mit Mike sprechen":
                 self.wollte_sprechen = "Mit Mike sprechen"
-
             elif choice == "Mit Frau Tarnath sprechen":
                 self.wollte_sprechen = "Mit Frau Tarnath sprechen"
-
             elif choice == "Keine Weiterleitung":
                 self.wollte_sprechen = "-"
-
 
         self.optionmenu = tk.CTkOptionMenu(root, values=["An Chefe gegeben", "An Christian gegeben", "An Mike gegeben", "An Frau Tarnath gegeben","Keine Weiterleitung"], command=auswahl_gedingst)
         self.optionmenu.set("Keine Weiterleitung")
@@ -325,13 +356,6 @@ class Listendings:
         self.optionmenu1.set("Mit Wem sprechen?")
         self.optionmenu1.place(x=1260,y=190)
 
-       
-
-        
-
-
-
-
 
 
 
@@ -346,7 +370,7 @@ class Listendings:
         
     
     
-    def Menu_anzeige_wechseln(self):
+    def Menu_anzeige_wechseln(self): ############# Hier kommt der ganze Text für das Menü rein.
         print("Menu_anzeige_wechseln(def)")
         self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche)
         self.Suche_knopp.place(x=200,y=100)
@@ -537,6 +561,7 @@ class Listendings:
                 print("Fehler beim Ausführen der 'Admin_Rechte'-Funktion:", e)
         else:
             print("Administratorrechte wurden nicht angefordert.")
+
     def senden(self, event):
         print("(DEV) senden(def)")
         # Textfeld-Inhalte lesen
@@ -870,24 +895,12 @@ class Listendings:
         Listen_Speicherort_Netzwerk_geladen = self.Listen_Speicherort_Netzwerk_geladen
 
         if self.csv_datei_pfad:
-            # Öffnen der Textdatei zum Lesen
             with open(self.Liste_mit_datum, 'r') as text_datei:
                 daten = text_datei.read()
-
-            # Aufteilen des Texts in Zeilen
             zeilen = daten.strip().split('\n')
-
-            # Initialisieren einer Liste für die Datensätze
             datensaetze = []
-
-            # Initialisieren der Variablen für Kundeninformationen
-            uhrzeit, kunde, problem, info, Telefonnummer, Weiterleitung, wollte_sprechen = "", "", "", "", "", "", ""
-
-            # Durchlaufen der Zeilen und Extrahieren der Informationen
+            uhrzeit, kunde, problem, info, Telefonnummer, wollte_sprechen, Weiterleitung = "", "", "", "", "", "", ""
             for zeile in zeilen:
-                print(zeilen)
-                print("=")
-                print(zeile)
                 if zeile.startswith("Uhrzeit:"):
                     uhrzeit = zeile.replace("Uhrzeit:", "").strip()
                 elif zeile.startswith("Kunde:"):
@@ -898,29 +911,29 @@ class Listendings:
                     info = zeile.replace("Info:", "").strip()
                 elif zeile.startswith("Telefonnummer:"):
                     Telefonnummer = zeile.replace("Telefonnummer:", "").strip()
-                elif zeile.startswith("Weiterleitung an:"):
+                elif zeile.startswith("Jemand bestimmtes sprechen:"):
+                    wollte_sprechen = zeile.replace("Jemand bestimmtes sprechen:", "").strip()
+                elif zeile.startswith("Weiterleitung:"):
                     Weiterleitung = zeile.replace("Weiterleitung:", "").strip()
-                
                     
-                if kunde and problem and info and uhrzeit and Telefonnummer and Weiterleitung and wollte_sprechen:
-                    datensaetze.append([ uhrzeit,kunde, problem, info, Telefonnummer, Weiterleitung,wollte_sprechen])
-                    uhrzeit, kunde, problem, info, Telefonnummer, Weiterleitung, wollte_sprechen  = "", "", "", "", "", "", ""
+                if kunde and problem and info and uhrzeit and Telefonnummer and wollte_sprechen and Weiterleitung:
+                    datensaetze.append([ uhrzeit, kunde, problem, info, Telefonnummer,  wollte_sprechen, Weiterleitung])
+                    uhrzeit, kunde, problem, info, Telefonnummer,  wollte_sprechen, Weiterleitung = "", "", "", "", "", "", ""
 
             if datensaetze:
                 self.tag_string = str(time.strftime("%d %m %Y"))
-            
                 with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
                     schreiber = csv.writer(datei)
-                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer", "Weiterleitung"])
+                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer", "Wollte Sprechen", "Weiterleitung"])
                     schreiber.writerows(datensaetze)
                     self.zeit_string = time.strftime("%H:%M:%S")
                     self.tag_string = str(time.strftime("%d %m %Y"))
-                    #schreiber.writerow(["Ende der Datensätze, Exportiert am " + self.tag_string + "um " + self.zeit_string], "Diese Liste wird jeden Tag neu Angelegt.")
                 print("Daten wurden in die CSV-Datei gespeichert.")
                 messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich gespeichert.")
             else:
                 print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
                 messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
+
 
     def bye(self):
         print("(ENDE) Das Programm wurde Beendet, auf wiedersehen! \^_^/ ")
