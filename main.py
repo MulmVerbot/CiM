@@ -94,7 +94,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.2.4.1"
+        self.Version = "Alpha 1.2.4.2"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -411,124 +411,44 @@ class Listendings:
         ich_nummer = "004915758382618"
         print("Thread gestartet: Kunde_ruft_an (def)")
         while self.Programm_läuft == True:
-            self.t_nummer.configure(state="normal")
             try:
-                if self.kunde_entry.get() == "" or self.kunde_entry.get() == "Kunde":
-                    if self.t_nummer.get() != "":
-                        with open("tmp.txt", "r") as tmp_ld:
-                            gel_tmp = tmp_ld.read()
-                            self.Anruf_Telefonnummer = gel_tmp
-                            print("HABS GELADEN:::: ", self.Anruf_Telefonnummer)
-                            tmp_ld.close()
-                            os.remove("tmp.txt")
-                            self.t_nummer.configure(state="normal")
-                            self.t_nummer.delete(0,tk.END)
-                            
-                            if self.t_nummer.get() == "":
-                                if self.Anruf_Telefonnummer == chefe_nummer: #chefe
-                                    self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                                    chefe = "Holger Beese aka el Chefe"
-                                    self.kunde_entry.insert(tk.END,chefe)
-                                    self.Anruf_Telefonnummer = None
+                with open("tmp.txt", "r") as tmp_ld:
+                    gel_tmp = tmp_ld.read()
+                    self.Anruf_Telefonnummer = gel_tmp
+                    print("HABS GELADEN:::: ", self.Anruf_Telefonnummer)
+                    tmp_ld.close()
+                    os.remove("tmp.txt")
+                    self.t_nummer.configure(state="normal")
+                    self.t_nummer.delete(0,tk.END)
+                    
+                    if self.Anruf_Telefonnummer == chefe_nummer: #chefe
+                        self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                        chefe = "Holger Beese aka el Chefe"
+                        self.kunde_entry.insert(tk.END,chefe)
+                        self.Anruf_Telefonnummer = None
 
-                                elif self.Anruf_Telefonnummer == christian_nummer: #Christian
-                                    self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                                    Christian = "Christian Melges"
-                                    self.kunde_entry.insert(tk.END,Christian)
-                                    self.Anruf_Telefonnummer = None
+                    elif self.Anruf_Telefonnummer == christian_nummer: #Christian
+                        self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                        Christian = "Christian Melges"
+                        self.kunde_entry.insert(tk.END,Christian)
+                        self.Anruf_Telefonnummer = None
 
-                                elif self.Anruf_Telefonnummer == mike_nummer: #Mike
-                                    self.t_nummer.insert(tk.END,self.Anruf_Telefonnummer)
-                                    Mike = "Mike Bosse"
-                                    self.kunde_entry.insert(1,Mike)
-                                    self.Anruf_Telefonnummer = None
+                    elif self.Anruf_Telefonnummer == mike_nummer: #Mike
+                        self.t_nummer.insert(tk.END,self.Anruf_Telefonnummer)
+                        Mike = "Mike Bosse"
+                        self.kunde_entry.insert(1,Mike)
+                        self.Anruf_Telefonnummer = None
 
-                                elif self.Anruf_Telefonnummer == ich_nummer: #Ich
-                                    self.t_nummer.insert(tk.END,self.Anruf_Telefonnummer)
-                                    ich = "Ich"
-                                    self.kunde_entry.insert(1,ich)
-                                    self.Anruf_Telefonnummer = None
+                    elif self.Anruf_Telefonnummer == ich_nummer: #Ich
+                        self.t_nummer.insert(tk.END,self.Anruf_Telefonnummer)
+                        ich = "Ich"
+                        self.kunde_entry.insert(1,ich)
+                        self.Anruf_Telefonnummer = None
 
-                                elif self.Anruf_Telefonnummer:
-                                    self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                                    self.Anruf_Telefonnummer = None
-                                self.t_nummer.configure(state="disabled")
-                    else:
-                        with open("tmp.txt", "r") as tmp_ld:
-                            gel_tmp = tmp_ld.read()
-                            self.Anruf_Telefonnummer = gel_tmp
-                            print("HABS GELADEN:::: ", self.Anruf_Telefonnummer)
-                            tmp_ld.close()
-                            os.remove("tmp.txt")
-                            self.t_nummer.configure(state="normal")
-                            self.t_nummer.delete(0,tk.END)
-                            self.t_nummer.configure(state="disabled")
-                            if self.t_nummer.get() == "":
-                                if self.Anruf_Telefonnummer == chefe_nummer: #chefe
-                                    self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                                    chefe = "Holger Beese aka el Chefe"
-                                    self.kunde_entry.insert(tk.END,chefe)
-                                    self.Anruf_Telefonnummer = None
-
-                                elif self.Anruf_Telefonnummer == christian_nummer: #Christian
-                                    self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                                    Christian = "Christian Melges"
-                                    self.kunde_entry.insert(tk.END,Christian)
-                                    self.Anruf_Telefonnummer = None
-
-                                elif self.Anruf_Telefonnummer == mike_nummer: #Mike
-                                    self.t_nummer.insert(tk.END,self.Anruf_Telefonnummer)
-                                    Mike = "Mike Bosse"
-                                    self.kunde_entry.insert(1,Mike)
-                                    self.Anruf_Telefonnummer = None
-
-                                elif self.Anruf_Telefonnummer == ich_nummer: #Ich
-                                    self.t_nummer.insert(tk.END,self.Anruf_Telefonnummer)
-                                    ich = "Ich"
-                                    self.kunde_entry.insert(1,ich)
-                                    self.Anruf_Telefonnummer = None
-
-                                elif self.Anruf_Telefonnummer:
-                                    self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                                    self.Anruf_Telefonnummer = None
-                                self.t_nummer.configure(state="disabled")
-                
-                else:
-                    with open("tmp.txt", "r") as tmp_ld:
-                        gel_tmp = tmp_ld.read()
-                        self.Anruf_Telefonnummer = gel_tmp
-                        print("HABS GELADEN:::: ", self.Anruf_Telefonnummer)
-                        tmp_ld.close()
-                        os.remove("tmp.txt")
-                        if self.t_nummer.get() == "":
-                                if self.Anruf_Telefonnummer == chefe_nummer: #chefe
-                                    self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                                    chefe = "Holger Beese aka el Chefe"
-                                    self.kunde_entry.insert(tk.END,chefe)
-                                    self.Anruf_Telefonnummer = None
-
-                                elif self.Anruf_Telefonnummer == christian_nummer: #Christian
-                                    self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                                    Christian = "Christian Melges"
-                                    self.kunde_entry.insert(tk.END,Christian)
-                                    self.Anruf_Telefonnummer = None
-
-                                elif self.Anruf_Telefonnummer == mike_nummer: #Mike
-                                    self.t_nummer.insert(tk.END,self.Anruf_Telefonnummer)
-                                    Mike = "Mike Bosse"
-                                    self.kunde_entry.insert(1,Mike)
-                                    self.Anruf_Telefonnummer = None
-
-                                elif self.Anruf_Telefonnummer == ich_nummer: #Ich
-                                    self.t_nummer.insert(tk.END,self.Anruf_Telefonnummer)
-                                    ich = "Ich"
-                                    self.kunde_entry.insert(1,ich)
-                                    self.Anruf_Telefonnummer = None
-
-                                elif self.Anruf_Telefonnummer:
-                                    self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                                    self.Anruf_Telefonnummer = None
-                                self.t_nummer.configure(state="disabled")
+                    elif self.Anruf_Telefonnummer:
+                        self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                        self.Anruf_Telefonnummer = None
+                    self.t_nummer.configure(state="disabled")    
             except Exception as eld:
                 pass
             time.sleep(1)
@@ -647,7 +567,7 @@ class Listendings:
             # Inhalte in Textdatei speichern
             if os.path.exists(self.Liste_mit_datum):
                 with open(self.Liste_mit_datum, "a") as f:
-                    f.write(f"Uhrzeit: {self.zeit_string}\n----------\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\n----------\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n==================================\n\n")
+                    f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
                 with open(self.Liste_mit_datum, "r") as f:
                     feedback_text = f.read()
                     self.ausgabe_text.delete("1.0", tk.END)
@@ -660,7 +580,7 @@ class Listendings:
             else:
                 print("(INFO) Liste zum beschreiben existiert bereits.")
                 with open(self.Liste_mit_datum, "w+") as f:
-                    f.write(f"Uhrzeit: {self.zeit_string}\n----------\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\n----------\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n==================================\n\n")
+                    f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
                     # Ausgabe-Textfeld aktualisieren
                 with open(self.Liste_mit_datum, "r") as f:
                     feedback_text = f.read()
@@ -810,24 +730,12 @@ class Listendings:
         self.csv_datei_pfad = filedialog.askdirectory()
 
         if self.csv_datei_pfad:
-            # Öffnen der Textdatei zum Lesen
             with open(self.Liste_mit_datum, 'r') as text_datei:
                 daten = text_datei.read()
-
-            # Aufteilen des Texts in Zeilen
             zeilen = daten.strip().split('\n')
-
-            # Initialisieren einer Liste für die Datensätze
             datensaetze = []
-
-            # Initialisieren der Variablen für Kundeninformationen
-            uhrzeit, kunde, problem, info, Telefonnummer, wollte_sprechen, Weiterleitung  = "", "", "", "", "", "", ""
-
-            # Durchlaufen der Zeilen und Extrahieren der Informationen
+            uhrzeit, kunde, problem, info, Telefonnummer, wollte_sprechen, Weiterleitung = "", "", "", "", "", "", ""
             for zeile in zeilen:
-                print(zeilen)
-                print("=")
-                print(zeile)
                 if zeile.startswith("Uhrzeit:"):
                     uhrzeit = zeile.replace("Uhrzeit:", "").strip()
                 elif zeile.startswith("Kunde:"):
@@ -838,26 +746,23 @@ class Listendings:
                     info = zeile.replace("Info:", "").strip()
                 elif zeile.startswith("Telefonnummer:"):
                     Telefonnummer = zeile.replace("Telefonnummer:", "").strip()
-                elif zeile.startswith("Weiterleitung an:"):
+                elif zeile.startswith("Jemand bestimmtes sprechen:"):
                     wollte_sprechen = zeile.replace("Jemand bestimmtes sprechen:", "").strip()
-                elif zeile.startswith("Weiterleitung an:"):
+                elif zeile.startswith("Weiterleitung:"):
                     Weiterleitung = zeile.replace("Weiterleitung:", "").strip()
-                
                     
                 if kunde and problem and info and uhrzeit and Telefonnummer and wollte_sprechen and Weiterleitung:
-                    datensaetze.append([ uhrzeit,kunde, problem, info, Telefonnummer, wollte_sprechen, Weiterleitung])
-                    uhrzeit, kunde, problem, info, Telefonnummer, wollte_sprechen, Weiterleitung  = "", "", "", "", "", "", ""
+                    datensaetze.append([ uhrzeit, kunde, problem, info, Telefonnummer,  wollte_sprechen, Weiterleitung])
+                    uhrzeit, kunde, problem, info, Telefonnummer,  wollte_sprechen, Weiterleitung = "", "", "", "", "", "", ""
 
             if datensaetze:
                 self.tag_string = str(time.strftime("%d %m %Y"))
-            
                 with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
                     schreiber = csv.writer(datei)
-                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer", "Weiterleitung", "Wollte Sprechen"])
+                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer", "Wollte Sprechen", "Weiterleitung"])
                     schreiber.writerows(datensaetze)
                     self.zeit_string = time.strftime("%H:%M:%S")
                     self.tag_string = str(time.strftime("%d %m %Y"))
-                    #schreiber.writerow(["Ende der Datensätze, Exportiert am " + self.tag_string + "um " + self.zeit_string], "Diese Liste wird jeden Tag neu Angelegt.")
                 print("Daten wurden in die CSV-Datei gespeichert.")
                 messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich gespeichert.")
             else:
@@ -869,24 +774,12 @@ class Listendings:
         self.csv_datei_pfad = self.Listen_Speicherort_geladen
 
         if self.csv_datei_pfad:
-            # Öffnen der Textdatei zum Lesen
             with open(self.Liste_mit_datum, 'r') as text_datei:
                 daten = text_datei.read()
-
-            # Aufteilen des Texts in Zeilen
             zeilen = daten.strip().split('\n')
-
-            # Initialisieren einer Liste für die Datensätze
             datensaetze = []
-
-            # Initialisieren der Variablen für Kundeninformationen
-            uhrzeit, kunde, problem, info, Telefonnummer, Weiterleitung, wollte_sprechen = "", "", "", "", "", "", ""
-
-            # Durchlaufen der Zeilen und Extrahieren der Informationen
+            uhrzeit, kunde, problem, info, Telefonnummer, wollte_sprechen, Weiterleitung = "", "", "", "", "", "", ""
             for zeile in zeilen:
-                print(zeilen)
-                print("=")
-                print(zeile)
                 if zeile.startswith("Uhrzeit:"):
                     uhrzeit = zeile.replace("Uhrzeit:", "").strip()
                 elif zeile.startswith("Kunde:"):
@@ -897,24 +790,23 @@ class Listendings:
                     info = zeile.replace("Info:", "").strip()
                 elif zeile.startswith("Telefonnummer:"):
                     Telefonnummer = zeile.replace("Telefonnummer:", "").strip()
-                elif zeile.startswith("Weiterleitung an:"):
+                elif zeile.startswith("Jemand bestimmtes sprechen:"):
+                    wollte_sprechen = zeile.replace("Jemand bestimmtes sprechen:", "").strip()
+                elif zeile.startswith("Weiterleitung:"):
                     Weiterleitung = zeile.replace("Weiterleitung:", "").strip()
-                
                     
-                if kunde and problem and info and uhrzeit and Telefonnummer and Weiterleitung and wollte_sprechen:
-                    datensaetze.append([ uhrzeit,kunde, problem, info, Telefonnummer, Weiterleitung,wollte_sprechen])
-                    uhrzeit, kunde, problem, info, Telefonnummer, Weiterleitung, wollte_sprechen  = "", "", "", "", "", "", ""
+                if kunde and problem and info and uhrzeit and Telefonnummer and wollte_sprechen and Weiterleitung:
+                    datensaetze.append([ uhrzeit, kunde, problem, info, Telefonnummer,  wollte_sprechen, Weiterleitung])
+                    uhrzeit, kunde, problem, info, Telefonnummer,  wollte_sprechen, Weiterleitung = "", "", "", "", "", "", ""
 
             if datensaetze:
                 self.tag_string = str(time.strftime("%d %m %Y"))
-            
                 with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
                     schreiber = csv.writer(datei)
-                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer", "Weiterleitung"])
+                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer", "Wollte Sprechen", "Weiterleitung"])
                     schreiber.writerows(datensaetze)
                     self.zeit_string = time.strftime("%H:%M:%S")
                     self.tag_string = str(time.strftime("%d %m %Y"))
-                    #schreiber.writerow(["Ende der Datensätze, Exportiert am " + self.tag_string + "um " + self.zeit_string], "Diese Liste wird jeden Tag neu Angelegt.")
                 print("Daten wurden in die CSV-Datei gespeichert.")
                 messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich gespeichert.")
             else:
