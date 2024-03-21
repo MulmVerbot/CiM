@@ -52,14 +52,17 @@ class Listendings:
             httpd = HTTPServer(server_address, Listendings.RequestHandler)
             try:
                 while Listendings.Programm_läuft == True:
-                    print(f'Ich horche mal auf Port {port}...')  
+                    print(f'Ich horche mal auf Port {port}...')
+                    httpd.shutdown()  
                     httpd.handle_request()
                     if Listendings.Programm_läuft == False:
+                        httpd.shutdown()
                         httpd.server_close()
                         print(f'Server auf Port {port} gestoppt.')
                         sys.exit()
             except KeyboardInterrupt:
                 httpd.server_close()
+                httpd.shutdown()
                 print(f'Server auf Port {port} gestoppt.')
 
     class Logger(object):
@@ -118,6 +121,9 @@ class Listendings:
         self.Uhrzeit_anruf_start = None
         self.Pause = True
         self.Menü_da = False
+        self.Starface_Modul = "0"
+        self.Auto_speichern_Einstellung = "0"
+        self.Autospeichern_tkvar = "0"
         self.tag_string = str(time.strftime("%d %m %Y"))
         self.Benutzerordner = os.path.expanduser('~')
         self.Listen_Speicherort_standard = os.path.join(self.Benutzerordner, 'CiM', 'Listen')
@@ -125,6 +131,7 @@ class Listendings:
         self.Starface_Einstellungsdatei = os.path.join(self.Einstellungen_ordner , "Starface_Modul.txt")
         self.Listen_Speicherort_Einstellungsdatei = os.path.join(self.Einstellungen_ordner, "Listendingsspeicherort.json")
         self.Listen_Speicherort_Netzwerk_Einstellungsdatei = os.path.join(self.Einstellungen_ordner, "Listendingsspeicherort_Netzwerk.json")
+        self.Auto_speichern_Einstellungsdatei = os.path.join(self.Einstellungen_ordner, "Auto_speichern.txt")
         
         self.Monat = time.strftime("%m")
         self.Thread_Kunderuftan = threading.Timer(2, self.Kunde_ruft_an)
@@ -139,6 +146,8 @@ class Listendings:
         self.Weiterleitung_an = ""
         self.wollte_sprechen = ""
         self.Starface_Farbe = "#4d4d4d"
+
+        
         
         
         
@@ -154,6 +163,21 @@ class Listendings:
                 print("Ordner ", {self.Monat_ordner_pfad}, "Erfolgreich erstellt.")
             except:
                 print("Fehler beim erstellen der Ordner")
+
+        try:
+            with open(self.Auto_speichern_Einstellungsdatei, "r") as einst_gel_autsp:
+                self.Auto_speichern_Einstellungsdatei_var = einst_gel_autsp.read()
+                print("Einstellunsgdatei zum Autospeichern geladen. Wert = ", self.Auto_speichern_Einstellungsdatei)
+                if self.Auto_speichern_Einstellungsdatei_var == "1":
+                    print("Die Autospeichern Var welche aus den Einstellungen zum Programmstart geladen wurde ist: ", self.Auto_speichern_Einstellungsdatei_var)
+                else:
+                    print("Die Autospeichern Var welche aus den Einstellungen zum Programmstart geladen wurde ist: ", self.Auto_speichern_Einstellungsdatei_var)
+                    self.Auto_speichern_Einstellungsdatei_var = "0"
+        except Exception as autpsp_err:
+            messagebox.showerror(title="CiM Fehler", message="Konnte die Datei zum Autospeichern nicht finden, vielleicht gibt es sie auch einfach nicht.")
+            print("Fehler beim Laden des Autospeicherns. Funktion wurde deaktiviert. self.Auto_speichern_Einstellungsdatei = 0. Fehlercode: ", autpsp_err)
+            self.Auto_speichern_Einstellungsdatei_var = "0"
+                
         
         
         try:
@@ -269,26 +293,21 @@ class Listendings:
         self.menudings = Menu(self.menu, tearoff=0)
         self.Einstellungen = Menu(self.menu, tearoff=0)
         self.Speichern_Menu = Menu(self.menu, tearoff=0)
-        #self.test_Menu = Menu(self.menu, tearoff=0)
         self.Bearbeiten_Menu = Menu(self.menu, tearoff=0)
         self.Suchen_Menu = Menu(self.menu, tearoff=0)
         self.Menü = Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label=self.Programm_Name + self.Version, menu=self.menudings)
-        #self.menu.add_cascade(label="Menü", menu=self.Menü)
         self.menu.add_cascade(label="Einstellungen", menu=self.Einstellungen)
         self.menu.add_cascade(label="Bearbeiten", menu=self.Bearbeiten_Menu)
         self.menu.add_cascade(label="Speichern", menu=self.Speichern_Menu)
-        #self.menu.add_cascade(label="Test", menu=self.test_Menu)
         self.menu.add_cascade(label="Suchen", menu=self.Suchen_Menu)
         self.menudings.add_command(label="Info", command=self.info)
         self.menudings.add_command(label="Admin rechte aktivieren", command=self.Admin_rechte)
         self.Einstellungen.add_command(label="Speicherort des ListenDings ändern...", command=self.ListenDings_speicherort_ändern)
         self.Speichern_Menu.add_command(label="als CSV Speichern", command=self.als_csv_speichern_eigener_ort)
-        self.Speichern_Menu.add_command(label="Speichern als...", command=self.als_csv_speichern)
-        self.Speichern_Menu.add_command(label="auf dem Netzlaufwerk als CSV Speichern", command=self.Netzlaufwerk_speichern)
-        self.Einstellungen.add_command(label="Netzlaufwerk einstellen", command=self.ListenDings_speicherort_Netzwerk_ändern)
-        self.Einstellungen.add_command(label="Auto Speichern ändern (Beim schließen) (Kaputt)", command=self.Auto_sp_ändern)
-        #self.test_Menu.add_command(label="Pause", command=self.pause)
+        self.Speichern_Menu.add_command(label="als CSV Speichern unter...", command=self.als_csv_speichern)
+        self.Speichern_Menu.add_command(label="als CSV Speichern auf Netzlaufwerk", command=self.Netzlaufwerk_speichern)
+        self.Einstellungen.add_command(label="Netzlaufwerk einstellen...", command=self.ListenDings_speicherort_Netzwerk_ändern)
         self.Bearbeiten_Menu.add_command(label="Bearbeiten Umschalten", command=self.beb_c)
         self.Bearbeiten_Menu.add_command(label="Alle Einträge löschen", command=self.alles_löschen)
         self.Suchen_Menu.add_command(label="Nach alten Eintrag suchen", command=self.Suche)
@@ -332,11 +351,13 @@ class Listendings:
         self.Menü_Knopp = tk.CTkButton(master, text="Menü Anzeigen", command=self.Menu_anzeige_wechseln, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         self.Menü_Knopp.place(x=1260, y=160)
 
-
-        self.Pause_menu = tk.CTkFrame(master, width=420, height=300, fg_color="gray42", border_color="White", border_width=10)
-        #self.Pause_menu.place(x=300,y=10)
+        
+        self.Pause_menu = tk.CTkFrame(master, width=420, height=300, fg_color="Grey32", border_color="Black", border_width=5)
+        self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche)
+        self.Starface_Modul_Einstellung_Knopp = tk.CTkButton(self.Pause_menu, text="Starface Modul umschalten", command=self.Starface_Modul_umschalten)
+        self.Auto_speichern_ändern_knopp = tk.CTkButton(self.Pause_menu, text="Auto Speichern umschalten", command=self.autospeichern_ä_c)
         self.Zhe_Clock = tk.CTkLabel(self.Pause_menu, text=self.Zeit)
-        self.Zhe_Clock.place(x=0,y=0)
+        self.Zhe_Clock.place(x=10,y=10)
 
         def auswahl_gedingst(choice):
             if choice == "An Chefe gegeben":
@@ -362,12 +383,18 @@ class Listendings:
             elif choice == "Keine Weiterleitung":
                 self.wollte_sprechen = "-"
 
-        self.optionmenu = tk.CTkOptionMenu(root, values=["An Chefe gegeben", "An Christian gegeben", "An Mike gegeben", "An Frau Tarnath gegeben","Keine Weiterleitung"], command=auswahl_gedingst)
+        self.optionmenu = tk.CTkOptionMenu(root, values=["An Chefe gegeben", "An Christian gegeben", "An Mike gegeben", "An Frau Tarnath gegeben","Keine Weiterleitung"], command=auswahl_gedingst, fg_color="White", text_color="Black", dropdown_hover_color="pink")
         self.optionmenu.set("Keine Weiterleitung")
         self.optionmenu.place(x=1260,y=220)
-        self.optionmenu1 = tk.CTkOptionMenu(root, values=["Mit Chefe sprechen", "Mit Christian sprechen", "Mit Mike sprechen", "Mit Frau Tarnath sprechen","Keine Anfrage"], command=auswahl_gedingst_sprechen)
+        self.optionmenu1 = tk.CTkOptionMenu(root, values=["Mit Chefe sprechen", "Mit Christian sprechen", "Mit Mike sprechen", "Mit Frau Tarnath sprechen","Keine Anfrage"], command=auswahl_gedingst_sprechen, fg_color="White", text_color="Black", dropdown_hover_color="pink")
         self.optionmenu1.set("Mit Wem sprechen?")
         self.optionmenu1.place(x=1260,y=190)
+
+        
+
+
+
+    
 
 
 
@@ -424,6 +451,7 @@ class Listendings:
                 try:
                     with open(self.Starface_Einstellungsdatei, "w+") as SternGesicht_data_neu:
                         SternGesicht_data_neu.write("1")
+                        self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist aktiviert", fg_color="aquamarine", text_color="Black")
                     messagebox.showinfo(title="CiM Einstellungen", message="Das Starface Modul wird nun nach dem Neustart des Programms aktiviert.")
                 except Exception as Ex_schr_stern:
                     print(Ex_schr_stern)
@@ -431,33 +459,72 @@ class Listendings:
         except Exception as ex_stern:
             print("Die Starface Moduleinstelllungen konten nicht überprüft werden. Fehlercode: ", ex_stern)
 
+    def autospeichern_ä_c(self):
+        print("autospeichern_ä_c")
+        if self.Auto_speichern_Einstellungsdatei_var == "1":
+            try:
+                with open(self.Auto_speichern_Einstellungsdatei, "w+") as schr_asp:
+                    schr_asp.write("0")
+                    self.Auto_speichern_ändern_knopp.configure(text="Autospeichern deaktiviert",fg_color="chocolate1", text_color="White")
+                    self.Auto_speichern_Einstellungsdatei_var = "0"
+            except Exception as o:
+                print("Es ist ein fehler aufgetreten: ",o)
+        else:
+            print("autospeicher = aus oder was anderes")
+            try:
+                with open(self.Auto_speichern_Einstellungsdatei, "w+") as schr_asp:
+                    schr_asp.write("1")
+                    self.Auto_speichern_ändern_knopp.configure(text="Autospeichern aktiviert", fg_color="aquamarine", text_color="Black")
+                    self.Auto_speichern_Einstellungsdatei_var = "1"
+            except Exception as o1:
+                print("Es ist ein fehler aufgetreten: ",o1)
+                    
+
         
     
     
     def Menu_anzeige_wechseln(self): ############# Hier kommt der ganze Text für das Menü rein.
         print("Menu_anzeige_wechseln(def)")
-        self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche)
-        self.Suche_knopp.place(x=200,y=100)
-        self.Starface_Modul_Einstellung_Knopp = tk.CTkButton(self.Pause_menu, text="Starface Modul umschalten", command=self.Starface_Modul_umschalten)
-        self.Starface_Modul_Einstellung_Knopp.place(x=10,y=50)
+        
+        
+        
+
         if self.Starface_Modul == "1":
             self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist aktiviert", fg_color="aquamarine", text_color="Black")
         else:
             self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist deaktiviert", fg_color="chocolate1", text_color="White")
+
+        if self.Auto_speichern_Einstellungsdatei_var == "1":
+            self.Auto_speichern_ändern_knopp.configure(text="Autospeichern aktiviert",fg_color="aquamarine", text_color="Black")
+        else:
+            self.Auto_speichern_ändern_knopp.configure(text="Autospeichern deaktiviert", fg_color="chocolate1", text_color="White")
+
+       
         if self.Menü_da == True:
+            print("menü == true")
+            self.Suche_knopp.place_forget()
+            self.Starface_Modul_Einstellung_Knopp.place_forget()
+            self.Auto_speichern_ändern_knopp.place_forget()
             self.Pause_menu.place_forget()
             self.Menü_da = False
             self.Menü_Knopp.configure(text="Menü Anzeigen")
         elif self.Menü_da == False:
+            print("menü == false")
             self.Pause_menu.place(x=300,y=10)
             self.Menü_da = True
             self.Menü_Knopp.configure(text="Menü schließen")
+            self.Suche_knopp.place(x=10,y=110)
+            self.Starface_Modul_Einstellung_Knopp.place(x=10,y=50)
+            self.Auto_speichern_ändern_knopp.place(x=10,y=80)
+
+    
+        
         
 
     def Suche(self):
         print("Suchen(def)")
         Suche_suche = ""
-        such_dialog = tk.CTkInputDialog(text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht.", title="CiM Suche")
+        such_dialog = tk.CTkInputDialog(text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht. (Groß-und Kleinschreibung beachten)", title="CiM Suche")
         Suche_suche = such_dialog.get_input()
         if Suche_suche:
             def read_text_file(file_path):
@@ -558,37 +625,14 @@ class Listendings:
     def Auto_sp_ändern(self):
         print("auto_speichern(def)")
         try:
-            with open("auto_speichern.txt", "r") as r_gel:
+            with open(self.Auto_speichern_Einstellungsdatei, "w+") as r_gel:
                 self.aSp_var = r_gel.read()
-            if self.aSp_var == "Ja":
-                self.aSp_var = "Nein"
-                with open("auto_speichern.txt", "wb+") as nsp:
-                    nsp.write(self.aSp_var)
-                    nsp.close()
-                    messagebox.showinfo(title="CiM Info", message="Das automatische Speichern wurde deaktiviert.")
-            elif self.aSp_var == "Nein":
-                self.aSp_var = "Ja"
-                with open("auto_speichern.txt", "wb+") as nsp:
-                    nsp.write(self.aSp_var)
-                    nsp.close()
-                    messagebox.showinfo(title="CiM Info", message="Das automatische Speichern wurde aktiviert.")
-            else:
-                self.aSp_var = "Nein"
-                messagebox.showerror(title="CiM", message="Herzlichen Glückwunsch! Du hast das ganze Speicher Dings Kaputt gemacht! Das Automatische speichern wurde deaktiviert. Versuche nun nochmal, diese Funktion zu nutzen.")
-                with open("auto_speichern.txt", "wb+") as nsp:
-                    nsp.write(self.aSp_var)
-                    nsp.close()
-                    messagebox.showinfo(title="CiM Info", message="Das automatische Speichern wurde aktiviert.")
-        except FileNotFoundError:
-            print("Die Datei gabs nicht.")
-            self.aSp_var = "Nein"
-            with open("auto_speichern.txt", "wb+") as nsp:
-                    nsp.write(self.aSp_var)
-                    nsp.close()
-                    messagebox.showinfo(title="CiM Info", message="Das automatische Speichern wurde aktiviert.")
-        except Exception as E:
-            Esxi = "Es ist irgendwas Kaputt gegangen, keine Ahnung was. Viel Spaß: ", E
-            messagebox.showerror(title="CiM Fehler", message=Esxi)
+                if self.aSp_var == "Ja":
+                    r_gel.write("0")
+                else:
+                    r_gel.write("1")
+        except Exception as esx:
+            print("auto_sp ist abgekackt. Fehlercode: " , esx)
 
             
 
@@ -1023,7 +1067,7 @@ class Listendings:
         tag_string = str(time.strftime("%d %m %Y"))
         print(zeit_string , tag_string)
         try:
-            with open("Listendingsspeicherort_Netzwerk.json" , "r") as Liste_Speicherort_Netzwerk_data:
+            with open(self.Listen_Speicherort_Netzwerk_Einstellungsdatei , "r") as Liste_Speicherort_Netzwerk_data:
                 Listen_Speicherort_Netzwerk = json.load(Liste_Speicherort_Netzwerk_data)
                 Listen_Speicherort_Netzwerk_geladen = (Listen_Speicherort_Netzwerk["ListenDings_Speicherort_Netzwerk"])
         except PermissionError:
@@ -1035,7 +1079,7 @@ class Listendings:
         try:
             try:
                 auto_speichern = "Ja"
-                with open("auto_speichern.txt", "r") as aSp:
+                with open(self.Auto_speichern_Einstellungsdatei, "r") as aSp:
                     dings_aSp = aSp.read()
                     auto_speichern = dings_aSp
             except:
@@ -1043,24 +1087,13 @@ class Listendings:
 
             if auto_speichern == "Ja":
                 csv_datei_pfad_Netzwerk = Listen_Speicherort_Netzwerk_geladen
-                if csv_datei_pfad_Netzwerk:
-                    # Öffnen der Textdatei zum Lesen
-                    with open("liste.txt", 'r') as text_datei:
+                if self.csv_datei_pfad:
+                    with open(self.Liste_mit_datum, 'r') as text_datei:
                         daten = text_datei.read()
-
                     zeilen = daten.strip().split('\n')
-
-                    # Initialisieren einer Liste für die Datensätze
                     datensaetze = []
-
-                    # Initialisieren der Variablen für Kundeninformationen
-                    uhrzeit, kunde, problem, info = "", "", "", "", ""
-
-                    # Durchlaufen der Zeilen und Extrahieren der Informationen
+                    uhrzeit, kunde, problem, info, Telefonnummer, wollte_sprechen, Weiterleitung = "", "", "", "", "", "", ""
                     for zeile in zeilen:
-                        print(zeilen)
-                        print("=")
-                        print(zeile)
                         if zeile.startswith("Uhrzeit:"):
                             uhrzeit = zeile.replace("Uhrzeit:", "").strip()
                         elif zeile.startswith("Kunde:"):
@@ -1069,24 +1102,27 @@ class Listendings:
                             problem = zeile.replace("Problem:", "").strip()
                         elif zeile.startswith("Info:"):
                             info = zeile.replace("Info:", "").strip()
-                        
+                        elif zeile.startswith("Telefonnummer:"):
+                            Telefonnummer = zeile.replace("Telefonnummer:", "").strip()
+                        elif zeile.startswith("Jemand bestimmtes sprechen:"):
+                            wollte_sprechen = zeile.replace("Jemand bestimmtes sprechen:", "").strip()
+                        elif zeile.startswith("Weiterleitung:"):
+                            Weiterleitung = zeile.replace("Weiterleitung:", "").strip()
                             
-                        if kunde and problem and info and uhrzeit:
-                            datensaetze.append([ uhrzeit,kunde, problem, info])
-                            uhrzeit, kunde, problem, info  = "", "", "", ""
+                        if kunde and problem and info and uhrzeit and Telefonnummer and wollte_sprechen and Weiterleitung:
+                            datensaetze.append([ uhrzeit, kunde, problem, info, Telefonnummer,  wollte_sprechen, Weiterleitung])
+                            uhrzeit, kunde, problem, info, Telefonnummer,  wollte_sprechen, Weiterleitung = "", "", "", "", "", "", ""
 
                     if datensaetze:
-                        tag_string = str(time.strftime("%d %m %Y"))
-                        # Schreiben der Daten in die CSV-Datei
-                        with open(csv_datei_pfad_Netzwerk + "/AnruferlistenDings" + tag_string + ".csv" , 'w', newline='') as datei:
+                        self.tag_string = str(time.strftime("%d %m %Y"))
+                        with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
                             schreiber = csv.writer(datei)
-                            schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info"])
+                            schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer", "Wollte Sprechen", "Weiterleitung"])
                             schreiber.writerows(datensaetze)
-                            zeit_string = time.strftime("%H:%M:%S")
-                            tag_string = str(time.strftime("%d %m %Y"))
-                            #schreiber.writerow(["Ende der Datensätze, Exportiert am " + self.tag_string + "um " + self.zeit_string], "Diese Liste wird jeden Tag neu Angelegt.")
+                            self.zeit_string = time.strftime("%H:%M:%S")
+                            self.tag_string = str(time.strftime("%d %m %Y"))
                         print("Daten wurden in die CSV-Datei gespeichert.")
-                        messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich auf dem Netzlaufwerk gespeichert.")
+                        messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich gespeichert.")
                     else:
                         print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
                         messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
