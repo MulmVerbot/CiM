@@ -66,14 +66,25 @@ class Listendings:
         def __init__(self): #eine init welche nur das "unwichtige" vorgeplänkel macht (Logs und so)
             self.tag_und_zeit_string = time.strftime("%m/%d/%Y, %H:%M:%S")
             self.tag_string = str(time.strftime("%d %m %Y"))
+            self.Benutzerordner = os.path.expanduser('~')
+            self.Logs_Speicherort_ordner = os.path.join(self.Benutzerordner, 'CiM', 'Logs')
+            Logname = self.tag_string + ".log"
+            self.Logs_Speicherort_Datei = os.path.join(self.Logs_Speicherort_ordner, Logname)
             print("[-INFO-] ", self.tag_und_zeit_string)
+            if not os.path.exists(self.Logs_Speicherort_ordner):
+                try:
+                    os.mkdir(self.Logs_Speicherort_ordner)
+                    print(f"Konnte den Ordner {self.Logs_Speicherort_ordner} erstellen.")
+                except:
+                    print(f"Konnte den Ordner {self.Logs_Speicherort_ordner} nicht erstellen.")
+            
             try:
-                log_pfad = ("CiM Logs/" + self.tag_string + ".log")
+                log_pfad = (self.Logs_Speicherort_Datei)
                 self.terminal = sys.stdout
                 self.log = open(log_pfad, "w")
             except:
                 try:
-                    log_pfad = ("CiM Logs/" + self.tag_string + ".log")
+                    log_pfad = (self.Logs_Speicherort_Datei)
                     self.terminal = sys.stdout
                     self.log = open(log_pfad, "w+")
                 except:
@@ -112,6 +123,8 @@ class Listendings:
         self.Listen_Speicherort_standard = os.path.join(self.Benutzerordner, 'CiM', 'Listen')
         self.Einstellungen_ordner = os.path.join(self.Benutzerordner, 'CiM', "Einstellungen")
         self.Starface_Einstellungsdatei = os.path.join(self.Einstellungen_ordner , "Starface_Modul.txt")
+        self.Listen_Speicherort_Einstellungsdatei = os.path.join(self.Einstellungen_ordner, "Listendingsspeicherort.json")
+        self.Listen_Speicherort_Netzwerk_Einstellungsdatei = os.path.join(self.Einstellungen_ordner, "Listendingsspeicherort_Netzwerk.json")
         
         self.Monat = time.strftime("%m")
         self.Thread_Kunderuftan = threading.Timer(2, self.Kunde_ruft_an)
@@ -179,24 +192,23 @@ class Listendings:
             print("Die Starface Moduleinstelllungen konten nicht überprüft werden.")
 
         try:
-            with open("Listendingsspeicherort.json" , "r") as Liste_Speicherort_data:
+            with open(self.Listen_Speicherort_Einstellungsdatei , "r") as Liste_Speicherort_data:
                 self.Listen_Speicherort = json.load(Liste_Speicherort_data)
                 self.Listen_Speicherort_geladen = (self.Listen_Speicherort["ListenDings_Speicherort"])
-                Listen_Speicherort_Netzwerk_geladen = self.Listen_Speicherort_Netzwerk_geladen
         except PermissionError:
-                messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Die Kontakliste konnte nicht aufgerufen werden.")
+                messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Die Speicherorte konnten nicht geladen werden")
         except:
-            messagebox.showerror(title="Listendings Speicherort", message="Der Pfad konnte zwar gelesen werden, allerdings scheint der Ausgewählte Ordner nicht zu existieren.")
+            messagebox.showerror(title="Listendings Speicherort", message="Die Einstellung scheint nicht zu existieren")
 
         try:
-            with open("Listendingsspeicherort_Netzwerk.json" , "r") as Liste_Speicherort_Netzwerk_data:
+            with open(self.Listen_Speicherort_Netzwerk_Einstellungsdatei , "r") as Liste_Speicherort_Netzwerk_data:
                 self.Listen_Speicherort_Netzwerk = json.load(Liste_Speicherort_Netzwerk_data)
                 self.Listen_Speicherort_Netzwerk_geladen = (self.Listen_Speicherort_Netzwerk["ListenDings_Speicherort_Netzwerk"])
         except PermissionError:
                 messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Der Gespeicherte Netzwerkpfad konnte nicht aufgerufen werden.")
         except Exception as e:
             ex = "Irgendwas ist passiert: ", e
-            messagebox.showerror(title="Listendings Speicherort", message=ex)
+            print(ex)
         
 
 
@@ -910,7 +922,7 @@ class Listendings:
         print("Der vom Nutzer gewählte Ort für das ListenDings lautet: ", self.gewählter_ListenDings_Ort)
         self.zu_speichernder_Ort_des_ListenDings = {"ListenDings_Speicherort": self.gewählter_ListenDings_Ort}
         try:
-            with open("Listendingsspeicherort.json", "w+" ) as fn:
+            with open(self.Listen_Speicherort_Einstellungsdatei, "w+" ) as fn:
                 json.dump(self.zu_speichernder_Ort_des_ListenDings, fn)
                 messagebox.showinfo(title="Erfolg", message="Der Pfad des Listendings wurde erfolgreich geändert und wird beim nächsten Programmstart aktiv.")
         except Exception as e:
@@ -924,7 +936,7 @@ class Listendings:
         print("Der vom Nutzer gewählte Ort für das ListenDings Netzwerk lautet: ", self.gewählter_ListenDings_Netzwerk_Ort)
         self.zu_speichernder_Ort_des_ListenDings_Netzwerk = {"ListenDings_Speicherort_Netzwerk": self.gewählter_ListenDings_Netzwerk_Ort}
         try:
-            with open("Listendingsspeicherort_Netzwerk.json", "w+" ) as fn:
+            with open(self.Listen_Speicherort_Netzwerk_Einstellungsdatei, "w+" ) as fn:
                 json.dump(self.zu_speichernder_Ort_des_ListenDings_Netzwerk, fn)
                 messagebox.showinfo(title="Erfolg", message="Der Pfad des Listendings wurde erfolgreich geändert und wird beim nächsten Programmstart aktiv.")
         except Exception as e:
@@ -957,7 +969,6 @@ class Listendings:
         print("Netzlaufwerk_speichern(def)")
         print("Als CSV speichern, im Standard Ort")
         self.csv_datei_pfad_Netzwerk = self.Listen_Speicherort_Netzwerk_geladen
-        Listen_Speicherort_Netzwerk_geladen = self.Listen_Speicherort_Netzwerk_geladen
 
         if self.csv_datei_pfad:
             with open(self.Liste_mit_datum, 'r') as text_datei:
