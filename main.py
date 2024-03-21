@@ -367,6 +367,57 @@ class Listendings:
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
+    def Starface_Modul_umschalten(self):
+        print("Starface_Modul_umschalten(def)")
+        try:
+            if not os.path.exists(self.Einstellungen_ordner):
+                try:
+                    print("Der Einstellungsordner scheint nicht zu existieren. Erstelle ihn nun.")
+                    os.mkdir(self.Einstellungen_ordner)
+                    print("Der Einstellungsornder wurde erfolgreich erstellt.")
+                except Exception as ex_einst:
+                    print("Fehler beim Erstellen des Einstellungsordners. Fehlercode:", ex_einst)
+                    messagebox.showerror(title="CiM Fehler", message=ex_einst)
+            elif os.path.exists(self.Starface_Einstellungsdatei):
+                try:
+                    with open(self.Starface_Einstellungsdatei, "r") as SternGesicht_data:
+                        self.Starface_Modul = SternGesicht_data.read()
+                        if self.Starface_Modul == "1":
+                            print("Starface Modul wird deaktiviert.")
+                            try:
+                                with open(self.Starface_Einstellungsdatei, "w+") as SternGesicht_data_neu:
+                                    SternGesicht_data_neu.write("0")
+                                self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist deaktiviert", fg_color="chocolate1", text_color="White")
+                                messagebox.showinfo(title="CiM Einstellungen", message="Das Starface Modul wird nun nach dem Neustart des Programms deaktiviert.")
+                            except Exception as Ex_schr_stern:
+                                print(Ex_schr_stern)
+                                messagebox.showerror(title="CiM Fehler", message="Die Einstellungsdatei konnte nicht beschrieben werden.")
+                        elif self.Starface_Modul == "0":
+                            print("Starface Modul wird aktiviert.")
+                            try:
+                                with open(self.Starface_Einstellungsdatei, "w+") as SternGesicht_data_neu:
+                                    SternGesicht_data_neu.write("1")
+                                self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist aktiviert", fg_color="aquamarine", text_color="Black")
+                                messagebox.showinfo(title="CiM Einstellungen", message="Das Starface Modul wird nun nach dem Neustart des Programms aktiviert, bitte schauen Sie, für die korrekte Einrichtung in die Dokumentation.")
+                            except Exception as Ex_schr_stern:
+                                print(Ex_schr_stern)
+                                messagebox.showerror(title="CiM Fehler", message="Die Einstellungsdatei konnte nicht beschrieben werden.")
+                        else:
+                            print("Das Starface Modul ist nicht aktiviert: self.Starface_Modul == ", self.Starface_Modul)
+                except Exception as Exp:
+                    print("Konnte die Einstellungsdatei nicht öffnen. Fehlercode: ", Exp)
+                    messagebox.showerror(title="CiM Fehler", message="Konnte die Einstellungsdatei nicht öffnen. Bitte in die Logs schauen.")
+            else:
+                try:
+                    with open(self.Starface_Einstellungsdatei, "w+") as SternGesicht_data_neu:
+                        SternGesicht_data_neu.write("1")
+                    messagebox.showinfo(title="CiM Einstellungen", message="Das Starface Modul wird nun nach dem Neustart des Programms aktiviert.")
+                except Exception as Ex_schr_stern:
+                    print(Ex_schr_stern)
+                    messagebox.showerror(title="CiM Fehler", message="Die Einstellungsdatei konnte nicht beschrieben werden.")
+        except Exception as ex_stern:
+            print("Die Starface Moduleinstelllungen konten nicht überprüft werden. Fehlercode: ", ex_stern)
+
         
     
     
@@ -374,6 +425,12 @@ class Listendings:
         print("Menu_anzeige_wechseln(def)")
         self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche)
         self.Suche_knopp.place(x=200,y=100)
+        self.Starface_Modul_Einstellung_Knopp = tk.CTkButton(self.Pause_menu, text="Starface Modul umschalten", command=self.Starface_Modul_umschalten)
+        self.Starface_Modul_Einstellung_Knopp.place(x=10,y=50)
+        if self.Starface_Modul == "1":
+            self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist aktiviert", fg_color="aquamarine", text_color="Black")
+        else:
+            self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist deaktiviert", fg_color="chocolate1", text_color="White")
         if self.Menü_da == True:
             self.Pause_menu.place_forget()
             self.Menü_da = False
@@ -418,7 +475,7 @@ class Listendings:
                 print("Das hab ich gefunden:")
                 for file_path in results:
                     print(file_path)
-                    ganzes_ergebnis = f"Hier nun das gefundene: {results}" 
+                    ganzes_ergebnis = f"In Disen Dateien habe ich etwas gefundenf: {results}" 
                 messagebox.showinfo(title="CiM Suche", message=ganzes_ergebnis)
                 self.Suche_thread.cancel()
             else:
