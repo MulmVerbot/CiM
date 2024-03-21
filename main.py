@@ -94,7 +94,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.2.4.2"
+        self.Version = "Alpha 1.2.4.3"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -104,6 +104,7 @@ class Listendings:
         root.protocol("WM_DELETE_WINDOW", self.bye)
         self.Listen_Speicherort_Netzwerk_geladen = None
         self.Zeit_text = None
+        self.Uhrzeit_anruf_start = None
         self.Pause = True
         self.Menü_da = False
         self.tag_string = str(time.strftime("%d %m %Y"))
@@ -497,6 +498,7 @@ class Listendings:
                     gel_tmp = tmp_ld.read()
                     self.Anruf_Telefonnummer = gel_tmp
                     print("HABS GELADEN:::: ", self.Anruf_Telefonnummer)
+                    self.Uhrzeit_anruf_start = self.Zeit
                     tmp_ld.close()
                     os.remove("tmp.txt")
                     self.t_nummer.configure(state="normal")
@@ -628,6 +630,9 @@ class Listendings:
         T_Nummer = self.t_nummer.get()
         self.ausgabe_text.configure(state='normal')
         self.zeit_string = time.strftime("%H:%M:%S")
+        if self.Uhrzeit_anruf_start == None:
+            self.Uhrzeit_anruf_start = "-"
+        self.Uhrzeit_text = self.Uhrzeit_anruf_start + " bis " + self.zeit_string
         
         if kunde or problem or info != "":
             #print("(INFO) Enter gedrückt obwohl etwas geschrieben wurde.")
@@ -649,7 +654,7 @@ class Listendings:
             # Inhalte in Textdatei speichern
             if os.path.exists(self.Liste_mit_datum):
                 with open(self.Liste_mit_datum, "a") as f:
-                    f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
+                    f.write(f"Uhrzeit: {self.Uhrzeit_text}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
                 with open(self.Liste_mit_datum, "r") as f:
                     feedback_text = f.read()
                     self.ausgabe_text.delete("1.0", tk.END)
@@ -662,7 +667,7 @@ class Listendings:
             else:
                 print("(INFO) Liste zum beschreiben existiert bereits.")
                 with open(self.Liste_mit_datum, "w+") as f:
-                    f.write(f"Uhrzeit: {self.zeit_string}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
+                    f.write(f"Uhrzeit: {self.Uhrzeit_text}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
                     # Ausgabe-Textfeld aktualisieren
                 with open(self.Liste_mit_datum, "r") as f:
                     feedback_text = f.read()
@@ -673,6 +678,7 @@ class Listendings:
                     self.wollte_sprechen = ""
                     self.optionmenu.set("Keine Weiterleitung")
                     self.optionmenu1.set("Mit Wem sprechen?")
+            
 
             
         else:
@@ -683,6 +689,7 @@ class Listendings:
             self.wollte_sprechen = ""
             self.optionmenu.set("Keine Weiterleitung")
             self.optionmenu1.set("Mit Wem sprechen?")
+            self.Uhrzeit_anruf_start = None
             return
         self.t_nummer.configure(state="normal")
         self.t_nummer.delete(0,tk.END)
@@ -692,6 +699,7 @@ class Listendings:
         self.t_nummer.configure(state="disabled")
         self.Weiterleitung_an = ""
         self.wollte_sprechen = ""
+        self.Uhrzeit_anruf_start = None
         self.optionmenu.set("Keine Weiterleitung")
     
     def beb_c(self):
