@@ -93,7 +93,10 @@ class Listendings:
                     print("heute keine Logs")
         def write(self, message):
             self.terminal.write(message)
-            self.log.write(message)
+            try:
+                self.log.write(message)
+            except:
+                pass
         def flush(self):
             #für Python 3 wichtig wegen kompatibilität, hab aber keine wirkliche ahnung was das macht
             pass    
