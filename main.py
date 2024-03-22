@@ -52,8 +52,7 @@ class Listendings:
             httpd = HTTPServer(server_address, Listendings.RequestHandler)
             try:
                 while Listendings.Programm_läuft == True:
-                    print(f'Ich horche mal auf Port {port}...')
-                    httpd.shutdown()  
+                    print(f'Ich horche mal auf Port {port}...') 
                     httpd.handle_request()
                     if Listendings.Programm_läuft == False:
                         httpd.shutdown()
