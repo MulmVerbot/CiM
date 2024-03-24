@@ -110,7 +110,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.2.4.3"
+        self.Version = "Alpha 1.2.4.4 (0)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -139,6 +139,9 @@ class Listendings:
         self.Thread_Kunderuftan = threading.Timer(2, self.Kunde_ruft_an)
         self.thread_uhr = threading.Timer(1, self.Uhr)
         self.thread_webserver = Listendings.WebServerThread()
+        self.thread_webserver.setDaemon(True)
+        self.thread_uhr.setDaemon(True)
+        self.Thread_Kunderuftan.setDaemon(True)
         self.thread_uhr.start()
         self.Thread_Kunderuftan.start()
         
