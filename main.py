@@ -110,7 +110,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.2.4.4 (0)"
+        self.Version = "Alpha 1.2.4.4 (1)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -151,6 +151,10 @@ class Listendings:
         self.Weiterleitung_an = ""
         self.wollte_sprechen = ""
         self.Starface_Farbe = "#4d4d4d"
+
+        self.zachen = 0
+        self.fertsch_var = None
+        self.fertsch_vars = None
 
         
         
@@ -395,6 +399,18 @@ class Listendings:
         self.optionmenu1.set("Mit Wem sprechen?")
         self.optionmenu1.place(x=1260,y=190)
 
+        self.kalender_menü = tk.CTkFrame(master, width=1250, height=520, fg_color="White", border_color="Black", border_width=2)
+        self.kalender_menü_Knopp = tk.CTkButton(master, text="Kalender öffnen", command=self.Kalender_anzeigen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.kalender_menü_Knopp.place(x=1260,y=480)
+
+        self.Liste_mit_zeugs =  tk.CTkScrollableFrame(self.kalender_menü, width=500, height=420, bg_color="Green")
+
+        
+        
+
+        
+
+
         
 
 
@@ -412,6 +428,52 @@ class Listendings:
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
+        
+    def Kalender_anzeigen(self):
+        print("kalender_anzeigen(def)")
+        self.kalender_menü.place(x=0,y=0)
+        self.Liste_mit_zeugs.place(x=100,y=50)
+        self.kalender_menü_Knopp.configure(text="Kalender schließen", command=self.Kalender_anzeigen_weg, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.Aufgabe_hinzufügen_Knopp = tk.CTkButton(self.kalender_menü, text="Eintrag Hinzufügen", command=self.Aufgabe_hinzufügen)
+        self.Aufgabe_hinzufügen_Knopp.place(x=620,y=50)
+
+    def Aufgabe_hinzufügen(self):
+        text_des_dings = None
+        Aufgabe = None
+        text_des_dings = tk.CTkInputDialog(text="Gib was ein:")
+        Aufgabe = self.Zeit + "  --  " + text_des_dings.get_input()
+        if Aufgabe:
+            print("Das is: ", text_des_dings, "und Aufgabe ist: ", Aufgabe)
+            self.zachen += 1
+          
+            self.fertsch_var = tk.StringVar()
+            self.fertsch_var.set("") 
+            try:
+                self.fertsch_vars.append(self.fertsch_var)
+            except:
+                pass
+            self.chkbx = tk.CTkCheckBox(self.Liste_mit_zeugs, text=Aufgabe, bg_color="White", text_color="Black", variable=self.fertsch_var, command=lambda: self.callback_fertsch_var(self.fertsch_var))
+            self.chkbx.grid(row=self.zachen, column=0, padx=10)
+        else:
+            pass
+
+    def callback_fertsch_var(self, fertsch_var):
+        index = self.fertsch_vars.index(fertsch_var)
+        print("Hier ist was fertsch geworden für Eintrag {}: {}".format(index, fertsch_var.get()))
+
+
+    def Kalender_anzeigen_weg(self):
+        print("Kalender_anzeigen_weg")
+        self.kalender_menü.place_forget()
+        self.Liste_mit_zeugs.place_forget()
+        self.Aufgabe_hinzufügen_Knopp.place_forget()
+        self.kalender_menü_Knopp.configure(text="Kalender öffnen", command=self.Kalender_anzeigen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+
+        
+        
+
+        
+
     def Starface_Modul_umschalten(self):
         print("Starface_Modul_umschalten(def)")
         try:
