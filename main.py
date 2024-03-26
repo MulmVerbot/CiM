@@ -2,6 +2,7 @@ try:
     import customtkinter as tk
     ###import tkinter as tk
     from tkinter import ttk
+    import tkinter as Atk
     from tkinter import messagebox
     from tkinter import filedialog
     from tkinter import Menu
@@ -26,6 +27,7 @@ root = tk.CTk()
 
 
 
+
 class Listendings:
     Programm_läuft = True
     class RequestHandler(BaseHTTPRequestHandler):
@@ -37,13 +39,22 @@ class Listendings:
             print("Angeforderter Pfad:", parsed_path.path)
             besserer_pfad = parsed_path.path.replace("/", "")
             print("Nummer die angerufen hat/wurde: ", besserer_pfad)
-            try:
-                with open("tmp.txt", "w+") as tmp:
-                    tmp.write(besserer_pfad)
-            except Exception as e:
-                print(f"Fehler beim Schreiben in tmp.txt: {e}")
+            if besserer_pfad == "b":
+                ende_des_anrufs = time.strftime("%H:%M:%S")
+                try:
+                    with open("tmp1.txt", "w+") as tmp:
+                            tmp.write(ende_des_anrufs)
+                except Exception as e:
+                    print(f"Fehler beim Schreiben in tmp1.txt: {e}")
+                print("Der Anruf war wohl fertig. var: ", besserer_pfad)
+            else:
+                try:
+                    with open("tmp.txt", "w+") as tmp:
+                        tmp.write(besserer_pfad)
+                except Exception as e:
+                    print(f"Fehler beim Schreiben in tmp.txt: {e}")
             self.wfile.write(b"<html><head><title>CiM Modul</title></head>")
-            self.wfile.write(b"<body><h1></h1></body></html>")
+            self.wfile.write(b"<body><h1>Dings</h1></body></html>")
 
     class WebServerThread(threading.Thread):
         def run(self):
@@ -110,7 +121,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.2.4.4 (1)"
+        self.Version = "Alpha 1.2.4.4 (2)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -126,6 +137,7 @@ class Listendings:
         self.Starface_Modul = "0"
         self.Auto_speichern_Einstellung = "0"
         self.Autospeichern_tkvar = "0"
+        self.Uhrzeit_anruf_ende = None
         self.tag_string = str(time.strftime("%d %m %Y"))
         self.Benutzerordner = os.path.expanduser('~')
         self.Listen_Speicherort_standard = os.path.join(self.Benutzerordner, 'CiM', 'Listen')
@@ -133,7 +145,9 @@ class Listendings:
         self.Starface_Einstellungsdatei = os.path.join(self.Einstellungen_ordner , "Starface_Modul.txt")
         self.Listen_Speicherort_Einstellungsdatei = os.path.join(self.Einstellungen_ordner, "Listendingsspeicherort.json")
         self.Listen_Speicherort_Netzwerk_Einstellungsdatei = os.path.join(self.Einstellungen_ordner, "Listendingsspeicherort_Netzwerk.json")
-        self.Auto_speichern_Einstellungsdatei = os.path.join(self.Einstellungen_ordner, "Auto_speichern.txt")
+        self.Auto_speichern_Einstellungsdatei = os.path.join(self.Einstellungen_ordner, "Auto_speichern.txt") 
+        self.icon_pfad = os.path.join(self.Benutzerordner, 'CiM','Assets','CiM_icon.jpg')
+        
         
         self.Monat = time.strftime("%m")
         self.Thread_Kunderuftan = threading.Timer(2, self.Kunde_ruft_an)
@@ -165,6 +179,19 @@ class Listendings:
         self.Tag_und_Liste = self.tag_string + " Dateien.txt"
         self.Liste_mit_datum = os.path.join(self.Listen_Speicherort_standard, self.Monat, self.Tag_und_Liste)
         self.Monat_ordner_pfad = os.path.join(self.Listen_Speicherort_standard, self.Monat)
+
+        
+        try:
+            p1 = "CiM_icon.png"
+            root.iconphoto(False, p1)
+        except:
+            try:
+                root.iconphoto(False, Atk.PhotoImage(file = self.icon_pfad))
+            except Exception as err:
+                messagebox.showinfo(message=err)
+                print("icon gibt heute nicht.")
+            
+
         print(self.tag_string)
         if not os.path.exists(self.Monat_ordner_pfad):
             try:
@@ -673,12 +700,24 @@ class Listendings:
                         ich = "Ich"
                         self.kunde_entry.insert(1,ich)
                         self.Anruf_Telefonnummer = None
-
-                    elif self.Anruf_Telefonnummer:
+                        
+                    elif self.Anruf_Telefonnummer.startswith("b") == False:
                         self.t_nummer.insert(1,self.Anruf_Telefonnummer)
                         self.Anruf_Telefonnummer = None
-                    self.t_nummer.configure(state="disabled")    
+                    self.t_nummer.configure(state="disabled")
             except Exception as eld:
+                pass
+            try:
+                with open("tmp1.txt", "r") as tmp1_ld:
+                    gel_tmp1 = tmp1_ld.read()
+                    self.Uhrzeit_anruf_ende = gel_tmp1
+                    print("End-Uhrzeit: ", self.Uhrzeit_anruf_ende)
+                    tmp1_ld.close()
+                    try:
+                        os.remove("tmp1.txt")
+                    except:
+                        pass  
+            except:
                 pass
             time.sleep(1)
         print("Thread beendet: Kunde_ruft_an (def")
@@ -755,7 +794,10 @@ class Listendings:
         self.zeit_string = time.strftime("%H:%M:%S")
         if self.Uhrzeit_anruf_start == None:
             self.Uhrzeit_anruf_start = "-"
-        self.Uhrzeit_text = self.Uhrzeit_anruf_start + " bis " + self.zeit_string
+        if self.Uhrzeit_anruf_ende == None:
+            self.Uhrzeit_anruf_ende = self.zeit_string + " (mit abweichung)"
+
+        self.Uhrzeit_text = self.Uhrzeit_anruf_start + " bis " + self.Uhrzeit_anruf_ende
         
         if kunde or problem or info != "":
             #print("(INFO) Enter gedrückt obwohl etwas geschrieben wurde.")
@@ -772,9 +814,8 @@ class Listendings:
             if self.Weiterleitung_an == "":
                 self.Weiterleitung_an = "Keine Weiterleitung"
             if self.wollte_sprechen == "":
-                self.wollte_sprechen = "Niemanden speziell sprechen"
+                self.wollte_sprechen = "Nein"
 
-            # Inhalte in Textdatei speichern
             if os.path.exists(self.Liste_mit_datum):
                 with open(self.Liste_mit_datum, "a") as f:
                     f.write(f"Uhrzeit: {self.Uhrzeit_text}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
@@ -791,7 +832,6 @@ class Listendings:
                 print("(INFO) Liste zum beschreiben existiert bereits.")
                 with open(self.Liste_mit_datum, "w+") as f:
                     f.write(f"Uhrzeit: {self.Uhrzeit_text}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
-                    # Ausgabe-Textfeld aktualisieren
                 with open(self.Liste_mit_datum, "r") as f:
                     feedback_text = f.read()
                     self.ausgabe_text.delete("1.0", tk.END)
