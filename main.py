@@ -182,7 +182,7 @@ class Listendings:
 
         
         try:
-            p1 = "CiM_icon.png"
+            p1 = Atk.PhotoImage(file = "CiM_icon.png")
             root.iconphoto(False, p1)
         except:
             try:
