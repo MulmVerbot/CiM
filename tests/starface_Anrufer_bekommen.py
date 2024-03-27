@@ -1,7 +1,7 @@
 import requests
 
-base_url = "http://[IP/URL der Starface]:80/rest"
-auth_token = "your_auth_token_here"
+base_url = "https://192.168.60.240:80/rest"
+auth_token = "0003:b7148d6f23c05378f6f826e09f38f5e7deddc33a33d0b52e92643c76ad6041a3419b018fa1c210707c0017d4f75ef515587b2ba8ed959ad32241f0d8017e9748"
 
 def get_current_call():
     url = f"{base_url}/CallServices"
