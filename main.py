@@ -702,9 +702,14 @@ class Listendings:
                         self.Anruf_Telefonnummer = None
                         
                     elif self.Anruf_Telefonnummer.startswith("b") == False:
-                        self.ganz = " : ", self.Anruf_Telefonnummer
-                        self.t_nummer.insert(1,self.ganz)
-                        self.Anruf_Telefonnummer = None
+                        if self.t_nummer.get() != "":
+                            self.ganz = " : " + self.Anruf_Telefonnummer
+                            self.t_nummer.insert(tk.END,self.ganz)
+                            self.Anruf_Telefonnummer = None
+                            self.ganz = None
+                        else:
+                            self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                            self.Anruf_Telefonnummer = None
                     self.t_nummer.configure(state="disabled")
             except Exception as eld:
                 pass
