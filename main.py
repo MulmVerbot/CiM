@@ -121,7 +121,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.2.4.4 (3)"
+        self.Version = "Alpha 1.2.4.4 (4)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -670,12 +670,12 @@ class Listendings:
                 with open("tmp.txt", "r") as tmp_ld:
                     gel_tmp = tmp_ld.read()
                     self.Anruf_Telefonnummer = gel_tmp
-                    print("HABS GELADEN:::: ", self.Anruf_Telefonnummer)
+                    print("abgefangene Telefonummer: ", self.Anruf_Telefonnummer)
                     self.Uhrzeit_anruf_start = self.Zeit
                     tmp_ld.close()
                     os.remove("tmp.txt")
                     self.t_nummer.configure(state="normal")
-                    self.t_nummer.delete(0,tk.END)
+                    #self.t_nummer.delete(0,tk.END)
                     
                     if self.Anruf_Telefonnummer == chefe_nummer: #chefe
                         self.t_nummer.insert(1,self.Anruf_Telefonnummer)
@@ -702,7 +702,8 @@ class Listendings:
                         self.Anruf_Telefonnummer = None
                         
                     elif self.Anruf_Telefonnummer.startswith("b") == False:
-                        self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                        self.ganz = " : ", self.Anruf_Telefonnummer
+                        self.t_nummer.insert(1,self.ganz)
                         self.Anruf_Telefonnummer = None
                     self.t_nummer.configure(state="disabled")
             except Exception as eld:
