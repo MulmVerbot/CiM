@@ -121,7 +121,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.2.4.4 (4)"
+        self.Version = "Alpha 1.2.4.4 (5)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -700,6 +700,10 @@ class Listendings:
                         ich = "Ich"
                         self.kunde_entry.insert(1,ich)
                         self.Anruf_Telefonnummer = None
+                    
+                    elif self.Anruf_Telefonnummer == "97":
+                        print("Klingel")
+                        pass
                         
                     elif self.Anruf_Telefonnummer.startswith("b") == False:
                         if self.t_nummer.get() != "":
@@ -832,6 +836,7 @@ class Listendings:
                 self.ausgabe_text.configure(state='disabled')
                 self.ausgabe_text.see(tk.END)
                 self.Weiterleitung_an = ""
+                self.Uhrzeit_anruf_ende = None
                 self.optionmenu.set("Keine Weiterleitung")
                 self.optionmenu1.set("Mit Wem sprechen?")
             else:
@@ -845,6 +850,7 @@ class Listendings:
                     self.ausgabe_text.configure(state='disabled')
                     self.Weiterleitung_an = ""
                     self.wollte_sprechen = ""
+                    self.Uhrzeit_anruf_ende = None
                     self.optionmenu.set("Keine Weiterleitung")
                     self.optionmenu1.set("Mit Wem sprechen?")
             
