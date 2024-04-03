@@ -121,7 +121,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.2.4.4 (5)"
+        self.Version = "Alpha 1.2.4.4 (6)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -679,7 +679,7 @@ class Listendings:
                     
                     if self.Anruf_Telefonnummer == chefe_nummer: #chefe
                         self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                        chefe = "Holger Beese aka el Chefe"
+                        chefe = "Holger Beese"
                         self.kunde_entry.insert(tk.END,chefe)
                         self.Anruf_Telefonnummer = None
 
@@ -706,7 +706,12 @@ class Listendings:
                         pass
                         
                     elif self.Anruf_Telefonnummer.startswith("b") == False:
-                        if self.t_nummer.get() != "":
+                        if self.t_nummer.get() != "" and self.kunde_entry.get() == "": # Nummer is da und kunde nicht
+                            self.t_nummer.delete(0,tk.END)
+                            self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                            self.Anruf_Telefonnummer = None
+
+                        elif self.t_nummer.get() != "" and self.kunde_entry.get() != "":
                             self.ganz = " : " + self.Anruf_Telefonnummer
                             self.t_nummer.insert(tk.END,self.ganz)
                             self.Anruf_Telefonnummer = None
