@@ -18,6 +18,7 @@ try:
     import threading
     from customtkinter import ThemeManager
     import datetime
+    from tkinter import simpledialog
 except:
     print("(FATAL) Konnte die wichtigen Bilbioteken nicht Laden!")
     messagebox.showerror(title="Kritischer Fehler", message="(FATAL) Konnte die wichtigen Bilbioteken nicht Laden! Das Programm wird nun Beendet.")
@@ -168,7 +169,7 @@ class Listendings:
 
         self.zachen = 0
         self.fertsch_var = None
-        self.fertsch_vars = None
+        self.fertsch_vars = []
 
         
         
@@ -465,28 +466,32 @@ class Listendings:
         self.Aufgabe_hinzufügen_Knopp.place(x=620,y=50)
 
     def Aufgabe_hinzufügen(self):
-        text_des_dings = None
-        Aufgabe = None
         text_des_dings = tk.CTkInputDialog(text="Gib was ein:")
         Aufgabe = self.Zeit + "  --  " + text_des_dings.get_input()
         if Aufgabe:
             print("Das is: ", text_des_dings, "und Aufgabe ist: ", Aufgabe)
             self.zachen += 1
-          
-            self.fertsch_var = tk.StringVar()
-            self.fertsch_var.set("") 
-            try:
-                self.fertsch_vars.append(self.fertsch_var)
-            except:
-                pass
-            self.chkbx = tk.CTkCheckBox(self.Liste_mit_zeugs, text=Aufgabe, bg_color="White", text_color="Black", variable=self.fertsch_var, command=lambda: self.callback_fertsch_var(self.fertsch_var))
-            self.chkbx.grid(row=self.zachen, column=0, padx=10)
+            fertsch_var = tk.StringVar()
+            fertsch_var.set("") 
+            self.fertsch_vars.append(fertsch_var)
+            chkbx = tk.CTkCheckBox(self.Liste_mit_zeugs, text=Aufgabe, bg_color="White", text_color="Black", variable=fertsch_var, command=lambda fv=fertsch_var: self.callback_fertsch_var(fv))
+            chkbx.fertsch_var = fertsch_var  # Speichern der Variable als Attribut des Widgets
+            chkbx.grid(row=self.zachen, column=0, padx=10)
         else:
             pass
 
     def callback_fertsch_var(self, fertsch_var):
-        index = self.fertsch_vars.index(fertsch_var)
-        print("Hier ist was fertsch geworden für Eintrag {}: {}".format(index, fertsch_var.get()))
+        try:
+            index = self.fertsch_vars.index(fertsch_var)
+            del self.fertsch_vars[index]
+            chkbx = self.Liste_mit_zeugs.grid_slaves(row=index+1, column=0)[0]
+            chkbx.destroy()  # Zerstöre die Checkbox
+        except Exception as exc1:
+            print("Fehler: ", exc1)
+
+    
+
+    
 
 
     def Kalender_anzeigen_weg(self):
@@ -1202,14 +1207,14 @@ class Listendings:
         print("ende des Programms, fange nun an zu speichern")
         try:
             try:
-                auto_speichern = "Ja"
+                auto_speichern = "1"
                 with open(self.Auto_speichern_Einstellungsdatei, "r") as aSp:
                     dings_aSp = aSp.read()
                     auto_speichern = dings_aSp
             except:
-                auto_speichern = "Nein"
+                auto_speichern = "0"
 
-            if auto_speichern == "Ja":
+            if auto_speichern == "1":
                 csv_datei_pfad_Netzwerk = Listen_Speicherort_Netzwerk_geladen
                 if self.csv_datei_pfad:
                     with open(self.Liste_mit_datum, 'r') as text_datei:
