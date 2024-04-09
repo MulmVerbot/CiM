@@ -122,7 +122,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.2.4.4 (7)"
+        self.Version = "Alpha 1.2.4.4 (9)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -147,7 +147,7 @@ class Listendings:
         self.Listen_Speicherort_Einstellungsdatei = os.path.join(self.Einstellungen_ordner, "Listendingsspeicherort.json")
         self.Listen_Speicherort_Netzwerk_Einstellungsdatei = os.path.join(self.Einstellungen_ordner, "Listendingsspeicherort_Netzwerk.json")
         self.Auto_speichern_Einstellungsdatei = os.path.join(self.Einstellungen_ordner, "Auto_speichern.txt") 
-        self.icon_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Assets', 'CiM_icon.jpg')
+        self.icon_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Assets', 'CiM_icon.png')
         
         
         self.Monat = time.strftime("%m")
@@ -623,7 +623,7 @@ class Listendings:
     def Suche(self):
         print("Suchen(def)")
         Suche_suche = ""
-        such_dialog = tk.CTkInputDialog(text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht. (Groß-und Kleinschreibung beachten)", title="CiM Suche")
+        such_dialog = tk.CTkInputDialog(title="CiM Suche", text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht. (Groß-und Kleinschreibung wird ignoriert)")
         Suche_suche = such_dialog.get_input()
         if Suche_suche:
             def read_text_file(file_path):
@@ -633,8 +633,9 @@ class Listendings:
                 except Exception as e:
                     print(f"Fehler: {e}")
                     return ""
+
             folder_path = self.Listen_Speicherort_standard
-            content_to_search = Suche_suche
+            content_to_search = Suche_suche.lower()  # Konvertiere den Suchinhalt in Kleinbuchstaben
             results = []
             try:
                 for root, dirs, files in os.walk(folder_path):
@@ -642,7 +643,7 @@ class Listendings:
                         try:
                             if file_name.endswith('.txt'):
                                 file_path = os.path.join(root, file_name)
-                                file_content = read_text_file(file_path)
+                                file_content = read_text_file(file_path).lower()  # Konvertiere den Dateiinhalt in Kleinbuchstaben
                                 if content_to_search in file_content:
                                     results.append(file_path)
                         except Exception as e:
@@ -652,16 +653,17 @@ class Listendings:
 
             if results:
                 print("Das hab ich gefunden:")
-                for file_path in results:
-                    print(file_path)
-                    ganzes_ergebnis = f"In Disen Dateien habe ich etwas gefundenf: {results}" 
+                ganzes_ergebnis = "In diesen Dateien habe ich etwas gefunden:\n" + "\n".join(results)
                 messagebox.showinfo(title="CiM Suche", message=ganzes_ergebnis)
-                self.Suche_thread.cancel()
             else:
                 print("gab nüscht")
                 dmsg = "Dazu konnte ich leider nichts finden."
                 messagebox.showinfo(title="CiM Suche", message=dmsg)
-                self.Suche_thread.cancel()
+        else:
+            print("gab nüscht")
+            dmsg = "Dazu konnte ich leider nichts finden."
+            messagebox.showinfo(title="CiM Suche", message=dmsg)
+                
 
 
     def Kunde_ruft_an(self):
