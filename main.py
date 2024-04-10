@@ -122,7 +122,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.2.4.4 (10)"
+        self.Version = "Alpha 1.3.0 (0)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -159,6 +159,8 @@ class Listendings:
         self.Thread_Kunderuftan.setDaemon(True)
         self.thread_uhr.start()
         self.Thread_Kunderuftan.start()
+        self.thread_suche = threading.Timer(1, self.Suche_algo)
+        self.thread_suche.setDaemon(True)
         
         self.Hintergrund_farbe = "SlateGrey"
         root.configure(fg_color=self.Hintergrund_farbe)
@@ -347,7 +349,8 @@ class Listendings:
         self.Einstellungen.add_command(label="Netzlaufwerk einstellen...", command=self.ListenDings_speicherort_Netzwerk_ändern)
         self.Bearbeiten_Menu.add_command(label="Bearbeiten Umschalten", command=self.beb_c)
         self.Bearbeiten_Menu.add_command(label="Alle Einträge löschen", command=self.alles_löschen)
-        self.Suchen_Menu.add_command(label="Nach alten Eintrag suchen", command=self.Suche)
+        self.Suchen_Menu.add_command(label="Nach alten Einträgen suchen", command=self.Suche)
+        self.Suchen_Menu.add_command(label="Im eigen Pfad nach alten Einträgen suchen", command=self.Suche1)
         
         # Initialisierung wichtiger Variablen
 
@@ -620,9 +623,87 @@ class Listendings:
         
         
 
+    def Suche1(self):
+        print("Suchen(def)")
+        self.Suche_suche = ""
+        self.Ort_wo_gesucht_wird = ""
+        self.suchfenster_ergebnisse = tk.CTkToplevel(root)
+        self.suchfenster_ergebnisse.title("Suchergebnisse")
+        self.suchfenster_ergebnisse.geometry("500x500")
+        self.suchfenster_ergebnisse_frame = tk.CTkScrollableFrame(self.suchfenster_ergebnisse, width=500, height=420, bg_color="Green")
+        self.suchfenster_ergebnisse_frame.pack()
+        self.erg_text_widget = tk.CTkTextbox(self.suchfenster_ergebnisse_frame, width=500, height=500)
+        self.erg_text_widget.pack()
+        
+        
+        
+        self.Ort_wo_gesucht_wird = filedialog.askdirectory()
+        if self.Ort_wo_gesucht_wird != "":
+            such_dialog = tk.CTkInputDialog(title="CiM Suche", text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht. (Groß-und Kleinschreibung wird ignoriert)")
+            self.Suche_suche = such_dialog.get_input()
+            if self.Suche_suche != "":
+                self.thread_suche.start()
+            else:
+                messagebox.showinfo(message="Suche Abgebrochen.")
+                self.suchfenster_ergebnisse.destroy()
+        else:
+            messagebox.showinfo(message="Suche Abgebrochen.")
+            self.suchfenster_ergebnisse.destroy()
+
+    def Suche_algo(self):
+        if self.Suche_suche:
+            def read_text_file(file_path):
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as file:
+                        return file.read()
+                except Exception as e:
+                    print(f"Fehler: {e}")
+                    return ""
+
+            folder_path = self.Ort_wo_gesucht_wird
+            content_to_search = self.Suche_suche.lower()  # Konvertiere den Suchinhalt in Kleinbuchstaben
+            results = []
+            try:
+                for root, dirs, files in os.walk(folder_path):
+                    for file_name in files:
+                        try:
+                            if file_name.endswith('.txt'):
+                                file_path = os.path.join(root, file_name)
+                                file_content = read_text_file(file_path).lower()  # Konvertiere den Dateiinhalt in Kleinbuchstaben
+                                if content_to_search in file_content:
+                                    results.append(file_path)
+                        except Exception as e:
+                            print(f"irgendwas ging nicht: {file_name}: {e}")
+                            self.thread_suche.cancel()
+            except Exception as e:
+                print(f"konnte den pfad nicht öffnen: {e}")
+                self.thread_suche.cancel()
+
+            if results:
+                print("Das hab ich gefunden:")
+                ganzes_ergebnis = "In diesen Dateien habe ich etwas gefunden:\n\n" + "\n\n".join(results)
+                #messagebox.showinfo(title="CiM Suche", message=ganzes_ergebnis)
+                self.erg_text_widget.insert("0.0", ganzes_ergebnis)
+                self.thread_suche.cancel()
+            else:
+                print("gab nüscht")
+                dmsg = "Dazu konnte ich leider nichts finden."
+                self.thread_suche.cancel()
+                self.suchfenster_ergebnisse.destroy()
+                messagebox.showinfo(title="CiM Suche", message=dmsg)
+                
+        else:
+            print("gab nüscht")
+            dmsg = "Dazu konnte ich leider nichts finden."
+            self.thread_suche.cancel()
+            self.suchfenster_ergebnisse.destroy()
+            messagebox.showinfo(title="CiM Suche", message=dmsg)
+            
+
     def Suche(self):
         print("Suchen(def)")
         Suche_suche = ""
+        #self.Listen_Speicherort_standard = filedialog.askdirectory()
         such_dialog = tk.CTkInputDialog(title="CiM Suche", text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht. (Groß-und Kleinschreibung wird ignoriert)")
         Suche_suche = such_dialog.get_input()
         if Suche_suche:
