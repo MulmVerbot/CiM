@@ -627,6 +627,8 @@ class Listendings:
         print("Suchen(def)")
         self.Suche_suche = ""
         self.Ort_wo_gesucht_wird = ""
+        self.gesucht_zahl = 0
+        self.durchsucht_text = f"bis jetzt wurden {self.gesucht_zahl} Dateien durchsucht."
         self.suchfenster_ergebnisse = tk.CTkToplevel(root)
         self.suchfenster_ergebnisse.title("Suchergebnisse")
         self.suchfenster_ergebnisse.geometry("500x500")
@@ -634,11 +636,15 @@ class Listendings:
         self.suchfenster_ergebnisse_frame.pack()
         self.erg_text_widget = tk.CTkTextbox(self.suchfenster_ergebnisse_frame, width=500, height=500)
         self.erg_text_widget.pack()
+        print("fenster fürs suchen geladen...")
+        self.Zahl_anzeige = tk.CTkLabel(self.suchfenster_ergebnisse, text=self.durchsucht_text)
+        self.Zahl_anzeige.pack()
         
         
         
         self.Ort_wo_gesucht_wird = filedialog.askdirectory()
         if self.Ort_wo_gesucht_wird != "":
+            print("pfad wurde ausgewählt")
             such_dialog = tk.CTkInputDialog(title="CiM Suche", text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht. (Groß-und Kleinschreibung wird ignoriert)")
             self.Suche_suche = such_dialog.get_input()
             if self.Suche_suche != "":
@@ -669,7 +675,10 @@ class Listendings:
                         try:
                             if file_name.endswith('.txt'):
                                 file_path = os.path.join(root, file_name)
-                                file_content = read_text_file(file_path).lower()  # Konvertiere den Dateiinhalt in Kleinbuchstaben
+                                file_content = read_text_file(file_path).lower()# Konvertiere den Dateiinhalt in Kleinbuchstaben
+                                self.gesucht_zahl += 1
+                                self.durchsucht_text = f"bis jetzt wurden {self.gesucht_zahl} Dateien durchsucht."
+                                self.Zahl_anzeige.configure(text=self.durchsucht_text)  
                                 if content_to_search in file_content:
                                     results.append(file_path)
                         except Exception as e:
@@ -688,6 +697,7 @@ class Listendings:
             else:
                 print("gab nüscht")
                 dmsg = "Dazu konnte ich leider nichts finden."
+                self.erg_text_widget.insert("0.0", "Keine Ergebnisse")
                 self.thread_suche.cancel()
                 self.suchfenster_ergebnisse.destroy()
                 messagebox.showinfo(title="CiM Suche", message=dmsg)
