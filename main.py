@@ -172,6 +172,7 @@ class Listendings:
         self.zachen = 0
         self.fertsch_var = None
         self.fertsch_vars = []
+        self.etwas_suchen = False
 
         
         
@@ -648,7 +649,12 @@ class Listendings:
             such_dialog = tk.CTkInputDialog(title="CiM Suche", text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht. (Groß-und Kleinschreibung wird ignoriert)")
             self.Suche_suche = such_dialog.get_input()
             if self.Suche_suche != "":
-                self.thread_suche.start()
+                try:
+                    self.thread_suche.start()
+                    print("Thread für die Suche gestartet.")
+                except:
+                    print("Thread für die Suche lief bereits.")
+                    pass
             else:
                 messagebox.showinfo(message="Suche Abgebrochen.")
                 self.suchfenster_ergebnisse.destroy()
@@ -657,57 +663,59 @@ class Listendings:
             self.suchfenster_ergebnisse.destroy()
 
     def Suche_algo(self):
-        if self.Suche_suche:
-            def read_text_file(file_path):
+        while self.etwas_suchen == True:
+            if self.Suche_suche:
+                def read_text_file(file_path):
+                    try:
+                        with open(file_path, 'r', encoding='utf-8') as file:
+                            return file.read()
+                    except Exception as e:
+                        print(f"Fehler: {e}")
+                        return ""
+
+                folder_path = self.Ort_wo_gesucht_wird
+                content_to_search = self.Suche_suche.lower()  # Konvertiere den Suchinhalt in Kleinbuchstaben
+                results = []
                 try:
-                    with open(file_path, 'r', encoding='utf-8') as file:
-                        return file.read()
+                    for root, dirs, files in os.walk(folder_path):
+                        for file_name in files:
+                            try:
+                                if file_name.endswith('.txt'):
+                                    file_path = os.path.join(root, file_name)
+                                    file_content = read_text_file(file_path).lower()# Konvertiere den Dateiinhalt in Kleinbuchstaben
+                                    self.gesucht_zahl += 1
+                                    self.durchsucht_text = f"bis jetzt wurden {self.gesucht_zahl} Dateien durchsucht."
+                                    self.Zahl_anzeige.configure(text=self.durchsucht_text)  
+                                    if content_to_search in file_content:
+                                        results.append(file_path)
+                            except Exception as e:
+                                print(f"irgendwas ging nicht: {file_name}: {e}")
                 except Exception as e:
-                    print(f"Fehler: {e}")
-                    return ""
+                    print(f"konnte den pfad nicht öffnen: {e}")
+                    self.etwas_suchen = False
+                    self.Suche_suche = ""
 
-            folder_path = self.Ort_wo_gesucht_wird
-            content_to_search = self.Suche_suche.lower()  # Konvertiere den Suchinhalt in Kleinbuchstaben
-            results = []
-            try:
-                for root, dirs, files in os.walk(folder_path):
-                    for file_name in files:
-                        try:
-                            if file_name.endswith('.txt'):
-                                file_path = os.path.join(root, file_name)
-                                file_content = read_text_file(file_path).lower()# Konvertiere den Dateiinhalt in Kleinbuchstaben
-                                self.gesucht_zahl += 1
-                                self.durchsucht_text = f"bis jetzt wurden {self.gesucht_zahl} Dateien durchsucht."
-                                self.Zahl_anzeige.configure(text=self.durchsucht_text)  
-                                if content_to_search in file_content:
-                                    results.append(file_path)
-                        except Exception as e:
-                            print(f"irgendwas ging nicht: {file_name}: {e}")
-                            self.thread_suche.cancel()
-            except Exception as e:
-                print(f"konnte den pfad nicht öffnen: {e}")
-                self.thread_suche.cancel()
-
-            if results:
-                print("Das hab ich gefunden:")
-                ganzes_ergebnis = "In diesen Dateien habe ich etwas gefunden:\n\n" + "\n\n".join(results)
-                #messagebox.showinfo(title="CiM Suche", message=ganzes_ergebnis)
-                self.erg_text_widget.insert("0.0", ganzes_ergebnis)
-                self.thread_suche.cancel()
+                if results:
+                    print("Das hab ich gefunden:")
+                    ganzes_ergebnis = "In diesen Dateien habe ich etwas gefunden:\n\n" + "\n\n".join(results)
+                    #messagebox.showinfo(title="CiM Suche", message=ganzes_ergebnis)
+                    self.erg_text_widget.insert("0.0", ganzes_ergebnis)
+                    self.etwas_suchen = False
+                    self.Suche_suche = ""
+                else:
+                    print("gab nüscht")
+                    dmsg = "Dazu konnte ich leider nichts finden."
+                    self.erg_text_widget.insert("0.0", "Keine Ergebnisse")
+                    self.etwas_suchen = False
+                    self.Suche_suche = ""
+                    messagebox.showinfo(title="CiM Suche", message=dmsg)
+                    
             else:
                 print("gab nüscht")
                 dmsg = "Dazu konnte ich leider nichts finden."
                 self.erg_text_widget.insert("0.0", "Keine Ergebnisse")
-                self.thread_suche.cancel()
-                self.suchfenster_ergebnisse.destroy()
+                self.Suche_suche = ""
                 messagebox.showinfo(title="CiM Suche", message=dmsg)
-                
-        else:
-            print("gab nüscht")
-            dmsg = "Dazu konnte ich leider nichts finden."
-            self.thread_suche.cancel()
-            self.suchfenster_ergebnisse.destroy()
-            messagebox.showinfo(title="CiM Suche", message=dmsg)
             
 
     def Suche(self):
