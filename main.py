@@ -122,7 +122,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.0 (0)"
+        self.Version = "Alpha 1.3.0 (1)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -173,6 +173,7 @@ class Listendings:
         self.fertsch_var = None
         self.fertsch_vars = []
         self.etwas_suchen = False
+        self.etwas_suchen1 = False
 
         
         
@@ -629,17 +630,22 @@ class Listendings:
         self.Suche_suche = ""
         self.Ort_wo_gesucht_wird = ""
         self.gesucht_zahl = 0
+        self.gesucht_zahl_mit_fehlern = 0
+        self.Ergebnise_zahl = 30
         self.durchsucht_text = f"bis jetzt wurden {self.gesucht_zahl} Dateien durchsucht."
+        self.durchsucht_text_mit_fehlern = f"Fehler: {self.gesucht_zahl_mit_fehlern}"
         self.suchfenster_ergebnisse = tk.CTkToplevel(root)
         self.suchfenster_ergebnisse.title("Suchergebnisse")
         self.suchfenster_ergebnisse.geometry("500x500")
         self.suchfenster_ergebnisse_frame = tk.CTkScrollableFrame(self.suchfenster_ergebnisse, width=500, height=420, bg_color="Green")
         self.suchfenster_ergebnisse_frame.pack()
         self.erg_text_widget = tk.CTkTextbox(self.suchfenster_ergebnisse_frame, width=500, height=500)
-        self.erg_text_widget.pack()
+        #self.erg_text_widget.pack()
         print("fenster fürs suchen geladen...")
         self.Zahl_anzeige = tk.CTkLabel(self.suchfenster_ergebnisse, text=self.durchsucht_text)
         self.Zahl_anzeige.pack()
+        self.Zahl_anzeige_der_fehler = tk.CTkLabel(self.suchfenster_ergebnisse, text=self.durchsucht_text_mit_fehlern)
+        self.Zahl_anzeige_der_fehler.pack()
         
         
         
@@ -650,9 +656,12 @@ class Listendings:
             self.Suche_suche = such_dialog.get_input()
             if self.Suche_suche != "":
                 try:
+                    self.etwas_suchen1 = True
+                    self.etwas_suchen = True
                     self.thread_suche.start()
                     print("Thread für die Suche gestartet.")
                 except:
+                    self.etwas_suchen == True
                     print("Thread für die Suche lief bereits.")
                     pass
             else:
@@ -663,59 +672,71 @@ class Listendings:
             self.suchfenster_ergebnisse.destroy()
 
     def Suche_algo(self):
-        while self.etwas_suchen == True:
-            if self.Suche_suche:
-                def read_text_file(file_path):
+        while self.etwas_suchen1 == True:
+            while self.etwas_suchen == True:
+                if self.Suche_suche:
+                    def read_text_file(file_path):
+                        try:
+                            with open(file_path, 'r', encoding='utf-8') as file:
+                                return file.read()
+                        except Exception as e:
+                            self.gesucht_zahl_mit_fehlern += 1
+                            self.durchsucht_text_mit_fehlern = f"Fehler: {self.gesucht_zahl_mit_fehlern}"
+                            self.Zahl_anzeige_der_fehler.configure(text=self.durchsucht_text_mit_fehlern)
+                            print(f"Fehler: {e}")
+                            return ""
+
+                    folder_path = self.Ort_wo_gesucht_wird
+                    content_to_search = self.Suche_suche.lower()  # Konvertiere den Suchinhalt in Kleinbuchstaben
+                    results = []
                     try:
-                        with open(file_path, 'r', encoding='utf-8') as file:
-                            return file.read()
+                        for root, dirs, files in os.walk(folder_path):
+                            for file_name in files:
+                                try:
+                                    if file_name.endswith('.txt'):
+                                        file_path = os.path.join(root, file_name)
+                                        file_content = read_text_file(file_path).lower()# Konvertiere den Dateiinhalt in Kleinbuchstaben
+                                        self.gesucht_zahl += 1
+                                        self.durchsucht_text = f"bis jetzt durchsucht: {self.gesucht_zahl}"
+                                        self.Zahl_anzeige.configure(text=self.durchsucht_text)  
+                                        if content_to_search in file_content:
+                                            results.append(file_path)
+                                            if results > 0:
+                                                self.erg_anzeige = tk.CTkLabel(self.suchfenster_ergebnisse_frame, text=file_path, pady=10) # Ergebnisse anzeigen und als Text darstellen
+                                                self.Ergebnise_zahl += 30
+                                                print(self.Ergebnise_zahl)
+                                                self.erg_anzeige.place(x=0,y=self.Ergebnise_zahl)
+                                            
+                                except Exception as e:
+                                    self.gesucht_zahl_mit_fehlern += 1
+                                    self.durchsucht_text_mit_fehlern = f"Fehler: {self.gesucht_zahl_mit_fehlern}"
+                                    self.Zahl_anzeige_der_fehler.configure(text=self.durchsucht_text_mit_fehlern)
+                                    print(f"irgendwas ging nicht: {file_name}: {e}")
                     except Exception as e:
-                        print(f"Fehler: {e}")
-                        return ""
+                        print(f"konnte den pfad nicht öffnen: {e}")
+                        self.etwas_suchen = False
+                        self.Suche_suche = ""
 
-                folder_path = self.Ort_wo_gesucht_wird
-                content_to_search = self.Suche_suche.lower()  # Konvertiere den Suchinhalt in Kleinbuchstaben
-                results = []
-                try:
-                    for root, dirs, files in os.walk(folder_path):
-                        for file_name in files:
-                            try:
-                                if file_name.endswith('.txt'):
-                                    file_path = os.path.join(root, file_name)
-                                    file_content = read_text_file(file_path).lower()# Konvertiere den Dateiinhalt in Kleinbuchstaben
-                                    self.gesucht_zahl += 1
-                                    self.durchsucht_text = f"bis jetzt wurden {self.gesucht_zahl} Dateien durchsucht."
-                                    self.Zahl_anzeige.configure(text=self.durchsucht_text)  
-                                    if content_to_search in file_content:
-                                        results.append(file_path)
-                            except Exception as e:
-                                print(f"irgendwas ging nicht: {file_name}: {e}")
-                except Exception as e:
-                    print(f"konnte den pfad nicht öffnen: {e}")
-                    self.etwas_suchen = False
-                    self.Suche_suche = ""
-
-                if results:
-                    print("Das hab ich gefunden:")
-                    ganzes_ergebnis = "In diesen Dateien habe ich etwas gefunden:\n\n" + "\n\n".join(results)
-                    #messagebox.showinfo(title="CiM Suche", message=ganzes_ergebnis)
-                    self.erg_text_widget.insert("0.0", ganzes_ergebnis)
-                    self.etwas_suchen = False
-                    self.Suche_suche = ""
+                    if results:
+                        print("Das hab ich gefunden:")
+                        ganzes_ergebnis = "In diesen Dateien habe ich etwas gefunden:\n\n" + "\n\n".join(results)
+                        ####self.erg_text_widget.insert("0.0", ganzes_ergebnis)
+                        self.etwas_suchen = False
+                        self.Suche_suche = ""
+                    else:
+                        print("gab nüscht")
+                        dmsg = "Dazu konnte ich leider nichts finden."
+                        self.erg_text_widget.insert("0.0", "Keine Ergebnisse")
+                        self.etwas_suchen = False
+                        self.Suche_suche = ""
+                        messagebox.showinfo(title="CiM Suche", message=dmsg)
+                        
                 else:
                     print("gab nüscht")
-                    dmsg = "Dazu konnte ich leider nichts finden."
+                    dmsg = "Dazu konnte ich leider nichts finden..."
                     self.erg_text_widget.insert("0.0", "Keine Ergebnisse")
-                    self.etwas_suchen = False
                     self.Suche_suche = ""
                     messagebox.showinfo(title="CiM Suche", message=dmsg)
-                    
-            else:
-                print("gab nüscht")
-                dmsg = "Dazu konnte ich leider nichts finden."
-                self.erg_text_widget.insert("0.0", "Keine Ergebnisse")
-                self.Suche_suche = ""
-                messagebox.showinfo(title="CiM Suche", message=dmsg)
             
 
     def Suche(self):
