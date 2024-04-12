@@ -631,7 +631,7 @@ class Listendings:
         self.Ort_wo_gesucht_wird = ""
         self.gesucht_zahl = 0
         self.gesucht_zahl_mit_fehlern = 0
-        self.Ergebnise_zahl = 30
+        self.Ergebnise_zahl = 0
         self.durchsucht_text = f"bis jetzt wurden {self.gesucht_zahl} Dateien durchsucht."
         self.durchsucht_text_mit_fehlern = f"Fehler: {self.gesucht_zahl_mit_fehlern}"
         self.suchfenster_ergebnisse = tk.CTkToplevel(root)
@@ -674,6 +674,7 @@ class Listendings:
     def Suche_algo(self):
         while self.etwas_suchen1 == True:
             while self.etwas_suchen == True:
+                self.Ergebnise_zahl = 0
                 if self.Suche_suche:
                     def read_text_file(file_path):
                         try:
@@ -701,11 +702,7 @@ class Listendings:
                                         self.Zahl_anzeige.configure(text=self.durchsucht_text)  
                                         if content_to_search in file_content:
                                             results.append(file_path)
-                                            if results > 0:
-                                                self.erg_anzeige = tk.CTkLabel(self.suchfenster_ergebnisse_frame, text=file_path, pady=10) # Ergebnisse anzeigen und als Text darstellen
-                                                self.Ergebnise_zahl += 30
-                                                print(self.Ergebnise_zahl)
-                                                self.erg_anzeige.place(x=0,y=self.Ergebnise_zahl)
+                                            
                                             
                                 except Exception as e:
                                     self.gesucht_zahl_mit_fehlern += 1
@@ -720,6 +717,11 @@ class Listendings:
                     if results:
                         print("Das hab ich gefunden:")
                         ganzes_ergebnis = "In diesen Dateien habe ich etwas gefunden:\n\n" + "\n\n".join(results)
+                        for i in results:
+                            self.erg_anzeige = tk.CTkLabel(self.suchfenster_ergebnisse_frame, text=file_path, pady=10, padx=10) # Ergebnisse anzeigen und als Text darstellen
+                            self.Ergebnise_zahl += 1
+                            print(self.Ergebnise_zahl)
+                            self.erg_anzeige.grid(row=self.Ergebnise_zahl, column=0)
                         ####self.erg_text_widget.insert("0.0", ganzes_ergebnis)
                         self.etwas_suchen = False
                         self.Suche_suche = ""
