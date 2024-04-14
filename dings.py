@@ -122,7 +122,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.0 (1)"
+        self.Version = "Alpha 1.3.0 (2)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -1240,27 +1240,7 @@ class Listendings:
             ei = "Das ändern des ListenDings Pfades hat nicht geklappt, ich hab aber auch keine Ahnung wieso, versuch mal den Text hier zu entziffern: " , e
             messagebox.showerror(title="Fehler", message=ei)
 
-    def neue_GUI(self):
-        print("neue_GUI (def)")
-        self.senden_button.unbind('<Button-1>')
-        root.unbind('<Return>')
-        #self.alles_löschen_knopp.place_forget()
-        #self.beb_knopp.grid_forget()
-        self.kunde_label.grid_forget()
-        self.problem_label.grid_forget()
-        self.info_label.grid_forget()
-        self.kunde_entry.grid_forget()
-        self.problem_entry.grid_forget()
-        self.info_entry.grid_forget()
-        self.senden_button.grid_forget()
-        self.ausgabe_text.grid_forget()
-
-        self.kunde_label.place(x=5,y=10)
-        self.problem_label.place(x=5,y=40)
-        self.info_label.place(x=5,y=70)
-        self.kunde_entry.place(x=60,y=10)
-        self.problem_entry.place(x=60,y=40)
-        self.info_entry.place(x=60,y=70)
+   
     
     def Netzlaufwerk_speichern(self):
         print("Netzlaufwerk_speichern(def)")
