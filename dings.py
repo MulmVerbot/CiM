@@ -19,6 +19,8 @@ try:
     from customtkinter import ThemeManager
     import datetime
     from tkinter import simpledialog
+    import subprocess
+    import platform
 except:
     print("(FATAL) Konnte die wichtigen Bilbioteken nicht Laden!")
     messagebox.showerror(title="Kritischer Fehler", message="(FATAL) Konnte die wichtigen Bilbioteken nicht Laden! Das Programm wird nun Beendet.")
@@ -122,7 +124,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.0 (3)"
+        self.Version = "Alpha 1.3.0 (4)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -358,7 +360,7 @@ class Listendings:
         self.Bearbeiten_Menu.add_command(label="Alle Einträge löschen", command=self.alles_löschen)
         self.Suchen_Menu.add_command(label="Nach alten Einträgen suchen", command=self.Suche)
         self.Suchen_Menu.add_command(label="Im eigen Pfad nach alten Einträgen suchen", command=self.Suche1)
-        
+        self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results)
         # Initialisierung wichtiger Variablen
 
         self.beb = "0"
@@ -744,14 +746,14 @@ class Listendings:
                 if results:
                     print("Das hab ich gefunden:")
                     ganzes_ergebnis = "In diesen Dateien habe ich etwas gefunden:\n\n" + "\n\n".join(results)
-                    print(ganzes_ergebnis)
+                    self.rearesults = results
+                    #print(ganzes_ergebnis)
                     self.durchsucht_text = f"Es wurden insgesammt: {self.gesucht_zahl} Daten durchsucht. {ganzes_ergebnis}"
                     #self.Zahl_anzeige.configure(text=self.durchsucht_text)
                     self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
                     self.suchfenster_ergebnisse.resizable(False,False)
                     try:
                         self.Ergebnisse_des_scans_feld.pack()
-                    
                     except:
                         print("neee.")
                     self.Ergebnisse_des_scans_feld.insert("0.0",ganzes_ergebnis)
@@ -780,6 +782,16 @@ class Listendings:
                 self.Suche_suche = ""
                 self.etwas_suchen1 = False
                 messagebox.showinfo(title="CiM Suche", message=dmsg)
+
+    def aufmachen_results(self):
+        try:
+            for result in self.rearesults:
+                if platform.system() == "Windows":
+                    os.startfile(result) # Für Windows
+                elif platform.system() == "Darwin":
+                    subprocess.call(["open", result]) # Für MacOS
+        except Exception as exci_leer:
+            messagebox.showerror(title="Fehler CiM", message=exci_leer)
             
 
     def Suche(self):
