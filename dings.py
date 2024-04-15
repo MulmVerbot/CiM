@@ -122,7 +122,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.0 (2)"
+        self.Version = "Alpha 1.3.0 (3)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -176,8 +176,8 @@ class Listendings:
         self.etwas_suchen1 = False
 
         self.suchfenster_ergebnisse = tk.CTkToplevel(root)
-        self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
         self.suchfenster_ergebnisse.resizable(False,False)
+        self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
         #self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
         self.suchfenster_ergebnisse.destroy()
         
@@ -639,6 +639,7 @@ class Listendings:
         self.Ergebnise_zahl = 0
         try:
             self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
+            self.suchfenster_ergebnisse.resizable(False,False)
             self.Ergebnisse_des_scans_feld.delete("1.0", tk.END)
         except:
             pass
@@ -747,6 +748,7 @@ class Listendings:
                     self.durchsucht_text = f"Es wurden insgesammt: {self.gesucht_zahl} Daten durchsucht. {ganzes_ergebnis}"
                     #self.Zahl_anzeige.configure(text=self.durchsucht_text)
                     self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
+                    self.suchfenster_ergebnisse.resizable(False,False)
                     try:
                         self.Ergebnisse_des_scans_feld.pack()
                     
@@ -768,6 +770,7 @@ class Listendings:
                     self.erg_text_widget.insert("0.0", "Keine Ergebnisse")
                     self.etwas_suchen1 = False
                     self.Suche_suche = ""
+                    self.suchfenster_ergebnisse.resizable(False,False)
                     messagebox.showinfo(title="CiM Suche", message=dmsg)
                     
             else:

@@ -122,7 +122,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.0 (1)"
+        self.Version = "Alpha 1.3.0 (3)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -175,6 +175,11 @@ class Listendings:
         self.etwas_suchen = False
         self.etwas_suchen1 = False
 
+        self.suchfenster_ergebnisse = tk.CTkToplevel(root)
+        self.suchfenster_ergebnisse.resizable(False,False)
+        self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
+        #self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
+        self.suchfenster_ergebnisse.destroy()
         
         
         
@@ -388,7 +393,7 @@ class Listendings:
         #self.beb_knopp = tk.CTkButton(self.menu_frame, text="Bearbeiten", command=self.beb_c)
         self.beb_knopp = tk.CTkButton(master, text="Bearbeiten", command=self.beb_c, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         self.beb_knopp.place(x=1260, y=100)  # Add more buttons as needed
-        self.alles_löschen_knopp = tk.CTkButton(master, text="Alle Eintrage löschen", command=self.alles_löschen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.alles_löschen_knopp = tk.CTkButton(master, text="durchsuchen...", command=self.Suche1, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         self.alles_löschen_knopp.place(x=1260, y=130)
         self.Menü_Knopp = tk.CTkButton(master, text="Menü Anzeigen", command=self.Menu_anzeige_wechseln, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         self.Menü_Knopp.place(x=1260, y=160)
@@ -632,13 +637,22 @@ class Listendings:
         self.gesucht_zahl = 0
         self.gesucht_zahl_mit_fehlern = 0
         self.Ergebnise_zahl = 0
+        try:
+            self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
+            self.suchfenster_ergebnisse.resizable(False,False)
+            self.Ergebnisse_des_scans_feld.delete("1.0", tk.END)
+        except:
+            pass
         self.durchsucht_text = f"bis jetzt wurden {self.gesucht_zahl} Dateien durchsucht."
         self.durchsucht_text_mit_fehlern = f"Fehler: {self.gesucht_zahl_mit_fehlern}"
-        self.suchfenster_ergebnisse = tk.CTkToplevel(root)
+        try:
+            self.suchfenster_ergebnisse = tk.CTkToplevel(root)
+        except:
+            pass
         self.suchfenster_ergebnisse.title("Suchergebnisse")
         self.suchfenster_ergebnisse.geometry("500x500")
         self.suchfenster_ergebnisse_frame = tk.CTkScrollableFrame(self.suchfenster_ergebnisse, width=500, height=420, bg_color="Green")
-        self.suchfenster_ergebnisse_frame.pack()
+        #self.suchfenster_ergebnisse_frame.pack()
         self.erg_text_widget = tk.CTkTextbox(self.suchfenster_ergebnisse_frame, width=500, height=500)
         #self.erg_text_widget.pack()
         print("fenster fürs suchen geladen...")
@@ -654,16 +668,27 @@ class Listendings:
             print("pfad wurde ausgewählt")
             such_dialog = tk.CTkInputDialog(title="CiM Suche", text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht. (Groß-und Kleinschreibung wird ignoriert)")
             self.Suche_suche = such_dialog.get_input()
+            such_dialog.destroy()
             if self.Suche_suche != "":
                 try:
+                   if self.etwas_suchen1 == False:
                     self.etwas_suchen1 = True
-                    self.etwas_suchen = True
                     self.thread_suche.start()
+                    #self.Suche_algo()
                     print("Thread für die Suche gestartet.")
                 except:
-                    self.etwas_suchen == True
+                    self.etwas_suchen1 = True
+                    #self.Suche_algo()
                     print("Thread für die Suche lief bereits.")
-                    pass
+                    try:
+                        self.etwas_suchen1 = True
+                        self.Suche_algo()
+                        #self.thread_suche.start()
+                        print("threads oderso.")
+                    except Exception as esisx:
+                        print("fehler161: ",esisx)
+                        
+                    
             else:
                 messagebox.showinfo(message="Suche Abgebrochen.")
                 self.suchfenster_ergebnisse.destroy()
@@ -673,72 +698,88 @@ class Listendings:
 
     def Suche_algo(self):
         while self.etwas_suchen1 == True:
-            while self.etwas_suchen == True:
-                self.Ergebnise_zahl = 0
-                if self.Suche_suche:
-                    def read_text_file(file_path):
-                        try:
-                            with open(file_path, 'r', encoding='utf-8') as file:
-                                return file.read()
-                        except Exception as e:
-                            self.gesucht_zahl_mit_fehlern += 1
-                            self.durchsucht_text_mit_fehlern = f"Fehler: {self.gesucht_zahl_mit_fehlern}"
-                            self.Zahl_anzeige_der_fehler.configure(text=self.durchsucht_text_mit_fehlern)
-                            print(f"Fehler: {e}")
-                            return ""
+            self.Ergebnise_zahl = 0
+            if self.Suche_suche != "":
+                print("dings")
 
-                    folder_path = self.Ort_wo_gesucht_wird
-                    content_to_search = self.Suche_suche.lower()  # Konvertiere den Suchinhalt in Kleinbuchstaben
-                    results = []
+            if self.Suche_suche:
+                def read_text_file(file_path):
                     try:
-                        for root, dirs, files in os.walk(folder_path):
-                            for file_name in files:
-                                try:
-                                    if file_name.endswith('.txt'):
-                                        file_path = os.path.join(root, file_name)
-                                        file_content = read_text_file(file_path).lower()# Konvertiere den Dateiinhalt in Kleinbuchstaben
-                                        self.gesucht_zahl += 1
-                                        self.durchsucht_text = f"bis jetzt durchsucht: {self.gesucht_zahl}"
-                                        self.Zahl_anzeige.configure(text=self.durchsucht_text)  
-                                        if content_to_search in file_content:
-                                            results.append(file_path)
-                                            
-                                            
-                                except Exception as e:
-                                    self.gesucht_zahl_mit_fehlern += 1
-                                    self.durchsucht_text_mit_fehlern = f"Fehler: {self.gesucht_zahl_mit_fehlern}"
-                                    self.Zahl_anzeige_der_fehler.configure(text=self.durchsucht_text_mit_fehlern)
-                                    print(f"irgendwas ging nicht: {file_name}: {e}")
+                        with open(file_path, 'r', encoding='utf-8') as file:
+                            return file.read()
                     except Exception as e:
-                        print(f"konnte den pfad nicht öffnen: {e}")
-                        self.etwas_suchen = False
-                        self.Suche_suche = ""
+                        self.gesucht_zahl_mit_fehlern += 1
+                        self.durchsucht_text_mit_fehlern = f"Fehler: {self.gesucht_zahl_mit_fehlern}"
+                        self.Zahl_anzeige_der_fehler.configure(text=self.durchsucht_text_mit_fehlern)
+                        print(f"Fehler: {e}")
+                        return ""
 
-                    if results:
-                        print("Das hab ich gefunden:")
-                        ganzes_ergebnis = "In diesen Dateien habe ich etwas gefunden:\n\n" + "\n\n".join(results)
-                        ##for i in results:
-                            #self.erg_anzeige = tk.CTkLabel(self.suchfenster_ergebnisse_frame, text=file_path, pady=10, padx=10) # Ergebnisse anzeigen und als Text darstellen
-                            #self.Ergebnise_zahl += 1
-                            #print(self.Ergebnise_zahl)
-                           # self.erg_anzeige.grid(row=self.Ergebnise_zahl, column=0)
-                        ####self.erg_text_widget.insert("0.0", ganzes_ergebnis)
-                        self.etwas_suchen = False
-                        self.Suche_suche = ""
-                    else:
-                        print("gab nüscht")
-                        dmsg = "Dazu konnte ich leider nichts finden."
-                        self.erg_text_widget.insert("0.0", "Keine Ergebnisse")
-                        self.etwas_suchen = False
-                        self.Suche_suche = ""
-                        messagebox.showinfo(title="CiM Suche", message=dmsg)
-                        
+                folder_path = self.Ort_wo_gesucht_wird
+                content_to_search = self.Suche_suche.lower()  # Konvertiere den Suchinhalt in Kleinbuchstaben
+                results = []
+                try:
+                    for root, dirs, files in os.walk(folder_path):
+                        for file_name in files:
+                            try:
+                                if file_name.endswith('.txt'):
+                                    file_path = os.path.join(root, file_name)
+                                    file_content = read_text_file(file_path).lower()# Konvertiere den Dateiinhalt in Kleinbuchstaben
+                                    self.gesucht_zahl += 1
+                                    self.durchsucht_text = f"bis jetzt durchsucht: {self.gesucht_zahl}"
+                                    self.Zahl_anzeige.configure(text=self.durchsucht_text)  
+                                    if content_to_search in file_content:
+                                        results.append(file_path)
+                                        
+                                        
+                            except Exception as e:
+                                self.gesucht_zahl_mit_fehlern += 1
+                                self.durchsucht_text_mit_fehlern = f"Fehler: {self.gesucht_zahl_mit_fehlern}"
+                                self.Zahl_anzeige_der_fehler.configure(text=self.durchsucht_text_mit_fehlern)
+                                print(f"irgendwas ging nicht: {file_name}: {e}")
+                except Exception as e:
+                    print(f"konnte den pfad nicht öffnen: {e}")
+                    self.etwas_suchen1 = False
+                    self.Suche_suche = ""
+
+                if results:
+                    print("Das hab ich gefunden:")
+                    ganzes_ergebnis = "In diesen Dateien habe ich etwas gefunden:\n\n" + "\n\n".join(results)
+                    print(ganzes_ergebnis)
+                    self.durchsucht_text = f"Es wurden insgesammt: {self.gesucht_zahl} Daten durchsucht. {ganzes_ergebnis}"
+                    #self.Zahl_anzeige.configure(text=self.durchsucht_text)
+                    self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
+                    self.suchfenster_ergebnisse.resizable(False,False)
+                    try:
+                        self.Ergebnisse_des_scans_feld.pack()
+                    
+                    except:
+                        print("neee.")
+                    self.Ergebnisse_des_scans_feld.insert("0.0",ganzes_ergebnis)
+                    ##for i in results:
+                        #self.erg_anzeige = tk.CTkLabel(self.suchfenster_ergebnisse_frame, text=file_path, pady=10, padx=10) # Ergebnisse anzeigen und als Text darstellen
+                        #self.Ergebnise_zahl += 1
+                        #print(self.Ergebnise_zahl)
+                        # self.erg_anzeige.grid(row=self.Ergebnise_zahl, column=0)
+                    ####self.erg_text_widget.insert("0.0", ganzes_ergebnis)
+                    self.etwas_suchen1 = False
+                    self.etwas_suchen = False
+                    self.Suche_suche = ""
                 else:
                     print("gab nüscht")
-                    dmsg = "Dazu konnte ich leider nichts finden..."
+                    dmsg = "Dazu konnte ich leider nichts finden."
                     self.erg_text_widget.insert("0.0", "Keine Ergebnisse")
+                    self.etwas_suchen1 = False
                     self.Suche_suche = ""
+                    self.suchfenster_ergebnisse.resizable(False,False)
                     messagebox.showinfo(title="CiM Suche", message=dmsg)
+                    
+            else:
+                print("gab nüscht")
+                dmsg = "Dazu konnte ich leider nichts finden..."
+                self.erg_text_widget.insert("0.0", "Keine Ergebnisse")
+                self.Suche_suche = ""
+                self.etwas_suchen1 = False
+                messagebox.showinfo(title="CiM Suche", message=dmsg)
             
 
     def Suche(self):
@@ -1240,27 +1281,7 @@ class Listendings:
             ei = "Das ändern des ListenDings Pfades hat nicht geklappt, ich hab aber auch keine Ahnung wieso, versuch mal den Text hier zu entziffern: " , e
             messagebox.showerror(title="Fehler", message=ei)
 
-    def neue_GUI(self):
-        print("neue_GUI (def)")
-        self.senden_button.unbind('<Button-1>')
-        root.unbind('<Return>')
-        #self.alles_löschen_knopp.place_forget()
-        #self.beb_knopp.grid_forget()
-        self.kunde_label.grid_forget()
-        self.problem_label.grid_forget()
-        self.info_label.grid_forget()
-        self.kunde_entry.grid_forget()
-        self.problem_entry.grid_forget()
-        self.info_entry.grid_forget()
-        self.senden_button.grid_forget()
-        self.ausgabe_text.grid_forget()
-
-        self.kunde_label.place(x=5,y=10)
-        self.problem_label.place(x=5,y=40)
-        self.info_label.place(x=5,y=70)
-        self.kunde_entry.place(x=60,y=10)
-        self.problem_entry.place(x=60,y=40)
-        self.info_entry.place(x=60,y=70)
+   
     
     def Netzlaufwerk_speichern(self):
         print("Netzlaufwerk_speichern(def)")
