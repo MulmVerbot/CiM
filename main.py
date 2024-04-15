@@ -662,6 +662,8 @@ class Listendings:
         self.Zahl_anzeige.pack()
         self.Zahl_anzeige_der_fehler = tk.CTkLabel(self.suchfenster_ergebnisse, text=self.durchsucht_text_mit_fehlern)
         self.Zahl_anzeige_der_fehler.pack()
+        self.knopp_offnen = tk.CTkButton(self.suchfenster_ergebnisse, text="Alle einfach aufmachen", command=self.aufmachen_results)
+        self.knopp_offnen.pack()
         
         
         
@@ -756,6 +758,8 @@ class Listendings:
                         self.Ergebnisse_des_scans_feld.pack()
                     except:
                         print("neee.")
+                    self.knopp_offnen = tk.CTkButton(self.suchfenster_ergebnisse, text="Alle einfach aufmachen", command=self.aufmachen_results)
+                    self.knopp_offnen.pack()
                     self.Ergebnisse_des_scans_feld.insert("0.0",ganzes_ergebnis)
                     ##for i in results:
                         #self.erg_anzeige = tk.CTkLabel(self.suchfenster_ergebnisse_frame, text=file_path, pady=10, padx=10) # Ergebnisse anzeigen und als Text darstellen
