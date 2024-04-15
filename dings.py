@@ -175,6 +175,9 @@ class Listendings:
         self.etwas_suchen = False
         self.etwas_suchen1 = False
 
+        self.suchfenster_ergebnisse = tk.CTkToplevel(root)
+        #self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse)
+        self.suchfenster_ergebnisse.destroy()
         
         
         
@@ -388,7 +391,7 @@ class Listendings:
         #self.beb_knopp = tk.CTkButton(self.menu_frame, text="Bearbeiten", command=self.beb_c)
         self.beb_knopp = tk.CTkButton(master, text="Bearbeiten", command=self.beb_c, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         self.beb_knopp.place(x=1260, y=100)  # Add more buttons as needed
-        self.alles_löschen_knopp = tk.CTkButton(master, text="Alle Eintrage löschen", command=self.alles_löschen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.alles_löschen_knopp = tk.CTkButton(master, text="durchsuchen...", command=self.Suche1, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         self.alles_löschen_knopp.place(x=1260, y=130)
         self.Menü_Knopp = tk.CTkButton(master, text="Menü Anzeigen", command=self.Menu_anzeige_wechseln, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         self.Menü_Knopp.place(x=1260, y=160)
@@ -632,13 +635,20 @@ class Listendings:
         self.gesucht_zahl = 0
         self.gesucht_zahl_mit_fehlern = 0
         self.Ergebnise_zahl = 0
+        try:
+            self.Ergebnisse_des_scans_feld.delete("1.0", tk.END)
+        except:
+            pass
         self.durchsucht_text = f"bis jetzt wurden {self.gesucht_zahl} Dateien durchsucht."
         self.durchsucht_text_mit_fehlern = f"Fehler: {self.gesucht_zahl_mit_fehlern}"
-        self.suchfenster_ergebnisse = tk.CTkToplevel(root)
+        try:
+            self.suchfenster_ergebnisse = tk.CTkToplevel(root)
+        except:
+            pass
         self.suchfenster_ergebnisse.title("Suchergebnisse")
         self.suchfenster_ergebnisse.geometry("500x500")
         self.suchfenster_ergebnisse_frame = tk.CTkScrollableFrame(self.suchfenster_ergebnisse, width=500, height=420, bg_color="Green")
-        self.suchfenster_ergebnisse_frame.pack()
+        #self.suchfenster_ergebnisse_frame.pack()
         self.erg_text_widget = tk.CTkTextbox(self.suchfenster_ergebnisse_frame, width=500, height=500)
         #self.erg_text_widget.pack()
         print("fenster fürs suchen geladen...")
@@ -654,15 +664,27 @@ class Listendings:
             print("pfad wurde ausgewählt")
             such_dialog = tk.CTkInputDialog(title="CiM Suche", text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht. (Groß-und Kleinschreibung wird ignoriert)")
             self.Suche_suche = such_dialog.get_input()
+            such_dialog.destroy()
             if self.Suche_suche != "":
                 try:
+                   if self.etwas_suchen1 == False:
                     self.etwas_suchen1 = True
                     self.thread_suche.start()
+                    #self.Suche_algo()
                     print("Thread für die Suche gestartet.")
                 except:
                     self.etwas_suchen1 = True
+                    #self.Suche_algo()
                     print("Thread für die Suche lief bereits.")
-                    pass
+                    try:
+                        self.etwas_suchen1 = True
+                        self.Suche_algo()
+                        #self.thread_suche.start()
+                        print("threads oderso.")
+                    except Exception as esisx:
+                        print("fehler161: ",esisx)
+                        
+                    
             else:
                 messagebox.showinfo(message="Suche Abgebrochen.")
                 self.suchfenster_ergebnisse.destroy()
@@ -673,6 +695,9 @@ class Listendings:
     def Suche_algo(self):
         while self.etwas_suchen1 == True:
             self.Ergebnise_zahl = 0
+            if self.Suche_suche != "":
+                print("dings")
+
             if self.Suche_suche:
                 def read_text_file(file_path):
                     try:
@@ -709,12 +734,17 @@ class Listendings:
                                 print(f"irgendwas ging nicht: {file_name}: {e}")
                 except Exception as e:
                     print(f"konnte den pfad nicht öffnen: {e}")
-                    self.etwas_suchen = False
+                    self.etwas_suchen1 = False
                     self.Suche_suche = ""
 
                 if results:
                     print("Das hab ich gefunden:")
                     ganzes_ergebnis = "In diesen Dateien habe ich etwas gefunden:\n\n" + "\n\n".join(results)
+                    print(ganzes_ergebnis)
+                    self.durchsucht_text = f"Es wurden insgesammt: {self.gesucht_zahl} Daten durchsucht. {ganzes_ergebnis}"
+                    self.Zahl_anzeige.configure(text=self.durchsucht_text)
+                    #self.Ergebnisse_des_scans_feld.pack()
+                    #self.Ergebnisse_des_scans_feld.insert("0.0",ganzes_ergebnis)
                     ##for i in results:
                         #self.erg_anzeige = tk.CTkLabel(self.suchfenster_ergebnisse_frame, text=file_path, pady=10, padx=10) # Ergebnisse anzeigen und als Text darstellen
                         #self.Ergebnise_zahl += 1
@@ -737,7 +767,7 @@ class Listendings:
                 dmsg = "Dazu konnte ich leider nichts finden..."
                 self.erg_text_widget.insert("0.0", "Keine Ergebnisse")
                 self.Suche_suche = ""
-                self.etwas_suchen1 = True
+                self.etwas_suchen1 = False
                 messagebox.showinfo(title="CiM Suche", message=dmsg)
             
 
