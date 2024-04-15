@@ -124,7 +124,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.0 (4)"
+        self.Version = "Alpha 1.3.0 (5)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -170,6 +170,7 @@ class Listendings:
         self.Weiterleitung_an = ""
         self.wollte_sprechen = ""
         self.Starface_Farbe = "#4d4d4d"
+        self.Ort_wo_gesucht_wird = ""
 
         self.zachen = 0
         self.fertsch_var = None
@@ -359,7 +360,7 @@ class Listendings:
         self.Bearbeiten_Menu.add_command(label="Bearbeiten Umschalten", command=self.beb_c)
         self.Bearbeiten_Menu.add_command(label="Alle Einträge löschen", command=self.alles_löschen)
         self.Suchen_Menu.add_command(label="Nach alten Einträgen suchen", command=self.Suche)
-        self.Suchen_Menu.add_command(label="Im eigen Pfad nach alten Einträgen suchen", command=self.Suche1)
+        self.Suchen_Menu.add_command(label="In der Kundenablage suchen...", command=self.Suche_KDabl)
         self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results)
         # Initialisierung wichtiger Variablen
 
@@ -635,7 +636,6 @@ class Listendings:
     def Suche1(self):
         print("Suchen(def)")
         self.Suche_suche = ""
-        self.Ort_wo_gesucht_wird = ""
         self.gesucht_zahl = 0
         self.gesucht_zahl_mit_fehlern = 0
         self.Ergebnise_zahl = 0
@@ -667,38 +667,42 @@ class Listendings:
         
         
         
-        self.Ort_wo_gesucht_wird = filedialog.askdirectory()
-        if self.Ort_wo_gesucht_wird != "":
-            print("pfad wurde ausgewählt")
-            such_dialog = tk.CTkInputDialog(title="CiM Suche", text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht. (Groß-und Kleinschreibung wird ignoriert)")
-            self.Suche_suche = such_dialog.get_input()
-            such_dialog.destroy()
-            if self.Suche_suche != "":
-                try:
-                   if self.etwas_suchen1 == False:
+        if self.Ort_wo_gesucht_wird == "":
+            self.Ort_wo_gesucht_wird = filedialog.askdirectory()
+        #if self.Ort_wo_gesucht_wird != "":
+        print("pfad wurde ausgewählt")
+        such_dialog = tk.CTkInputDialog(title="CiM Suche", text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht. (Groß-und Kleinschreibung wird ignoriert)")
+        
+        self.Suche_suche = such_dialog.get_input()
+        such_dialog.destroy()
+        if self.Suche_suche != "":
+            try:
+                if self.etwas_suchen1 == False:
                     self.etwas_suchen1 = True
                     self.thread_suche.start()
                     #self.Suche_algo()
                     print("Thread für die Suche gestartet.")
-                except:
+            except:
+                self.etwas_suchen1 = True
+                #self.Suche_algo()
+                print("Thread für die Suche lief bereits.")
+                try:
                     self.etwas_suchen1 = True
-                    #self.Suche_algo()
-                    print("Thread für die Suche lief bereits.")
-                    try:
-                        self.etwas_suchen1 = True
-                        self.Suche_algo()
-                        #self.thread_suche.start()
-                        print("threads oderso.")
-                    except Exception as esisx:
-                        print("fehler161: ",esisx)
+                    self.Suche_algo()
+                except Exception as esisx:
+                    print("fehler161: ",esisx)
                         
                     
-            else:
+            '''else:
                 messagebox.showinfo(message="Suche Abgebrochen.")
-                self.suchfenster_ergebnisse.destroy()
+                self.suchfenster_ergebnisse.destroy()'''
         else:
-            messagebox.showinfo(message="Suche Abgebrochen.")
+            messagebox.showinfo(message="Suche Abgebrochen. self.Suche_suche !='''' ")
             self.suchfenster_ergebnisse.destroy()
+
+    def Suche_KDabl(self):
+        self.Ort_wo_gesucht_wird = "/Volumes/Kundenablage/"
+        self.Suche1()
 
     def Suche_algo(self):
         while self.etwas_suchen1 == True:
@@ -715,7 +719,7 @@ class Listendings:
                         self.gesucht_zahl_mit_fehlern += 1
                         self.durchsucht_text_mit_fehlern = f"Fehler: {self.gesucht_zahl_mit_fehlern}"
                         self.Zahl_anzeige_der_fehler.configure(text=self.durchsucht_text_mit_fehlern)
-                        print(f"Fehler: {e}")
+                        #print(f"Fehler: {e}")
                         return ""
 
                 folder_path = self.Ort_wo_gesucht_wird
@@ -739,19 +743,18 @@ class Listendings:
                                 self.gesucht_zahl_mit_fehlern += 1
                                 self.durchsucht_text_mit_fehlern = f"Fehler: {self.gesucht_zahl_mit_fehlern}"
                                 self.Zahl_anzeige_der_fehler.configure(text=self.durchsucht_text_mit_fehlern)
-                                print(f"irgendwas ging nicht: {file_name}: {e}")
+                                #print(f"irgendwas ging nicht: {file_name}: {e}")
                 except Exception as e:
-                    print(f"konnte den pfad nicht öffnen: {e}")
+                    #print(f"konnte den pfad nicht öffnen: {e}")
                     self.etwas_suchen1 = False
                     self.Suche_suche = ""
+                    self.Ort_wo_gesucht_wird = ""
 
                 if results:
                     print("Das hab ich gefunden:")
                     ganzes_ergebnis = "In diesen Dateien habe ich etwas gefunden:\n\n" + "\n\n".join(results)
                     self.rearesults = results
-                    #print(ganzes_ergebnis)
                     self.durchsucht_text = f"Es wurden insgesammt: {self.gesucht_zahl} Daten durchsucht. {ganzes_ergebnis}"
-                    #self.Zahl_anzeige.configure(text=self.durchsucht_text)
                     self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
                     self.suchfenster_ergebnisse.resizable(False,False)
                     try:
@@ -761,21 +764,20 @@ class Listendings:
                     self.knopp_offnen = tk.CTkButton(self.suchfenster_ergebnisse, text="Alle einfach aufmachen", command=self.aufmachen_results)
                     self.knopp_offnen.pack()
                     self.Ergebnisse_des_scans_feld.insert("0.0",ganzes_ergebnis)
-                    ##for i in results:
-                        #self.erg_anzeige = tk.CTkLabel(self.suchfenster_ergebnisse_frame, text=file_path, pady=10, padx=10) # Ergebnisse anzeigen und als Text darstellen
-                        #self.Ergebnise_zahl += 1
-                        #print(self.Ergebnise_zahl)
-                        # self.erg_anzeige.grid(row=self.Ergebnise_zahl, column=0)
-                    ####self.erg_text_widget.insert("0.0", ganzes_ergebnis)
                     self.etwas_suchen1 = False
                     self.etwas_suchen = False
                     self.Suche_suche = ""
+                    self.Ort_wo_gesucht_wird = ""
                 else:
                     print("gab nüscht")
                     dmsg = "Dazu konnte ich leider nichts finden."
-                    self.erg_text_widget.insert("0.0", "Keine Ergebnisse")
+                    try:
+                        self.erg_text_widget.insert("0.0", "Keine Ergebnisse")
+                    except:
+                        pass
                     self.etwas_suchen1 = False
                     self.Suche_suche = ""
+                    self.Ort_wo_gesucht_wird = ""
                     self.suchfenster_ergebnisse.resizable(False,False)
                     messagebox.showinfo(title="CiM Suche", message=dmsg)
                     
