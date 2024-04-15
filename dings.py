@@ -176,7 +176,9 @@ class Listendings:
         self.etwas_suchen1 = False
 
         self.suchfenster_ergebnisse = tk.CTkToplevel(root)
-        #self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse)
+        self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
+        self.suchfenster_ergebnisse.resizable(False,False)
+        #self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
         self.suchfenster_ergebnisse.destroy()
         
         
@@ -636,6 +638,7 @@ class Listendings:
         self.gesucht_zahl_mit_fehlern = 0
         self.Ergebnise_zahl = 0
         try:
+            self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
             self.Ergebnisse_des_scans_feld.delete("1.0", tk.END)
         except:
             pass
@@ -742,9 +745,14 @@ class Listendings:
                     ganzes_ergebnis = "In diesen Dateien habe ich etwas gefunden:\n\n" + "\n\n".join(results)
                     print(ganzes_ergebnis)
                     self.durchsucht_text = f"Es wurden insgesammt: {self.gesucht_zahl} Daten durchsucht. {ganzes_ergebnis}"
-                    self.Zahl_anzeige.configure(text=self.durchsucht_text)
-                    #self.Ergebnisse_des_scans_feld.pack()
-                    #self.Ergebnisse_des_scans_feld.insert("0.0",ganzes_ergebnis)
+                    #self.Zahl_anzeige.configure(text=self.durchsucht_text)
+                    self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
+                    try:
+                        self.Ergebnisse_des_scans_feld.pack()
+                    
+                    except:
+                        print("neee.")
+                    self.Ergebnisse_des_scans_feld.insert("0.0",ganzes_ergebnis)
                     ##for i in results:
                         #self.erg_anzeige = tk.CTkLabel(self.suchfenster_ergebnisse_frame, text=file_path, pady=10, padx=10) # Ergebnisse anzeigen und als Text darstellen
                         #self.Ergebnise_zahl += 1
