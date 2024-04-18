@@ -124,7 +124,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.0 (5)"
+        self.Version = "Alpha 1.3.0 (6)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -141,6 +141,7 @@ class Listendings:
         self.Auto_speichern_Einstellung = "0"
         self.Autospeichern_tkvar = "0"
         self.Uhrzeit_anruf_ende = None
+        self.zeile_zahl = 0
         self.tag_string = str(time.strftime("%d %m %Y"))
         self.Benutzerordner = os.path.expanduser('~')
         self.Listen_Speicherort_standard = os.path.join(self.Benutzerordner, 'CiM', 'Listen')
@@ -150,6 +151,7 @@ class Listendings:
         self.Listen_Speicherort_Netzwerk_Einstellungsdatei = os.path.join(self.Einstellungen_ordner, "Listendingsspeicherort_Netzwerk.json")
         self.Auto_speichern_Einstellungsdatei = os.path.join(self.Einstellungen_ordner, "Auto_speichern.txt") 
         self.icon_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Assets', 'CiM_icon.png')
+        self.index_liste_pfad_Einstellungsdatei = os.path.join(self.Benutzerordner, 'CiM', 'Einstellungen', 'CiM_Index.txt')
         
         
         self.Monat = time.strftime("%m")
@@ -177,6 +179,7 @@ class Listendings:
         self.fertsch_vars = []
         self.etwas_suchen = False
         self.etwas_suchen1 = False
+        self.Index_stand = None
 
         self.suchfenster_ergebnisse = tk.CTkToplevel(root)
         self.suchfenster_ergebnisse.resizable(False,False)
@@ -481,23 +484,54 @@ class Listendings:
     def Aufgabe_hinzufügen(self):
         text_des_dings = tk.CTkInputDialog(text="Gib was ein:")
         Aufgabe = self.Zeit + "  --  " + text_des_dings.get_input()
+        try:
+            with open(self.index_liste_pfad_Einstellungsdatei, "w+") as index_gel:
+                index_gel = index_gel.read()
+                print("Geladener Stand: ", index_gel)
+                self.Index_stand = index_gel
+                if self.Index_stand == "":
+                    self.Index_stand = 0
+                check_var = self.Index_stand
+                check_var +=1
+                print("check var ist jetzt: ", check_var)
+        except Exception as ExIndi_Ex1:
+            print("Fehler beim öffnen der Indexliste, es wird nun wieder bei Null angefangen... Fehlercode: ", ExIndi_Ex1)
+            self.Index_stand = 0
+
+        def checkbox_event():  # löschen der Aufgabe
+            print("die checkbox hat gerade den folgenden Wert: ", check_var.get())
+            if check_var.get() == "an":
+                checkbox.grid_forget()
+                
         if Aufgabe:
-            print("Das is: ", text_des_dings, "und Aufgabe ist: ", Aufgabe)
-            self.zachen += 1
-            fertsch_var = tk.StringVar()
-            fertsch_var.set("") 
-            self.fertsch_vars.append(fertsch_var)
-            chkbx = tk.CTkCheckBox(self.Liste_mit_zeugs, text=Aufgabe, bg_color="White", text_color="Black", variable=fertsch_var, command=lambda fv=fertsch_var: self.callback_fertsch_var(fv))
-            chkbx.fertsch_var = fertsch_var  # Speichern der Variable als Attribut des Widgets
-            chkbx.grid(row=self.zachen, column=0, padx=10)
+            try:
+                check_var = tk.StringVar(value="Numero Uno")
+                #checkbox = tk.CTkCheckBox(root, text="CTkCheckBox", command=checkbox_event,variable=check_var, onvalue="on", offvalue="off")
+                checkbox = tk.CTkCheckBox(self.Liste_mit_zeugs, text=Aufgabe, command=checkbox_event,variable=check_var, onvalue="an", offvalue="aus")
+                #checkbox.pack()
+                checkbox.grid(row=self.zeile_zahl, column=0, padx=10)
+                self.zeile_zahl +=1
+            except Exception as Excio:
+                print("Fehler beim hinzufügen der Aufgabe Fehlercode: ",Excio)
+
+            
+            try:
+                with open(self.index_liste_pfad_Einstellungsdatei, "w+") as Datei_offn:
+                    Datei_offn.write(self.zeile_zahl)
+                    print("Index Datei geschrieben. geschriebener Wert: ", self.zeile_zahl)
+            except Exception as edx:
+                print(edx)
         else:
+            print("pass")
             pass
 
     def callback_fertsch_var(self, fertsch_var):
         try:
             index = self.fertsch_vars.index(fertsch_var)
+            print("Index beim löschen lautet: ", index)
             del self.fertsch_vars[index]
             chkbx = self.Liste_mit_zeugs.grid_slaves(row=index+1, column=0)[0]
+            self.zachen -= 1
             chkbx.destroy()  # Zerstöre die Checkbox
         except Exception as exc1:
             print("Fehler: ", exc1)
