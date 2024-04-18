@@ -77,7 +77,8 @@ class Listendings:
                 httpd.server_close()
                 httpd.shutdown()
                 print(f'Server auf Port {port} gestoppt.')
-Dasisteinrichtiggeiler zteszdiggaundwenndasauchsobveiuderanderentastatruristdannfickdochmeinlebendiggamaaaan.,,
+#Dasisteinrichtiggeiler zteszdiggaundwenndasauchsobveiuderanderentastatruristdannfickdochmeinlebendiggamaaaan.,,
+#jetzt sollteda sdas mit en leerzeihen doch schon so a bissl nesser sein wa? naja ich denke schon so digga ja aj ja ajajja a a a a a lo l 1 2 3 4 4  5 5 6 6 7 7 87 8 8 8  eze ez ez e
     class Logger(object):
         def __init__(self): #eine init welche nur das "unwichtige" vorgeplänkel macht (Logs und so)
             self.tag_und_zeit_string = time.strftime("%m/%d/%Y, %H:%M:%S")
