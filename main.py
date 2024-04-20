@@ -125,7 +125,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.0 (6)"
+        self.Version = "Alpha 1.3.0 (7)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -181,6 +181,7 @@ class Listendings:
         self.etwas_suchen = False
         self.etwas_suchen1 = False
         self.Index_stand = None
+        self.Kalender_offen = False
 
         self.suchfenster_ergebnisse = tk.CTkToplevel(root)
         self.suchfenster_ergebnisse.resizable(False,False)
@@ -450,6 +451,8 @@ class Listendings:
 
         self.Liste_mit_zeugs =  tk.CTkScrollableFrame(self.kalender_menü, width=500, height=420, bg_color="Green")
 
+        self.Aufgabe_hinzufügen_Knopp = tk.CTkButton(self.kalender_menü, text="Eintrag Hinzufügen", command=self.Aufgabe_hinzufügen)
+
         
         
 
@@ -475,56 +478,81 @@ class Listendings:
     ####### ======================== init ende ======================== #######
         
     def Kalender_anzeigen(self):
-        print("kalender_anzeigen(def)")
-        self.kalender_menü.place(x=0,y=0)
-        self.Liste_mit_zeugs.place(x=100,y=50)
-        self.kalender_menü_Knopp.configure(text="Kalender schließen", command=self.Kalender_anzeigen_weg, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
-        self.Aufgabe_hinzufügen_Knopp = tk.CTkButton(self.kalender_menü, text="Eintrag Hinzufügen", command=self.Aufgabe_hinzufügen)
-        self.Aufgabe_hinzufügen_Knopp.place(x=620,y=50)
+        if self.Kalender_offen == True:
+            print("Kalender ist bereits geöffnet, ich ignoriere diese Anfrage einfach.")
+        elif self.Kalender_offen == False:
+            print("kalender_anzeigen(def)")
+            self.kalender_menü.place(x=0,y=0)
+            self.Liste_mit_zeugs.place(x=100,y=50)
+            self.kalender_menü_Knopp.configure(text="Kalender schließen", command=self.Kalender_anzeigen_weg, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+            self.Aufgabe_hinzufügen_Knopp = tk.CTkButton(self.kalender_menü, text="Eintrag Hinzufügen", command=self.Aufgabe_hinzufügen)
+            self.Aufgabe_hinzufügen_Knopp.place(x=620,y=50)
+
+            try:
+                print("Lade nun die alten Aufgaben...")
+                with open("tasks.json", "r") as f:
+                    self.tasks = json.load(f)
+                    print("Daten der alten Aufgaben erfolgreich geladen..")
+                    self.D1 = tk.CTkToplevel(root)
+                    self.D1.protocol("WM_DELETE_WINDOW", self.D1_schließen)
+                    self.D1.configure(title="Aufgabenliste")
+                    self.Kalender_offen = True
+                    
+                    for task in self.tasks:
+                        self.check_var = tk.StringVar(value="aus")
+                        ##self.checkbox = tk.CTkCheckBox(self.D1, text=task, command=self.checkbox_event,variable=self.check_var, onvalue="an", offvalue="aus")
+                        self.checkbox = tk.CTkCheckBox(self.D1, text=task, command=self.checkbox_event,variable=self.check_var, onvalue="an", offvalue="aus")
+                        self.checkbox.place(x=10,y=self.zeile_zahl)
+                        print("Aufgabe platziert...")
+                        self.zeile_zahl +=30
+                print("Alle Aufgaben wurden platziert.")
+            except FileNotFoundError:
+                pass
+        
+    def save_tasks(self):
+        with open("Aufgaben.json", "w") as f:
+            json.dump(self.tasks, f)
+    
+    def D1_schließen(self):
+        print("D1_schließen(def)")
+        self.D1.destroy()
+        self.zeile_zahl = 0
+        self.Kalender_offen = False
+        self.checkbox = None
 
     def Aufgabe_hinzufügen(self):
-        text_des_dings = tk.CTkInputDialog(text="Gib was ein:")
+        text_des_dings = tk.CTkInputDialog(text="Gib eine neue Aufgabe ein:")
         Aufgabe = self.Zeit + "  --  " + text_des_dings.get_input()
-        try:
-            with open(self.index_liste_pfad_Einstellungsdatei, "w+") as index_gel:
-                index_gel = index_gel.read()
-                print("Geladener Stand: ", index_gel)
-                self.Index_stand = index_gel
-                if self.Index_stand == "":
-                    self.Index_stand = 0
-                check_var = self.Index_stand
-                check_var +=1
-                print("check var ist jetzt: ", check_var)
-        except Exception as ExIndi_Ex1:
-            print("Fehler beim öffnen der Indexliste, es wird nun wieder bei Null angefangen... Fehlercode: ", ExIndi_Ex1)
-            self.Index_stand = 0
 
-        def checkbox_event():  # löschen der Aufgabe
-            print("die checkbox hat gerade den folgenden Wert: ", check_var.get())
-            if check_var.get() == "an":
-                checkbox.grid_forget()
-                
         if Aufgabe:
             try:
-                check_var = tk.StringVar(value="Numero Uno")
-                #checkbox = tk.CTkCheckBox(root, text="CTkCheckBox", command=checkbox_event,variable=check_var, onvalue="on", offvalue="off")
-                checkbox = tk.CTkCheckBox(self.Liste_mit_zeugs, text=Aufgabe, command=checkbox_event,variable=check_var, onvalue="an", offvalue="aus")
-                #checkbox.pack()
-                checkbox.grid(row=self.zeile_zahl, column=0, padx=10)
-                self.zeile_zahl +=1
+                task = Aufgabe
+                if task:
+                    self.tasks.append(task)
+                    #self.task_menu.add_checkbutton(label=task, onvalue=True, offvalue=False)
+                    #self.save_tasks()
+                    self.check_var = tk.StringVar(value="Numero Uno")
+                    self.checkbox = tk.CTkCheckBox(self.Liste_mit_zeugs, text=task, command=self.checkbox_event,variable=self.check_var, onvalue="an", offvalue="aus")
+                    self.checkbox.place(x=10,y=self.zeile_zahl)
+                    self.zeile_zahl +=30
+                    with open("tasks.json", "w") as f: # Speichern der gerade eben hinzugefügten Aufgabe
+                        json.dump(self.tasks, f)
             except Exception as Excio:
                 print("Fehler beim hinzufügen der Aufgabe Fehlercode: ",Excio)
-
-            
             try:
                 with open(self.index_liste_pfad_Einstellungsdatei, "w+") as Datei_offn:
                     Datei_offn.write(self.zeile_zahl)
                     print("Index Datei geschrieben. geschriebener Wert: ", self.zeile_zahl)
             except Exception as edx:
-                print(edx)
+                print("Fehler aber Programm läuft weiter: ",edx)
         else:
             print("pass")
             pass
+            
+    def checkbox_event(self):  # löschen der Aufgabe
+        print("die self.checkbox hat gerade den folgenden Wert #W3#: ", self.check_var.get())
+        #if self.check_var.get() == "an":
+        self.checkbox.place_forget()
 
     def callback_fertsch_var(self, fertsch_var):
         try:
@@ -544,11 +572,12 @@ class Listendings:
 
     def Kalender_anzeigen_weg(self):
         print("Kalender_anzeigen_weg")
+        self.D1.destroy()
         self.kalender_menü.place_forget()
         self.Liste_mit_zeugs.place_forget()
         self.Aufgabe_hinzufügen_Knopp.place_forget()
         self.kalender_menü_Knopp.configure(text="Kalender öffnen", command=self.Kalender_anzeigen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
-
+        
         
         
 
