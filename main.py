@@ -77,8 +77,7 @@ class Listendings:
                 httpd.server_close()
                 httpd.shutdown()
                 print(f'Server auf Port {port} gestoppt.')
-#Dasisteinrichtiggeiler zteszdiggaundwenndasauchsobveiuderanderentastatruristdannfickdochmeinlebendiggamaaaan.,,
-#jetzt sollteda sdas mit en leerzeihen doch schon so a bissl nesser sein wa? naja ich denke schon so digga ja aj ja ajajja a a a a a lo l 1 2 3 4 4  5 5 6 6 7 7 87 8 8 8  eze ez ez e
+
     class Logger(object):
         def __init__(self): #eine init welche nur das "unwichtige" vorgeplänkel macht (Logs und so)
             self.tag_und_zeit_string = time.strftime("%m/%d/%Y, %H:%M:%S")
@@ -125,7 +124,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.0 (7)"
+        self.Version = "Alpha 1.3.0 (8)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -202,11 +201,13 @@ class Listendings:
         try:
             p1 = Atk.PhotoImage(file = "CiM_icon.png")
             root.iconphoto(False, p1)
-        except:
+        except Exception as exci1:
+            print("Fehlschlag beim setzen des Icons, versuche es nun erneut. Fehlercode: ", exci1)
             try:
                 root.iconphoto(False, Atk.PhotoImage(file = self.icon_pfad))
             except Exception as err:
-                messagebox.showinfo(message=err)
+                err1 = "Es ist ein Fehler beim setzen des Icosn aufgetreten. Fehlerlode: ", err
+                messagebox.showinfo(message=err1)
                 print("icon gibt heute nicht.")
             
 
@@ -407,7 +408,13 @@ class Listendings:
         self.Menü_Knopp.place(x=1260, y=160)
 
         
-        self.Pause_menu = tk.CTkFrame(master, width=420, height=300, fg_color="Grey32", border_color="Black", border_width=5)
+        self.Pause_menu = tk.CTkFrame(master, width=769, height=420, fg_color="Grey32", border_color="White", border_width=1, corner_radius=0)
+        # jetzt kommen die ganzen stat Sachen des Pause Menüs.
+        self.Listen_Speicherort_Netzwerk_geladen_anders = "Netzwerkspeicherort: " + self.Listen_Speicherort_Netzwerk_geladen
+        self.Listen_Speicherort_geladen_anders = "Pfad für die Lokale Speicherung: " + self.Listen_Speicherort_geladen
+        self.Netzlaufwerk_pfad_geladen_Label = tk.CTkLabel(self.Pause_menu, text=self.Listen_Speicherort_Netzwerk_geladen_anders, text_color="Black", bg_color="White", corner_radius=3)
+        self.Pfad_geladen_Label = tk.CTkLabel(self.Pause_menu, text=self.Listen_Speicherort_geladen_anders, text_color="Black", bg_color="White", corner_radius=3,)
+
         self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche)
         self.Starface_Modul_Einstellung_Knopp = tk.CTkButton(self.Pause_menu, text="Starface Modul umschalten", command=self.Starface_Modul_umschalten)
         self.Auto_speichern_ändern_knopp = tk.CTkButton(self.Pause_menu, text="Auto Speichern umschalten", command=self.autospeichern_ä_c)
@@ -507,6 +514,7 @@ class Listendings:
                         self.zeile_zahl +=30
                 print("Alle Aufgaben wurden platziert.")
             except FileNotFoundError:
+                print("File not found beim laden der Aufgaben aufgetrenen. Versuche fortzufahren...")
                 pass
         
     def save_tasks(self):
@@ -678,13 +686,17 @@ class Listendings:
        
         if self.Menü_da == True:
             print("menü == true")
+            # Menu wird jetzt nicht mehr da sein.
             self.Suche_knopp.place_forget()
             self.Starface_Modul_Einstellung_Knopp.place_forget()
             self.Auto_speichern_ändern_knopp.place_forget()
             self.Pause_menu.place_forget()
             self.Menü_da = False
+            self.Netzlaufwerk_pfad_geladen_Label.place_forget()
+            self.Pfad_geladen_Label.place_forget()
             self.Menü_Knopp.configure(text="Menü Anzeigen")
         elif self.Menü_da == False:
+            # Menu wird jetzt angezeigt (Ja, wirklich.)
             print("menü == false")
             self.Pause_menu.place(x=300,y=10)
             self.Menü_da = True
@@ -692,6 +704,8 @@ class Listendings:
             self.Suche_knopp.place(x=10,y=110)
             self.Starface_Modul_Einstellung_Knopp.place(x=10,y=50)
             self.Auto_speichern_ändern_knopp.place(x=10,y=80)
+            self.Netzlaufwerk_pfad_geladen_Label.place(x=320,y=80)
+            self.Pfad_geladen_Label.place(x=320,y=110)
 
     
         
