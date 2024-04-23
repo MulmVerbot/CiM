@@ -124,7 +124,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.0 (8)"
+        self.Version = "Alpha 1.3.0 (9)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -410,8 +410,17 @@ class Listendings:
         
         self.Pause_menu = tk.CTkFrame(master, width=769, height=420, fg_color="Grey32", border_color="White", border_width=1, corner_radius=0)
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
-        self.Listen_Speicherort_Netzwerk_geladen_anders = "Netzwerkspeicherort: " + self.Listen_Speicherort_Netzwerk_geladen
-        self.Listen_Speicherort_geladen_anders = "Pfad für die Lokale Speicherung: " + self.Listen_Speicherort_geladen
+        # jetzt kommen die ganzen stat Sachen des Pause Menüs.
+        # jetzt kommen die ganzen stat Sachen des Pause Menüs.
+        # jetzt kommen die ganzen stat Sachen des Pause Menüs.
+        # jetzt kommen die ganzen stat Sachen des Pause Menüs.
+        # jetzt kommen die ganzen stat Sachen des Pause Menüs.
+
+        self.Listen_Speicherort_Netzwerk_geladen_anders = "Netzwerkspeicherort: "
+        self.Listen_Speicherort_geladen_anders = "Lokaler Speicherpfad: "
+        self.Listen_Speicherort_geladen_anders_Entry = tk.CTkEntry(self.Pause_menu, width=300)
+        self.Listen_Speicherort_Netzwerk_geladen_anders_Entry = tk.CTkEntry(self.Pause_menu, width=300)
+
         self.Netzlaufwerk_pfad_geladen_Label = tk.CTkLabel(self.Pause_menu, text=self.Listen_Speicherort_Netzwerk_geladen_anders, text_color="Black", bg_color="White", corner_radius=3)
         self.Pfad_geladen_Label = tk.CTkLabel(self.Pause_menu, text=self.Listen_Speicherort_geladen_anders, text_color="Black", bg_color="White", corner_radius=3,)
 
@@ -423,7 +432,7 @@ class Listendings:
 
         def auswahl_gedingst(choice):
             if choice == "An Chefe gegeben":
-                self.Weiterleitung_an = "An Holger Beese weitergeleitet."
+                self.Weiterleitung_an = "An el Chefe weitergeleitet."
             elif choice == "An Christian gegeben":
                 self.Weiterleitung_an = "An Christian Melges weitergeleitet."
             elif choice == "An Mike gegeben":
@@ -435,7 +444,7 @@ class Listendings:
 
         def auswahl_gedingst_sprechen(choice):
             if choice == "Mit Chefe sprechen":
-                self.wollte_sprechen = "Mit Chefe sprechen"
+                self.wollte_sprechen = "Mit el Chefe sprechen"
             elif choice == "Mit Christian sprechen":
                 self.wollte_sprechen = "Mit Christian sprechen"
             elif choice == "Mit Mike sprechen":
@@ -695,6 +704,13 @@ class Listendings:
             self.Netzlaufwerk_pfad_geladen_Label.place_forget()
             self.Pfad_geladen_Label.place_forget()
             self.Menü_Knopp.configure(text="Menü Anzeigen")
+            self.Listen_Speicherort_geladen_anders_Entry.place_forget()
+            self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.place_forget()
+            try:
+                self.Listen_Speicherort_geladen_anders_Entry.delete(0, tk.END)
+                self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.delete(0, tk.END)
+            except:
+                print("Konnte den Inhalt der Entrys für die Pfade nicht löschen")
         elif self.Menü_da == False:
             # Menu wird jetzt angezeigt (Ja, wirklich.)
             print("menü == false")
@@ -704,9 +720,16 @@ class Listendings:
             self.Suche_knopp.place(x=10,y=110)
             self.Starface_Modul_Einstellung_Knopp.place(x=10,y=50)
             self.Auto_speichern_ändern_knopp.place(x=10,y=80)
-            self.Netzlaufwerk_pfad_geladen_Label.place(x=320,y=80)
-            self.Pfad_geladen_Label.place(x=320,y=110)
 
+            self.Netzlaufwerk_pfad_geladen_Label.place(x=220,y=80)
+            self.Pfad_geladen_Label.place(x=220,y=110)
+            self.Listen_Speicherort_geladen_anders_Entry.place(x=350, y=110)
+            self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.place(x=350,y=80)
+            try:
+                self.Listen_Speicherort_geladen_anders_Entry.insert(0, self.Listen_Speicherort_geladen)
+                self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.insert(0, self.Listen_Speicherort_Netzwerk_geladen)
+            except:
+                print("Dings das ging  nicht.")
     
         
         
