@@ -35,6 +35,7 @@ class Listendings:
     Programm_läuft = True
     class RequestHandler(BaseHTTPRequestHandler):
         def do_GET(self):
+            saite = "<!DOCTYPE html><html lang='de'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Ganzflächiger Hintergrund</title><style>body {margin: 0;padding: 0;background-color: #40444c;}.content {padding: 20px;color: white;font-family: Arial, sans-serif;}</style></head><body><div class='content'><h1>Meine Seite mit ganzflächigem Hintergrund</h1><p>Hier ist etwas Text auf der Seite.</p></div></body></html>"
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
@@ -57,7 +58,7 @@ class Listendings:
                 except Exception as e:
                     print(f"Fehler beim Schreiben in tmp.txt: {e}")
             self.wfile.write(b"<html><head><title>CiM Modul</title></head>")
-            self.wfile.write(b"<body><h1>Dings</h1></body></html>")
+            self.wfile.write(b"<meta name='viewport' content='width=device-width, initial-scale=1.0'><style>body {margin: 0;padding: 0;background-color: #40444c;}.content {padding: 20px;color: white;font-family: Arial, sans-serif;}</style></head><body><div class='content'></div></body></html>")
 
     class WebServerThread(threading.Thread):
         def run(self):
@@ -124,7 +125,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.0 (9)"
+        self.Version = "Alpha 1.3.0 (10)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -172,6 +173,7 @@ class Listendings:
         self.Weiterleitung_an = ""
         self.wollte_sprechen = ""
         self.Starface_Farbe = "#4d4d4d"
+        self.Starface_Farbe_Neu = "#40444c"
         self.Ort_wo_gesucht_wird = ""
 
         self.zachen = 0
