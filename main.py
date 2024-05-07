@@ -125,7 +125,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.0 (10)"
+        self.Version = "Alpha 1.3.0 (11)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -343,7 +343,7 @@ class Listendings:
         #self.senden_button.grid(row=3, column=1)
         self.ausgabe_text.place(x=5,y=110)
 
-
+        
         # erschaffen des Column Menü Dings
         self.menu = Menu(root)
         root.configure(menu=self.menu)
@@ -423,8 +423,8 @@ class Listendings:
         self.Listen_Speicherort_geladen_anders_Entry = tk.CTkEntry(self.Pause_menu, width=300)
         self.Listen_Speicherort_Netzwerk_geladen_anders_Entry = tk.CTkEntry(self.Pause_menu, width=300)
 
-        self.Netzlaufwerk_pfad_geladen_Label = tk.CTkLabel(self.Pause_menu, text=self.Listen_Speicherort_Netzwerk_geladen_anders, text_color="Black", bg_color="White", corner_radius=3)
-        self.Pfad_geladen_Label = tk.CTkLabel(self.Pause_menu, text=self.Listen_Speicherort_geladen_anders, text_color="Black", bg_color="White", corner_radius=3,)
+        self.Netzlaufwerk_pfad_geladen_Label = tk.CTkLabel(self.Pause_menu, text=self.Listen_Speicherort_Netzwerk_geladen_anders, text_color="Black", bg_color="Grey32", corner_radius=3)
+        self.Pfad_geladen_Label = tk.CTkLabel(self.Pause_menu, text=self.Listen_Speicherort_geladen_anders, text_color="Black", bg_color="Grey32", corner_radius=3,)
 
         self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche)
         self.Starface_Modul_Einstellung_Knopp = tk.CTkButton(self.Pause_menu, text="Starface Modul umschalten", command=self.Starface_Modul_umschalten)
@@ -475,20 +475,6 @@ class Listendings:
         
 
         
-
-
-        
-
-
-
-    
-
-
-
-
-
-
-
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
@@ -725,8 +711,8 @@ class Listendings:
 
             self.Netzlaufwerk_pfad_geladen_Label.place(x=220,y=80)
             self.Pfad_geladen_Label.place(x=220,y=110)
-            self.Listen_Speicherort_geladen_anders_Entry.place(x=350, y=110)
-            self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.place(x=350,y=80)
+            self.Listen_Speicherort_geladen_anders_Entry.place(x=370, y=110)
+            self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.place(x=370,y=80)
             try:
                 self.Listen_Speicherort_geladen_anders_Entry.insert(0, self.Listen_Speicherort_geladen)
                 self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.insert(0, self.Listen_Speicherort_Netzwerk_geladen)
@@ -1174,7 +1160,7 @@ class Listendings:
         self.optionmenu.set("Keine Weiterleitung")
     
     def beb_c(self):
-        self.text_tk_text = self.ausgabe_text.get("1.0", "end-1c")
+        self.text_tk_text = self.ausgabe_text.get("1.0", "end-1c") # mir fällt jetzt erst im Nachhinein (3-4 Monate später) auf das da "end-1c" steht, wtf ist das und warum ist das da?
         if self.beb == "0":
             print("beb is jetzt = 1")
             self.ausgabe_text.configure(state='normal')
@@ -1279,12 +1265,6 @@ class Listendings:
     def pause_beenden_c(self):
         print("pause_beenden(def)")
         self.Pause = False
-        
-        
-
-
-            
-
 
     def als_csv_speichern(self): #das ist das speicher unter... dings
         print("Als CSV speichern")
