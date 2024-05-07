@@ -21,6 +21,9 @@ try:
     from tkinter import simpledialog
     import subprocess
     import platform
+    import smtplib
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
 except:
     print("(FATAL) Konnte die wichtigen Bilbioteken nicht Laden!")
     messagebox.showerror(title="Kritischer Fehler", message="(FATAL) Konnte die wichtigen Bilbioteken nicht Laden! Das Programm wird nun Beendet.")
@@ -396,7 +399,7 @@ class Listendings:
             self.ausgabe_text.configure(state='disabled')
 
 
-    ###### Hier kommt das animations dings der seitenleiste #####
+    
         self.menu_frame = tk.CTkFrame(master, width=200, height=400)  # Adjust size as needed
         #self.menu_frame.place(x=1100, y=50)  # Position it outside the visible area to the right
 
@@ -408,6 +411,8 @@ class Listendings:
         self.alles_löschen_knopp.place(x=1260, y=130)
         self.Menü_Knopp = tk.CTkButton(master, text="Menü Anzeigen", command=self.Menu_anzeige_wechseln, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         self.Menü_Knopp.place(x=1260, y=160)
+
+        self.Ticket_erstellen_Knopp = tk.CTkButton(root, text="Ticket erstellen...", command=self.Ticket_erstellen)
 
         
         self.Pause_menu = tk.CTkFrame(master, width=769, height=420, fg_color="Grey32", border_color="White", border_width=1, corner_radius=0)
@@ -480,6 +485,42 @@ class Listendings:
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
+
+    def Ticket_erstellen_mail(self): # naja das halt dann mit dem Mail.to Befehl.
+        print("Ticket_erstellen (Email)")
+        sender_email = "m.becker@beese-computer.de"
+        pw_email = ""
+        receiver_email = "m.becker@beese-computer.de"
+        subject = self.Betreff_Ticket_e.get()
+        message = self.Nachricht_Ticket_e.get()
+        smtp_server = "192.168.50.22"
+
+        msg = MIMEMultipart()
+        msg["From"] = sender_email
+        msg["To"] = receiver_email
+        msg["Subject"] = subject
+        msg.attach(MIMEText(message, "plain"))
+
+        with smtplib.SMTP_SSL(smtp_server, 465) as server:
+            server.login(sender_email, pw_email)
+            server.sendmail(sender_email, receiver_email, msg.as_string())
+            print("E-Mail erfolgreich gesendet!")
+
+
+    def Ticket_erstellen_api(self): # Ich denke nicht, dass ich das hier so schnell hinbekommen werde, da das Ding immer wieder nen fehler schmeißt den ich nicht mal verstehe haha.
+        print("Ticket_erstellen_api")
+        messagebox.showerror(title="Fehler", message="Dieses Feature existiert noch nicht, wie hast Du überhaupt geschafft diese Funktion aufzurufen!?!???")
+
+    def Ticket_erstellen(self): # Die erste frage, ob es per Mail oder API erstellt werden soll.
+        print("Ticket_erstellen(def)")
+        self.Ticket_Fenster = tk.CTkToplevel()
+        self.Ticket_Fenster.title(self.Programm_Name + " " + self.Version + "                                                     Ein Ticket erstellen                                                     " + self.Zeit)
+        root.configure(resizeable=False)
+        root.geometry("520x520")
+        self.Betreff_Ticket_e = tk.CTkEntry(self.Ticket_Fenster, width=300, placeholder_text="Betreffzeile")
+        self.Nachricht_Ticket_e = tk.CTkEntry(self.Ticket_Fenster, width=300, placeholder_text="Inhalt")
+        self.Betreff_Ticket_e.place(x=10,y=50)
+        self.Nachricht_Ticket_e.place(x=10,y=80)
         
     def Kalender_anzeigen(self):
         if self.Kalender_offen == True:
