@@ -16,9 +16,6 @@ try:
     from http.server import BaseHTTPRequestHandler, HTTPServer
     import urllib.parse
     import threading
-    from customtkinter import ThemeManager
-    import datetime
-    from tkinter import simpledialog
     import subprocess
     import platform
     import smtplib
@@ -128,7 +125,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.0 (11)"
+        self.Version = "Alpha 1.3.1 (0)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -156,6 +153,10 @@ class Listendings:
         self.Auto_speichern_Einstellungsdatei = os.path.join(self.Einstellungen_ordner, "Auto_speichern.txt") 
         self.icon_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Assets', 'CiM_icon.png')
         self.index_liste_pfad_Einstellungsdatei = os.path.join(self.Benutzerordner, 'CiM', 'Einstellungen', 'CiM_Index.txt')
+        self.Einstellung_Email_Sender_Adresse = os.path.join(self.Einstellungen_ordner , "Email_sender.txt")
+        self.Einstellung_Email_Empfänge_Adresse = os.path.join(self.Einstellungen_ordner, "Email_Empfänger.txt")
+        self.Einstellung_smtp_server = os.path.join(self.Einstellungen_ordner, "SMTP_Server.txt")
+        self.Einstellung_smtp_Passwort = os.path.join(self.Einstellungen_ordner, "SMTP_Passwort.txt")
         
         
         self.Monat = time.strftime("%m")
@@ -178,6 +179,10 @@ class Listendings:
         self.Starface_Farbe = "#4d4d4d"
         self.Starface_Farbe_Neu = "#40444c"
         self.Ort_wo_gesucht_wird = ""
+        self.sender_email = ""
+        self.empfänger_email = ""
+        self.smtp_server = ""
+        self.pw_email = ""
 
         self.zachen = 0
         self.fertsch_var = None
@@ -293,6 +298,32 @@ class Listendings:
         except Exception as e:
             ex = "Irgendwas ist passiert: ", e
             print(ex)
+
+    ######### JETZT KOMMT HIER DIE SHAISE FÜR DAS EMAIL TICKET ZEUGS ###########
+        '''self.pw_email = "Email4MaxBecker2022!"
+        self.empfänger_email = "m.becker@beese-computer.de"
+        self.smtp_server = "192.168.50.22"'''
+        try:
+            with open(self.Einstellung_Email_Sender_Adresse, "r") as Email_S_Datei:
+                self.sender_email = Email_S_Datei.read()
+            with open(self.Einstellung_Email_Empfänge_Adresse, "r") as Email_E_Datei:
+                self.empfänger_email = Email_E_Datei.read()
+            with open(self.Einstellung_smtp_server, "r") as SMTP_Server_Datei:
+                self.smtp_server = SMTP_Server_Datei.read()
+            with open(self.Einstellung_smtp_Passwort, "r") as SMTP_Server_Passwort_Datei:
+                self.pw_email= SMTP_Server_Passwort_Datei.read()
+
+            with smtplib.SMTP_SSL(self.smtp_server, 465) as server: 
+                server.login(self.sender_email, self.pw_email)
+                print("Beim SMTP Server erfolgreich eingelogt.")
+
+        except Exception as EmailEx3_l:
+            print(EmailEx3_l)
+            self.sender_email = ""
+            self.empfänger_email = ""
+            self.smtp_server = ""
+            self.pw_email = ""
+            messagebox.showerror(title="CiM Fehler", message=f"Beim Laden der Email Einstellungen unter {self.Einstellung_Email_Sender_Adresse} ; {self.Einstellung_Email_Empfänge_Adresse} und {self.Einstellung_smtp_server} ist ein Fehler aufgetreten. Fehlercode: {EmailEx3_l}")
         
 
 
@@ -413,6 +444,7 @@ class Listendings:
         self.Menü_Knopp.place(x=1260, y=160)
 
         self.Ticket_erstellen_Knopp = tk.CTkButton(root, text="Ticket erstellen...", command=self.Ticket_erstellen)
+        self.Ticket_erstellen_Knopp.place(x=1260,y=450)
 
         
         self.Pause_menu = tk.CTkFrame(master, width=769, height=420, fg_color="Grey32", border_color="White", border_width=1, corner_radius=0)
@@ -429,7 +461,23 @@ class Listendings:
         self.Listen_Speicherort_Netzwerk_geladen_anders_Entry = tk.CTkEntry(self.Pause_menu, width=300)
 
         self.Netzlaufwerk_pfad_geladen_Label = tk.CTkLabel(self.Pause_menu, text=self.Listen_Speicherort_Netzwerk_geladen_anders, text_color="Black", bg_color="Grey32", corner_radius=3)
-        self.Pfad_geladen_Label = tk.CTkLabel(self.Pause_menu, text=self.Listen_Speicherort_geladen_anders, text_color="Black", bg_color="Grey32", corner_radius=3,)
+        self.Pfad_geladen_Label = tk.CTkLabel(self.Pause_menu, text=self.Listen_Speicherort_geladen_anders, text_color="Black", bg_color="Grey32", corner_radius=3)
+
+        self.gel_Email_Empfänger_L = tk.CTkLabel(self.Pause_menu, text="Ziel Email Adresse", text_color="White", bg_color="Grey32", corner_radius=3)
+        self.gel_Email_Sender_L = tk.CTkLabel(self.Pause_menu, text="Absende Email Adresse", text_color="White", bg_color="Grey32", corner_radius=3)
+        self.gel_Email_Absender_Passwort_L = tk.CTkLabel(self.Pause_menu, text="Absender Email Passwort", text_color="White", bg_color="Grey32", corner_radius=3)
+        self.gel_SMTP_Server_L = tk.CTkLabel(self.Pause_menu, text="SMTP Server", text_color="White", bg_color="Grey32", corner_radius=3)
+
+        self.gel_Email_Empfänger_E = tk.CTkEntry(self.Pause_menu, placeholder_text="Empfänger Adresse", width=300)
+        self.gel_Email_Sender_E = tk.CTkEntry(self.Pause_menu, placeholder_text="Sender Email Adresse", width=300)
+        self.gel_Email_Absender_Passwort_E = tk.CTkEntry(self.Pause_menu, placeholder_text="Passwort der Email Adresse", width=300)
+        self.gel_SMTP_Server_E = tk.CTkEntry(self.Pause_menu, placeholder_text="IPv4 oder Namen des SMTP Eintragen", width=300)
+
+        self.Mail_Einstellungen_speichern = tk.CTkButton(self.Pause_menu, text="Angaben Speichern", command=self.Email_Einstellungen_speichern)
+
+        
+        ####################################################################################################################################################################################################
+        ####################################################################################################################################################################################################
 
         self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche)
         self.Starface_Modul_Einstellung_Knopp = tk.CTkButton(self.Pause_menu, text="Starface Modul umschalten", command=self.Starface_Modul_umschalten)
@@ -488,23 +536,36 @@ class Listendings:
 
     def Ticket_erstellen_mail(self): # naja das halt dann mit dem Mail.to Befehl.
         print("Ticket_erstellen (Email)")
-        sender_email = "m.becker@beese-computer.de"
-        pw_email = ""
-        receiver_email = "m.becker@beese-computer.de"
-        subject = self.Betreff_Ticket_e.get()
-        message = self.Nachricht_Ticket_e.get()
-        smtp_server = "192.168.50.22"
+        '''self.sender_email = "m.becker@beese-computer.de"
+        self.pw_email = "Email4MaxBecker2022!"
+        self.empfänger_email = "m.becker@beese-computer.de"
+        self.smtp_server = "192.168.50.22"'''
+
+        self.Betreff_Mail = self.Betreff_Ticket_e.get()
+        self.Nachricht_Mail_Inhalt = self.Nachricht_Ticket_e.get("0.0", "end")
 
         msg = MIMEMultipart()
-        msg["From"] = sender_email
-        msg["To"] = receiver_email
-        msg["Subject"] = subject
-        msg.attach(MIMEText(message, "plain"))
+        msg["From"] = self.sender_email
+        msg["To"] = self.empfänger_email
+        msg["Subject"] = self.Betreff_Mail
+        msg.attach(MIMEText(self.Nachricht_Mail_Inhalt, "plain"))
 
-        with smtplib.SMTP_SSL(smtp_server, 465) as server:
-            server.login(sender_email, pw_email)
-            server.sendmail(sender_email, receiver_email, msg.as_string())
+        with smtplib.SMTP_SSL(self.smtp_server, 465) as server:
+            try:
+                server.login(self.sender_email, self.pw_email)
+            except Exception as EmailEx1:
+                print("Fehler beim anmelde beim Mailserver. Fehlercode: ", EmailEx1)
+                messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim Anmelden am Mailserver. Fehlercode: {self.smtp_server}")
+
+            try:
+                server.sendmail(self.sender_email, self.empfänger_email, msg.as_string())
+            except Exception as EmailEx2:
+                print("Fehler beim anmelde beim senden an den Mailserver. Fehlercode: ", EmailEx2)
+                messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der Nachricht an den Mailserver. Fehlercode: {self.smtp_server}")
+            self.Ticket_Fenster.destroy()
+            messagebox.showinfo(title="CiM", message="Das Ticket wurde erfolgreich erstellt.")
             print("E-Mail erfolgreich gesendet!")
+            
 
 
     def Ticket_erstellen_api(self): # Ich denke nicht, dass ich das hier so schnell hinbekommen werde, da das Ding immer wieder nen fehler schmeißt den ich nicht mal verstehe haha.
@@ -514,13 +575,35 @@ class Listendings:
     def Ticket_erstellen(self): # Die erste frage, ob es per Mail oder API erstellt werden soll.
         print("Ticket_erstellen(def)")
         self.Ticket_Fenster = tk.CTkToplevel()
-        self.Ticket_Fenster.title(self.Programm_Name + " " + self.Version + "                                                     Ein Ticket erstellen                                                     " + self.Zeit)
-        root.configure(resizeable=False)
-        root.geometry("520x520")
+        self.Ticket_Fenster.title(self.Programm_Name + " " + "Ein Ticket erstellen                          Ein Ticket erstellen                          ")
+        self.Ticket_Fenster.configure(resizeable=False)
+        self.Ticket_Fenster.geometry("680x520")
         self.Betreff_Ticket_e = tk.CTkEntry(self.Ticket_Fenster, width=300, placeholder_text="Betreffzeile")
-        self.Nachricht_Ticket_e = tk.CTkEntry(self.Ticket_Fenster, width=300, placeholder_text="Inhalt")
+        self.Nachricht_Ticket_e = tk.CTkTextbox(self.Ticket_Fenster, width=300, height=420, wrap="word")
+        self.Ticket_abschicken_mail = tk.CTkButton(self.Ticket_Fenster, text="Ticket erstellen und versenden", command=self.Ticket_erstellen_mail)
+        self.Ticket_abschicken_mail.place(x=330,y=50)
         self.Betreff_Ticket_e.place(x=10,y=50)
         self.Nachricht_Ticket_e.place(x=10,y=80)
+
+    def Email_Einstellungen_speichern(self):
+        print("Email_Einstellungen_speichern (def)")
+        try:
+            if self.gel_Email_Sender_E.get() and self.gel_SMTP_Server_E.get() and self.gel_Email_Empfänger_E.get() and self.gel_Email_Absender_Passwort_E.get():
+                with open(self.Einstellung_Email_Sender_Adresse, "w+") as Email_S_Datei_s:
+                    Email_S_Datei_s.write(self.gel_Email_Sender_E.get())
+                with open(self.Einstellung_Email_Empfänge_Adresse, "w+") as Email_E_Datei_s:
+                    Email_E_Datei_s.write(self.gel_Email_Empfänger_E.get())
+                with open(self.Einstellung_smtp_server, "w+") as SMTP_Server_Datei_s:
+                    SMTP_Server_Datei_s.write(self.gel_SMTP_Server_E.get())
+                with open(self.Einstellung_smtp_Passwort, "w+") as SMTP_Server_Passwort_Datei_s:
+                    SMTP_Server_Passwort_Datei_s.write(self.gel_Email_Absender_Passwort_E.get())
+                messagebox.showinfo(title="CiM", message="Die Einstellungen wurden erfolgreich gespeichert und werden beim NÄCHSTEN START aktiv.")
+            else:
+                messagebox.showinfo(title="CiM", message="Bitte geben Sie BEVOR Sie speichern, zuerst in ALLEN Feldern etwas ein.")
+
+        except Exception as EmailEx3_l:
+            print("Beim versuch die Email Daten zu speichern ist ein Fehler aufgetreten. Fehlercode: ", EmailEx3_l)
+            messagebox.showerror(title="CiM Fehler", message=f"Beim speichern der Email Einstellungen unter {self.Einstellung_Email_Sender_Adresse} ; {self.Einstellung_Email_Empfänge_Adresse} und {self.Einstellung_smtp_server} ist ein Fehler aufgetreten. Fehlercode: {EmailEx3_l}")
         
     def Kalender_anzeigen(self):
         if self.Kalender_offen == True:
@@ -723,7 +806,7 @@ class Listendings:
 
        
         if self.Menü_da == True:
-            print("menü == true")
+            print("menü == true(Menü war offen)")
             # Menu wird jetzt nicht mehr da sein.
             self.Suche_knopp.place_forget()
             self.Starface_Modul_Einstellung_Knopp.place_forget()
@@ -742,7 +825,7 @@ class Listendings:
                 print("Konnte den Inhalt der Entrys für die Pfade nicht löschen")
         elif self.Menü_da == False:
             # Menu wird jetzt angezeigt (Ja, wirklich.)
-            print("menü == false")
+            print("menü == false (Menü war nicht offen)")
             self.Pause_menu.place(x=300,y=10)
             self.Menü_da = True
             self.Menü_Knopp.configure(text="Menü schließen")
@@ -754,11 +837,41 @@ class Listendings:
             self.Pfad_geladen_Label.place(x=220,y=110)
             self.Listen_Speicherort_geladen_anders_Entry.place(x=370, y=110)
             self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.place(x=370,y=80)
+
+            self.gel_Email_Empfänger_L.place(x=220,y=150)
+            self.gel_Email_Sender_L.place(x=220,y=180)
+            self.gel_Email_Absender_Passwort_L.place(x=220,y=210)
+            self.gel_SMTP_Server_L.place(x=220,y=240)
+
+            self.gel_Email_Empfänger_E.place(x=370,y=150)
+            self.gel_Email_Sender_E.place(x=370,y=180)
+            self.gel_Email_Absender_Passwort_E.place(x=370,y=210)
+            self.gel_SMTP_Server_E.place(x=370,y=240)
+            self.Mail_Einstellungen_speichern.place(x=420,y=280)
+            try:
+                try:
+                    self.gel_Email_Empfänger_E.delete(0, tk.END)
+                    self.gel_Email_Sender_E.delete(0, tk.END)
+                    self.gel_Email_Absender_Passwort_E.delete(0, tk.END)
+                    self.gel_SMTP_Server_E.delete(0, tk.END)
+                    self.gel_Email_Empfänger_E.delete(0, tk.END)
+                except:
+                    print("konnte die entrys nicht leeren")
+
+                self.gel_Email_Empfänger_E.insert(0, self.empfänger_email)
+                self.gel_Email_Sender_E.insert(0, self.sender_email)
+                self.gel_Email_Absender_Passwort_E.insert(0, self.pw_email)
+                self.gel_SMTP_Server_E.insert(0, self.smtp_server)
+                print("Alles was mit den Email Einstellungen zu tun hat wurde erfolgreich gelade")
+                
+            except Exception as ExGelEm1:
+                print("Fehler beim einfügen der Email Daten in die Entrys. Fehlercode: ", ExGelEm1)
+
             try:
                 self.Listen_Speicherort_geladen_anders_Entry.insert(0, self.Listen_Speicherort_geladen)
                 self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.insert(0, self.Listen_Speicherort_Netzwerk_geladen)
             except:
-                print("Dings das ging  nicht.")
+                print("Konnte die geladenen Speicherorte nicht in die Entrys übernehmen.")
     
         
         
