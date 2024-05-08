@@ -125,7 +125,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.1 (0)"
+        self.Version = "Alpha 1.3.1 (1)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -177,7 +177,7 @@ class Listendings:
         self.Weiterleitung_an = ""
         self.wollte_sprechen = ""
         self.Starface_Farbe = "#4d4d4d"
-        self.Starface_Farbe_Neu = "#40444c"
+        self.Starface_Farbe_Neu = "#293136"#-> Das hier ist die Dunklere Version und das hier
         self.Ort_wo_gesucht_wird = ""
         self.sender_email = ""
         self.empfänger_email = ""
@@ -575,7 +575,7 @@ class Listendings:
     def Ticket_erstellen(self): # Die erste frage, ob es per Mail oder API erstellt werden soll.
         print("Ticket_erstellen(def)")
         self.Ticket_Fenster = tk.CTkToplevel()
-        self.Ticket_Fenster.title(self.Programm_Name + " " + "Ein Ticket erstellen                          Ein Ticket erstellen                          ")
+        self.Ticket_Fenster.title(self.Programm_Name + " " + "                          Ein Ticket erstellen                          ")
         self.Ticket_Fenster.configure(resizeable=False)
         self.Ticket_Fenster.geometry("680x520")
         self.Betreff_Ticket_e = tk.CTkEntry(self.Ticket_Fenster, width=300, placeholder_text="Betreffzeile")
