@@ -216,7 +216,7 @@ class Listendings:
             try:
                 root.iconphoto(False, Atk.PhotoImage(file = self.icon_pfad))
             except Exception as err:
-                err1 = "Es ist ein Fehler beim setzen des Icosn aufgetreten. Fehlerlode: ", err
+                err1 = "Es ist ein Fehler beim setzen des Icons aufgetreten. Fehlerlode: ", err
                 messagebox.showinfo(message=err1)
                 print("icon gibt heute nicht.")
             
@@ -300,9 +300,6 @@ class Listendings:
             print(ex)
 
     ######### JETZT KOMMT HIER DIE SHAISE FÜR DAS EMAIL TICKET ZEUGS ###########
-        '''self.pw_email = "Email4MaxBecker2022!"
-        self.empfänger_email = "m.becker@beese-computer.de"
-        self.smtp_server = "192.168.50.22"'''
         try:
             with open(self.Einstellung_Email_Sender_Adresse, "r") as Email_S_Datei:
                 self.sender_email = Email_S_Datei.read()
@@ -312,10 +309,9 @@ class Listendings:
                 self.smtp_server = SMTP_Server_Datei.read()
             with open(self.Einstellung_smtp_Passwort, "r") as SMTP_Server_Passwort_Datei:
                 self.pw_email= SMTP_Server_Passwort_Datei.read()
+                
 
-            with smtplib.SMTP_SSL(self.smtp_server, 465) as server: 
-                server.login(self.sender_email, self.pw_email)
-                print("Beim SMTP Server erfolgreich eingelogt.")
+            
 
         except Exception as EmailEx3_l:
             print(EmailEx3_l)
@@ -536,11 +532,6 @@ class Listendings:
 
     def Ticket_erstellen_mail(self): # naja das halt dann mit dem Mail.to Befehl.
         print("Ticket_erstellen (Email)")
-        '''self.sender_email = "m.becker@beese-computer.de"
-        self.pw_email = "Email4MaxBecker2022!"
-        self.empfänger_email = "m.becker@beese-computer.de"
-        self.smtp_server = "192.168.50.22"'''
-
         self.Betreff_Mail = self.Betreff_Ticket_e.get()
         self.Nachricht_Mail_Inhalt = self.Nachricht_Ticket_e.get("0.0", "end")
 
@@ -584,6 +575,13 @@ class Listendings:
         self.Ticket_abschicken_mail.place(x=330,y=50)
         self.Betreff_Ticket_e.place(x=10,y=50)
         self.Nachricht_Ticket_e.place(x=10,y=80)
+        try:
+            with smtplib.SMTP_SSL(self.smtp_server, 465) as server: 
+                server.login(self.sender_email, self.pw_email)
+                print("Beim SMTP Server erfolgreich eingelogt.")
+        except Exception as Ex1EA:
+            print(f"Fehler bei der Anmeldung am SMTP Server. Fehlercode: {Ex1EA}")
+            messagebox.showinfo(title="CiM Fehler", message=f"Bei der Anmeldung am SMTP Server ist ein Fehler aufgetreten. Überprüfen Sie die im Menü hinterlegten Zugangsdaten und versuchen Sie es später erneut. Fehlercode: {Ex1EA}")
 
     def Email_Einstellungen_speichern(self):
         print("Email_Einstellungen_speichern (def)")
