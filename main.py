@@ -21,6 +21,7 @@ try:
     import smtplib
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
+    from tkinterdnd2 import DND_FILES
 except:
     print("(FATAL) Konnte die wichtigen Bilbioteken nicht Laden!")
     try:
@@ -120,15 +121,11 @@ class Listendings:
             pass    
     sys.stdout = Logger()
 
-    
-
-        
-
     def __init__(self, master):
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.1 (3)"
+        self.Version = "Alpha 1.3.1 (4)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -189,6 +186,8 @@ class Listendings:
         self.empfänger_email = ""
         self.smtp_server = ""
         self.pw_email = ""
+        self.smtp_login_erfolgreich = False
+        self.das_hübsche_grau = "LightSlateGray"
 
         self.zachen = 0
         self.fertsch_var = None
@@ -284,7 +283,7 @@ class Listendings:
                     print("Konnte die Einstellungsdatei nicht öffnen. Fehlercode: ", Exp)
                     messagebox.showerror(title="CiM Fehler", message="Konnte die Einstellungsdatei nicht öffnen. Bitte in die Logs schauen.")
         except Exception as ex_stern:
-            print("Die Starface Moduleinstelllungen konten nicht überprüft werden.")
+            print(f"Die Starface Moduleinstelllungen konten nicht überprüft werden. Fehlercode: {ex_stern}")
 
         try:
             with open(self.Listen_Speicherort_Einstellungsdatei , "r") as Liste_Speicherort_data:
@@ -309,16 +308,16 @@ class Listendings:
         try:
             with open(self.Einstellung_Email_Sender_Adresse, "r") as Email_S_Datei:
                 self.sender_email = Email_S_Datei.read()
+                print("[-EINSTLLUNGEN LADEN-] Sender Email geladen.")
             with open(self.Einstellung_Email_Empfänge_Adresse, "r") as Email_E_Datei:
                 self.empfänger_email = Email_E_Datei.read()
+                print("[-EINSTLLUNGEN LADEN-] Empfänger Adresse geladen.")
             with open(self.Einstellung_smtp_server, "r") as SMTP_Server_Datei:
                 self.smtp_server = SMTP_Server_Datei.read()
+                print("[-EINSTLLUNGEN LADEN-] SMTP Server Adresse geladen.")
             with open(self.Einstellung_smtp_Passwort, "r") as SMTP_Server_Passwort_Datei:
                 self.pw_email= SMTP_Server_Passwort_Datei.read()
-                
-
-            
-
+                print("[-EINSTLLUNGEN LADEN-] Absender Kennwort geladen.s")
         except Exception as EmailEx3_l:
             print(EmailEx3_l)
             self.sender_email = ""
@@ -348,39 +347,19 @@ class Listendings:
         
         
 
-        # "Senden" Knopf
         self.senden_button = tk.CTkButton(master, text="Senden", command="")
         self.senden_button.bind('<Button-1>', self.senden)
         root.bind('<Return>', self.senden)
-
-        # Alles löschen knopf
         self.alles_löschen_knopp = tk.CTkButton(master, text="Alle Eintrage löschen", command=self.alles_löschen)
-        #self.alles_löschen_knopp.place(x=1250,y=400)
-
-        #self.beb_knopp = tk.CTkButton(master, text="Bearbeiten", command=self.beb)
-        ##self.beb_knopp.grid(row=3, column=2)
-
-        # Ausgabe-Textfeld
         self.ausgabe_text = tk.CTkTextbox(master, width=1250, height=400, wrap="word")
-        ###self.ausgabe_text.configure(highlightthickness=0)
         self.ausgabe_text.configure(state='disabled')
-        #self.ausgabe_text.configure(font=("Helvetica", "14"))
-
-        # Positionierung von Labels und Textfeldern
-        #self.kunde_label.grid(row=0, column=0)
-        #self.problem_label.grid(row=1, column=0)
-        #self.info_label.grid(row=2, column=0)
-
-        #self.kunde_entry.grid(row=0, column=1)
         self.kunde_entry.place(x=5,y=5)
         self.problem_entry.place(x=5,y=35)
         self.info_entry.place(x=5,y=65)
         self.t_nummer.place(x=605,y=5)
-        #self.senden_button.grid(row=3, column=1)
         self.ausgabe_text.place(x=5,y=110)
 
         
-        # erschaffen des Column Menü Dings
         self.menu = Menu(root)
         root.configure(menu=self.menu)
         self.menudings = Menu(self.menu, tearoff=0)
@@ -446,11 +425,11 @@ class Listendings:
         self.Menü_Knopp = tk.CTkButton(master, text="Menü Anzeigen", command=self.Menu_anzeige_wechseln, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         self.Menü_Knopp.place(x=1260, y=160)
 
-        self.Ticket_erstellen_Knopp = tk.CTkButton(root, text="Ticket erstellen...", command=self.Ticket_erstellen)
+        self.Ticket_erstellen_Knopp = tk.CTkButton(root, text="Ticket erstellen...", command=self.Ticket_erstellen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         self.Ticket_erstellen_Knopp.place(x=1260,y=450)
 
         
-        self.Pause_menu = tk.CTkFrame(master, width=769, height=420, fg_color="Grey32", border_color="White", border_width=1, corner_radius=0)
+        self.Pause_menu = tk.CTkFrame(master, width=769, height=420, fg_color="LightSlateGray", border_color="White", border_width=1, corner_radius=0)
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
@@ -463,26 +442,28 @@ class Listendings:
         self.Listen_Speicherort_geladen_anders_Entry = tk.CTkEntry(self.Pause_menu, width=300)
         self.Listen_Speicherort_Netzwerk_geladen_anders_Entry = tk.CTkEntry(self.Pause_menu, width=300)
 
-        self.Netzlaufwerk_pfad_geladen_Label = tk.CTkLabel(self.Pause_menu, text=self.Listen_Speicherort_Netzwerk_geladen_anders, text_color="Black", bg_color="Grey32", corner_radius=3)
-        self.Pfad_geladen_Label = tk.CTkLabel(self.Pause_menu, text=self.Listen_Speicherort_geladen_anders, text_color="Black", bg_color="Grey32", corner_radius=3)
+        self.Netzlaufwerk_pfad_geladen_Label = tk.CTkLabel(self.Pause_menu, text=self.Listen_Speicherort_Netzwerk_geladen_anders, text_color="burlywood1", bg_color=self.das_hübsche_grau, corner_radius=3)
+        self.Pfad_geladen_Label = tk.CTkLabel(self.Pause_menu, text=self.Listen_Speicherort_geladen_anders, text_color="burlywood1", bg_color=self.das_hübsche_grau, corner_radius=3)
 
-        self.gel_Email_Empfänger_L = tk.CTkLabel(self.Pause_menu, text="Ziel Email Adresse", text_color="White", bg_color="Grey32", corner_radius=3)
-        self.gel_Email_Sender_L = tk.CTkLabel(self.Pause_menu, text="Absende Email Adresse", text_color="White", bg_color="Grey32", corner_radius=3)
-        self.gel_Email_Absender_Passwort_L = tk.CTkLabel(self.Pause_menu, text="Absender Email Passwort", text_color="White", bg_color="Grey32", corner_radius=3)
-        self.gel_SMTP_Server_L = tk.CTkLabel(self.Pause_menu, text="SMTP Server", text_color="White", bg_color="Grey32", corner_radius=3)
+        self.gel_Email_Empfänger_L = tk.CTkLabel(self.Pause_menu, text="Ziel Email Adresse", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
+        self.gel_Email_Sender_L = tk.CTkLabel(self.Pause_menu, text="Absende Email Adresse", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
+        self.gel_Email_Absender_Passwort_L = tk.CTkLabel(self.Pause_menu, text="Absender Email Passwort", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
+        self.gel_SMTP_Server_L = tk.CTkLabel(self.Pause_menu, text="SMTP Server", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
 
         self.gel_Email_Empfänger_E = tk.CTkEntry(self.Pause_menu, placeholder_text="Empfänger Adresse", width=300)
         self.gel_Email_Sender_E = tk.CTkEntry(self.Pause_menu, placeholder_text="Sender Email Adresse", width=300)
         self.gel_Email_Absender_Passwort_E = tk.CTkEntry(self.Pause_menu, placeholder_text="Passwort der Email Adresse", width=300)
         self.gel_SMTP_Server_E = tk.CTkEntry(self.Pause_menu, placeholder_text="IPv4 oder Namen des SMTP Eintragen", width=300)
 
-        self.Mail_Einstellungen_speichern = tk.CTkButton(self.Pause_menu, text="Angaben Speichern", command=self.Email_Einstellungen_speichern)
+        self.Mail_Einstellungen_speichern = tk.CTkButton(self.Pause_menu, text="Angaben Speichern", command=self.Email_Einstellungen_speichern, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.smtp_login_erfolgreich_l = tk.CTkLabel(self.Pause_menu, text="Anmeldestatus")
 
+        self.SMTP_Server_erneut_anmelden = tk.CTkButton(self.Pause_menu, text="erneut Verbinden", command=self.SMTP_Anmeldung_Manuell, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         
         ####################################################################################################################################################################################################
         ####################################################################################################################################################################################################
 
-        self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche)
+        self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         self.Starface_Modul_Einstellung_Knopp = tk.CTkButton(self.Pause_menu, text="Starface Modul umschalten", command=self.Starface_Modul_umschalten)
         self.Auto_speichern_ändern_knopp = tk.CTkButton(self.Pause_menu, text="Auto Speichern umschalten", command=self.autospeichern_ä_c)
         self.Zhe_Clock = tk.CTkLabel(self.Pause_menu, text=self.Zeit)
@@ -549,11 +530,17 @@ class Listendings:
         msg.attach(MIMEText(self.Nachricht_Mail_Inhalt, "plain"))
 
         with smtplib.SMTP_SSL(self.smtp_server, 465) as server:
-            '''try:
+            try:
                 server.login(self.sender_email, self.pw_email)
+                self.smtp_login_erfolgreich = True
             except Exception as EmailEx1:
                 print("Fehler beim anmelde beim Mailserver. Fehlercode: ", EmailEx1)
-                messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim Anmelden am Mailserver. Fehlercode: {self.smtp_server}")'''
+                self.smtp_login_erfolgreich = False
+                try:
+                    self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP fehlgeschlagen.", text_color="Red")
+                except:
+                    pass
+                messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim Anmelden am Mailserver. Fehlercode: {self.smtp_server}")
 
             try:
                 server.sendmail(self.sender_email, self.empfänger_email, msg.as_string())
@@ -602,7 +589,7 @@ class Listendings:
                     SMTP_Server_Datei_s.write(self.gel_SMTP_Server_E.get())
                 with open(self.Einstellung_smtp_Passwort, "w+") as SMTP_Server_Passwort_Datei_s:
                     SMTP_Server_Passwort_Datei_s.write(self.gel_Email_Absender_Passwort_E.get())
-                messagebox.showinfo(title="CiM", message="Die Einstellungen wurden erfolgreich gespeichert und werden beim NÄCHSTEN START aktiv.")
+                messagebox.showinfo(title="CiM", message="Die Einstellungen wurden erfolgreich gespeichert und werden beim nächsten Start oder durch erneutes verbinden aktiv.")
             else:
                 messagebox.showinfo(title="CiM", message="Bitte geben Sie BEVOR Sie speichern, zuerst in ALLEN Feldern etwas ein.")
 
@@ -656,7 +643,29 @@ class Listendings:
     
     def SMTP_Anmeldung_Manuell(self):
         print("[-SMTP Anmeldung-] Führe nun eine Manuelle Anmeldung beim SMTP Server durch...")
-        messagebox.showinfo(title="CiM SMTP Anmeldung", message="Es wird nun eine Manuelle SMTP Server Verbindung durchgeführt, momentan wird sich die Software noch für ca 10 - 15 Sekunden aufhängen aber nicht wundern, das Programm läuft weiter.")
+        print("[-SMTP Anmeldung-] Ich lade nun zu allerst die Einstellungen neu...")
+        try:
+            with open(self.Einstellung_Email_Sender_Adresse, "r") as Email_S_Datei:
+                self.sender_email = Email_S_Datei.read()
+                print("[-EINSTLLUNGEN LADEN-] Sender Email geladen.")
+            with open(self.Einstellung_Email_Empfänge_Adresse, "r") as Email_E_Datei:
+                self.empfänger_email = Email_E_Datei.read()
+                print("[-EINSTLLUNGEN LADEN-] Empfänger Adresse geladen.")
+            with open(self.Einstellung_smtp_server, "r") as SMTP_Server_Datei:
+                self.smtp_server = SMTP_Server_Datei.read()
+                print("[-EINSTLLUNGEN LADEN-] SMTP Server Adresse geladen.")
+            with open(self.Einstellung_smtp_Passwort, "r") as SMTP_Server_Passwort_Datei:
+                self.pw_email= SMTP_Server_Passwort_Datei.read()
+                print("[-EINSTLLUNGEN LADEN-] Absender Kennwort geladen.s")
+        except Exception as EmailEx3_l:
+            print(EmailEx3_l)
+            self.sender_email = ""
+            self.empfänger_email = ""
+            self.smtp_server = ""
+            self.pw_email = ""
+            messagebox.showerror(title="CiM Fehler", message=f"Beim Laden der Email Einstellungen unter {self.Einstellung_Email_Sender_Adresse} ; {self.Einstellung_Email_Empfänge_Adresse} und {self.Einstellung_smtp_server} ist ein Fehler aufgetreten. Fehlercode: {EmailEx3_l}")
+        messagebox.showinfo(title="CiM SMTP Anmeldung", message="Es wird nun eine Manuelle SMTP Server Verbindung durchgeführt, das sollte nicht länger als ein paar Sekunden dauern.")
+        self.smtp_login_erfolgreich_l.configure(text="Anmeldung erfolgt...", text_color="Grey42")
         self.SMTP_Anmeldung()
 
     def SMTP_Anmeldung(self):
@@ -665,8 +674,18 @@ class Listendings:
             try:
                 server.login(self.sender_email, self.pw_email)
                 print("[-SMTP ANMELDUNG-] Anmeldung beim SMTP Server erfolgreich.")
+                self.smtp_login_erfolgreich = True
+                try:
+                    self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP Server war erfolgreich.", text_color="SeaGreen1")
+                except:
+                    pass
             except Exception as EmailEx1:
                 print("[-SMTP ANMELDUNG-] Fehler beim anmelden beim Mailserver. Fehlercode: ", EmailEx1)
+                self.smtp_login_erfolgreich = False
+                try:
+                    self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP fehlgeschlagen.", text_color="Red")
+                except:
+                    pass
                 messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim Anmelden am Mailserver. Fehlercode: {EmailEx1}")
 
     def Aufgabe_hinzufügen(self):
@@ -838,6 +857,7 @@ class Listendings:
             self.Menü_Knopp.configure(text="Menü Anzeigen")
             self.Listen_Speicherort_geladen_anders_Entry.place_forget()
             self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.place_forget()
+            self.smtp_login_erfolgreich_l.place_forget()
             try:
                 self.Listen_Speicherort_geladen_anders_Entry.delete(0, tk.END)
                 self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.delete(0, tk.END)
@@ -868,6 +888,7 @@ class Listendings:
             self.gel_Email_Absender_Passwort_E.place(x=370,y=210)
             self.gel_SMTP_Server_E.place(x=370,y=240)
             self.Mail_Einstellungen_speichern.place(x=420,y=280)
+            self.SMTP_Server_erneut_anmelden.place(x=420,y=360)
             try:
                 try:
                     self.gel_Email_Empfänger_E.delete(0, tk.END)
@@ -892,6 +913,15 @@ class Listendings:
                 self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.insert(0, self.Listen_Speicherort_Netzwerk_geladen)
             except:
                 print("Konnte die geladenen Speicherorte nicht in die Entrys übernehmen.")
+            try:
+                if self.smtp_login_erfolgreich == True:
+                    self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP Server war erfolgreich.", text_color="SeaGreen1")
+                    self.smtp_login_erfolgreich_l.place(x=220,y=320)
+                elif self.smtp_login_erfolgreich == False:
+                    self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP fehlgeschlagen.", text_color="Red")
+                    self.smtp_login_erfolgreich_l.place(x=220,y=320)
+            except Exception as Exc21:
+                print(f"Fehler bei der entscheidung ob die Anmeldung bei Server erfolgreich war, wie auch immer das jetzt nun wieder schiefgehen konnte... Fehlercode: {Exc21}")
     
         
         
@@ -999,6 +1029,7 @@ class Listendings:
                                     self.durchsucht_text = f"bis jetzt durchsucht: {self.gesucht_zahl}"
                                     self.Zahl_anzeige.configure(text=self.durchsucht_text)  
                                     if content_to_search in file_content:
+                                        self.Ergebnise_zahl += 1
                                         results.append(file_path)
                                         
                                         
@@ -1015,7 +1046,8 @@ class Listendings:
 
                 if results:
                     print("Das hab ich gefunden:")
-                    ganzes_ergebnis = "In diesen Dateien habe ich etwas gefunden:\n\n" + "\n\n".join(results)
+                    
+                    ganzes_ergebnis = "Ich habe in folgenden Dateien " + str(self.Ergebnise_zahl) + " Ergebnisse gefunden:\n\n" + "\n\n".join(results)
                     self.rearesults = results
                     self.durchsucht_text = f"Es wurden insgesammt: {self.gesucht_zahl} Daten durchsucht. {ganzes_ergebnis}"
                     self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
@@ -1236,18 +1268,21 @@ class Listendings:
             self.ausgabe_text.configure(state='disabled')
 
     def Admin_rechte(self):
-        response = ctypes.windll.user32.MessageBoxW(None, "Möchten Sie Administratorrechte anfordern? Dies wird das Programm mit Adminrechten neustarten. Das funktioniert auch glaube nur auf Windows.", "Administratorrechte erforderlich", 4)
-        if response == 6:  # Wert 6 entspricht dem Klick auf "Ja"
-            try:
-                # Hier führen wir die Funktion mit Administratorrechten aus
-                print("Instanz mit Admin Rechten gestartet")
-                ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
-                sys.exit()
-            except Exception as e:
-                messagebox.showerror(title="ich sagte doch das geht nicht...", message=e)
-                print("Fehler beim Ausführen der 'Admin_Rechte'-Funktion:", e)
-        else:
-            print("Administratorrechte wurden nicht angefordert.")
+        try:
+            response = ctypes.windll.user32.MessageBoxW(None, "Möchten Sie Administratorrechte anfordern? Dies wird das Programm mit Adminrechten neustarten. Das funktioniert auch glaube nur auf Windows.", "Administratorrechte erforderlich", 4)
+            if response == 6:  # Wert 6 entspricht dem Klick auf "Ja"
+                try:
+                    # Hier führen wir die Funktion mit Administratorrechten aus
+                    print("Instanz mit Admin Rechten gestartet")
+                    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
+                    sys.exit()
+                except Exception as e:
+                    messagebox.showerror(title="ich sagte doch das geht nicht...", message=e)
+                    print("Fehler beim Ausführen der 'Admin_Rechte'-Funktion:", e)
+            else:
+                print("Administratorrechte wurden nicht angefordert.")
+        except Exception as excAdm:
+            messagebox.showinfo(message=excAdm)
 
     def senden(self, event):
         print("(DEV) senden(def)")
