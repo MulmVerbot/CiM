@@ -22,6 +22,7 @@ try:
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
     from tkinterdnd2 import DND_FILES
+    from pypresence import Presence
 except:
     print("(FATAL) Konnte die wichtigen Bilbioteken nicht Laden!")
     try:
@@ -31,6 +32,15 @@ except:
     sys.exit()
 
 root = tk.CTk()
+try:
+    client_id = '807247545780273224'  # Ersetzen Sie dies durch Ihre Client-ID
+    RPC = Presence(client_id)  
+    RPC.connect()
+
+    # Die Rich Presence wird angezeigt
+    RPC.update(details="aber Bald geschafft", state="Status hier", large_image="Bild.jpg", small_image="nix", large_text="Verbringt seine Zeit in der Käsefabrik", small_text="Gar kein bock mehr...")
+except Exception as Ex12234:
+    print(f"DC Rich presence is abgekackt{Ex12234}")
 
 
 
