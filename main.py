@@ -422,7 +422,7 @@ class Listendings:
         self.beb_knopp.place(x=1260, y=100)  # Add more buttons as needed
         self.alles_löschen_knopp = tk.CTkButton(master, text="durchsuchen...", command=self.Suche1, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         self.alles_löschen_knopp.place(x=1260, y=130)
-        self.Menü_Knopp = tk.CTkButton(master, text="Menü Anzeigen", command=self.Menu_anzeige_wechseln, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.Menü_Knopp = tk.CTkButton(master, text="Menü anzeigen", command=self.Menu_anzeige_wechseln, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         self.Menü_Knopp.place(x=1260, y=160)
 
         self.Ticket_erstellen_Knopp = tk.CTkButton(root, text="Ticket erstellen...", command=self.Ticket_erstellen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
@@ -447,7 +447,7 @@ class Listendings:
 
         self.gel_Email_Empfänger_L = tk.CTkLabel(self.Pause_menu, text="Ziel Email Adresse", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
         self.gel_Email_Sender_L = tk.CTkLabel(self.Pause_menu, text="Absende Email Adresse", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
-        self.gel_Email_Absender_Passwort_L = tk.CTkLabel(self.Pause_menu, text="Absender Email Passwort", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
+        self.gel_Email_Absender_Passwort_L = tk.CTkLabel(self.Pause_menu, text="Absende Mail Kennwort", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
         self.gel_SMTP_Server_L = tk.CTkLabel(self.Pause_menu, text="SMTP Server", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
 
         self.gel_Email_Empfänger_E = tk.CTkEntry(self.Pause_menu, placeholder_text="Empfänger Adresse", width=300)
@@ -569,13 +569,6 @@ class Listendings:
         self.Ticket_abschicken_mail.place(x=330,y=50)
         self.Betreff_Ticket_e.place(x=10,y=50)
         self.Nachricht_Ticket_e.place(x=10,y=80)
-        '''try:  # das hier wird wohl nicht mehr benötigt da die Anmeldung jetzt über nen Thread erfolgt
-            with smtplib.SMTP_SSL(self.smtp_server, 465) as server: 
-                server.login(self.sender_email, self.pw_email)
-                print("Beim SMTP Server erfolgreich eingelogt.")
-        except Exception as Ex1EA:
-            print(f"Fehler bei der Anmeldung am SMTP Server. Fehlercode: {Ex1EA}")
-            messagebox.showinfo(title="CiM Fehler", message=f"Bei der Anmeldung am SMTP Server ist ein Fehler aufgetreten. Überprüfen Sie die im Menü hinterlegten Zugangsdaten und versuchen Sie es später erneut. Fehlercode: {Ex1EA}")'''
 
     def Email_Einstellungen_speichern(self):
         print("Email_Einstellungen_speichern (def)")
@@ -834,14 +827,14 @@ class Listendings:
         
 
         if self.Starface_Modul == "1":
-            self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist aktiviert", fg_color="aquamarine", text_color="Black")
+            self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist aktiviert.", fg_color="aquamarine", text_color="Black")
         else:
-            self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist deaktiviert", fg_color="chocolate1", text_color="White")
+            self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist deaktiviert.", fg_color="chocolate1", text_color="White")
 
         if self.Auto_speichern_Einstellungsdatei_var == "1":
-            self.Auto_speichern_ändern_knopp.configure(text="Autospeichern aktiviert",fg_color="aquamarine", text_color="Black")
+            self.Auto_speichern_ändern_knopp.configure(text="Autospeichern aktiviert.",fg_color="aquamarine", text_color="Black")
         else:
-            self.Auto_speichern_ändern_knopp.configure(text="Autospeichern deaktiviert", fg_color="chocolate1", text_color="White")
+            self.Auto_speichern_ändern_knopp.configure(text="Autospeichern deaktiviert.", fg_color="chocolate1", text_color="White")
 
        
         if self.Menü_da == True:
@@ -854,7 +847,7 @@ class Listendings:
             self.Menü_da = False
             self.Netzlaufwerk_pfad_geladen_Label.place_forget()
             self.Pfad_geladen_Label.place_forget()
-            self.Menü_Knopp.configure(text="Menü Anzeigen")
+            self.Menü_Knopp.configure(text="Menü anzeigen")
             self.Listen_Speicherort_geladen_anders_Entry.place_forget()
             self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.place_forget()
             self.smtp_login_erfolgreich_l.place_forget()
