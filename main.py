@@ -23,7 +23,10 @@ try:
     from email.mime.text import MIMEText
 except:
     print("(FATAL) Konnte die wichtigen Bilbioteken nicht Laden!")
-    messagebox.showerror(title="Kritischer Fehler", message="(FATAL) Konnte die wichtigen Bilbioteken nicht Laden! Das Programm wird nun Beendet.")
+    try:
+        messagebox.showerror(title="Kritischer Fehler", message="(FATAL) Konnte die wichtigen Bilbioteken nicht Laden! Das Programm wird nun Beendet.")
+    except:
+        sys.exit()
     sys.exit()
 
 root = tk.CTk()
@@ -125,7 +128,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.1 (2)"
+        self.Version = "Alpha 1.3.1 (3)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -170,6 +173,9 @@ class Listendings:
         self.Thread_Kunderuftan.start()
         self.thread_suche = threading.Timer(1, self.Suche_algo)
         self.thread_suche.setDaemon(True)
+        self.smtp_server_anmeldung_thread = threading.Timer(1, self.SMTP_Anmeldung)
+        self.smtp_server_anmeldung_thread.setDaemon(True)
+        self.smtp_server_anmeldung_thread.start()
         
         self.Hintergrund_farbe = "SlateGrey"
         root.configure(fg_color=self.Hintergrund_farbe)
@@ -395,6 +401,7 @@ class Listendings:
         self.Speichern_Menu.add_command(label="als CSV Speichern unter...", command=self.als_csv_speichern)
         self.Speichern_Menu.add_command(label="als CSV Speichern auf Netzlaufwerk", command=self.Netzlaufwerk_speichern)
         self.Einstellungen.add_command(label="Netzlaufwerk einstellen...", command=self.ListenDings_speicherort_Netzwerk_ändern)
+        self.Einstellungen.add_command(label="Beim SMTP Server anmelden...", command=self.SMTP_Anmeldung_Manuell)
         self.Bearbeiten_Menu.add_command(label="Bearbeiten Umschalten", command=self.beb_c)
         self.Bearbeiten_Menu.add_command(label="Alle Einträge löschen", command=self.alles_löschen)
         self.Suchen_Menu.add_command(label="Nach alten Einträgen suchen", command=self.Suche)
@@ -542,17 +549,17 @@ class Listendings:
         msg.attach(MIMEText(self.Nachricht_Mail_Inhalt, "plain"))
 
         with smtplib.SMTP_SSL(self.smtp_server, 465) as server:
-            try:
+            '''try:
                 server.login(self.sender_email, self.pw_email)
             except Exception as EmailEx1:
                 print("Fehler beim anmelde beim Mailserver. Fehlercode: ", EmailEx1)
-                messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim Anmelden am Mailserver. Fehlercode: {self.smtp_server}")
+                messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim Anmelden am Mailserver. Fehlercode: {self.smtp_server}")'''
 
             try:
                 server.sendmail(self.sender_email, self.empfänger_email, msg.as_string())
             except Exception as EmailEx2:
-                print("Fehler beim anmelde beim senden an den Mailserver. Fehlercode: ", EmailEx2)
-                messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der Nachricht an den Mailserver. Fehlercode: {self.smtp_server}")
+                print("Fehler beim anmelden beim senden an den Mailserver. Fehlercode: ", EmailEx2)
+                messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der Nachricht an den Mailserver. Fehlercode: {EmailEx2}")
             self.Ticket_Fenster.destroy()
             messagebox.showinfo(title="CiM", message="Das Ticket wurde erfolgreich erstellt.")
             print("E-Mail erfolgreich gesendet!")
@@ -575,13 +582,13 @@ class Listendings:
         self.Ticket_abschicken_mail.place(x=330,y=50)
         self.Betreff_Ticket_e.place(x=10,y=50)
         self.Nachricht_Ticket_e.place(x=10,y=80)
-        try:
+        '''try:  # das hier wird wohl nicht mehr benötigt da die Anmeldung jetzt über nen Thread erfolgt
             with smtplib.SMTP_SSL(self.smtp_server, 465) as server: 
                 server.login(self.sender_email, self.pw_email)
                 print("Beim SMTP Server erfolgreich eingelogt.")
         except Exception as Ex1EA:
             print(f"Fehler bei der Anmeldung am SMTP Server. Fehlercode: {Ex1EA}")
-            messagebox.showinfo(title="CiM Fehler", message=f"Bei der Anmeldung am SMTP Server ist ein Fehler aufgetreten. Überprüfen Sie die im Menü hinterlegten Zugangsdaten und versuchen Sie es später erneut. Fehlercode: {Ex1EA}")
+            messagebox.showinfo(title="CiM Fehler", message=f"Bei der Anmeldung am SMTP Server ist ein Fehler aufgetreten. Überprüfen Sie die im Menü hinterlegten Zugangsdaten und versuchen Sie es später erneut. Fehlercode: {Ex1EA}")'''
 
     def Email_Einstellungen_speichern(self):
         print("Email_Einstellungen_speichern (def)")
@@ -646,6 +653,21 @@ class Listendings:
         self.zeile_zahl = 0
         self.Kalender_offen = False
         self.checkbox = None
+    
+    def SMTP_Anmeldung_Manuell(self):
+        print("[-SMTP Anmeldung-] Führe nun eine Manuelle Anmeldung beim SMTP Server durch...")
+        messagebox.showinfo(title="CiM SMTP Anmeldung", message="Es wird nun eine Manuelle SMTP Server Verbindung durchgeführt, momentan wird sich die Software noch für ca 10 - 15 Sekunden aufhängen aber nicht wundern, das Programm läuft weiter.")
+        self.SMTP_Anmeldung()
+
+    def SMTP_Anmeldung(self):
+        print("[-SMTP ANMELDUNG-] Melde mich nun am SMTP Server an...")
+        with smtplib.SMTP_SSL(self.smtp_server, 465) as server:
+            try:
+                server.login(self.sender_email, self.pw_email)
+                print("[-SMTP ANMELDUNG-] Anmeldung beim SMTP Server erfolgreich.")
+            except Exception as EmailEx1:
+                print("[-SMTP ANMELDUNG-] Fehler beim anmelden beim Mailserver. Fehlercode: ", EmailEx1)
+                messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim Anmelden am Mailserver. Fehlercode: {EmailEx1}")
 
     def Aufgabe_hinzufügen(self):
         text_des_dings = tk.CTkInputDialog(text="Gib eine neue Aufgabe ein:")
