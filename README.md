@@ -10,6 +10,7 @@ Hier kommt noch bissl Zeugs dazu.
 - Nach Configuration im Starface UCC Client: Automatische aufnahme der Telefonummer des Anrufenden Kunden
 - Eine Uhr welche die Uhrzeit anzeigt und eine Meldung rausgibt sobald Feierabend ist und sobald man über-Minten macht
 - Weiterleitungen können protokolliert werden
+- Einstellung eines SMTP Server um Beispielsweise Tickets direkt aus dem Programm versendet werden können
 
 # Zukünftige Features:
 - Eine Todo Liste mit einstellbaren Timern und Erinnerungen
