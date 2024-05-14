@@ -33,14 +33,15 @@ except:
 
 root = tk.CTk()
 try:
-    client_id = '807247545780273224'  # Ersetzen Sie dies durch Ihre Client-ID
+    client_id = '807247545780273224'
     RPC = Presence(client_id)  
     RPC.connect()
 
     # Die Rich Presence wird angezeigt
-    RPC.update(details="aber Bald geschafft", state="Status hier", large_image="Bild.jpg", small_image="nix", large_text="Verbringt seine Zeit in der Käsefabrik", small_text="Gar kein bock mehr...")
+    RPC.update(details="Bald geschafft die shaise hier", state="Ich befinde mich in miserablem Zustand", large_image="Bild.jpg", small_image="nix", large_text="Verbringt seine Zeit in der Käsefabrik", small_text="Gar kein bock mehr...")
 except Exception as Ex12234:
     print(f"DC Rich presence is abgekackt{Ex12234}")
+    messagebox.showerror(message=f"Rich Presence funktioniert nicht: {Ex12234}")
 
 
 
@@ -135,7 +136,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.1 (4)"
+        self.Version = "Alpha 1.3.1 (5)"
         self.Zeit = "Lädt.."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -530,12 +531,23 @@ class Listendings:
 
     def Ticket_erstellen_mail(self): # naja das halt dann mit dem Mail.to Befehl.
         print("Ticket_erstellen (Email)")
+        self.alternative_empfänger_adresse = ""
         self.Betreff_Mail = self.Betreff_Ticket_e.get()
+        self.alternative_empfänger_adresse = self.alternative_empfänger_adresse_e.get()
         self.Nachricht_Mail_Inhalt = self.Nachricht_Ticket_e.get("0.0", "end")
 
         msg = MIMEMultipart()
         msg["From"] = self.sender_email
-        msg["To"] = self.empfänger_email
+        if self.alternative_empfänger_adresse == "":
+            msg["To"] = self.empfänger_email
+            print(self.empfänger_email)
+            print(self.alternative_empfänger_adresse)
+            print("[-TICKET ERSTELLEN-] Ticket wird an die hinterlegte Emailadresse versendet...")
+        elif self.alternative_empfänger_adresse != "":
+            msg["To"] = self.alternative_empfänger_adresse
+            print(self.alternative_empfänger_adresse)
+            print(self.empfänger_email)
+            print("[-TICKET ERSTELLEN-] Ticket wird an alternative Emailadresse versendet...")
         msg["Subject"] = self.Betreff_Mail
         msg.attach(MIMEText(self.Nachricht_Mail_Inhalt, "plain"))
 
@@ -551,15 +563,15 @@ class Listendings:
                 except:
                     pass
                 messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim Anmelden am Mailserver. Fehlercode: {self.smtp_server}")
-
-            try:
-                server.sendmail(self.sender_email, self.empfänger_email, msg.as_string())
-            except Exception as EmailEx2:
-                print("Fehler beim anmelden beim senden an den Mailserver. Fehlercode: ", EmailEx2)
-                messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der Nachricht an den Mailserver. Fehlercode: {EmailEx2}")
-            self.Ticket_Fenster.destroy()
-            messagebox.showinfo(title="CiM", message="Das Ticket wurde erfolgreich erstellt.")
-            print("E-Mail erfolgreich gesendet!")
+            if self.alternative_empfänger_adresse == "":
+                try:
+                    server.sendmail(self.sender_email, self.empfänger_email, msg.as_string())
+                except Exception as EmailEx2:
+                    print("Fehler beim anmelden beim senden an den Mailserver. Fehlercode: ", EmailEx2)
+                    messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der Nachricht an den Mailserver. Fehlercode: {EmailEx2}")
+                self.Ticket_Fenster.destroy()
+                messagebox.showinfo(title="CiM", message="Das Ticket wurde erfolgreich erstellt.")
+                print("E-Mail erfolgreich gesendet!")
             
 
 
@@ -576,6 +588,8 @@ class Listendings:
         self.Betreff_Ticket_e = tk.CTkEntry(self.Ticket_Fenster, width=300, placeholder_text="Betreffzeile")
         self.Nachricht_Ticket_e = tk.CTkTextbox(self.Ticket_Fenster, width=300, height=420, wrap="word")
         self.Ticket_abschicken_mail = tk.CTkButton(self.Ticket_Fenster, text="Ticket erstellen und versenden", command=self.Ticket_erstellen_mail)
+        self.alternative_empfänger_adresse_e = tk.CTkEntry(self.Ticket_Fenster, placeholder_text="Alternative Empfänger", width=300)
+        self.alternative_empfänger_adresse_e.place(x=330,y=120)
         self.Ticket_abschicken_mail.place(x=330,y=50)
         self.Betreff_Ticket_e.place(x=10,y=50)
         self.Nachricht_Ticket_e.place(x=10,y=80)
