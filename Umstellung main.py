@@ -1029,7 +1029,7 @@ class Listendings:
         self.Suche1()
 
     def Suche_alte_Einträge(self):
-        self.Ort_wo_gesucht_wird = self.Monat_ordner_pfad
+        self.Ort_wo_gesucht_wird = self.Listen_Speicherort_standard
         self.Suche1()
 
     def Suche_algo(self):

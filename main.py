@@ -136,7 +136,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.2 (2)"
+        self.Version = "Alpha 1.3.2 (3)"
         self.Zeit = "Die Zeit ist eine Illusion"
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -1029,7 +1029,7 @@ class Listendings:
         self.Suche1()
 
     def Suche_alte_Einträge(self):
-        self.Ort_wo_gesucht_wird = self.Monat_ordner_pfad
+        self.Ort_wo_gesucht_wird = self.Listen_Speicherort_standard
         self.Suche1()
 
     def Suche_algo(self):
