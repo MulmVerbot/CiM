@@ -40,8 +40,8 @@ try:
     # Die Rich Presence wird angezeigt
     RPC.update(details="Bald geschafft die shaise hier", state="Ich befinde mich in miserablem Zustand", large_image="Bild.jpg", small_image="nix", large_text="Verbringt seine Zeit in der Käsefabrik", small_text="Gar kein bock mehr...")
 except Exception as Ex12234:
-    print(f"DC Rich presence is abgekackt{Ex12234}")
-    messagebox.showerror(message=f"Rich Presence funktioniert nicht: {Ex12234}")
+    print(f"[-DC RICH PRESENCE-] DC Rich presence is abgekackt{Ex12234}")
+    #messagebox.showerror(message=f"Rich Presence funktioniert nicht: {Ex12234}")
 
 
 
@@ -136,11 +136,11 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.1 (5)"
-        self.Zeit = "Lädt.."
+        self.Version = "Alpha 1.3.2 (0)"
+        self.Zeit = "Die Zeit ist eine Illusion"
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
-        root.geometry("1420x520")
+        root.geometry("1444x520")
         self.Programm_läuft = True
         self.Uhr_läuft = True
         root.protocol("WM_DELETE_WINDOW", self.bye)
@@ -211,7 +211,6 @@ class Listendings:
         self.suchfenster_ergebnisse = tk.CTkToplevel(root)
         self.suchfenster_ergebnisse.resizable(False,False)
         self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
-        #self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
         self.suchfenster_ergebnisse.destroy()
         
         
@@ -220,8 +219,9 @@ class Listendings:
         self.zeit_string = time.strftime("%H:%M:%S")
         self.tag_string = str(time.strftime("%d %m %Y"))
         self.Tag_und_Liste = self.tag_string + " Dateien.txt"
-        self.Liste_mit_datum = os.path.join(self.Listen_Speicherort_standard, self.Monat, self.Tag_und_Liste)
-        self.Monat_ordner_pfad = os.path.join(self.Listen_Speicherort_standard, self.Monat)
+        self.Jahr = str(time.strftime("%Y"))
+        self.Liste_mit_datum = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat, self.Tag_und_Liste) # Das ist der Ort wo dann immer alles gespeichert wird
+        self.Monat_ordner_pfad = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat) # Das ist der Ort welcher zum Programmstart erstellt wird falls er nicht bereits existieren sollte
 
         
         try:
@@ -248,15 +248,15 @@ class Listendings:
         try:
             with open(self.Auto_speichern_Einstellungsdatei, "r") as einst_gel_autsp:
                 self.Auto_speichern_Einstellungsdatei_var = einst_gel_autsp.read()
-                print("Einstellunsgdatei zum Autospeichern geladen. Wert = ", self.Auto_speichern_Einstellungsdatei)
+                print("[-EINSTELLUNGEN-] Einstellunsgdatei zum Autospeichern geladen. Dateipfad: ", self.Auto_speichern_Einstellungsdatei)
                 if self.Auto_speichern_Einstellungsdatei_var == "1":
-                    print("Die Autospeichern Var welche aus den Einstellungen zum Programmstart geladen wurde ist: ", self.Auto_speichern_Einstellungsdatei_var)
+                    print("[-EINSTELLUNGEN-] Die Autospeichern Var welche aus den Einstellungen zum Programmstart geladen wurde ist: ", self.Auto_speichern_Einstellungsdatei_var)
                 else:
-                    print("Die Autospeichern Var welche aus den Einstellungen zum Programmstart geladen wurde ist: ", self.Auto_speichern_Einstellungsdatei_var)
+                    print("[-EINSTELLUNGEN-] Die Autospeichern Var welche aus den Einstellungen zum Programmstart geladen wurde ist: ", self.Auto_speichern_Einstellungsdatei_var)
                     self.Auto_speichern_Einstellungsdatei_var = "0"
         except Exception as autpsp_err:
             messagebox.showerror(title="CiM Fehler", message="Konnte die Datei zum Autospeichern nicht finden, vielleicht gibt es sie auch einfach nicht.")
-            print("Fehler beim Laden des Autospeicherns. Funktion wurde deaktiviert. self.Auto_speichern_Einstellungsdatei = 0. Fehlercode: ", autpsp_err)
+            print("[-EINSTELLUNGEN-] Fehler beim Laden des Autospeicherns. Funktion wurde deaktiviert. self.Auto_speichern_Einstellungsdatei = 0. Fehlercode: ", autpsp_err)
             self.Auto_speichern_Einstellungsdatei_var = "0"
                 
         
@@ -394,7 +394,7 @@ class Listendings:
         self.Einstellungen.add_command(label="Beim SMTP Server anmelden...", command=self.SMTP_Anmeldung_Manuell)
         self.Bearbeiten_Menu.add_command(label="Bearbeiten Umschalten", command=self.beb_c)
         self.Bearbeiten_Menu.add_command(label="Alle Einträge löschen", command=self.alles_löschen)
-        self.Suchen_Menu.add_command(label="Nach alten Einträgen suchen", command=self.Suche)
+        self.Suchen_Menu.add_command(label="Nach alten Einträgen suchen", command=self.Suche_alte_Einträge)
         self.Suchen_Menu.add_command(label="In der Kundenablage suchen...", command=self.Suche_KDabl)
         self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results)
         # Initialisierung wichtiger Variablen
@@ -423,14 +423,15 @@ class Listendings:
             self.ausgabe_text.configure(state='disabled')
 
 
-    
-        self.menu_frame = tk.CTkFrame(master, width=200, height=400)  # Adjust size as needed
-        #self.menu_frame.place(x=1100, y=50)  # Position it outside the visible area to the right
+    ############################ GUI INNIT ######################
+    ############################ GUI INNIT ######################
+    ############################ GUI INNIT ######################
+        self.menu_frame = tk.CTkFrame(master, width=200, height=400)
 
-        # Add buttons to the menu frame
-        #self.beb_knopp = tk.CTkButton(self.menu_frame, text="Bearbeiten", command=self.beb_c)
+
+        
         self.beb_knopp = tk.CTkButton(master, text="Bearbeiten", command=self.beb_c, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
-        self.beb_knopp.place(x=1260, y=100)  # Add more buttons as needed
+        self.beb_knopp.place(x=1260, y=100)
         self.alles_löschen_knopp = tk.CTkButton(master, text="durchsuchen...", command=self.Suche1, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         self.alles_löschen_knopp.place(x=1260, y=130)
         self.Menü_Knopp = tk.CTkButton(master, text="Menü anzeigen", command=self.Menu_anzeige_wechseln, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
@@ -466,13 +467,10 @@ class Listendings:
         self.gel_Email_Absender_Passwort_E = tk.CTkEntry(self.Pause_menu, placeholder_text="Passwort der Email Adresse", width=300)
         self.gel_SMTP_Server_E = tk.CTkEntry(self.Pause_menu, placeholder_text="IPv4 oder Namen des SMTP Eintragen", width=300)
 
-        self.Mail_Einstellungen_speichern = tk.CTkButton(self.Pause_menu, text="Angaben Speichern", command=self.Email_Einstellungen_speichern, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.Mail_Einstellungen_speichern = tk.CTkButton(self.Pause_menu, text="Email Einstellungen speichern", command=self.Email_Einstellungen_speichern, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         self.smtp_login_erfolgreich_l = tk.CTkLabel(self.Pause_menu, text="Anmeldestatus")
 
-        self.SMTP_Server_erneut_anmelden = tk.CTkButton(self.Pause_menu, text="erneut Verbinden", command=self.SMTP_Anmeldung_Manuell, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
-        
-        ####################################################################################################################################################################################################
-        ####################################################################################################################################################################################################
+        self.SMTP_Server_erneut_anmelden = tk.CTkButton(self.Pause_menu, text="erneut mit SMTP Server verbinden", command=self.SMTP_Anmeldung_Manuell, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
 
         self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         self.Starface_Modul_Einstellung_Knopp = tk.CTkButton(self.Pause_menu, text="Starface Modul umschalten", command=self.Starface_Modul_umschalten)
@@ -503,21 +501,32 @@ class Listendings:
                 self.wollte_sprechen = "Mit Frau Tarnath sprechen"
             elif choice == "Keine Weiterleitung":
                 self.wollte_sprechen = "-"
+        
 
-        self.optionmenu = tk.CTkOptionMenu(root, values=["An Chefe gegeben", "An Christian gegeben", "An Mike gegeben", "An Frau Tarnath gegeben","Keine Weiterleitung"], command=auswahl_gedingst, fg_color="White", text_color="Black", dropdown_hover_color="pink")
-        self.optionmenu.set("Keine Weiterleitung")
-        self.optionmenu.place(x=1260,y=220)
         self.optionmenu1 = tk.CTkOptionMenu(root, values=["Mit Chefe sprechen", "Mit Christian sprechen", "Mit Mike sprechen", "Mit Frau Tarnath sprechen","Keine Anfrage"], command=auswahl_gedingst_sprechen, fg_color="White", text_color="Black", dropdown_hover_color="pink")
         self.optionmenu1.set("Mit Wem sprechen?")
         self.optionmenu1.place(x=1260,y=190)
+        self.optionmenu = tk.CTkOptionMenu(root, values=["An Chefe gegeben", "An Christian gegeben", "An Mike gegeben", "An Frau Tarnath gegeben","Keine Weiterleitung"], command=auswahl_gedingst, fg_color="White", text_color="Black", dropdown_hover_color="pink")
+        self.optionmenu.set("Keine Weiterleitung")
+        self.optionmenu.place(x=1260,y=220)
 
         self.kalender_menü = tk.CTkFrame(master, width=1250, height=520, fg_color="White", border_color="Black", border_width=2)
+        self.Liste_mit_zeugs =  tk.CTkScrollableFrame(self.kalender_menü, width=500, height=420, bg_color="Green")
+        self.Aufgabe_hinzufügen_Knopp = tk.CTkButton(self.kalender_menü, text="Eintrag Hinzufügen", command=self.Aufgabe_hinzufügen)
+
+        ################################ MENU FRAMES ENDE ################################
+        ################################ MENU FRAMES ENDE ################################
+        ################################ MENU FRAMES ENDE ################################
+        ################################ MENU FRAMES ENDE ################################
+
         self.kalender_menü_Knopp = tk.CTkButton(master, text="Kalender öffnen", command=self.Kalender_anzeigen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         self.kalender_menü_Knopp.place(x=1260,y=480)
+        self.KDabl_durchsuchen_Knopp = tk.CTkButton(root, text="In Kunden DB suchen...", command=self.Suche_KDabl, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.KDabl_durchsuchen_Knopp.place(x=1260,y=250)
+        self.In_alten_Einträgen_suchen = tk.CTkButton(root, text="In DB suchen...", command=self.Suche_alte_Einträge, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.In_alten_Einträgen_suchen.place(x=1260,y=280)
 
-        self.Liste_mit_zeugs =  tk.CTkScrollableFrame(self.kalender_menü, width=500, height=420, bg_color="Green")
-
-        self.Aufgabe_hinzufügen_Knopp = tk.CTkButton(self.kalender_menü, text="Eintrag Hinzufügen", command=self.Aufgabe_hinzufügen)
+        
 
         
         
@@ -864,14 +873,14 @@ class Listendings:
         if self.Menü_da == True:
             print("menü == true(Menü war offen)")
             # Menu wird jetzt nicht mehr da sein.
-            self.Suche_knopp.place_forget()
+            #self.Suche_knopp.place_forget()
             self.Starface_Modul_Einstellung_Knopp.place_forget()
             self.Auto_speichern_ändern_knopp.place_forget()
             self.Pause_menu.place_forget()
             self.Menü_da = False
             self.Netzlaufwerk_pfad_geladen_Label.place_forget()
             self.Pfad_geladen_Label.place_forget()
-            self.Menü_Knopp.configure(text="Menü anzeigen")
+            self.Menü_Knopp.configure(text="Menü anzeigen", fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
             self.Listen_Speicherort_geladen_anders_Entry.place_forget()
             self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.place_forget()
             self.smtp_login_erfolgreich_l.place_forget()
@@ -885,8 +894,8 @@ class Listendings:
             print("menü == false (Menü war nicht offen)")
             self.Pause_menu.place(x=300,y=10)
             self.Menü_da = True
-            self.Menü_Knopp.configure(text="Menü schließen")
-            self.Suche_knopp.place(x=10,y=110)
+            self.Menü_Knopp.configure(text="Menü schließen", fg_color="aquamarine", hover_color="aquamarine3")
+            #self.Suche_knopp.place(x=10,y=110)
             self.Starface_Modul_Einstellung_Knopp.place(x=10,y=50)
             self.Auto_speichern_ändern_knopp.place(x=10,y=80)
 
@@ -1012,6 +1021,10 @@ class Listendings:
 
     def Suche_KDabl(self):
         self.Ort_wo_gesucht_wird = "/Volumes/Kundenablage/"
+        self.Suche1()
+
+    def Suche_alte_Einträge(self):
+        self.Ort_wo_gesucht_wird = self.Monat_ordner_pfad
         self.Suche1()
 
     def Suche_algo(self):
