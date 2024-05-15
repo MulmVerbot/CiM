@@ -136,7 +136,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.2 (0)"
+        self.Version = "Alpha 1.3.2 (1)"
         self.Zeit = "Die Zeit ist eine Illusion"
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -337,17 +337,15 @@ class Listendings:
             self.pw_email = ""
             messagebox.showerror(title="CiM Fehler", message=f"Beim Laden der Email Einstellungen unter {self.Einstellung_Email_Sender_Adresse} ; {self.Einstellung_Email_Empfänge_Adresse} und {self.Einstellung_smtp_server} ist ein Fehler aufgetreten. Fehlercode: {EmailEx3_l}")
         
-
+    ########### SHAISE ENDE ###########
+    ###################################
 
 
         
 
-        # Labels für Textfelder
         self.kunde_label = tk.CTkLabel(master, text="Kunde:")
         self.problem_label = tk.CTkLabel(master, text="Problem:")
-        self.info_label = tk.CTkLabel(master, text="Info:")        
-
-        # Textfelder
+        self.info_label = tk.CTkLabel(master, text="Info:")
 
         self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Kunde")
         self.t_nummer = tk.CTkEntry(master, width=600, placeholder_text="Telefonnummer")
@@ -525,6 +523,7 @@ class Listendings:
         self.KDabl_durchsuchen_Knopp.place(x=1260,y=250)
         self.In_alten_Einträgen_suchen = tk.CTkButton(root, text="In DB suchen...", command=self.Suche_alte_Einträge, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         self.In_alten_Einträgen_suchen.place(x=1260,y=280)
+        self.Eintrag_raus_kopieren_knopp = tk.CTkButton(root, text="den Letzten Eintrag rauskopieren", command=self.Eintrag_raus_kopieren)
 
         
 
@@ -537,6 +536,12 @@ class Listendings:
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
+
+    def Eintrag_raus_kopieren(self):
+        print("Eintrag_raus_kopieren(def)")
+        self.geladener_Text = self.ausgabe_text.get("0.0", "end")
+        self.einzelner_Eintrag = self.geladener_Text.split("\n\n")
+        print(f"Aufgteilter Text: {self.einzelner_Eintrag}")
 
     def Ticket_erstellen_mail(self): # naja das halt dann mit dem Mail.to Befehl.
         print("Ticket_erstellen (Email)")
