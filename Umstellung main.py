@@ -136,7 +136,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.2 (2)"
+        self.Version = "Alpha 1.3.3 (0)"
         self.Zeit = "Die Zeit ist eine Illusion"
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -207,6 +207,7 @@ class Listendings:
         self.etwas_suchen1 = False
         self.Index_stand = None
         self.Kalender_offen = False
+        self.wieviele_Einträge_geladen = 0
 
         self.suchfenster_ergebnisse = tk.CTkToplevel(root)
         self.suchfenster_ergebnisse.resizable(False,False)
@@ -360,13 +361,17 @@ class Listendings:
         self.senden_button.bind('<Button-1>', self.senden)
         root.bind('<Return>', self.senden)
         self.alles_löschen_knopp = tk.CTkButton(master, text="Alle Eintrage löschen", command=self.alles_löschen)
-        self.ausgabe_text = tk.CTkTextbox(master, width=1250, height=400, wrap="word")
-        self.ausgabe_text.configure(state='disabled')
+        #self.ausgabe_text = tk.CTkTextbox(master, width=1250, height=400, wrap="word")
+       #self.ausgabe_text.configure(state='disabled')
+
+        self.ausgabe_frame = tk.CTkFrame(root, width=1250, height=400)# den frame für die ausgabe hinpacken
+        self.ausgabe_frame.place(x=5,y=110)
         self.kunde_entry.place(x=5,y=5)
         self.problem_entry.place(x=5,y=35)
         self.info_entry.place(x=5,y=65)
         self.t_nummer.place(x=605,y=5)
-        self.ausgabe_text.place(x=5,y=110)
+        #self.ausgabe_text.place(x=5,y=110)
+        
 
         
         self.menu = Menu(root)
@@ -402,12 +407,12 @@ class Listendings:
         try:
             # Ausgabe-Textfeld aktualisieren
             print("(INFO) versuche die alten Aufzeichenungen zu Laden")
-            self.ausgabe_text.configure(state='normal')
+            #self.ausgabe_text.configure(state='normal')
             with open(self.Liste_mit_datum, "r") as f:
                 feedback_text = f.read()
-                self.ausgabe_text.delete("1.0", tk.END)
-                self.ausgabe_text.insert(tk.END, feedback_text)
-                self.ausgabe_text.configure(state='disabled')
+                #self.ausgabe_text.delete("1.0", tk.END)
+                #self.ausgabe_text.insert(tk.END, feedback_text)
+                #self.ausgabe_text.configure(state='disabled')
                 print("-----------------------------------------")
                 print("(DEV) Hier ist nun das geladene aus der bisherigen Liste:")
                 print(feedback_text)
@@ -1318,7 +1323,10 @@ class Listendings:
                 print("Administratorrechte wurden nicht angefordert.")
         except Exception as excAdm:
             messagebox.showinfo(message=excAdm)
-
+###### SENDEN ######
+###### SENDEN ######
+###### SENDEN ######
+###### SENDEN ######
     def senden(self, event):
         print("(DEV) senden(def)")
         # Textfeld-Inhalte lesen
@@ -1326,7 +1334,7 @@ class Listendings:
         problem = self.problem_entry.get()
         info = self.info_entry.get()
         T_Nummer = self.t_nummer.get()
-        self.ausgabe_text.configure(state='normal')
+        #self.ausgabe_text.configure(state='normal')
         self.zeit_string = time.strftime("%H:%M:%S")
         if self.Uhrzeit_anruf_start == None:
             self.Uhrzeit_anruf_start = "-"
@@ -1337,6 +1345,7 @@ class Listendings:
         
         if kunde or problem or info != "":
             #print("(INFO) Enter gedrückt obwohl etwas geschrieben wurde.")
+
             if self.kunde_entry.get() == "":
                 kunde = "-"
             if self.problem_entry.get() == "":
@@ -1352,9 +1361,9 @@ class Listendings:
             if self.wollte_sprechen == "":
                 self.wollte_sprechen = "Nein"
 
-            if os.path.exists(self.Liste_mit_datum):
+            if os.path.exists(self.Liste_mit_datum): #### bis hierhin is schonmal standart, da brauchen wir nix ändern ####
                 with open(self.Liste_mit_datum, "a") as f:
-                    f.write(f"Uhrzeit: {self.Uhrzeit_text}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
+                    self.Sache_die_gesendet_wurde = f"Uhrzeit: {self.Uhrzeit_text}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n"
                 with open(self.Liste_mit_datum, "r") as f:
                     feedback_text = f.read()
                     self.ausgabe_text.delete("1.0", tk.END)
