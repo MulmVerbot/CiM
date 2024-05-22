@@ -148,7 +148,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.3 (0)"
+        self.Version = "Alpha 1.3.3 (1)"
         self.Zeit = "Die Zeit ist eine Illusion"
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -463,7 +463,7 @@ class Listendings:
         
         self.Pause_menu = tk.CTkFrame(master, width=769, height=420, fg_color="LightSlateGray", border_color="White", border_width=1, corner_radius=0)
         def rückruf_speichern():
-            print("checkbox toggled, current value:", self.mitspeichern.get())
+            print("self.mitspeichern.get() = :", self.mitspeichern.get())
             self.Kontakt_soll_gleich_mitgespeichert_werden = True
 
         self.mitspeichern = tk.StringVar(value="off")
@@ -1381,10 +1381,6 @@ class Listendings:
 
 
     def Kunde_ruft_an(self):
-        chefe_nummer = "00491772446952"
-        christian_nummer = "004915233836862"
-        mike_nummer = "004915229048779"
-        ich_nummer = "004915758382618"
         print("Thread gestartet: Kunde_ruft_an (def)")
         while self.Programm_läuft == True:
             try:
@@ -1424,10 +1420,23 @@ class Listendings:
                                         self.Anruf_Telefonnummer = None
                             except Exception as ExcK1:
                                 print(f"Fehler beim Durchsuchen der JSON DB nach dem Kontakt. Fehlercode: {ExcK1}")
-                        
+                    else:
+                        try:
+                            with open("DB.json", 'r', encoding='utf-8') as datei:
+                                daten = json.load(datei)
+                            for kontakt in daten.get("Kontakte", []):
+                                if kontakt.get("Telefonnummer_jsn") == self.Anruf_Telefonnummer:
+                                    self.t_nummer.delete(0,tk.END)
+                                    self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                                    self.Anruf_Telefonnummer = None
+                                    Name_gel_für_e = kontakt.get("Name")
+                                    self.kunde_entry.insert(tk.END,Name_gel_für_e)
+                                    self.Anruf_Telefonnummer = None
+                        except Exception as ExcK1:
+                            print(f"Fehler beim Durchsuchen der JSON DB nach dem Kontakt. Fehlercode: {ExcK1}")   
 
-                        
             except Exception as eld:
+                print(eld)
                 pass
             try:
                 with open("tmp1.txt", "r") as tmp1_ld:
