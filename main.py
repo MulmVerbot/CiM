@@ -32,6 +32,18 @@ except:
     sys.exit()
 
 root = tk.CTk()
+
+width = 1444
+height = 520
+def mittig_fenster(root, width, height):
+    fenster_breite = root.winfo_screenwidth()
+    fenster_höhe = root.winfo_screenheight()
+    x = (fenster_breite - width) // 2
+    y = (fenster_höhe - height) // 2
+
+    # Leg die Position des Fensters fest
+    root.geometry(f"{width}x{height}+{x}+{y}")
+mittig_fenster(root, width, height)
 try:
     client_id = '807247545780273224'
     RPC = Presence(client_id)  
@@ -140,7 +152,7 @@ class Listendings:
         self.Zeit = "Die Zeit ist eine Illusion"
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
-        root.geometry("1444x520")
+        #root.geometry("1444x520")
         self.Programm_läuft = True
         self.Uhr_läuft = True
         root.protocol("WM_DELETE_WINDOW", self.bye)
@@ -209,6 +221,14 @@ class Listendings:
         self.Kalender_offen = False
 
         self.suchfenster_ergebnisse = tk.CTkToplevel(root)
+        try:
+            fenster_breite = root.winfo_screenwidth()
+            fenster_höhe = root.winfo_screenheight()
+            x = (fenster_breite - width) // 2
+            y = (fenster_höhe - height) // 2
+            self.suchfenster_ergebnisse.geometry(f"{width}x{height}+{x}+{y}")
+        except:
+            pass
         self.suchfenster_ergebnisse.resizable(False,False)
         self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
         self.suchfenster_ergebnisse.destroy()
@@ -598,7 +618,17 @@ class Listendings:
         self.Ticket_Fenster = tk.CTkToplevel()
         self.Ticket_Fenster.title(self.Programm_Name + " " + "                          Ein Ticket erstellen                          ")
         self.Ticket_Fenster.configure(resizeable=False)
-        self.Ticket_Fenster.geometry("680x520")
+        try:
+            height = 520
+            width = 680
+            fenster_breite = root.winfo_screenwidth()
+            fenster_höhe = root.winfo_screenheight()
+            x = (fenster_breite - width) // 2
+            y = (fenster_höhe - height) // 2
+            self.Ticket_Fenster.geometry(f"{width}x{height}+{x}+{y}")
+        except:
+            pass
+        #self.Ticket_Fenster.geometry("680x520")
         self.Betreff_Ticket_e = tk.CTkEntry(self.Ticket_Fenster, width=300, placeholder_text="Betreffzeile")
         self.Nachricht_Ticket_e = tk.CTkTextbox(self.Ticket_Fenster, width=300, height=420, wrap="word")
         self.Ticket_abschicken_mail = tk.CTkButton(self.Ticket_Fenster, text="Ticket erstellen und versenden", command=self.Ticket_erstellen_mail)
@@ -973,10 +1003,20 @@ class Listendings:
         self.durchsucht_text_mit_fehlern = f"Fehler: {self.gesucht_zahl_mit_fehlern}"
         try:
             self.suchfenster_ergebnisse = tk.CTkToplevel(root)
+            try:
+                height = 500
+                width = 500
+                fenster_breite = root.winfo_screenwidth()
+                fenster_höhe = root.winfo_screenheight()
+                x = (fenster_breite - width) // 2
+                y = (fenster_höhe - height) // 2
+                self.suchfenster_ergebnisse.geometry(f"{width}x{height}+{x}+{y}")
+            except:
+                pass
+                self.suchfenster_ergebnisse.title("Suchergebnisse")
+            #self.suchfenster_ergebnisse.geometry("500x500")
         except:
             pass
-        self.suchfenster_ergebnisse.title("Suchergebnisse")
-        self.suchfenster_ergebnisse.geometry("500x500")
         self.suchfenster_ergebnisse_frame = tk.CTkScrollableFrame(self.suchfenster_ergebnisse, width=500, height=420, bg_color="Green")
         #self.suchfenster_ergebnisse_frame.pack()
         self.erg_text_widget = tk.CTkTextbox(self.suchfenster_ergebnisse_frame, width=500, height=500)
