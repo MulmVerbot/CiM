@@ -148,7 +148,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.2 (3)"
+        self.Version = "Alpha 1.3.3 (0)"
         self.Zeit = "Die Zeit ist eine Illusion"
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -219,6 +219,7 @@ class Listendings:
         self.etwas_suchen1 = False
         self.Index_stand = None
         self.Kalender_offen = False
+        self.Kontakt_soll_gleich_mitgespeichert_werden = False
 
         self.suchfenster_ergebnisse = tk.CTkToplevel(root)
         try:
@@ -410,6 +411,7 @@ class Listendings:
         self.Speichern_Menu.add_command(label="als CSV Speichern auf Netzlaufwerk", command=self.Netzlaufwerk_speichern)
         self.Einstellungen.add_command(label="Netzlaufwerk einstellen...", command=self.ListenDings_speicherort_Netzwerk_ändern)
         self.Einstellungen.add_command(label="Beim SMTP Server anmelden...", command=self.SMTP_Anmeldung_Manuell)
+        self.Einstellungen.add_command(label="Einen neuen Kontakt hinzufügen...", command=self.zeugs1)
         self.Bearbeiten_Menu.add_command(label="Bearbeiten Umschalten", command=self.beb_c)
         self.Bearbeiten_Menu.add_command(label="Alle Einträge löschen", command=self.alles_löschen)
         self.Suchen_Menu.add_command(label="Nach alten Einträgen suchen", command=self.Suche_alte_Einträge)
@@ -460,6 +462,13 @@ class Listendings:
 
         
         self.Pause_menu = tk.CTkFrame(master, width=769, height=420, fg_color="LightSlateGray", border_color="White", border_width=1, corner_radius=0)
+        def rückruf_speichern():
+            print("checkbox toggled, current value:", self.mitspeichern.get())
+            self.Kontakt_soll_gleich_mitgespeichert_werden = True
+
+        self.mitspeichern = tk.StringVar(value="off")
+        self.abhgehakt_hinzufügen_box = tk.CTkCheckBox(root, text="Angaben in KTDB speichern?", command=rückruf_speichern, variable=self.mitspeichern, onvalue="on", offvalue="off")
+        self.abhgehakt_hinzufügen_box.place(x=1225,y=20)
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
@@ -985,7 +994,161 @@ class Listendings:
                 print(f"Fehler bei der entscheidung ob die Anmeldung bei Server erfolgreich war, wie auch immer das jetzt nun wieder schiefgehen konnte... Fehlercode: {Exc21}")
     
         
-        
+    
+    def zeugs1(self): # zuegs1 zum zeugs anstarrten
+        print("zuegs1 zum zeugs anstarrten")
+        self.Kontakt_soll_gleich_mitgespeichert_werden = False
+        self.zeugs()
+
+    def zeugs(self):
+        DATEI_PFAD = 'DB.json'
+        if self.Kontakt_soll_gleich_mitgespeichert_werden == True: # Es soll mitgespeichert werden
+            def lade_kontakte():
+                try:
+                    with open(DATEI_PFAD, 'r', encoding='utf-8') as datei:
+                        return json.load(datei)
+                except FileNotFoundError:
+                    return {"Kontakte": []}
+                except json.JSONDecodeError:
+                    messagebox.showerror("Fehler", "Fehler beim Lesen der JSON-Datei.")
+                    return {"Kontakte": []}
+
+            def speichere_kontakte(kontakte):
+                try:
+                    with open(DATEI_PFAD, 'w', encoding='utf-8') as datei:
+                        json.dump(kontakte, datei, ensure_ascii=False, indent=4)
+                except Exception as e:
+                    messagebox.showerror("Fehler", f"Fehler beim Speichern der JSON-Datei: {e}")
+
+            def hinzufuegen_kontakt():
+                telefonnummer = self.t_nummer.get()
+                name = self.kunde_entry.get()
+
+                if not telefonnummer or not name:
+                    messagebox.showwarning("Warnung", "Bitte beide Felder ausfüllen.")
+                    return
+
+                kontakte = lade_kontakte()
+                gefunden = False
+                for kontakt in kontakte['Kontakte']:
+                    if kontakt['Telefonnummer_jsn'] == telefonnummer:
+                        messagebox.showinfo(title="CiM", message=f"Dieser Kontakt existiert bereits unter dem Namen {kontakt['Name']} mit der Telefonnummer {kontakt['Telefonnummer_jsn']}.")
+                        kontakt['Name'] = name
+                        gefunden = True
+                        messagebox.showinfo("Info", "Name der bestehenden Telefonnummer aktualisiert.")
+                        break
+
+                if not gefunden:
+                    kontakte['Kontakte'].append({"Telefonnummer_jsn": telefonnummer, "Name": name})
+                    print("Kontakt wurde hinzugefügt.")
+                    #messagebox.showinfo("Erfolg", "Kontakt hinzugefügt.")
+
+                speichere_kontakte(kontakte)
+                self.Kontakt_soll_gleich_mitgespeichert_werden = True
+
+            def loeschen_kontakt():
+                telefonnummer = entry_telefonnummer.get()
+                kontakte = lade_kontakte()
+                neue_kontakte = [kontakt for kontakt in kontakte['Kontakte'] if kontakt["Telefonnummer_jsn"] != telefonnummer]
+                if len(neue_kontakte) == len(kontakte['Kontakte']):
+                    messagebox.showinfo("Info", "Telefonnummer nicht gefunden.")
+                else:
+                    kontakte['Kontakte'] = neue_kontakte
+                    speichere_kontakte(kontakte)
+                    messagebox.showinfo("Erfolg", "Kontakt gelöscht.")
+
+            
+
+            hinzufuegen_kontakt()
+        else: # Es soll nicht mitgespeichert werden.
+
+            def lade_kontakte():
+                try:
+                    with open(DATEI_PFAD, 'r', encoding='utf-8') as datei:
+                        return json.load(datei)
+                except FileNotFoundError:
+                    return {"Kontakte": []}
+                except json.JSONDecodeError:
+                    messagebox.showerror("Fehler", "Fehler beim Lesen der JSON-Datei.")
+                    return {"Kontakte": []}
+
+            def speichere_kontakte(kontakte):
+                try:
+                    with open(DATEI_PFAD, 'w', encoding='utf-8') as datei:
+                        json.dump(kontakte, datei, ensure_ascii=False, indent=4)
+                except Exception as e:
+                    messagebox.showerror("Fehler", f"Fehler beim Speichern der JSON-Datei: {e}")
+
+            def hinzufuegen_kontakt():
+                telefonnummer = entry_telefonnummer.get()
+                name = entry_name.get()
+                if not telefonnummer or not name:
+                    messagebox.showwarning("Warnung", "Bitte beide Felder ausfüllen.")
+                    return
+
+                kontakte = lade_kontakte()
+                gefunden = False
+                for kontakt in kontakte['Kontakte']:
+                    if kontakt['Telefonnummer_jsn'] == telefonnummer:
+                        kontakt['Name'] = name
+                        gefunden = True
+                        messagebox.showinfo("Info", "Name der bestehenden Telefonnummer aktualisiert.")
+                        break
+
+                if not gefunden:
+                    kontakte['Kontakte'].append({"Telefonnummer_jsn": telefonnummer, "Name": name})
+                    messagebox.showinfo("Erfolg", "Kontakt hinzugefügt.")
+
+                speichere_kontakte(kontakte)
+                entry_telefonnummer.delete(0, tk.END)
+                entry_name.delete(0, tk.END)
+
+            def loeschen_kontakt():
+                telefonnummer = entry_telefonnummer.get()
+                kontakte = lade_kontakte()
+                neue_kontakte = [kontakt for kontakt in kontakte['Kontakte'] if kontakt["Telefonnummer_jsn"] != telefonnummer]
+                if len(neue_kontakte) == len(kontakte['Kontakte']):
+                    messagebox.showinfo("Info", "Telefonnummer nicht gefunden.")
+                else:
+                    kontakte['Kontakte'] = neue_kontakte
+                    speichere_kontakte(kontakte)
+                    messagebox.showinfo("Erfolg", "Kontakt gelöscht.")
+                entry_telefonnummer.delete(0, tk.END)
+                entry_name.delete(0, tk.END)
+
+            root1 = Atk.Toplevel()
+            root1.title("Kontaktmanager")
+            width = 420
+            height = 320
+
+            def mittig_fenster(root1, width, height):
+                fenster_breite = root1.winfo_screenwidth()
+                fenster_höhe = root1.winfo_screenheight()
+                x = (fenster_breite - width) // 2
+                y = (fenster_höhe - height) // 2
+                root1.geometry(f"{width}x{height}+{x}+{y}")
+
+            mittig_fenster(root1, width, height)
+
+            frame = Atk.Frame(root1)
+            frame.pack(pady=10)
+            
+            label_telefonnummer = Atk.Label(frame, text="Telefonnummer:")
+            label_telefonnummer.grid(row=0, column=0, padx=5, pady=5)
+            entry_telefonnummer = Atk.Entry(frame)
+            entry_telefonnummer.grid(row=0, column=1, padx=5, pady=5)
+            
+            label_name = Atk.Label(frame, text="Name:")
+            label_name.grid(row=1, column=0, padx=5, pady=5)
+            entry_name = Atk.Entry(frame)
+            entry_name.grid(row=1, column=1, padx=5, pady=5)
+            
+            button_hinzufuegen = Atk.Button(frame, text="Hinzufügen", command=hinzufuegen_kontakt)
+            button_hinzufuegen.grid(row=2, column=0, padx=5, pady=5)
+            
+            button_loeschen = Atk.Button(frame, text="Löschen", command=loeschen_kontakt)
+            button_loeschen.grid(row=2, column=1, padx=5, pady=5)
+
 
     def Suche1(self):
         print("Suchen(def)")
@@ -1233,51 +1396,37 @@ class Listendings:
                     tmp_ld.close()
                     os.remove("tmp.txt")
                     self.t_nummer.configure(state="normal")
-                    #self.t_nummer.delete(0,tk.END)
-                    
-                    if self.Anruf_Telefonnummer == chefe_nummer: #chefe
-                        self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                        chefe = "Holger Beese"
-                        self.kunde_entry.insert(tk.END,chefe)
-                        self.Anruf_Telefonnummer = None
 
-                    elif self.Anruf_Telefonnummer == christian_nummer: #Christian
-                        self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                        Christian = "Christian Melges"
-                        self.kunde_entry.insert(tk.END,Christian)
-                        self.Anruf_Telefonnummer = None
-
-                    elif self.Anruf_Telefonnummer == mike_nummer: #Mike
-                        self.t_nummer.insert(tk.END,self.Anruf_Telefonnummer)
-                        Mike = "Mike Bosse"
-                        self.kunde_entry.insert(1,Mike)
-                        self.Anruf_Telefonnummer = None
-
-                    elif self.Anruf_Telefonnummer == ich_nummer: #Ich
-                        self.t_nummer.insert(tk.END,self.Anruf_Telefonnummer)
-                        ich = "Ich"
-                        self.kunde_entry.insert(1,ich)
-                        self.Anruf_Telefonnummer = None
-                    
-                    elif self.Anruf_Telefonnummer == "97":
-                        print("Klingel")
-                        pass
-                        
-                    elif self.Anruf_Telefonnummer.startswith("b") == False:
+                    if self.Anruf_Telefonnummer.startswith("b") == False:
                         if self.t_nummer.get() != "" and self.kunde_entry.get() == "": # Nummer is da und kunde nicht
                             self.t_nummer.delete(0,tk.END)
                             self.t_nummer.insert(1,self.Anruf_Telefonnummer)
                             self.Anruf_Telefonnummer = None
 
-                        elif self.t_nummer.get() != "" and self.kunde_entry.get() != "":
+                        elif self.t_nummer.get() != "" and self.kunde_entry.get() != "": #nummer und kunde is da
                             self.ganz = " : " + self.Anruf_Telefonnummer
                             self.t_nummer.insert(tk.END,self.ganz)
                             self.Anruf_Telefonnummer = None
                             self.ganz = None
-                        else:
-                            self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                            self.Anruf_Telefonnummer = None
-                    self.t_nummer.configure(state="disabled")
+
+                        else: # ich glaube das war ganz normal das was kommt wenn wer anruft.
+                            print("ELSE!")
+                            try:
+                                with open("DB.json", 'r', encoding='utf-8') as datei:
+                                    daten = json.load(datei)
+                                for kontakt in daten.get("Kontakte", []):
+                                    if kontakt.get("Telefonnummer_jsn") == self.Anruf_Telefonnummer:
+                                        self.t_nummer.delete(0,tk.END)
+                                        self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                                        self.Anruf_Telefonnummer = None
+                                        Name_gel_für_e = kontakt.get("Name")
+                                        self.kunde_entry.insert(tk.END,Name_gel_für_e)
+                                        self.Anruf_Telefonnummer = None
+                            except Exception as ExcK1:
+                                print(f"Fehler beim Durchsuchen der JSON DB nach dem Kontakt. Fehlercode: {ExcK1}")
+                        
+
+                        
             except Exception as eld:
                 pass
             try:
@@ -1361,7 +1510,6 @@ class Listendings:
 
     def senden(self, event):
         print("(DEV) senden(def)")
-        # Textfeld-Inhalte lesen
         kunde = self.kunde_entry.get()
         problem = self.problem_entry.get()
         info = self.info_entry.get()
@@ -1372,6 +1520,7 @@ class Listendings:
             self.Uhrzeit_anruf_start = "-"
         if self.Uhrzeit_anruf_ende == None:
             self.Uhrzeit_anruf_ende = self.zeit_string + " (mit abweichung)"
+            
 
         self.Uhrzeit_text = self.Uhrzeit_anruf_start + " bis " + self.Uhrzeit_anruf_ende
         
@@ -1405,6 +1554,9 @@ class Listendings:
                 self.Uhrzeit_anruf_ende = None
                 self.optionmenu.set("Keine Weiterleitung")
                 self.optionmenu1.set("Mit Wem sprechen?")
+                self.kunde_entry.focus()
+                self.zeugs()
+                # jetzt wurde das ding fertig in eine neue Datei versendet
             else:
                 print("(INFO) Liste zum beschreiben existiert bereits.")
                 with open(self.Liste_mit_datum, "w+") as f:
@@ -1419,9 +1571,9 @@ class Listendings:
                     self.Uhrzeit_anruf_ende = None
                     self.optionmenu.set("Keine Weiterleitung")
                     self.optionmenu1.set("Mit Wem sprechen?")
-            
-
-            
+                    self.kunde_entry.focus()
+                    self.zeugs()
+                    # jetzt wurde das ding fertig in eine bestehende Datei versendet
         else:
             print("(ERR) Da hat wer Enter gedrückt obwohl noch nicht geschrieben war.")
             messagebox.showinfo(title="Fehler", message="Bitte geben Sie zuerst in wenigsten eine Spalte etwas ein.")
