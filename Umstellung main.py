@@ -1366,10 +1366,12 @@ class Listendings:
                     self.Sache_die_gesendet_wurde = f"Uhrzeit: {self.Uhrzeit_text}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n"
                 with open(self.Liste_mit_datum, "r") as f:
                     feedback_text = f.read()
-                    self.ausgabe_text.delete("1.0", tk.END)
-                    self.ausgabe_text.insert(tk.END, feedback_text)
-                self.ausgabe_text.configure(state='disabled')
-                self.ausgabe_text.see(tk.END)
+                    for word in feedback_text:
+                       self.text_als_Scheiben = feedback_text.split("\n\n")
+                   # self.ausgabe_text.delete("1.0", tk.END)
+                   # self.ausgabe_text.insert(tk.END, feedback_text)
+              #  self.ausgabe_text.configure(state='disabled')
+             #   self.ausgabe_text.see(tk.END)
                 self.Weiterleitung_an = ""
                 self.Uhrzeit_anruf_ende = None
                 self.optionmenu.set("Keine Weiterleitung")
@@ -1378,11 +1380,14 @@ class Listendings:
                 print("(INFO) Liste zum beschreiben existiert bereits.")
                 with open(self.Liste_mit_datum, "w+") as f:
                     f.write(f"Uhrzeit: {self.Uhrzeit_text}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
+                    
                 with open(self.Liste_mit_datum, "r") as f:
                     feedback_text = f.read()
-                    self.ausgabe_text.delete("1.0", tk.END)
-                    self.ausgabe_text.insert(tk.END, feedback_text)
-                    self.ausgabe_text.configure(state='disabled')
+                    for word in feedback_text:
+                       self.text_als_Scheiben = feedback_text.split("\n\n")
+                 #   self.ausgabe_text.delete("1.0", tk.END)
+                 #   self.ausgabe_text.insert(tk.END, feedback_text)
+                   # self.ausgabe_text.configure(state='disabled')
                     self.Weiterleitung_an = ""
                     self.wollte_sprechen = ""
                     self.Uhrzeit_anruf_ende = None
@@ -1394,7 +1399,7 @@ class Listendings:
         else:
             print("(ERR) Da hat wer Enter gedrückt obwohl noch nicht geschrieben war.")
             messagebox.showinfo(title="Fehler", message="Bitte geben Sie zuerst in wenigsten eine Spalte etwas ein.")
-            self.ausgabe_text.configure(state='disabled')
+           # self.ausgabe_text.configure(state='disabled')
             self.Weiterleitung_an = ""
             self.wollte_sprechen = ""
             self.optionmenu.set("Keine Weiterleitung")
