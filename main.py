@@ -148,11 +148,10 @@ class Listendings:
     def __init__(self, master):
         self.master = master
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.4 (1)"
+        self.Version = "Alpha 1.3.4 (3)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
-        #root.geometry("1444x520")
         self.Programm_läuft = True
         self.Uhr_läuft = True
         root.protocol("WM_DELETE_WINDOW", self.bye)
