@@ -148,7 +148,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.3 (1)"
+        self.Version = "Alpha 1.3.3 (2)"
         self.Zeit = "Die Zeit ist eine Illusion"
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -180,6 +180,8 @@ class Listendings:
         self.Einstellung_Email_Empfänge_Adresse = os.path.join(self.Einstellungen_ordner, "Email_Empfänger.txt")
         self.Einstellung_smtp_server = os.path.join(self.Einstellungen_ordner, "SMTP_Server.txt")
         self.Einstellung_smtp_Passwort = os.path.join(self.Einstellungen_ordner, "SMTP_Passwort.txt")
+        self.Db_Ordner_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Db')
+        self.Json_pfad = os.path.join(self.Db_Ordner_pfad, 'Db.json')
         
         
         self.Monat = time.strftime("%m")
@@ -256,7 +258,13 @@ class Listendings:
                 err1 = "Es ist ein Fehler beim setzen des Icons aufgetreten. Fehlerlode: ", err
                 messagebox.showinfo(message=err1)
                 print("icon gibt heute nicht.")
-            
+        try:
+            print("Der Db Ordner scheint nicht zu existieren. Erstelle ihn nun.")
+            os.mkdir(self.Db_Ordner_pfad)
+            print("Der Db Ordner wurde erfolgreich erstellt.")
+        except Exception as ex_einst:
+            print("Fehler beim Erstellen des Db Ordners. Fehlercode:", ex_einst)
+            #messagebox.showerror(title="CiM Fehler", message=ex_einst)
 
         print(self.tag_string)
         if not os.path.exists(self.Monat_ordner_pfad):
@@ -282,7 +290,7 @@ class Listendings:
                 
         
         
-        try:
+        try: 
             if not os.path.exists(self.Einstellungen_ordner):
                 try:
                     print("Der Einstellungsordner scheint nicht zu existieren. Erstelle ihn nun.")
@@ -314,8 +322,10 @@ class Listendings:
                 except Exception as Exp:
                     print("Konnte die Einstellungsdatei nicht öffnen. Fehlercode: ", Exp)
                     messagebox.showerror(title="CiM Fehler", message="Konnte die Einstellungsdatei nicht öffnen. Bitte in die Logs schauen.")
-        except Exception as ex_stern:
-            print(f"Die Starface Moduleinstelllungen konten nicht überprüft werden. Fehlercode: {ex_stern}")
+
+            
+        except Exception as ex_stern2:
+            print(f"Die Starface Moduleinstelllungen konten nicht überprüft werden. Fehlercode: {ex_stern2}")
 
         try:
             with open(self.Listen_Speicherort_Einstellungsdatei , "r") as Liste_Speicherort_data:
@@ -335,6 +345,10 @@ class Listendings:
         except Exception as e:
             ex = "Irgendwas ist passiert: ", e
             print(ex)
+
+        
+
+        
 
     ######### JETZT KOMMT HIER DIE SHAISE FÜR DAS EMAIL TICKET ZEUGS ###########
         try:
@@ -432,7 +446,7 @@ class Listendings:
                 self.ausgabe_text.configure(state='disabled')
                 print("-----------------------------------------")
                 print("(DEV) Hier ist nun das geladene aus der bisherigen Liste:")
-                print(feedback_text)
+                print("feedback_text #  wegen Datenschutz entfernt.")
                 print("(DEV) Das War das geladene aus der bisherigen Liste.")
                 print("-----------------------------------------")
         except FileNotFoundError:
@@ -1001,7 +1015,7 @@ class Listendings:
         self.zeugs()
 
     def zeugs(self):
-        DATEI_PFAD = 'DB.json'
+        DATEI_PFAD = self.Json_pfad
         if self.Kontakt_soll_gleich_mitgespeichert_werden == True: # Es soll mitgespeichert werden
             def lade_kontakte():
                 try:
@@ -1408,35 +1422,39 @@ class Listendings:
                         else: # ich glaube das war ganz normal das was kommt wenn wer anruft.
                             print("ELSE!")
                             try:
-                                with open("DB.json", 'r', encoding='utf-8') as datei:
+                                with open(self.Json_pfad, 'r', encoding='utf-8') as datei:
                                     daten = json.load(datei)
+                                self.t_nummer.delete(0,tk.END)
+                                self.t_nummer.insert(1,self.Anruf_Telefonnummer)
                                 for kontakt in daten.get("Kontakte", []):
                                     if kontakt.get("Telefonnummer_jsn") == self.Anruf_Telefonnummer:
-                                        self.t_nummer.delete(0,tk.END)
-                                        self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                                        
                                         self.Anruf_Telefonnummer = None
                                         Name_gel_für_e = kontakt.get("Name")
                                         self.kunde_entry.insert(tk.END,Name_gel_für_e)
                                         self.Anruf_Telefonnummer = None
+                                        print("irgendwas")
                             except Exception as ExcK1:
                                 print(f"Fehler beim Durchsuchen der JSON DB nach dem Kontakt. Fehlercode: {ExcK1}")
                     else:
                         try:
+                            print("JETZT MACHMAS SO")
                             with open("DB.json", 'r', encoding='utf-8') as datei:
                                 daten = json.load(datei)
                             for kontakt in daten.get("Kontakte", []):
                                 if kontakt.get("Telefonnummer_jsn") == self.Anruf_Telefonnummer:
                                     self.t_nummer.delete(0,tk.END)
                                     self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                                    self.t_nummer.delete(0,tk.END)
+                                    self.t_nummer.insert(1,self.Anruf_Telefonnummer)
                                     self.Anruf_Telefonnummer = None
                                     Name_gel_für_e = kontakt.get("Name")
                                     self.kunde_entry.insert(tk.END,Name_gel_für_e)
-                                    self.Anruf_Telefonnummer = None
                         except Exception as ExcK1:
                             print(f"Fehler beim Durchsuchen der JSON DB nach dem Kontakt. Fehlercode: {ExcK1}")   
 
             except Exception as eld:
-                print(eld)
+                #print(eld)
                 pass
             try:
                 with open("tmp1.txt", "r") as tmp1_ld:
