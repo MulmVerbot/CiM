@@ -1426,7 +1426,7 @@ class Listendings:
                 with open("tmp.txt", "r") as tmp_ld:
                     gel_tmp = tmp_ld.read()
                     self.Anruf_Telefonnummer = gel_tmp
-                    print1 = "abgefangene Telefonummer: " + self.Anruf_Telefonnummer + "\n"
+                    print1 = "-abgefangene Telefonummer: " + self.Anruf_Telefonnummer + "-\n"
                     self.Ereignislog.insert(tk.END, print1)
                     self.Uhrzeit_anruf_start = self.Zeit
                     tmp_ld.close()
@@ -1485,7 +1485,6 @@ class Listendings:
                                     # hier enden die speziellen Ausnahmen für spezielle Kontakte.
                         except Exception as ExcK1:
                                 print(f"Fehler beim Durchsuchen der JSON DB nach dem Kontakt. Fehlercode: {ExcK1}")
-                        
             except Exception:
                 pass
             try:
