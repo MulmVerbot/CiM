@@ -148,8 +148,8 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.3 (2)"
-        self.Zeit = "Die Zeit ist eine Illusion"
+        self.Version = "Alpha 1.3.3 (3)"
+        self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
         #root.geometry("1444x520")
@@ -482,7 +482,13 @@ class Listendings:
 
         self.mitspeichern = tk.StringVar(value="off")
         self.abhgehakt_hinzufügen_box = tk.CTkCheckBox(root, text="Angaben in KTDB speichern?", command=rückruf_speichern, variable=self.mitspeichern, onvalue="on", offvalue="off")
-        self.abhgehakt_hinzufügen_box.place(x=1225,y=20)
+        self.abhgehakt_hinzufügen_box.place(x=1220,y=5)
+
+        self.Ereignislog = tk.CTkTextbox(root, width=220, height=50)
+        self.Ereignislog.place(x=1210,y=40)
+        self.Ereignislog.insert(tk.END, "-Ereignislog -\n")
+
+
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
@@ -1050,11 +1056,12 @@ class Listendings:
                         kontakt['Name'] = name
                         gefunden = True
                         messagebox.showinfo("Info", "Name der bestehenden Telefonnummer aktualisiert.")
+                        self.Ereignislog.insert(tk.END, "-bestehende Nummer wurde aktualisiert.-\n")
                         break
 
                 if not gefunden:
                     kontakte['Kontakte'].append({"Telefonnummer_jsn": telefonnummer, "Name": name})
-                    print("Kontakt wurde hinzugefügt.")
+                    self.Ereignislog.insert(tk.END, "-Kontakt wurde hinzugefügt.-\n")
                     #messagebox.showinfo("Erfolg", "Kontakt hinzugefügt.")
 
                 speichere_kontakte(kontakte)
@@ -1382,14 +1389,17 @@ class Listendings:
             if results:
                 print("Das hab ich gefunden:")
                 ganzes_ergebnis = "In diesen Dateien habe ich etwas gefunden:\n" + "\n".join(results)
+                self.Ereignislog.insert(tk.END, "-Suche mit Ergebnissen abgeschlossen.-\n")
                 messagebox.showinfo(title="CiM Suche", message=ganzes_ergebnis)
             else:
                 print("gab nüscht")
                 dmsg = "Dazu konnte ich leider nichts finden."
+                self.Ereignislog.insert(tk.END, "-Suche ohne Ergebnisse abgeschlossen.-\n")
                 messagebox.showinfo(title="CiM Suche", message=dmsg)
         else:
             print("gab nüscht")
             dmsg = "Dazu konnte ich leider nichts finden."
+            self.Ereignislog.insert(tk.END, "-Suche mit Ergebnissen abgeschlossen.-\n")
             messagebox.showinfo(title="CiM Suche", message=dmsg)
                 
 
@@ -1975,8 +1985,5 @@ class Listendings:
         print("======================================")
         sys.exit()
 
-# Hauptprogramm
-#root.resizable(False,False)
 Listendings = Listendings(root)
-#root.protocol("WM_DELETE_WINDOW", bye)
 root.mainloop()
