@@ -148,7 +148,7 @@ class Listendings:
         self.master = master
         self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.3 (3)"
+        self.Version = "Alpha 1.3.3 (4)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -395,13 +395,13 @@ class Listendings:
         self.senden_button.bind('<Button-1>', self.senden)
         root.bind('<Return>', self.senden)
         self.alles_löschen_knopp = tk.CTkButton(master, text="Alle Eintrage löschen", command=self.alles_löschen)
-        self.ausgabe_text = tk.CTkTextbox(master, width=1250, height=400, wrap="word")
+        self.ausgabe_text = tk.CTkTextbox(master, width=1255, height=420, wrap="word")
         self.ausgabe_text.configure(state='disabled')
         self.kunde_entry.place(x=5,y=5)
         self.problem_entry.place(x=5,y=35)
         self.info_entry.place(x=5,y=65)
         self.t_nummer.place(x=605,y=5)
-        self.ausgabe_text.place(x=5,y=110)
+        self.ausgabe_text.place(x=0,y=100)
 
         
         self.menu = Menu(root)
@@ -1052,10 +1052,11 @@ class Listendings:
                 gefunden = False
                 for kontakt in kontakte['Kontakte']:
                     if kontakt['Telefonnummer_jsn'] == telefonnummer:
-                        messagebox.showinfo(title="CiM", message=f"Dieser Kontakt existiert bereits unter dem Namen {kontakt['Name']} mit der Telefonnummer {kontakt['Telefonnummer_jsn']}.")
+                        #messagebox.showinfo(title="CiM", message=f"Dieser Kontakt existiert bereits unter dem Namen {kontakt['Name']} mit der Telefonnummer {kontakt['Telefonnummer_jsn']}.")
+                        self.Ereignislog.insert(tk.END, "-Der Name besteht bereits.-\n")
                         kontakt['Name'] = name
                         gefunden = True
-                        messagebox.showinfo("Info", "Name der bestehenden Telefonnummer aktualisiert.")
+                        #messagebox.showinfo("Info", "Name der bestehenden Telefonnummer aktualisiert.")
                         self.Ereignislog.insert(tk.END, "-bestehende Nummer wurde aktualisiert.-\n")
                         break
 
@@ -1076,7 +1077,8 @@ class Listendings:
                 else:
                     kontakte['Kontakte'] = neue_kontakte
                     speichere_kontakte(kontakte)
-                    messagebox.showinfo("Erfolg", "Kontakt gelöscht.")
+                    self.Ereignislog.insert(tk.END, "-Kontakt wurde gelöscht.-\n")
+                    #messagebox.showinfo("Erfolg", "Kontakt gelöscht.")
 
             
 
@@ -1438,12 +1440,14 @@ class Listendings:
                                 self.t_nummer.insert(1,self.Anruf_Telefonnummer)
                                 for kontakt in daten.get("Kontakte", []):
                                     if kontakt.get("Telefonnummer_jsn") == self.Anruf_Telefonnummer:
-                                        
                                         self.Anruf_Telefonnummer = None
                                         Name_gel_für_e = kontakt.get("Name")
                                         self.kunde_entry.insert(tk.END,Name_gel_für_e)
                                         self.Anruf_Telefonnummer = None
                                         print("irgendwas")
+                                        if kontakt.get("Telefonnummer_jsn") == 97:
+                                            self.Ereignislog.insert(tk.END, "-Es hat geklingelt.-\n")
+                                            self.senden()
                             except Exception as ExcK1:
                                 print(f"Fehler beim Durchsuchen der JSON DB nach dem Kontakt. Fehlercode: {ExcK1}")
                     else:
