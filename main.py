@@ -97,7 +97,7 @@ class Listendings:
                 while Listendings.Programm_läuft == True:
                     print(f'Ich horche mal auf Port {port}...') 
                     httpd.handle_request()
-                    if Listendings.Programm_läuft == False:
+                    if Listendings.Programm_läuft == False: # wenn diese funktion hier jemals funktionieren würde, könnten hier auch Fehler erscheinen.
                         httpd.shutdown()
                         httpd.server_close()
                         print(f'Server auf Port {port} gestoppt.')
@@ -233,7 +233,7 @@ class Listendings:
         self.etwas_suchen1 = False
         self.Index_stand = None
         self.Kalender_offen = False
-        self.Kontakt_soll_gleich_mitgespeichert_werden = False
+        self.Kontakt_soll_gleich_mitgespeichert_werden = True
 
         self.suchfenster_ergebnisse = tk.CTkToplevel(root)
         try:
@@ -1095,9 +1095,6 @@ class Listendings:
                     speichere_kontakte(kontakte)
                     self.Ereignislog.insert(tk.END, "-Kontakt wurde gelöscht.-\n")
                     #messagebox.showinfo("Erfolg", "Kontakt gelöscht.")
-
-            
-
             hinzufuegen_kontakt()
         else: # Es soll nicht mitgespeichert werden.
 
@@ -1429,62 +1426,67 @@ class Listendings:
                 with open("tmp.txt", "r") as tmp_ld:
                     gel_tmp = tmp_ld.read()
                     self.Anruf_Telefonnummer = gel_tmp
-                    print("abgefangene Telefonummer: ", self.Anruf_Telefonnummer)
+                    print1 = "abgefangene Telefonummer: " + self.Anruf_Telefonnummer + "\n"
+                    self.Ereignislog.insert(tk.END, print1)
                     self.Uhrzeit_anruf_start = self.Zeit
                     tmp_ld.close()
                     os.remove("tmp.txt")
-                    self.t_nummer.configure(state="normal")
-
-                    if self.Anruf_Telefonnummer.startswith("b") == False:
-                        if self.t_nummer.get() != "" and self.kunde_entry.get() == "": # Nummer is da und kunde nicht
-                            self.t_nummer.delete(0,tk.END)
-                            self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                            self.Anruf_Telefonnummer = None
-
-                        elif self.t_nummer.get() != "" and self.kunde_entry.get() != "": #nummer und kunde is da
-                            self.ganz = " : " + self.Anruf_Telefonnummer
+                    if self.Anruf_Telefonnummer.startswith("b") == False or self.Anruf_Telefonnummer.startswith("a") == True: # wenn es kein Anruf beender (b) war gehts weiter...
+                        if self.t_nummer.get() != "" and self.kunde_entry.get() != "": # Nummer und Kunde is da = weiter...
+                            self.ganz = " : " + self.Anruf_Telefonnummer #  es wird hier nun bis zum else eine weitere frisch aufgenommene Nummer hinzugefügt
+                            self.t_nummer.configure(state="normal")
                             self.t_nummer.insert(tk.END,self.ganz)
+                            self.t_nummer.configure(state="disabled")
                             self.Anruf_Telefonnummer = None
                             self.ganz = None
-
-                        else: # ich glaube das war ganz normal das was kommt wenn wer anruft.
-                            print("ELSE!")
+                        else:
                             try:
                                 with open(self.Json_pfad, 'r', encoding='utf-8') as datei:
                                     daten = json.load(datei)
+                                self.t_nummer.configure(state="normal")
                                 self.t_nummer.delete(0,tk.END)
                                 self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                                self.t_nummer.configure(state="disabled")
                                 for kontakt in daten.get("Kontakte", []):
                                     if kontakt.get("Telefonnummer_jsn") == self.Anruf_Telefonnummer:
                                         self.Anruf_Telefonnummer = None
                                         Name_gel_für_e = kontakt.get("Name")
                                         self.kunde_entry.insert(tk.END,Name_gel_für_e)
                                         self.Anruf_Telefonnummer = None
-                                        print("irgendwas")
+                                        self.Ereignislog.insert(tk.END, "-Anruf wurde beendet.-\n")
+                                        # hier kommen jetzt die Ausnahmen für spezielle Kontakte hin. !!WENN SIE GEFUNDEN WUDEN!!
                                         if kontakt.get("Telefonnummer_jsn") == 97:
                                             self.Ereignislog.insert(tk.END, "-Es hat geklingelt.-\n")
                                             self.senden()
+                                        
+                                        # hier enden die speziellen Ausnahmen für spezielle Kontakte.
                             except Exception as ExcK1:
-                                print(f"Fehler beim Durchsuchen der JSON DB nach dem Kontakt. Fehlercode: {ExcK1}")
-                    else:
+                                    print(f"Fehler beim Durchsuchen der JSON DB nach dem Kontakt. Fehlercode: {ExcK1}")
+                    elif self.Anruf_Telefonnummer.startswith("a") == True or self.Anruf_Telefonnummer.startswith("b") == False:
                         try:
-                            print("JETZT MACHMAS SO")
-                            with open("DB.json", 'r', encoding='utf-8') as datei:
+                            with open(self.Json_pfad, 'r', encoding='utf-8') as datei:
                                 daten = json.load(datei)
+                            self.t_nummer.configure(state="normal")
+                            self.t_nummer.delete(0,tk.END)
+                            self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                            self.t_nummer.configure(state="disabled")
                             for kontakt in daten.get("Kontakte", []):
                                 if kontakt.get("Telefonnummer_jsn") == self.Anruf_Telefonnummer:
-                                    self.t_nummer.delete(0,tk.END)
-                                    self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                                    self.t_nummer.delete(0,tk.END)
-                                    self.t_nummer.insert(1,self.Anruf_Telefonnummer)
                                     self.Anruf_Telefonnummer = None
                                     Name_gel_für_e = kontakt.get("Name")
                                     self.kunde_entry.insert(tk.END,Name_gel_für_e)
+                                    self.Anruf_Telefonnummer = None
+                                    self.Ereignislog.insert(tk.END, "-Anruf wurde beendet.-\n")
+                                    # hier kommen jetzt die Ausnahmen für spezielle Kontakte hin. !!WENN SIE GEFUNDEN WUDEN!!
+                                    if kontakt.get("Telefonnummer_jsn") == 97:
+                                        self.Ereignislog.insert(tk.END, "-Es hat geklingelt.-\n")
+                                        self.senden()
+                                    
+                                    # hier enden die speziellen Ausnahmen für spezielle Kontakte.
                         except Exception as ExcK1:
-                            print(f"Fehler beim Durchsuchen der JSON DB nach dem Kontakt. Fehlercode: {ExcK1}")   
-
-            except Exception as eld:
-                #print(eld)
+                                print(f"Fehler beim Durchsuchen der JSON DB nach dem Kontakt. Fehlercode: {ExcK1}")
+                        
+            except Exception:
                 pass
             try:
                 with open("tmp1.txt", "r") as tmp1_ld:
