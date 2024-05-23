@@ -23,6 +23,7 @@ try:
     from email.mime.text import MIMEText
     from tkinterdnd2 import DND_FILES
     from pypresence import Presence
+    import shutil
 except:
     print("(FATAL) Konnte die wichtigen Bilbioteken nicht Laden!")
     try:
@@ -143,12 +144,11 @@ class Listendings:
             #für Python 3 wichtig wegen kompatibilität, hab aber keine wirkliche ahnung was das macht
             pass    
     sys.stdout = Logger()
-
+# Freude ist bloß ein Mangel an Informationen
     def __init__(self, master):
         self.master = master
-        self.DB = "liste.txt"
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.3 (4)"
+        self.Version = "Alpha 1.3.4 (0)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -182,6 +182,18 @@ class Listendings:
         self.Einstellung_smtp_Passwort = os.path.join(self.Einstellungen_ordner, "SMTP_Passwort.txt")
         self.Db_Ordner_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Db')
         self.Json_pfad = os.path.join(self.Db_Ordner_pfad, 'Db.json')
+        
+        try:
+            self.Bearbeiten_Bild = Atk.PhotoImage(file="Bilder/Bearbeiten.png")
+            self.Durchsuchen_Bild = Atk.PhotoImage(file="Bilder/Durchsuchen.png")
+            self.Speichern_Bild = Atk.PhotoImage(file="Bilder/Speichern.png")
+            self.Menü_Bild = Atk.PhotoImage(file="Bilder/Menü.png")
+            self.Ticket_Bild = Atk.PhotoImage(file="Bilder/Ticket.png")
+            self.Kalender_Bild = Atk.PhotoImage(file="Bilder/Kalender.png")
+            self.Kunde_suchen_Bild = Atk.PhotoImage(file="Bilder/Kunde_suchen.png")
+            self.Dings_Liste_Bild = Atk.PhotoImage(file="Bilder/Dings_Liste.png")
+        except Exception as alk:
+            messagebox.showinfo("", f"self.Bild ging nicht {alk}")
         
         
         self.Monat = time.strftime("%m")
@@ -464,14 +476,14 @@ class Listendings:
 
 
         
-        self.beb_knopp = tk.CTkButton(master, text="Bearbeiten", command=self.beb_c, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.beb_knopp = tk.CTkButton(master, text="Bearbeiten", command=self.beb_c, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Bearbeiten_Bild)
         self.beb_knopp.place(x=1260, y=100)
-        self.alles_löschen_knopp = tk.CTkButton(master, text="durchsuchen...", command=self.Suche1, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.alles_löschen_knopp = tk.CTkButton(master, text="durchsuchen...", command=self.Suche1, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Durchsuchen_Bild)
         self.alles_löschen_knopp.place(x=1260, y=130)
-        self.Menü_Knopp = tk.CTkButton(master, text="Menü anzeigen", command=self.Menu_anzeige_wechseln, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.Menü_Knopp = tk.CTkButton(master, text="Menü", command=self.Menu_anzeige_wechseln, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Menü_Bild)
         self.Menü_Knopp.place(x=1260, y=160)
 
-        self.Ticket_erstellen_Knopp = tk.CTkButton(root, text="Ticket erstellen...", command=self.Ticket_erstellen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.Ticket_erstellen_Knopp = tk.CTkButton(root, text="Ticket erstellen", command=self.Ticket_erstellen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Ticket_Bild)
         self.Ticket_erstellen_Knopp.place(x=1260,y=450)
 
         
@@ -480,12 +492,12 @@ class Listendings:
             print("self.mitspeichern.get() = :", self.mitspeichern.get())
             self.Kontakt_soll_gleich_mitgespeichert_werden = True
 
-        self.mitspeichern = tk.StringVar(value="off")
-        self.abhgehakt_hinzufügen_box = tk.CTkCheckBox(root, text="Angaben in KTDB speichern?", command=rückruf_speichern, variable=self.mitspeichern, onvalue="on", offvalue="off")
-        self.abhgehakt_hinzufügen_box.place(x=1220,y=5)
+        self.mitspeichern = tk.StringVar(value="on")
+        self.abhgehakt_hinzufügen_box = tk.CTkCheckBox(self.Pause_menu, text="Namen und Telefonnummer in KTDB speichern?", command=rückruf_speichern, variable=self.mitspeichern, onvalue="on", offvalue="off")
+        self.abhgehakt_hinzufügen_box.place(x=400,y=10)
 
-        self.Ereignislog = tk.CTkTextbox(root, width=220, height=50)
-        self.Ereignislog.place(x=1210,y=40)
+        self.Ereignislog = tk.CTkTextbox(root, width=220, height=80, wrap="word")
+        self.Ereignislog.place(x=1210,y=10)
         self.Ereignislog.insert(tk.END, "-Ereignislog -\n")
 
 
@@ -566,11 +578,11 @@ class Listendings:
         ################################ MENU FRAMES ENDE ################################
         ################################ MENU FRAMES ENDE ################################
 
-        self.kalender_menü_Knopp = tk.CTkButton(master, text="Kalender öffnen", command=self.Kalender_anzeigen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.kalender_menü_Knopp = tk.CTkButton(master, text="Kalender öffnen", command=self.Kalender_anzeigen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Kalender_Bild)
         self.kalender_menü_Knopp.place(x=1260,y=480)
-        self.KDabl_durchsuchen_Knopp = tk.CTkButton(root, text="In Kunden DB suchen...", command=self.Suche_KDabl, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.KDabl_durchsuchen_Knopp = tk.CTkButton(root, text="In Kunden-DB suchen", command=self.Suche_KDabl, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Kunde_suchen_Bild)
         self.KDabl_durchsuchen_Knopp.place(x=1260,y=250)
-        self.In_alten_Einträgen_suchen = tk.CTkButton(root, text="In DB suchen...", command=self.Suche_alte_Einträge, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.In_alten_Einträgen_suchen = tk.CTkButton(root, text="In DB suchen", command=self.Suche_alte_Einträge, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Dings_Liste_Bild)
         self.In_alten_Einträgen_suchen.place(x=1260,y=280)
         self.Eintrag_raus_kopieren_knopp = tk.CTkButton(root, text="den Letzten Eintrag rauskopieren", command=self.Eintrag_raus_kopieren)
 
@@ -606,6 +618,7 @@ class Listendings:
             print(self.empfänger_email)
             print(self.alternative_empfänger_adresse)
             print("[-TICKET ERSTELLEN-] Ticket wird an die hinterlegte Emailadresse versendet...")
+            self.Ereignislog.insert(tk.END, "-[-TICKET ERSTELLEN-] Ticket wird an die hinterlegte Emailadresse versendet...-\n")
         elif self.alternative_empfänger_adresse != "":
             msg["To"] = self.alternative_empfänger_adresse
             print(self.alternative_empfänger_adresse)
@@ -623,14 +636,17 @@ class Listendings:
                 self.smtp_login_erfolgreich = False
                 try:
                     self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP fehlgeschlagen.", text_color="Red")
+                    self.Ereignislog.insert(tk.END, "-Anmeldung am SMTP fehlgeschlagen.-\n")
                 except:
                     pass
                 messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim Anmelden am Mailserver. Fehlercode: {self.smtp_server}")
             if self.alternative_empfänger_adresse == "":
                 try:
                     server.sendmail(self.sender_email, self.empfänger_email, msg.as_string())
+                    self.Ereignislog.insert(tk.END, "-Email an SMTP Server versendet.-\n")
                 except Exception as EmailEx2:
                     print("Fehler beim anmelden beim senden an den Mailserver. Fehlercode: ", EmailEx2)
+                    self.Ereignislog.insert(tk.END, "-Anmeldung am SMTP fehlgeschlagen.-\n")
                     messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der Nachricht an den Mailserver. Fehlercode: {EmailEx2}")
                 self.Ticket_Fenster.destroy()
                 messagebox.showinfo(title="CiM", message="Das Ticket wurde erfolgreich erstellt.")
@@ -834,7 +850,7 @@ class Listendings:
         self.kalender_menü.place_forget()
         self.Liste_mit_zeugs.place_forget()
         self.Aufgabe_hinzufügen_Knopp.place_forget()
-        self.kalender_menü_Knopp.configure(text="Kalender öffnen", command=self.Kalender_anzeigen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.kalender_menü_Knopp.configure(text="Kalender öffnen", command=self.Kalender_anzeigen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Kalender_Bild)
         
         
         
@@ -944,7 +960,7 @@ class Listendings:
             self.Menü_da = False
             self.Netzlaufwerk_pfad_geladen_Label.place_forget()
             self.Pfad_geladen_Label.place_forget()
-            self.Menü_Knopp.configure(text="Menü anzeigen", fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+            self.Menü_Knopp.configure(text="Menü", fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
             self.Listen_Speicherort_geladen_anders_Entry.place_forget()
             self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.place_forget()
             self.smtp_login_erfolgreich_l.place_forget()
