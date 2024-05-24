@@ -79,6 +79,8 @@ class Listendings:
                 except Exception as e:
                     print(f"Fehler beim Schreiben in tmp1.txt: {e}")
                 print("Der Anruf war wohl fertig. var: ", besserer_pfad)
+            elif besserer_pfad == "a":
+                print("Der bessere Pfad ist ein a.")
             else:
                 try:
                     with open("tmp.txt", "w+") as tmp:
@@ -148,7 +150,7 @@ class Listendings:
     def __init__(self, master):
         self.master = master
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.4 (3)"
+        self.Version = "Alpha 1.3.4 (4)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -191,6 +193,8 @@ class Listendings:
             self.Kalender_Bild = Atk.PhotoImage(file="Bilder/Kalender.png")
             self.Kunde_suchen_Bild = Atk.PhotoImage(file="Bilder/Kunde_suchen.png")
             self.Dings_Liste_Bild = Atk.PhotoImage(file="Bilder/Dings_Liste.png")
+            self.Dings_Bild = Atk.PhotoImage(file="Bilder/Dings.png")
+            self.Kopieren_Bild = Atk.PhotoImage(file="Bilder/Kopieren.png")
         except Exception as alk:
             messagebox.showinfo("", f"self.Bild ging nicht {alk}")
         
@@ -475,15 +479,13 @@ class Listendings:
 
 
         
-        self.beb_knopp = tk.CTkButton(master, text="Bearbeiten", command=self.beb_c, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Bearbeiten_Bild)
+        self.beb_knopp = tk.CTkButton(master, text="Bearbeiten", command=self.beb_c, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.Bearbeiten_Bild)
         self.beb_knopp.place(x=1260, y=100)
         self.alles_löschen_knopp = tk.CTkButton(master, text="durchsuchen...", command=self.Suche1, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Durchsuchen_Bild)
         self.alles_löschen_knopp.place(x=1260, y=130)
         self.Menü_Knopp = tk.CTkButton(master, text="Menü", command=self.Menu_anzeige_wechseln, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Menü_Bild)
         self.Menü_Knopp.place(x=1260, y=160)
 
-        self.Ticket_erstellen_Knopp = tk.CTkButton(root, text="Ticket erstellen", command=self.Ticket_erstellen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Ticket_Bild)
-        self.Ticket_erstellen_Knopp.place(x=1260,y=450)
 
         
         self.Pause_menu = tk.CTkFrame(master, width=769, height=420, fg_color="LightSlateGray", border_color="White", border_width=1, corner_radius=0)
@@ -525,14 +527,14 @@ class Listendings:
         self.gel_Email_Absender_Passwort_E = tk.CTkEntry(self.Pause_menu, placeholder_text="Passwort der Email Adresse", width=300)
         self.gel_SMTP_Server_E = tk.CTkEntry(self.Pause_menu, placeholder_text="IPv4 oder Namen des SMTP Eintragen", width=300)
 
-        self.Mail_Einstellungen_speichern = tk.CTkButton(self.Pause_menu, text="Email Einstellungen speichern", command=self.Email_Einstellungen_speichern, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.Mail_Einstellungen_speichern = tk.CTkButton(self.Pause_menu, text="Email Einstellungen speichern", command=self.Email_Einstellungen_speichern, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1")
         self.smtp_login_erfolgreich_l = tk.CTkLabel(self.Pause_menu, text="Anmeldestatus")
 
         self.SMTP_Server_erneut_anmelden = tk.CTkButton(self.Pause_menu, text="erneut mit SMTP Server verbinden", command=self.SMTP_Anmeldung_Manuell, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
 
         self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
-        self.Starface_Modul_Einstellung_Knopp = tk.CTkButton(self.Pause_menu, text="Starface Modul umschalten", command=self.Starface_Modul_umschalten)
-        self.Auto_speichern_ändern_knopp = tk.CTkButton(self.Pause_menu, text="Auto Speichern umschalten", command=self.autospeichern_ä_c)
+        self.Starface_Modul_Einstellung_Knopp = tk.CTkButton(self.Pause_menu, text="Starface Modul umschalten", command=self.Starface_Modul_umschalten, hover_color="pink")
+        self.Auto_speichern_ändern_knopp = tk.CTkButton(self.Pause_menu, text="Auto Speichern umschalten", command=self.autospeichern_ä_c, hover_color="pink")
         self.Zhe_Clock = tk.CTkLabel(self.Pause_menu, text=self.Zeit)
         self.Zhe_Clock.place(x=10,y=10)
 
@@ -583,11 +585,17 @@ class Listendings:
         self.KDabl_durchsuchen_Knopp.place(x=1260,y=250)
         self.In_alten_Einträgen_suchen = tk.CTkButton(root, text="In DB suchen", command=self.Suche_alte_Einträge, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Dings_Liste_Bild)
         self.In_alten_Einträgen_suchen.place(x=1260,y=280)
-        self.Eintrag_raus_kopieren_knopp = tk.CTkButton(root, text="den Letzten Eintrag rauskopieren", command=self.Eintrag_raus_kopieren)
-
+        self.Einstellungsseite_Knopp = tk.CTkButton(root, text="Einstellungen", command=self.Einstellungen_öffnen, fg_color="white", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.Dings_Bild)
+        self.Einstellungsseite_Knopp.place(x=1260,y=420)
+        self.Ticket_erstellen_Knopp = tk.CTkButton(root, text="Ticket erstellen", command=self.Ticket_erstellen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Ticket_Bild)
+        self.Ticket_erstellen_Knopp.place(x=1260,y=450)
+        self.Eintrag_raus_kopieren_knopp = tk.CTkButton(root, text="Letztes kopieren", command=self.Eintrag_raus_kopieren, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Kopieren_Bild)
+        self.Eintrag_raus_kopieren_knopp.place(x=1260,y=390)
         
 
         
+
+        
         
 
         
@@ -596,6 +604,47 @@ class Listendings:
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
+
+    def Einstellungen_öffnen(self):
+        self.Frame_höhe = 150
+        self.Frame_breite = 200
+        print("Einstellungen_öffnen (def)")
+        self.Einstellungen_Frame_einz = tk.CTkFrame(root, width=self.Frame_breite, height=self.Frame_höhe, border_color="Pink", border_width=2, fg_color="transparent")
+        self.Einstellungen_Auswahl_Knopp = tk.CTkButton(self.Einstellungen_Frame_einz, text="Seite 1", command=self.Einstellungen_öffnen_Seite_1, corner_radius=45, border_spacing=1,text_color="Black", fg_color="White", hover_color="DarkSlateGray1", width=20)
+        self.Einstellungen_Auswahl_Knopp_2 = tk.CTkButton(self.Einstellungen_Frame_einz, text="Seite 2", command=self.Einstellungen_öffnen_Seite_1, corner_radius=45, border_spacing=1,text_color="Black", fg_color="White", hover_color="DarkSlateGray1", width=20)
+        self.Einstellungen_Frame_einz.place(x=960,y=340)
+        self.Einstellungen_Frame_einz_is_da = True
+        self.Einstellungsseite_Knopp.configure(text="Einstellungen schließen", command=self.Einstellungen_schließen)
+        self.Einstellungen_Auswahl_Knopp.place(x=5,y=70)
+        self.Einstellungen_Auswahl_Knopp_2.place(x=60,y=20)
+
+    def Einstellungen_öffnen_Seite_1(self):
+        print("Einstellungen_öffnen_Seite_1")
+        self.Einstellungen_öffnen_Seite_1_is_da = True
+        self.Einstellungen_Frame_einz.place_forget()
+        self.Einstellungen_Auswahl_Knopp.place_forget()
+        
+        while self.Frame_höhe >=690: # eigentlich soll sich das Fenster hier bewegen
+            self.Frame_höhe +=1
+            print("rame_höhe = ", self.Frame_höhe)
+            if self.Frame_breite <=1260:
+                print("forget")
+                self.Einstellungen_Frame_einz.place_forget()
+                self.Einstellungen_Frame_einz.configure(width=self.Frame_breite, height=self.Frame_höhe)
+                self.Einstellungen_Frame_einz.place(x=0,y=100)
+        while self.Frame_breite >=1260:
+            self.Frame_breite += 1
+            if self.Frame_höhe <=690:
+                self.Einstellungen_Frame_einz.place_forget()
+                self.Einstellungen_Frame_einz.configure(width=self.Frame_breite, height=self.Frame_höhe)
+                self.Einstellungen_Frame_einz.place(x=0,y=100)
+        
+
+    def Einstellungen_schließen(self):
+        print("Einstellungen_schließen(def)")
+        self.Einstellungen_Frame_einz_is_da = False
+        self.Einstellungsseite_Knopp.configure(text="Einstellungen öffnen", command=self.Einstellungen_öffnen)
+        self.Einstellungen_Frame_einz.place_forget()
 
     def Eintrag_raus_kopieren(self):
         print("Eintrag_raus_kopieren(def)")
@@ -1415,9 +1464,9 @@ class Listendings:
             dmsg = "Dazu konnte ich leider nichts finden."
             self.Ereignislog.insert(tk.END, "-Suche mit Ergebnissen abgeschlossen.-\n")
             messagebox.showinfo(title="CiM Suche", message=dmsg)
-                
-
-
+####               
+####
+####
     def Kunde_ruft_an(self):
         print("Thread gestartet: Kunde_ruft_an (def)")
         while self.Programm_läuft == True:
@@ -1430,7 +1479,7 @@ class Listendings:
                     self.Uhrzeit_anruf_start = self.Zeit
                     tmp_ld.close()
                     os.remove("tmp.txt")
-                    if self.Anruf_Telefonnummer.startswith("b") == False or self.Anruf_Telefonnummer.startswith("a") == True: # wenn es kein Anruf beender (b) war gehts weiter...
+                    if self.Anruf_Telefonnummer.startswith("b") == True:
                         if self.t_nummer.get() != "" and self.kunde_entry.get() != "": # Nummer und Kunde is da = weiter...
                             self.ganz = " : " + self.Anruf_Telefonnummer #  es wird hier nun bis zum else eine weitere frisch aufgenommene Nummer hinzugefügt
                             self.t_nummer.configure(state="normal")
@@ -1438,7 +1487,7 @@ class Listendings:
                             self.t_nummer.configure(state="disabled")
                             self.Anruf_Telefonnummer = None
                             self.ganz = None
-                        else:
+                        else: # WENN BEIDE ENTRYS LEER SIND
                             try:
                                 with open(self.Json_pfad, 'r', encoding='utf-8') as datei:
                                     daten = json.load(datei)
@@ -1447,8 +1496,7 @@ class Listendings:
                                 self.t_nummer.insert(1,self.Anruf_Telefonnummer)
                                 self.t_nummer.configure(state="disabled")
                                 for kontakt in daten.get("Kontakte", []):
-                                    if kontakt.get("Telefonnummer_jsn") == self.Anruf_Telefonnummer:
-                                        self.Anruf_Telefonnummer = None
+                                    if kontakt.get("Telefonnummer_jsn") == self.Anruf_Telefonnummer: # WENN ES IN DER KTK GEFUNDEN WURDE
                                         Name_gel_für_e = kontakt.get("Name")
                                         self.kunde_entry.insert(tk.END,Name_gel_für_e)
                                         self.Anruf_Telefonnummer = None
@@ -1457,11 +1505,10 @@ class Listendings:
                                         if kontakt.get("Telefonnummer_jsn") == 97:
                                             self.Ereignislog.insert(tk.END, "-Es hat geklingelt.-\n")
                                             self.senden()
-                                        
                                         # hier enden die speziellen Ausnahmen für spezielle Kontakte.
                             except Exception as ExcK1:
-                                    print(f"Fehler beim Durchsuchen der JSON DB nach dem Kontakt. Fehlercode: {ExcK1}")
-                    elif self.Anruf_Telefonnummer.startswith("a") == True or self.Anruf_Telefonnummer.startswith("b") == False:
+                                print(f"Fehler beim Durchsuchen der JSON DB nach dem Kontakt. Fehlercode: {ExcK1}")
+                    else: # JETZT KOMMT ALLES DAS WENN ES KEIN b IST
                         try:
                             with open(self.Json_pfad, 'r', encoding='utf-8') as datei:
                                 daten = json.load(datei)
@@ -1470,17 +1517,15 @@ class Listendings:
                             self.t_nummer.insert(1,self.Anruf_Telefonnummer)
                             self.t_nummer.configure(state="disabled")
                             for kontakt in daten.get("Kontakte", []):
-                                if kontakt.get("Telefonnummer_jsn") == self.Anruf_Telefonnummer:
-                                    self.Anruf_Telefonnummer = None
+                                if kontakt.get("Telefonnummer_jsn") == self.Anruf_Telefonnummer: # WENN ES IN DER KTK GEFUNDEN WURDE
                                     Name_gel_für_e = kontakt.get("Name")
                                     self.kunde_entry.insert(tk.END,Name_gel_für_e)
                                     self.Anruf_Telefonnummer = None
                                     self.Ereignislog.insert(tk.END, "-Anruf wurde beendet.-\n")
                                     # hier kommen jetzt die Ausnahmen für spezielle Kontakte hin. !!WENN SIE GEFUNDEN WUDEN!!
-                                    if kontakt.get("Telefonnummer_jsn") == 97:
-                                        self.Ereignislog.insert(tk.END, "-Es hat geklingelt.-\n")
-                                        self.senden()
-                                    
+                                    if kontakt.get("Telefonnummer_jsn") == 97: # das hier entfernen falls es dann immer doppelt klingeln sollte.
+                                        self.Ereignislog.insert(tk.END, "-Es hat geklingelt.-\n")#
+                                        self.senden()#
                                     # hier enden die speziellen Ausnahmen für spezielle Kontakte.
                         except Exception as ExcK1:
                                 print(f"Fehler beim Durchsuchen der JSON DB nach dem Kontakt. Fehlercode: {ExcK1}")
@@ -1502,7 +1547,7 @@ class Listendings:
         print("Thread beendet: Kunde_ruft_an (def")
             
     
-    #### emde der werbung #######
+#### ende der werbung ####### was für ne werbung?
     def info(self):
         print("(INFO) Info(def)")
         messagebox.showinfo(title="Info", message=self.Programm_Name + " " + self.Version + "\n Programmiert von Maximilian Becker, \n https://dings.software für mehr Informationen")
@@ -1666,7 +1711,7 @@ class Listendings:
             self.ausgabe_text.configure(state='disabled')
             self.t_nummer.configure(state="disabled")
             root.bind('<Return>', self.senden)
-            self.beb_knopp.configure(text="Bearbeiten", fg_color="white", hover_color="pink")
+            self.beb_knopp.configure(text="Bearbeiten", fg_color="white", hover_color="DarkSlateGray1")
             self.beb = "0"
             with open(self.Liste_mit_datum, "w+") as f:
                 f.write(self.text_tk_text)
@@ -1924,7 +1969,7 @@ class Listendings:
 
 
     def bye(self):
-        print("(ENDE) Das Programm wurde Beendet, auf wiedersehen! \^_^/ ")
+        print("(ENDE) Das Programm wurde Beendet, auf wiedersehen! :3 ")
         self.Programm_läuft = False
         Listendings.Programm_läuft = False
         self.Uhr_läuft = False
