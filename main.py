@@ -214,7 +214,14 @@ class Listendings:
         self.smtp_server_anmeldung_thread.setDaemon(True)
         self.smtp_server_anmeldung_thread.start()
         
-        self.Hintergrund_farbe = "SlateGrey"
+        #self.Hintergrund_farbe = "SlateGrey"
+        self.Hintergrund_farbe = "AntiqueWhite2"
+        self.Hintergrund_farbe_Text_Widget = "AntiqueWhite2" #"AntiqueWhite" #"AntiqueWhite2"
+        self.Textfarbe = "Black"
+        self.Border_Farbe = "AntiqueWhite4"
+        self.Entry_Farbe = "AntiqueWhite3"
+        self.Ereignislog_farbe = self.Hintergrund_farbe_Text_Widget
+
         root.configure(fg_color=self.Hintergrund_farbe)
         root.resizable(False, False)
         self.Weiterleitung_an = ""
@@ -393,24 +400,20 @@ class Listendings:
 
         
 
-        self.kunde_label = tk.CTkLabel(master, text="Kunde:")
-        self.problem_label = tk.CTkLabel(master, text="Problem:")
-        self.info_label = tk.CTkLabel(master, text="Info:")
-
-        self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Kunde")
-        self.t_nummer = tk.CTkEntry(master, width=600, placeholder_text="Telefonnummer")
-        self.t_nummer.configure(state="disabled")
-        self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem")
-        self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info")
-
-        
+    #### Die Stars der Stunde ####
+        self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Kunde", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
+        self.t_nummer = tk.CTkEntry(master, width=600, placeholder_text="Telefonnummer", state="disabled", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
+        self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
+        self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
+    
+    #### ####
         
 
         self.senden_button = tk.CTkButton(master, text="Senden", command="")
         self.senden_button.bind('<Button-1>', self.senden)
         root.bind('<Return>', self.senden)
         self.alles_löschen_knopp = tk.CTkButton(master, text="Alle Eintrage löschen", command=self.alles_löschen)
-        self.ausgabe_text = tk.CTkTextbox(master, width=1255, height=420, wrap="word")
+        self.ausgabe_text = tk.CTkTextbox(master, width=1255, height=420, wrap="word", fg_color=self.Hintergrund_farbe_Text_Widget, text_color=self.Textfarbe, border_color=self.Border_Farbe, border_width=2)
         self.ausgabe_text.configure(state='disabled')
         self.kunde_entry.place(x=5,y=5)
         self.problem_entry.place(x=5,y=35)
@@ -497,7 +500,7 @@ class Listendings:
         self.abhgehakt_hinzufügen_box = tk.CTkCheckBox(self.Pause_menu, text="Namen und Telefonnummer in KTDB speichern?", command=rückruf_speichern, variable=self.mitspeichern, onvalue="on", offvalue="off")
         self.abhgehakt_hinzufügen_box.place(x=400,y=10)
 
-        self.Ereignislog = tk.CTkTextbox(root, width=220, height=80, wrap="word")
+        self.Ereignislog = tk.CTkTextbox(root, width=220, height=80, wrap="word", text_color="Black", fg_color=self.Ereignislog_farbe, border_color=self.Border_Farbe, border_width=2)
         self.Ereignislog.place(x=1210,y=10)
         self.Ereignislog.insert(tk.END, "-Ereignislog -\n")
 
@@ -609,7 +612,7 @@ class Listendings:
         self.Frame_höhe = 150
         self.Frame_breite = 200
         print("Einstellungen_öffnen (def)")
-        self.Einstellungen_Frame_einz = tk.CTkFrame(root, width=self.Frame_breite, height=self.Frame_höhe, border_color="Pink", border_width=2, fg_color="transparent")
+        self.Einstellungen_Frame_einz = tk.CTkFrame(root, width=self.Frame_breite, height=self.Frame_höhe, border_color="Pink", border_width=0, fg_color="Red")
         self.Einstellungen_Auswahl_Knopp = tk.CTkButton(self.Einstellungen_Frame_einz, text="Seite 1", command=self.Einstellungen_öffnen_Seite_1, corner_radius=45, border_spacing=1,text_color="Black", fg_color="White", hover_color="DarkSlateGray1", width=20)
         self.Einstellungen_Auswahl_Knopp_2 = tk.CTkButton(self.Einstellungen_Frame_einz, text="Seite 2", command=self.Einstellungen_öffnen_Seite_1, corner_radius=45, border_spacing=1,text_color="Black", fg_color="White", hover_color="DarkSlateGray1", width=20)
         self.Einstellungen_Frame_einz.place(x=960,y=340)
@@ -623,22 +626,24 @@ class Listendings:
         self.Einstellungen_öffnen_Seite_1_is_da = True
         self.Einstellungen_Frame_einz.place_forget()
         self.Einstellungen_Auswahl_Knopp.place_forget()
+        print("alles vergessen.")
         
-        while self.Frame_höhe >=690: # eigentlich soll sich das Fenster hier bewegen
-            self.Frame_höhe +=1
+        while self.Frame_höhe <= 1260: # eigentlich soll sich das Fenster hier bewegen
+            self.Frame_höhe += 1
+            time.sleep(0.1)
+            self.Einstellungen_Frame_einz.place_forget()
+            self.Einstellungen_Frame_einz = tk.CTkFrame(root, width=self.Frame_breite, height=self.Frame_höhe, border_color="Pink", border_width=0, fg_color="Red")
+            self.Einstellungen_Frame_einz.place(x=0,y=100)
             print("rame_höhe = ", self.Frame_höhe)
-            if self.Frame_breite <=1260:
-                print("forget")
-                self.Einstellungen_Frame_einz.place_forget()
-                self.Einstellungen_Frame_einz.configure(width=self.Frame_breite, height=self.Frame_höhe)
-                self.Einstellungen_Frame_einz.place(x=0,y=100)
-        while self.Frame_breite >=1260:
+        while self.Frame_breite <= 690:
             self.Frame_breite += 1
-            if self.Frame_höhe <=690:
-                self.Einstellungen_Frame_einz.place_forget()
-                self.Einstellungen_Frame_einz.configure(width=self.Frame_breite, height=self.Frame_höhe)
-                self.Einstellungen_Frame_einz.place(x=0,y=100)
-        
+            time.sleep(0.1)
+            print("rame_breite = ", self.Frame_breite)
+            self.Einstellungen_Frame_einz = tk.CTkFrame(root, width=self.Frame_breite, height=self.Frame_höhe, border_color="Pink", border_width=0, fg_color="Red")
+        self.Einstellungen_Frame_einz.place_forget()
+        self.Einstellungen_Frame_einz = tk.CTkFrame(root, width=self.Frame_breite, height=self.Frame_höhe, border_color="Pink", border_width=0, fg_color="Red")
+        self.Einstellungen_Frame_einz.place(x=0,y=100)
+        print("alles durch.")
 
     def Einstellungen_schließen(self):
         print("Einstellungen_schließen(def)")
@@ -900,11 +905,6 @@ class Listendings:
         self.Aufgabe_hinzufügen_Knopp.place_forget()
         self.kalender_menü_Knopp.configure(text="Kalender öffnen", command=self.Kalender_anzeigen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Kalender_Bild)
         
-        
-        
-
-        
-
     def Starface_Modul_umschalten(self):
         print("Starface_Modul_umschalten(def)")
         try:
