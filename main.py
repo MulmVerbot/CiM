@@ -23,11 +23,10 @@ try:
     from email.mime.text import MIMEText
     from tkinterdnd2 import DND_FILES
     from pypresence import Presence
-    import shutil
-except:
-    print("(FATAL) Konnte die wichtigen Bilbioteken nicht Laden!")
+except Exception as E:
+    print(f"(FATAL) Fehler beim laden der Bibliotheken, Fehlermeldung: {E}")
     try:
-        messagebox.showerror(title="Kritischer Fehler", message="(FATAL) Konnte die wichtigen Bilbioteken nicht Laden! Das Programm wird nun Beendet.")
+        messagebox.showerror("Kritischer Fehler",f"(FATAL) Fehler beim laden der Bibliotheken, Fehlermeldung: {E}")
     except:
         sys.exit()
     sys.exit()
@@ -183,6 +182,7 @@ class Listendings:
         self.Einstellung_smtp_Passwort = os.path.join(self.Einstellungen_ordner, "SMTP_Passwort.txt")
         self.Db_Ordner_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Db')
         self.Json_pfad = os.path.join(self.Db_Ordner_pfad, 'Db.json')
+        self.Einstellung_Theme = os.path.join(self.Einstellungen_ordner, "Theme.txt")
         
         try:
             self.Bearbeiten_Bild = Atk.PhotoImage(file="Bilder/Bearbeiten.png")
@@ -268,6 +268,7 @@ class Listendings:
         self.Liste_mit_datum = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat, self.Tag_und_Liste) # Das ist der Ort wo dann immer alles gespeichert wird
         self.Monat_ordner_pfad = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat) # Das ist der Ort welcher zum Programmstart erstellt wird falls er nicht bereits existieren sollte
 
+    ################ Jetzt werden hier so Dinge geladen wie Einstellungen, oder es wird hier geguckt, ob alle benötigten Ordner Existieren ############
         
         try:
             p1 = Atk.PhotoImage(file = "CiM_icon.png")
@@ -280,13 +281,25 @@ class Listendings:
                 err1 = "Es ist ein Fehler beim setzen des Icons aufgetreten. Fehlerlode: ", err
                 messagebox.showinfo(message=err1)
                 print("icon gibt heute nicht.")
+
+        try:
+            print(f"Ich lade nun die Theme Einstellungen...")
+            with open(self.Einstellung_Theme, "r") as E_theme_gel:
+                self.Einstellungen_Theme_Inhalt = E_theme_gel.read()
+                if self.Einstellungen_Theme_Inhalt == "Dark":
+                    tk.set_default_color_theme("Designs/Dunkel.json")
+                elif self.Einstellungen_Theme_Inhalt == "Light":
+                    tk.set_default_color_theme("Designs/Light.json")
+                else:
+                    print(f"Konnte die Einstellung leider nicht laden.")
+        except Exception as exko:
+            print(f"Es ist ein Fehler beim Laden der Theme Einstellungen aufgetreten. Fehlercode: {exko}")
         try:
             print("Der Db Ordner scheint nicht zu existieren. Erstelle ihn nun.")
             os.mkdir(self.Db_Ordner_pfad)
             print("Der Db Ordner wurde erfolgreich erstellt.")
         except Exception as ex_einst:
             print("Fehler beim Erstellen des Db Ordners. Fehlercode:", ex_einst)
-            #messagebox.showerror(title="CiM Fehler", message=ex_einst)
 
         print(self.tag_string)
         if not os.path.exists(self.Monat_ordner_pfad):
@@ -594,6 +607,8 @@ class Listendings:
         self.Ticket_erstellen_Knopp.place(x=1260,y=450)
         self.Eintrag_raus_kopieren_knopp = tk.CTkButton(root, text="Letztes kopieren", command=self.Eintrag_raus_kopieren, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Kopieren_Bild)
         self.Eintrag_raus_kopieren_knopp.place(x=1260,y=390)
+
+
         
 
         

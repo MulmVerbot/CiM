@@ -24,7 +24,7 @@ def create_window():
         root.geometry(f"{start_x}x{start_y}+{x}+{y}")
 
         # Überwache die Mausbewegung alle 100 Millisekunden
-        root.after(100, move_window)
+        root.after(1, move_window)
 
     # Starte die Überwachung
     move_window()
