@@ -22,7 +22,7 @@ try:
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
     from tkinterdnd2 import DND_FILES
-    from pypresence import Presence
+    #from pypresence import Presence
 except Exception as E:
     print(f"(FATAL) Fehler beim laden der Bibliotheken, Fehlermeldung: {E}")
     try:
