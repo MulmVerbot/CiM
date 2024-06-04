@@ -44,16 +44,7 @@ def mittig_fenster(root, width, height):
     # Leg die Position des Fensters fest
     root.geometry(f"{width}x{height}+{x}+{y}")
 mittig_fenster(root, width, height)
-try:
-    client_id = '807247545780273224'
-    RPC = Presence(client_id)  
-    RPC.connect()
 
-    # Die Rich Presence wird angezeigt
-    RPC.update(details="Bald geschafft die shaise hier", state="Ich befinde mich in miserablem Zustand", large_image="Bild.jpg", small_image="nix", large_text="Verbringt seine Zeit in der Käsefabrik", small_text="Gar kein bock mehr...")
-except Exception as Ex12234:
-    print(f"[-DC RICH PRESENCE-] DC Rich presence is abgekackt{Ex12234}")
-    #messagebox.showerror(message=f"Rich Presence funktioniert nicht: {Ex12234}")
 
 
 
@@ -725,6 +716,8 @@ class Listendings:
     def Ticket_erstellen_api(self): # Ich denke nicht, dass ich das hier so schnell hinbekommen werde, da das Ding immer wieder nen fehler schmeißt den ich nicht mal verstehe haha.
         print("Ticket_erstellen_api")
         messagebox.showerror(title="Fehler", message="Dieses Feature existiert noch nicht, wie hast Du überhaupt geschafft diese Funktion aufzurufen!?!???")
+
+    
 
     def Ticket_erstellen(self): # Die erste frage, ob es per Mail oder API erstellt werden soll.
         print("Ticket_erstellen(def)")
