@@ -277,10 +277,10 @@ class Listendings:
             print(f"Ich lade nun die Theme Einstellungen...")
             with open(self.Einstellung_Theme, "r") as E_theme_gel:
                 self.Einstellungen_Theme_Inhalt = E_theme_gel.read()
-                if self.Einstellungen_Theme_Inhalt == "Dark":
-                    tk.set_default_color_theme("Designs/Dunkel.json")
-                elif self.Einstellungen_Theme_Inhalt == "Light":
-                    tk.set_default_color_theme("Designs/Light.json")
+                if self.Einstellungen_Theme_Inhalt == "dunkel":
+                    tk.set_default_color_theme("Designs/dunkel.json")
+                elif self.Einstellungen_Theme_Inhalt == "hell":
+                    tk.set_default_color_theme("Designs/hell.json")
                 else:
                     print(f"Konnte die Einstellung leider nicht laden.")
         except Exception as exko:
@@ -568,6 +568,13 @@ class Listendings:
                 self.wollte_sprechen = "Mit Frau Tarnath sprechen"
             elif choice == "Keine Weiterleitung":
                 self.wollte_sprechen = "-"
+
+        def auswahl_design_gedingst(choice):
+            if choice == "hell":
+                Design_Einstellung = "hell"
+            elif choice == "dunkel":
+                Design_Einstellung = "dunkel"
+            
         
 
         self.optionmenu1 = tk.CTkOptionMenu(root, values=["Mit Chefe sprechen", "Mit Christian sprechen", "Mit Mike sprechen", "Mit Frau Tarnath sprechen","Keine Anfrage"], command=auswahl_gedingst_sprechen, fg_color="White", text_color="Black", dropdown_hover_color="pink")
@@ -576,6 +583,10 @@ class Listendings:
         self.optionmenu = tk.CTkOptionMenu(root, values=["An Chefe gegeben", "An Christian gegeben", "An Mike gegeben", "An Frau Tarnath gegeben","Keine Weiterleitung"], command=auswahl_gedingst, fg_color="White", text_color="Black", dropdown_hover_color="pink")
         self.optionmenu.set("Keine Weiterleitung")
         self.optionmenu.place(x=1260,y=220)
+
+        self.Einstellung_Design_auswahl = tk.CTkOptionMenu(self.Pause_menu, values=["hell", "dunkel"], command=auswahl_design_gedingst)
+
+
 
         self.kalender_menü = tk.CTkFrame(master, width=1250, height=520, fg_color="White", border_color="Black", border_width=2)
         self.Liste_mit_zeugs =  tk.CTkScrollableFrame(self.kalender_menü, width=500, height=420, bg_color="Green")
@@ -1020,6 +1031,7 @@ class Listendings:
             self.Listen_Speicherort_geladen_anders_Entry.place_forget()
             self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.place_forget()
             self.smtp_login_erfolgreich_l.place_forget()
+            self.Einstellung_Design_auswahl.place_forget()
             try:
                 self.Listen_Speicherort_geladen_anders_Entry.delete(0, tk.END)
                 self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.delete(0, tk.END)
@@ -1051,6 +1063,8 @@ class Listendings:
             self.gel_SMTP_Server_E.place(x=370,y=240)
             self.Mail_Einstellungen_speichern.place(x=420,y=280)
             self.SMTP_Server_erneut_anmelden.place(x=420,y=360)
+
+            self.Einstellung_Design_auswahl.place(x=10,y=50)
             try:
                 try:
                     self.gel_Email_Empfänger_E.delete(0, tk.END)
