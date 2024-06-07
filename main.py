@@ -396,8 +396,8 @@ class Listendings:
             self.empfänger_email = ""
             self.smtp_server = ""
             self.pw_email = ""
-            messagebox.showerror(title="CiM Fehler", message=f"Beim Laden der Email Einstellungen unter {self.Einstellung_Email_Sender_Adresse} ; {self.Einstellung_Email_Empfänge_Adresse} und {self.Einstellung_smtp_server} ist ein Fehler aufgetreten. Fehlercode: {EmailEx3_l}")
-        
+            #messagebox.showerror(title="CiM Fehler", message=f"Beim Laden der Email Einstellungen unter {self.Einstellung_Email_Sender_Adresse} ; {self.Einstellung_Email_Empfänge_Adresse} und {self.Einstellung_smtp_server} ist ein Fehler aufgetreten. Fehlercode: {EmailEx3_l}")
+            print(f"Beim Laden der Email Einstellungen unter {self.Einstellung_Email_Sender_Adresse} ; {self.Einstellung_Email_Empfänge_Adresse} und {self.Einstellung_smtp_server} ist ein Fehler aufgetreten. Fehlercode: {EmailEx3_l}")
     ########### SHAISE ENDE ###########
     ###################################
 
@@ -466,11 +466,6 @@ class Listendings:
                 self.ausgabe_text.delete("1.0", tk.END)
                 self.ausgabe_text.insert(tk.END, feedback_text)
                 self.ausgabe_text.configure(state='disabled')
-                print("-----------------------------------------")
-                print("(DEV) Hier ist nun das geladene aus der bisherigen Liste:")
-                print("feedback_text #  wegen Datenschutz entfernt.")
-                print("(DEV) Das War das geladene aus der bisherigen Liste.")
-                print("-----------------------------------------")
         except FileNotFoundError:
             print("(INFO) Die Datei Liste.txt gibts net")
             self.ausgabe_text.configure(state='disabled')
@@ -604,7 +599,7 @@ class Listendings:
         self.In_alten_Einträgen_suchen = tk.CTkButton(root, text="In DB suchen", command=self.Suche_alte_Einträge, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Dings_Liste_Bild)
         self.In_alten_Einträgen_suchen.place(x=1260,y=280)
         self.Einstellungsseite_Knopp = tk.CTkButton(root, text="Einstellungen", command=self.Einstellungen_öffnen, fg_color="white", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.Dings_Bild)
-########self.Einstellungsseite_Knopp.place(x=1260,y=420)
+        self.Einstellungsseite_Knopp.place(x=1260,y=420)
         self.Ticket_erstellen_Knopp = tk.CTkButton(root, text="Ticket erstellen", command=self.Ticket_erstellen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Ticket_Bild)
         self.Ticket_erstellen_Knopp.place(x=1260,y=450)
         self.Eintrag_raus_kopieren_knopp = tk.CTkButton(root, text="Letztes kopieren", command=self.Eintrag_raus_kopieren, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Kopieren_Bild)
@@ -647,7 +642,7 @@ class Listendings:
         
         while self.Frame_höhe <= 1260: # eigentlich soll sich das Fenster hier bewegen
             self.Frame_höhe += 1
-            time.sleep(0.1)
+            time.sleep(0.01)
             self.Einstellungen_Frame_einz.place_forget()
             self.Einstellungen_Frame_einz = tk.CTkFrame(root, width=self.Frame_breite, height=self.Frame_höhe, border_color="Pink", border_width=0, fg_color="Red")
             self.Einstellungen_Frame_einz.place(x=0,y=100)
@@ -1283,11 +1278,9 @@ class Listendings:
             except:
                 pass
                 self.suchfenster_ergebnisse.title("Suchergebnisse")
-            #self.suchfenster_ergebnisse.geometry("500x500")
         except:
             pass
         self.suchfenster_ergebnisse_frame = tk.CTkScrollableFrame(self.suchfenster_ergebnisse, width=500, height=420, bg_color="Green")
-        #self.suchfenster_ergebnisse_frame.pack()
         self.erg_text_widget = tk.CTkTextbox(self.suchfenster_ergebnisse_frame, width=500, height=500)
         #self.erg_text_widget.pack()
         print("fenster fürs suchen geladen...")
@@ -1302,7 +1295,6 @@ class Listendings:
         
         if self.Ort_wo_gesucht_wird == "":
             self.Ort_wo_gesucht_wird = filedialog.askdirectory()
-        #if self.Ort_wo_gesucht_wird != "":
         print("pfad wurde ausgewählt")
         such_dialog = tk.CTkInputDialog(title="CiM Suche", text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht. (Groß-und Kleinschreibung wird ignoriert)")
         
@@ -1317,7 +1309,6 @@ class Listendings:
                     print("Thread für die Suche gestartet.")
             except:
                 self.etwas_suchen1 = True
-                #self.Suche_algo()
                 print("Thread für die Suche lief bereits.")
                 try:
                     self.etwas_suchen1 = True
@@ -1389,8 +1380,6 @@ class Listendings:
                     self.Ort_wo_gesucht_wird = ""
 
                 if results:
-                    print("Das hab ich gefunden:")
-                    
                     ganzes_ergebnis = "Ich habe in folgenden Dateien " + str(self.Ergebnise_zahl) + " Ergebnisse gefunden:\n\n" + "\n\n".join(results)
                     self.rearesults = results
                     self.durchsucht_text = f"Es wurden insgesammt: {self.gesucht_zahl} Daten durchsucht. {ganzes_ergebnis}"
@@ -1399,8 +1388,8 @@ class Listendings:
                     try:
                         self.Ergebnisse_des_scans_feld.pack()
                     except:
-                        print("neee.")
-                    self.knopp_offnen = tk.CTkButton(self.suchfenster_ergebnisse, text="Alle einfach aufmachen", command=self.aufmachen_results)
+                        pass
+                    self.knopp_offnen = tk.CTkButton(self.suchfenster_ergebnisse, text="Alle einfach aufmachen", command=self.aufmachen_results_vor)
                     self.knopp_offnen.pack()
                     self.Ergebnisse_des_scans_feld.insert("0.0",ganzes_ergebnis)
                     self.etwas_suchen1 = False
@@ -1437,6 +1426,16 @@ class Listendings:
                     subprocess.call(["open", result]) # Für MacOS
         except Exception as exci_leer:
             messagebox.showerror(title="Fehler CiM", message=exci_leer)
+
+    def aufmachen_results_vor(self):
+        print("suche_alles aufamachen davor warnmeldung dings")
+        
+
+        if self.Anzal_der_Ergebnisse >= 20:
+            print("Es sind >= 20 Suchergebnisse...")
+            messagebox.showinfo(title="CiM Suche", message=f"Sind Sie sicher dass sie wirklich alle {self.Anzal_der_Ergebnisse}")
+        else:
+            print("Es sind weniger als 20 Suchergbnisse.")
             
 
     def Suche(self):
