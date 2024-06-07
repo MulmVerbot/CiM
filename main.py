@@ -140,7 +140,7 @@ class Listendings:
     def __init__(self, master):
         self.master = master
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.4 (5)"
+        self.Version = "Alpha 1.3.4 (6)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -625,13 +625,20 @@ class Listendings:
         self.Frame_breite = 200
         print("Einstellungen_öffnen (def)")
         self.Einstellungen_Frame_einz = tk.CTkFrame(root, width=self.Frame_breite, height=self.Frame_höhe, border_color="Pink", border_width=0, fg_color="Red")
-        self.Einstellungen_Auswahl_Knopp = tk.CTkButton(self.Einstellungen_Frame_einz, text="Seite 1", command=self.Einstellungen_öffnen_Seite_1, corner_radius=45, border_spacing=1,text_color="Black", fg_color="White", hover_color="DarkSlateGray1", width=20)
-        self.Einstellungen_Auswahl_Knopp_2 = tk.CTkButton(self.Einstellungen_Frame_einz, text="Seite 2", command=self.Einstellungen_öffnen_Seite_1, corner_radius=45, border_spacing=1,text_color="Black", fg_color="White", hover_color="DarkSlateGray1", width=20)
+        self.Einstellungen_Auswahl_Knopp = tk.CTkButton(self.Einstellungen_Frame_einz, text="Seite 1", command=self.Einstellungen_öffnen_Seite_1_thread_start, corner_radius=45, border_spacing=1,text_color="Black", fg_color="White", hover_color="DarkSlateGray1", width=20)
+        self.Einstellungen_Auswahl_Knopp_2 = tk.CTkButton(self.Einstellungen_Frame_einz, text="Seite 2", command=self.Einstellungen_öffnen_Seite_2, corner_radius=45, border_spacing=1,text_color="Black", fg_color="White", hover_color="DarkSlateGray1", width=20)
         self.Einstellungen_Frame_einz.place(x=960,y=340)
         self.Einstellungen_Frame_einz_is_da = True
         self.Einstellungsseite_Knopp.configure(text="Einstellungen schließen", command=self.Einstellungen_schließen)
         self.Einstellungen_Auswahl_Knopp.place(x=5,y=70)
         self.Einstellungen_Auswahl_Knopp_2.place(x=60,y=20)
+
+    def Einstellungen_öffnen_Seite_1_thread_start(self):
+        print("starte nun den Thread für die Einstellungsseite...")
+        self.Einstellungs_Thread = threading.Thread(target=self.Einstellungen_öffnen_Seite_1)
+        self.Einstellungs_Thread.start()
+        print("Thread läuft...")
+        
 
     def Einstellungen_öffnen_Seite_1(self):
         print("Einstellungen_öffnen_Seite_1")
@@ -640,22 +647,30 @@ class Listendings:
         self.Einstellungen_Auswahl_Knopp.place_forget()
         print("alles vergessen.")
         
-        while self.Frame_höhe <= 1260: # eigentlich soll sich das Fenster hier bewegen
-            self.Frame_höhe += 1
-            time.sleep(0.01)
-            self.Einstellungen_Frame_einz.place_forget()
+        while self.Frame_höhe <= 420: # eigentlich soll sich das Fenster hier bewegen
+            self.Frame_höhe += 10
             self.Einstellungen_Frame_einz = tk.CTkFrame(root, width=self.Frame_breite, height=self.Frame_höhe, border_color="Pink", border_width=0, fg_color="Red")
+            self.Einstellungen_Frame_einz.place_forget()
             self.Einstellungen_Frame_einz.place(x=0,y=100)
             print("rame_höhe = ", self.Frame_höhe)
-        while self.Frame_breite <= 690:
-            self.Frame_breite += 1
-            time.sleep(0.1)
+        while self.Frame_breite <= 1260:
+            self.Frame_breite += 10
             print("rame_breite = ", self.Frame_breite)
             self.Einstellungen_Frame_einz = tk.CTkFrame(root, width=self.Frame_breite, height=self.Frame_höhe, border_color="Pink", border_width=0, fg_color="Red")
-        self.Einstellungen_Frame_einz.place_forget()
+            self.Einstellungen_Frame_einz.place_forget()
+            self.Einstellungen_Frame_einz.place(x=0,y=100)
+        
         self.Einstellungen_Frame_einz = tk.CTkFrame(root, width=self.Frame_breite, height=self.Frame_höhe, border_color="Pink", border_width=0, fg_color="Red")
-        self.Einstellungen_Frame_einz.place(x=0,y=100)
-        print("alles durch.")
+        print("Fenster ist jetzt in der richtigen Größe.")
+        try:
+            self.Einstellungs_Thread.join()
+            print("Thread wurde erfolgreich beendet.")
+        except Exception as E_t:
+            print(f"Konnte den Thread self.Einstellungs_Thread nicht beenden, Fehlermeldung: {E_t}")
+        
+
+    def Einstellungen_öffnen_Seite_2(self):
+        print("Einstellungen Seite 2 wurde aufgerufen.")
 
     def Einstellungen_schließen(self):
         print("Einstellungen_schließen(def)")
