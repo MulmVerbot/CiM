@@ -196,15 +196,15 @@ class Listendings:
         self.Thread_Kunderuftan = threading.Timer(2, self.Kunde_ruft_an)
         self.thread_uhr = threading.Timer(1, self.Uhr)
         self.thread_webserver = Listendings.WebServerThread()
-        self.thread_webserver.setDaemon(True)
-        self.thread_uhr.setDaemon(True)
-        self.Thread_Kunderuftan.setDaemon(True)
+        self.thread_webserver.daemon = True
+        self.thread_uhr.daemon = True
+        self.Thread_Kunderuftan.daemon = True
         self.thread_uhr.start()
         self.Thread_Kunderuftan.start()
         self.thread_suche = threading.Thread(target=self.Suche_algo)
         #self.thread_suche.setDaemon(True)
         self.smtp_server_anmeldung_thread = threading.Timer(1, self.SMTP_Anmeldung)
-        self.smtp_server_anmeldung_thread.setDaemon(True)
+        self.smtp_server_anmeldung_thread.daemon = True
         self.smtp_server_anmeldung_thread.start()
         
         #self.Hintergrund_farbe = "SlateGrey"
