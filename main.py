@@ -1603,13 +1603,6 @@ class Listendings:
         except Exception as esx:
             print("auto_sp ist abgekackt. Fehlercode: " , esx)
 
-            
-
-
-        
-        
-
-
     def Neuladen_der_Liste(self):
         try:
             # Ausgabe-Textfeld aktualisieren
