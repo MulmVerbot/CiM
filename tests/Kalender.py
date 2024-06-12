@@ -7,16 +7,16 @@ class CalendarApp:
         self.root = root
         self.root.title("Kalender-App")
 
-        # Erstelle einen Kalender
-        self.cal = Calendar(self.root, selectmode="day")
-        self.cal.pack()
+        # Erstelle einen Kalender und passe die Schriftgröße an
+        self.cal = Calendar(self.root, selectmode="day", font=("Arial", 14), background="white", foreground="black", bordercolor="gray", headersbackground="gray", normalbackground="white", weekendbackground="lightgray")
+        self.cal.pack(padx=10, pady=10)
 
         # Erstelle Buttons für Aktionen
         self.add_button = ttk.Button(self.root, text="Termin hinzufügen", command=self.add_event)
-        self.add_button.pack()
+        self.add_button.pack(pady=5)
 
         self.delete_button = ttk.Button(self.root, text="Termin löschen", command=self.delete_event)
-        self.delete_button.pack()
+        self.delete_button.pack(pady=5)
 
     def add_event(self):
         selected_date = self.cal.get_date()

@@ -142,7 +142,7 @@ class Listendings:
     def __init__(self, master):
         self.master = master
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.4 (6)"
+        self.Version = "Alpha 1.3.4 (7)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -188,6 +188,7 @@ class Listendings:
             self.Dings_Liste_Bild = Atk.PhotoImage(file="Bilder/Dings_Liste.png")
             self.Dings_Bild = Atk.PhotoImage(file="Bilder/Dings.png")
             self.Kopieren_Bild = Atk.PhotoImage(file="Bilder/Kopieren.png")
+            self.Schnellnotiz_Bild = Atk.PhotoImage(file="Bilder/Schnellnotiz.png")
         except Exception as alk:
             messagebox.showinfo("", f"self.Bild ging nicht {alk}")
         
@@ -498,12 +499,14 @@ class Listendings:
             self.Kontakt_soll_gleich_mitgespeichert_werden = True
 
         self.mitspeichern = tk.StringVar(value="on")
-        self.abhgehakt_hinzufügen_box = tk.CTkCheckBox(self.Pause_menu, text="Namen und Telefonnummer in KTDB speichern?", command=rückruf_speichern, variable=self.mitspeichern, onvalue="on", offvalue="off")
+        self.abhgehakt_hinzufügen_box = tk.CTkCheckBox(self.Pause_menu, text="Namen und Telefonnummer in KtDb speichern?", command=rückruf_speichern, variable=self.mitspeichern, onvalue="on", offvalue="off")
         self.abhgehakt_hinzufügen_box.place(x=400,y=10)
 
         self.Ereignislog = tk.CTkTextbox(root, width=220, height=80, wrap="word", text_color="Black", fg_color=self.Ereignislog_farbe, border_color=self.Border_Farbe, border_width=2)
         self.Ereignislog.place(x=1210,y=10)
-        self.Ereignislog.insert(tk.END, "-Ereignislog -\n")
+        self.Ereignislog.insert(tk.END, "[-Ereignislog-]\n")
+
+        
 
 
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
@@ -606,6 +609,8 @@ class Listendings:
         self.Ticket_erstellen_Knopp.place(x=1260,y=450)
         self.Eintrag_raus_kopieren_knopp = tk.CTkButton(root, text="Letztes kopieren", command=self.Eintrag_raus_kopieren, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Kopieren_Bild)
         self.Eintrag_raus_kopieren_knopp.place(x=1260,y=390)
+        self.Notizen_knopp = tk.CTkButton(root, text="Schnellnotiz", command=self.schnellnotizen_öffnen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.Schnellnotiz_Bild)
+        self.Notizen_knopp.place(x=1260,y=360)
 
 
         
@@ -621,6 +626,25 @@ class Listendings:
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
+
+    def schnellnotizen_öffnen(self):
+        print("schnellnotizen_öffnen(def)")
+        self.schnellnotizen_Fenster = tk.CTkToplevel(root)
+        self.schnellnotizen_Fenster.title("Schnellnotiz (wird NICHT gespeichert)")
+        self.schnellnotizen_Fenster.configure(fg_color="White")
+        self.Textfeld_Schnellnotizen = tk.CTkTextbox(self.schnellnotizen_Fenster, width=420, height=420, text_color="Black", fg_color="azure", wrap="word", border_color="Black", border_width=2)
+        height = 420
+        width = 420
+        try:
+            x = root.winfo_x() + root.winfo_width()//2 - self.schnellnotizen_Fenster.winfo_width()//2
+            y = root.winfo_y() + root.winfo_height()//2 - self.schnellnotizen_Fenster.winfo_height()//2
+            self.schnellnotizen_Fenster.geometry(f"{width}x{height}+{x}+{y}")
+        except:
+            print("Konnte das Schnellnotizfenster nicht zentrieren.")
+            self.schnellnotizen_Fenster.geometry(f"{width}x{height}+{x}+{y}")
+        self.schnellnotizen_Fenster.resizable(False,False)
+        self.Textfeld_Schnellnotizen.pack()
+
 
     def Einstellungen_öffnen(self):
         self.Frame_höhe = 150
