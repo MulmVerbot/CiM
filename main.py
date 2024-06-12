@@ -123,7 +123,7 @@ class Listendings:
     def __init__(self, master):
         self.master = master
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.4 (9)"
+        self.Version = "Alpha 1.3.4 (10)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -220,6 +220,7 @@ class Listendings:
         self.Index_stand = None
         self.Kalender_offen = False
         self.Kontakt_soll_gleich_mitgespeichert_werden = True
+        self.Design_Einstellung = None
 
         self.suchfenster_ergebnisse = tk.CTkToplevel(root)
         try:
@@ -271,19 +272,20 @@ class Listendings:
         except Exception as exko:
             print(f"Es ist ein Fehler beim Laden der Theme Einstellungen aufgetreten. Fehlercode: {exko}")
         try:
-            print("Der Db Ordner scheint nicht zu existieren. Erstelle ihn nun.")
-            os.mkdir(self.Db_Ordner_pfad)
-            print("Der Db Ordner wurde erfolgreich erstellt.")
+            if not os.path.exists(self.Db_Ordner_pfad):
+                print("[-INFO-] Der Db Ordner scheint nicht zu existieren. Erstelle ihn nun.")
+                os.mkdir(self.Db_Ordner_pfad)
+                print("[-INFO-] Der Db Ordner wurde erfolgreich erstellt.")
         except Exception as ex_einst:
-            print("Fehler beim Erstellen des Db Ordners. Fehlercode:", ex_einst)
+            print("[-ERR-] Fehler beim Erstellen des Db Ordners. Fehlercode:", ex_einst)
 
         print(self.tag_string)
         if not os.path.exists(self.Monat_ordner_pfad):
             try:
                 os.makedirs(self.Monat_ordner_pfad)
-                print("Ordner ", {self.Monat_ordner_pfad}, "Erfolgreich erstellt.")
-            except:
-                print("Fehler beim erstellen der Ordner")
+                print("[-INFO-] Ordner ", {self.Monat_ordner_pfad}, "Erfolgreich erstellt.")
+            except Exception as EX1_Monat_ordn:
+                print(f"[-ERR-] Fehler beim erstellen der Ordner. Fehlercode: {EX1_Monat_ordn}")
 
         try:
             with open(self.Auto_speichern_Einstellungsdatei, "r") as einst_gel_autsp:
@@ -514,7 +516,7 @@ class Listendings:
 
         self.gel_Email_Empfänger_E = tk.CTkEntry(self.Pause_menu, placeholder_text="Empfänger Adresse", width=300)
         self.gel_Email_Sender_E = tk.CTkEntry(self.Pause_menu, placeholder_text="Sender Email Adresse", width=300)
-        self.gel_Email_Absender_Passwort_E = tk.CTkEntry(self.Pause_menu, placeholder_text="Passwort der Email Adresse", width=300)
+        self.gel_Email_Absender_Passwort_E = tk.CTkEntry(self.Pause_menu, placeholder_text="Passwort der Email Adresse", width=300, show="#")
         self.gel_SMTP_Server_E = tk.CTkEntry(self.Pause_menu, placeholder_text="IPv4 oder Namen des SMTP Eintragen", width=300)
 
         self.Mail_Einstellungen_speichern = tk.CTkButton(self.Pause_menu, text="Email Einstellungen speichern", command=self.Email_Einstellungen_speichern, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1")
@@ -554,10 +556,14 @@ class Listendings:
 
         def auswahl_design_gedingst(choice):
             if choice == "hell":
-                Design_Einstellung = "hell"
+                self.Design_Einstellung = "hell"
             elif choice == "dunkel":
-                Design_Einstellung = "dunkel"
-            
+                self.Design_Einstellung = "dunkel"
+            elif choice == "System":
+                self.Design_Einstellung = "System"
+            else:
+                print("[-ERR-] Fehler bei der Auswahl der Designeinstellung, nutze nun den Systemstandard.")
+                self.Design_Einstellung = "System"
         
 
         self.optionmenu1 = tk.CTkOptionMenu(root, values=["Mit Chefe sprechen", "Mit Christian sprechen", "Mit Mike sprechen", "Mit Frau Tarnath sprechen","Keine Anfrage"], command=auswahl_gedingst_sprechen, fg_color="White", text_color="Black", dropdown_hover_color="pink")
@@ -567,13 +573,15 @@ class Listendings:
         self.optionmenu.set("Keine Weiterleitung")
         self.optionmenu.place(x=1260,y=220)
 
-        self.Einstellung_Design_auswahl = tk.CTkOptionMenu(self.Pause_menu, values=["hell", "dunkel"], command=auswahl_design_gedingst)
-
+        self.Einstellung_Design_auswahl = tk.CTkOptionMenu(self.Pause_menu, values=["hell", "dunkel", "System"], command=auswahl_design_gedingst)
+        self.Einstellung_Design_L = tk.CTkLabel(self.Pause_menu, text="Design Einstellung:")
+        
 
 
         self.kalender_menü = tk.CTkFrame(master, width=1250, height=520, fg_color="White", border_color="Black", border_width=2)
         self.Liste_mit_zeugs =  tk.CTkScrollableFrame(self.kalender_menü, width=500, height=420, bg_color="Green")
         self.Aufgabe_hinzufügen_Knopp = tk.CTkButton(self.kalender_menü, text="Eintrag Hinzufügen", command=self.Aufgabe_hinzufügen)
+
 
         ################################ MENU FRAMES ENDE ################################
         ################################ MENU FRAMES ENDE ################################
@@ -595,13 +603,20 @@ class Listendings:
         self.Notizen_knopp = tk.CTkButton(root, text="Schnellnotiz", command=self.schnellnotizen_öffnen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.Schnellnotiz_Bild)
         self.Notizen_knopp.place(x=1260,y=360)
 
-
-        
-
-        
-
-        
-        
+        if self.Design_Einstellung == "hell":
+            print("Es wird versucht die helle Design Einstellung zu laden.")
+            tk.set_appearance_mode("Dark")
+        elif self.Design_Einstellung == "dunkel":
+            print("Es wird versucht die dunkle Design Einstellung zu laden.")
+            tk.set_appearance_mode("Dark")
+        elif self.Design_Einstellung == "System":
+            print("Es wird versucht die System Design Einstellung zu laden.")
+            tk.set_appearance_mode("System")
+        else:
+            print("Es gab einen Fehler bei der geladenen Designeinstellung, es wird nun der Systemstandard geladen...")
+            tk.set_appearance_mode("System")
+            print("Die System Design Einstellung wurde geladen.")
+            
 
         
     ####### ======================== init ende ======================== #######
@@ -630,8 +645,10 @@ class Listendings:
     
     def JSON_Explorer_öffnen(self):
         print("[-INFO-] öffne nun den JSON Explorer...")
-        exec(open('json_explorer.py').read())
-
+        try:
+            exec(open('json_explorer.py').read())
+        except Exception as JSON_E:
+            messagebox.showerror(title="CiM Fehler", message=f"Konnte die Datei json_explorer.py nicht finden, stelle sicher, dass sie sich im Programmverzeichnis befindet! Fehlercode: {JSON_E}")
 
     def Einstellungen_öffnen(self):
         self.Frame_höhe = 150
@@ -1087,7 +1104,8 @@ class Listendings:
             self.Mail_Einstellungen_speichern.place(x=420,y=280)
             self.SMTP_Server_erneut_anmelden.place(x=420,y=360)
 
-            self.Einstellung_Design_auswahl.place(x=10,y=50)
+            self.Einstellung_Design_auswahl.place(x=10,y=200)
+            self.Einstellung_Design_L.place(x=10,y=170)
             try:
                 try:
                     self.gel_Email_Empfänger_E.delete(0, tk.END)
@@ -1485,54 +1503,6 @@ class Listendings:
             print(f"Es sind weniger als 20 Suchergbnisse.{self.Anzal_der_Ergebnisse}")
             self.aufmachen_results()
             
-
-    '''def Suche(self):
-        print("Suchen(def)")
-        Suche_suche = ""
-        #self.Listen_Speicherort_standard = filedialog.askdirectory()
-        such_dialog = tk.CTkInputDialog(title="CiM Suche", text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht. (Groß-und Kleinschreibung wird ignoriert)")
-        Suche_suche = such_dialog.get_input()
-        if Suche_suche:
-            def read_text_file(file_path):
-                try:
-                    with open(file_path, 'r', encoding='utf-8') as file:
-                        return file.read()
-                except Exception as e:
-                    print(f"Fehler: {e}")
-                    return ""
-
-            folder_path = self.Listen_Speicherort_standard
-            content_to_search = Suche_suche.lower()  # Konvertiere den Suchinhalt in Kleinbuchstaben
-            results = []
-            try:
-                for root, dirs, files in os.walk(folder_path):
-                    for file_name in files:
-                        try:
-                            if file_name.endswith('.txt'):
-                                file_path = os.path.join(root, file_name)
-                                file_content = read_text_file(file_path).lower()  # Konvertiere den Dateiinhalt in Kleinbuchstaben
-                                if content_to_search in file_content:
-                                    results.append(file_path)
-                        except Exception as e:
-                            print(f"irgendwas ging nicht: {file_name}: {e}")
-            except Exception as e:
-                print(f"konnte den pfad nicht öffnen: {e}")
-
-            if results:
-                print("Das hab ich gefunden:")
-                ganzes_ergebnis = "In diesen Dateien habe ich etwas gefunden:\n" + "\n".join(results)
-                self.Ereignislog.insert(tk.END, "-Suche mit Ergebnissen abgeschlossen.-\n")
-                messagebox.showinfo(title="CiM Suche", message=ganzes_ergebnis)
-            else:
-                print("gab nüscht")
-                dmsg = "Dazu konnte ich leider nichts finden."
-                self.Ereignislog.insert(tk.END, "-Suche ohne Ergebnisse abgeschlossen.-\n")
-                messagebox.showinfo(title="CiM Suche", message=dmsg)
-        else:
-            print("gab nüscht")
-            dmsg = "Dazu konnte ich leider nichts finden."
-            self.Ereignislog.insert(tk.END, "-Suche mit Ergebnissen abgeschlossen.-\n")
-            messagebox.showinfo(title="CiM Suche", message=dmsg)'''
 ####               
 ####
 ####

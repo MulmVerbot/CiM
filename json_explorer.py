@@ -3,36 +3,32 @@ import tkinter as Atk
 from tkinter import ttk, filedialog, messagebox
 from tkinter import Menu
 from main import Listendings
+import os
 
 class JSONTreeView:
     def __init__(self, root):
         self.root = root
         self.root.title("JSON Tree Viewer and Editor")
         
-        '''self.tree = ttk.Treeview(root)
+        self.tree = ttk.Treeview(root)
         self.tree.pack(expand=True, fill='both')
 
-        self.menu_json = Menu(root)
-        self.root.config(menu=self.menu_json)
-        
-        file_menu = Atk.Menu(self.menu_json, tearoff=0)
-        self.menu_json.add_cascade(label="Datei", menu=file_menu)
-        file_menu.add_command(label="JSON Datei öffnen...", command=self.load_json_file)
-        file_menu.add_command(label="JSON Datei speichern", command=self.save_json_file)
-        file_menu.add_command(label="Db des ListenDings öffnen...", command=self.load_json_file_standard)'''
 
         laden = Atk.Button(root, text="JSON Datei laden...", command=self.load_json_file)
         laden.pack()
         speichern = Atk.Button(root, text="JSON Datei Speichern")
         speichern.pack()
         DB_laden = Atk.Button(root, text="DB öffnen", command=self.load_json_file_standard)
+        DB_laden.pack()
 
 
     def load_json_file_standard(self):
-        file_path = Listendings.Listen_Speicherort_standard
-        if file_path:
-            with open(file_path, 'r') as f:
-                self.json_data = json.load(f)
+        self.Benutzerordner = os.path.expanduser('~')
+        self.Db_Ordner_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Db')
+        self.Json_pfad = os.path.join(self.Db_Ordner_pfad, 'Db.json')
+        file_path = self.Json_pfad
+        with open(file_path, 'r+') as f:
+            self.json_data = json.load(f)
             self.populate_tree(self.json_data)
 
     def load_json_file(self):
