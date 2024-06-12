@@ -22,6 +22,7 @@ try:
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
     from tkinterdnd2 import DND_FILES
+    from PIL import Image
     #from pypresence import Presence
 except Exception as E:
     print(f"(FATAL) Fehler beim laden der Bibliotheken, Fehlermeldung: {E}")
@@ -30,26 +31,6 @@ except Exception as E:
     except:
         sys.exit()
     sys.exit()
-
-root = tk.CTk()
-
-width = 1444
-height = 520
-def mittig_fenster(root, width, height):
-    fenster_breite = root.winfo_screenwidth()
-    fenster_höhe = root.winfo_screenheight()
-    x = (fenster_breite - width) // 2
-    y = (fenster_höhe - height) // 2
-
-    # Leg die Position des Fensters fest
-    root.geometry(f"{width}x{height}+{x}+{y}")
-mittig_fenster(root, width, height)
-
-
-
-
-
-
 
 class Listendings:
     Programm_läuft = True
@@ -142,7 +123,7 @@ class Listendings:
     def __init__(self, master):
         self.master = master
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.4 (8)"
+        self.Version = "Alpha 1.3.4 (9)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -179,17 +160,17 @@ class Listendings:
         self.Einstellung_Theme = os.path.join(self.Einstellungen_ordner, "Theme.txt")
         
         try: ## das hier sind die Bilder
-            self.Bearbeiten_Bild = Atk.PhotoImage(file="Bilder/Bearbeiten.png")
-            self.Durchsuchen_Bild = Atk.PhotoImage(file="Bilder/Durchsuchen.png")
-            self.Speichern_Bild = Atk.PhotoImage(file="Bilder/Speichern.png")
-            self.Menü_Bild = Atk.PhotoImage(file="Bilder/Menü.png")
-            self.Ticket_Bild = Atk.PhotoImage(file="Bilder/Ticket.png")
-            self.Kalender_Bild = Atk.PhotoImage(file="Bilder/Kalender.png")
-            self.Kunde_suchen_Bild = Atk.PhotoImage(file="Bilder/Kunde_suchen.png")
-            self.Dings_Liste_Bild = Atk.PhotoImage(file="Bilder/Dings_Liste.png")
-            self.Dings_Bild = Atk.PhotoImage(file="Bilder/Dings.png")
-            self.Kopieren_Bild = Atk.PhotoImage(file="Bilder/Kopieren.png")
-            self.Schnellnotiz_Bild = Atk.PhotoImage(file="Bilder/Schnellnotiz.png")
+            self.Bearbeiten_Bild = tk.CTkImage(Image.open("Bilder/Bearbeiten.png"))
+            self.Durchsuchen_Bild = tk.CTkImage(Image.open("Bilder/Durchsuchen.png"))
+            self.Speichern_Bild = tk.CTkImage(Image.open("Bilder/Speichern.png"))
+            self.Menü_Bild = tk.CTkImage(Image.open("Bilder/Menü.png"))
+            self.Ticket_Bild = tk.CTkImage(Image.open("Bilder/Ticket.png"))
+            self.Kalender_Bild = tk.CTkImage(Image.open("Bilder/Kalender.png"))
+            self.Kunde_suchen_Bild = tk.CTkImage(Image.open("Bilder/Kunde_suchen.png"))
+            self.Dings_Liste_Bild = tk.CTkImage(Image.open("Bilder/Dings_Liste.png"))
+            self.Dings_Bild = tk.CTkImage(Image.open("Bilder/Dings.png"))
+            self.Kopieren_Bild = tk.CTkImage(Image.open("Bilder/Kopieren.png"))
+            self.Schnellnotiz_Bild = tk.CTkImage(Image.open("Bilder/Schnellnotiz.png"))
         except Exception as alk:
             messagebox.showinfo("", f"self.Bild ging nicht {alk}")
         
@@ -454,6 +435,7 @@ class Listendings:
         self.Einstellungen.add_command(label="Einen neuen Kontakt hinzufügen...", command=self.zeugs1)
         self.Bearbeiten_Menu.add_command(label="Bearbeiten Umschalten", command=self.beb_c)
         self.Bearbeiten_Menu.add_command(label="Alle Einträge löschen", command=self.alles_löschen)
+        self.Bearbeiten_Menu.add_command(label="JSON Explorer öffnen", command=self.JSON_Explorer_öffnen)
         self.Suchen_Menu.add_command(label="Nach alten Einträgen suchen", command=self.Suche_alte_Einträge)
         self.Suchen_Menu.add_command(label="In der Kundenablage suchen...", command=self.Suche_KDabl)
         self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results)
@@ -645,6 +627,10 @@ class Listendings:
             self.schnellnotizen_Fenster.geometry(f"{width}x{height}+{x}+{y}")
         self.schnellnotizen_Fenster.resizable(False,False)
         self.Textfeld_Schnellnotizen.pack()
+    
+    def JSON_Explorer_öffnen(self):
+        print("[-INFO-] öffne nun den JSON Explorer...")
+        exec(open('json_explorer.py').read())
 
 
     def Einstellungen_öffnen(self):
@@ -2133,5 +2119,19 @@ class Listendings:
         print("======================================")
         sys.exit()
 
-Listendings = Listendings(root)
-root.mainloop()
+
+if __name__ == "__main__":
+    root = tk.CTk()
+    width = 1444
+    height = 520
+    def mittig_fenster(root, width, height):
+        fenster_breite = root.winfo_screenwidth()
+        fenster_höhe = root.winfo_screenheight()
+        x = (fenster_breite - width) // 2
+        y = (fenster_höhe - height) // 2
+
+        # Leg die Position des Fensters fest
+        root.geometry(f"{width}x{height}+{x}+{y}")
+    mittig_fenster(root, width, height)
+    Listendings = Listendings(root)
+    root.mainloop()
