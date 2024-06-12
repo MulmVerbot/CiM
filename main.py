@@ -123,7 +123,7 @@ class Listendings:
     def __init__(self, master):
         self.master = master
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.4 (10)"
+        self.Version = "Alpha 1.3.4 (11)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -221,22 +221,6 @@ class Listendings:
         self.Kalender_offen = False
         self.Kontakt_soll_gleich_mitgespeichert_werden = True
         self.Design_Einstellung = None
-
-        self.suchfenster_ergebnisse = tk.CTkToplevel(root)
-        try:
-            fenster_breite = root.winfo_screenwidth()
-            fenster_höhe = root.winfo_screenheight()
-            x = (fenster_breite - width) // 2
-            y = (fenster_höhe - height) // 2
-            self.suchfenster_ergebnisse.geometry(f"{width}x{height}+{x}+{y}")
-        except:
-            pass
-        self.suchfenster_ergebnisse.resizable(False,False)
-        self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
-        self.suchfenster_ergebnisse.destroy()
-        
-        
-        
         
         self.zeit_string = time.strftime("%H:%M:%S")
         self.tag_string = str(time.strftime("%d %m %Y"))
@@ -251,14 +235,13 @@ class Listendings:
             p1 = Atk.PhotoImage(file = "CiM_icon.png")
             root.iconphoto(False, p1)
         except Exception as exci1:
-            print("Fehlschlag beim setzen des Icons, versuche es nun erneut. Fehlercode: ", exci1)
+            print(f"Fehlschlag beim setzen des Icons, versuche es nun erneut. Fehlercode: {exci1}")
             try:
                 root.iconphoto(False, Atk.PhotoImage(file = self.icon_pfad))
             except Exception as err:
                 err1 = "Es ist ein Fehler beim setzen des Icons aufgetreten. Fehlerlode: ", err
                 messagebox.showinfo(message=err1)
                 print("icon gibt heute nicht.")
-
         try:
             print(f"Ich lade nun die Theme Einstellungen...")
             with open(self.Einstellung_Theme, "r") as E_theme_gel:
@@ -267,8 +250,13 @@ class Listendings:
                     tk.set_default_color_theme("Designs/dunkel.json")
                 elif self.Einstellungen_Theme_Inhalt == "hell":
                     tk.set_default_color_theme("Designs/hell.json")
+                elif self.Design_Einstellung == "System":
+                    print("Es wird versucht die System Design Einstellung zu laden.")
+                    tk.set_appearance_mode("System")
                 else:
-                    print(f"Konnte die Einstellung leider nicht laden.")
+                    print("Es gab einen Fehler bei der geladenen Designeinstellung, es wird nun der Systemstandard geladen...")
+                    tk.set_appearance_mode("System")
+                    print("Die System Design Einstellung wurde geladen.")
         except Exception as exko:
             print(f"Es ist ein Fehler beim Laden der Theme Einstellungen aufgetreten. Fehlercode: {exko}")
         try:
@@ -603,20 +591,7 @@ class Listendings:
         self.Notizen_knopp = tk.CTkButton(root, text="Schnellnotiz", command=self.schnellnotizen_öffnen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.Schnellnotiz_Bild)
         self.Notizen_knopp.place(x=1260,y=360)
 
-        if self.Design_Einstellung == "hell":
-            print("Es wird versucht die helle Design Einstellung zu laden.")
-            tk.set_appearance_mode("Dark")
-        elif self.Design_Einstellung == "dunkel":
-            print("Es wird versucht die dunkle Design Einstellung zu laden.")
-            tk.set_appearance_mode("Dark")
-        elif self.Design_Einstellung == "System":
-            print("Es wird versucht die System Design Einstellung zu laden.")
-            tk.set_appearance_mode("System")
-        else:
-            print("Es gab einen Fehler bei der geladenen Designeinstellung, es wird nun der Systemstandard geladen...")
-            tk.set_appearance_mode("System")
-            print("Die System Design Einstellung wurde geladen.")
-            
+        
 
         
     ####### ======================== init ende ======================== #######
@@ -908,7 +883,7 @@ class Listendings:
 
     def Aufgabe_hinzufügen(self):
         text_des_dings = tk.CTkInputDialog(text="Gib eine neue Aufgabe ein:")
-        Aufgabe = self.Zeit + "  --  " + text_des_dings.get_input()
+        Aufgabe = self.Zeit + "  --  " + text_des_dings.get_input() 
 
         if Aufgabe:
             try:
@@ -1148,7 +1123,7 @@ class Listendings:
         self.zeugs()
 
     def zeugs(self):
-        DATEI_PFAD = self.Json_pfad
+        DATEI_PFAD = self.Json_pfad 
         if self.Kontakt_soll_gleich_mitgespeichert_werden == True: # Es soll mitgespeichert werden
             def lade_kontakte():
                 try:
@@ -2074,11 +2049,6 @@ class Listendings:
                     messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
             else:
                 print("die var zum auto_speichern lag bei was anderem als 1")
-        '''except Exception as e:
-            ei = "Es ist ein Fehler beim Speichern aufgetreten, keine Ahnung was passiert ist wahrscheinlich fehlt nur das Laufwerk. Hier ist noch ein Code mit dem Du nicht anfangen kannst: ", e
-            print(e)
-            messagebox.showerror(title="CiM Fehler", message=ei)'''
-        
         print("======================================")
         sys.exit()
 

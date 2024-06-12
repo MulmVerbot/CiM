@@ -16,6 +16,7 @@ Hier kommt noch bissl Zeugs dazu.
     Um die Redundanzfreiheit zu verbessern, wird auch wenn die Nummer bereits eingetragen wurde, der Name des Kontakts immer mit dem Inhalt der Zeile "Kunde" Überschrieben.
 - Es kann per Schnellmenü in der Kundenablage, in der Datenbank vorangehender "ListenDingse" oder in einem selbst gewählten Ordner/Laufwerk gesucht werden (klappt auch mit Netzlaufwerken)
 - Es kann per Knopfdruck ein Fenster für eine Schnellnotiz geöffnet werden, diese wird nicht gespeichert und funktioniert ohne Ladezeiten oder irgendeinen anderen Schnickschnack
+- Das JSON Adressbuch kann über ein inkludiertes, externes Script in einer grafischen Ansicht dargestellt werden(genauso wie alle anderen JSON Dateien, das Ding ist universal).
 
 # Zukünftige Features:
 - Eine Todo Liste mit einstellbaren Timern und Erinnerungen
