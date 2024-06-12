@@ -142,7 +142,7 @@ class Listendings:
     def __init__(self, master):
         self.master = master
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.4 (7)"
+        self.Version = "Alpha 1.3.4 (8)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -159,6 +159,7 @@ class Listendings:
         self.Autospeichern_tkvar = "0"
         self.Uhrzeit_anruf_ende = None
         self.zeile_zahl = 0
+        self.Anzal_der_Ergebnisse = 0
         self.tag_string = str(time.strftime("%d %m %Y"))
         self.Benutzerordner = os.path.expanduser('~')
         self.Listen_Speicherort_standard = os.path.join(self.Benutzerordner, 'CiM', 'Listen')
@@ -177,7 +178,7 @@ class Listendings:
         self.Json_pfad = os.path.join(self.Db_Ordner_pfad, 'Db.json')
         self.Einstellung_Theme = os.path.join(self.Einstellungen_ordner, "Theme.txt")
         
-        try:
+        try: ## das hier sind die Bilder
             self.Bearbeiten_Bild = Atk.PhotoImage(file="Bilder/Bearbeiten.png")
             self.Durchsuchen_Bild = Atk.PhotoImage(file="Bilder/Durchsuchen.png")
             self.Speichern_Bild = Atk.PhotoImage(file="Bilder/Speichern.png")
@@ -539,7 +540,7 @@ class Listendings:
 
         self.SMTP_Server_erneut_anmelden = tk.CTkButton(self.Pause_menu, text="erneut mit SMTP Server verbinden", command=self.SMTP_Anmeldung_Manuell, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
 
-        self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche_alte_Einträge, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         self.Starface_Modul_Einstellung_Knopp = tk.CTkButton(self.Pause_menu, text="Starface Modul umschalten", command=self.Starface_Modul_umschalten, hover_color="pink")
         self.Auto_speichern_ändern_knopp = tk.CTkButton(self.Pause_menu, text="Auto Speichern umschalten", command=self.autospeichern_ä_c, hover_color="pink")
         self.Zhe_Clock = tk.CTkLabel(self.Pause_menu, text=self.Zeit)
@@ -1329,7 +1330,7 @@ class Listendings:
         self.Zahl_anzeige.pack()
         self.Zahl_anzeige_der_fehler = tk.CTkLabel(self.suchfenster_ergebnisse, text=self.durchsucht_text_mit_fehlern)
         self.Zahl_anzeige_der_fehler.pack()
-        self.knopp_offnen = tk.CTkButton(self.suchfenster_ergebnisse, text="Alle einfach aufmachen", command=self.aufmachen_results)
+        self.knopp_offnen = tk.CTkButton(self.suchfenster_ergebnisse, text="Alle einfach aufmachen", command=self.aufmachen_results_vor)
         self.knopp_offnen.pack()
         
         
@@ -1376,8 +1377,6 @@ class Listendings:
 
     def Suche_algo(self):
         self.Ergebnise_zahl = 0
-        if self.Suche_suche != "":
-            print("dings")
 
         if self.Suche_suche:
             def read_text_file(file_path):
@@ -1433,8 +1432,9 @@ class Listendings:
                     self.Ergebnisse_des_scans_feld.pack()
                 except:
                     pass
-                self.knopp_offnen = tk.CTkButton(self.suchfenster_ergebnisse, text="Alle einfach aufmachen", command=self.aufmachen_results_vor)
-                self.knopp_offnen.pack()
+                #self.knopp_offnen = tk.CTkButton(self.suchfenster_ergebnisse, text="Alle einfach aufmachen", command=self.aufmachen_results_vor)
+                #self.knopp_offnen.pack()
+                self.Anzal_der_Ergebnisse = self.Ergebnise_zahl
                 self.Ergebnisse_des_scans_feld.insert("0.0",ganzes_ergebnis)
                 self.etwas_suchen1 = False
                 self.etwas_suchen = False
@@ -1487,16 +1487,20 @@ class Listendings:
 
     def aufmachen_results_vor(self):
         print("suche_alles aufamachen davor warnmeldung dings")
-        
-
         if self.Anzal_der_Ergebnisse >= 20:
-            print("Es sind >= 20 Suchergebnisse...")
-            messagebox.showinfo(title="CiM Suche", message=f"Sind Sie sicher dass sie wirklich alle {self.Anzal_der_Ergebnisse}")
-        else:
-            print("Es sind weniger als 20 Suchergbnisse.")
+            print(f"Es sind >= 20 Suchergebnisse... {self.Anzal_der_Ergebnisse}")
+            antw = messagebox.askyesno(title="CiM Suche", message=f"Sind Sie sicher dass sie wirklich alle {self.Anzal_der_Ergebnisse} Ergbnisse öffnen möchten? (Unter Windows könnte Ihr System einfrieren)")
+            if antw:
+                if antw == True:
+                    self.aufmachen_results()
+                elif antw == False:
+                    print("[-INFO-] Nutzer wollte doch nicht alles aufmachen")
+        elif self.Anzal_der_Ergebnisse <= 20:
+            print(f"Es sind weniger als 20 Suchergbnisse.{self.Anzal_der_Ergebnisse}")
+            self.aufmachen_results()
             
 
-    def Suche(self):
+    '''def Suche(self):
         print("Suchen(def)")
         Suche_suche = ""
         #self.Listen_Speicherort_standard = filedialog.askdirectory()
@@ -1542,7 +1546,7 @@ class Listendings:
             print("gab nüscht")
             dmsg = "Dazu konnte ich leider nichts finden."
             self.Ereignislog.insert(tk.END, "-Suche mit Ergebnissen abgeschlossen.-\n")
-            messagebox.showinfo(title="CiM Suche", message=dmsg)
+            messagebox.showinfo(title="CiM Suche", message=dmsg)'''
 ####               
 ####
 ####
