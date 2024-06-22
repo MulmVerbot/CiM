@@ -159,6 +159,7 @@ class Listendings:
         self.Json_pfad = os.path.join(self.Db_Ordner_pfad, 'Db.json')
         self.Einstellung_Theme = os.path.join(self.Einstellungen_ordner, "Theme.txt")
         
+        
         try: ## das hier sind die Bilder
             self.Bearbeiten_Bild = tk.CTkImage(Image.open("Bilder/Bearbeiten.png"))
             self.Durchsuchen_Bild = tk.CTkImage(Image.open("Bilder/Durchsuchen.png"))
@@ -332,6 +333,7 @@ class Listendings:
             with open(self.Listen_Speicherort_Einstellungsdatei , "r") as Liste_Speicherort_data:
                 self.Listen_Speicherort = json.load(Liste_Speicherort_data)
                 self.Listen_Speicherort_geladen = (self.Listen_Speicherort["ListenDings_Speicherort"])
+                #self.csv_datei_pfad = self.Listen_Speicherort_geladen
         except PermissionError:
                 messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Die Speicherorte konnten nicht geladen werden")
         except:
@@ -341,6 +343,8 @@ class Listendings:
             with open(self.Listen_Speicherort_Netzwerk_Einstellungsdatei , "r") as Liste_Speicherort_Netzwerk_data:
                 self.Listen_Speicherort_Netzwerk = json.load(Liste_Speicherort_Netzwerk_data)
                 self.Listen_Speicherort_Netzwerk_geladen = (self.Listen_Speicherort_Netzwerk["ListenDings_Speicherort_Netzwerk"])
+               # self.Listen_Speicherort_Netzwerk_geladen = os.path.join(self.Listen_Speicherort_Netzwerk_geladen, self.Jahr,self.Monat, self.tag_string + ".csv")
+                self.Listen_Speicherort_Netzwerk_geladen_ordner = os.path.join(self.Listen_Speicherort_Netzwerk_geladen, self.Jahr, self.Monat)
         except PermissionError:
                 messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Der Gespeicherte Netzwerkpfad konnte nicht aufgerufen werden.")
         except Exception as e:
@@ -1931,10 +1935,14 @@ class Listendings:
     
     def Netzlaufwerk_speichern(self):
         print("Netzlaufwerk_speichern(def)")
-        print("Als CSV speichern, im Standard Ort")
-        self.csv_datei_pfad_Netzwerk = self.Listen_Speicherort_Netzwerk_geladen
-
-        if self.csv_datei_pfad:
+        ##try:
+            ##if not os.path.exists(self.Listen_Speicherort_Netzwerk_geladen_ordner):
+                ##os.mkdir(self.Listen_Speicherort_Netzwerk_geladen_ordner)
+                ##print(f"Die Ordner {self.Listen_Speicherort_Netzwerk_geladen_ordner} wurden erstellt.")
+        ##except Exception as Ex_sp_n_E1:
+          ##  print(f"Beim erstellen der Ordner unter Pfad {self.Listen_Speicherort_Netzwerk_geladen_ordner} ist ein Fehler aufgetreten: {Ex_sp_n_E1}")
+            ##messagebox.showerror(title="CiM Fehler", message=f"Beim erstellen der Ordner unter Pfad {self.Listen_Speicherort_Netzwerk_geladen_ordner} ist ein Fehler aufgetreten: {Ex_sp_n_E1}")
+        if self.Listen_Speicherort_Netzwerk_geladen:
             with open(self.Liste_mit_datum, 'r') as text_datei:
                 daten = text_datei.read()
             zeilen = daten.strip().split('\n')
@@ -1962,7 +1970,7 @@ class Listendings:
 
             if datensaetze:
                 self.tag_string = str(time.strftime("%d %m %Y"))
-                with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
+                with open(self.Listen_Speicherort_Netzwerk_geladen + self.tag_string + ".csv", 'w', newline='') as datei:
                     schreiber = csv.writer(datei)
                     schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer", "Wollte Sprechen", "Weiterleitung"])
                     schreiber.writerows(datensaetze)
