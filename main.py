@@ -123,7 +123,7 @@ class Listendings:
     def __init__(self, master):
         self.master = master
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.4 (12)"
+        self.Version = "Alpha 1.3.4 (13)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -1977,7 +1977,7 @@ class Listendings:
                     self.zeit_string = time.strftime("%H:%M:%S")
                     self.tag_string = str(time.strftime("%d %m %Y"))
                 print("Daten wurden in die CSV-Datei gespeichert.")
-                messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich gespeichert.")
+                messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich im Netzlaufwerkpfad gespeichert.")
             else:
                 print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
                 messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
@@ -2051,10 +2051,10 @@ class Listendings:
                         self.tag_string = str(time.strftime("%d %m %Y"))
                     print("Daten wurden in die CSV-Datei gespeichert.")
                     print(f"Dateien wurden unter {self.csv_datei_pfad} gespeichert.")
-                    messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich gespeichert.")
+                    messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich im Netzlaufwerkpfad gespeichert.")
                 else:
                     print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
-                    messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
+                    messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern im Netzlaufwerkpfad schiefgelaufen. (vielleicht keine Datensätze?)")
             else:
                 print("die var zum auto_speichern lag bei was anderem als 1")
         print("======================================")
