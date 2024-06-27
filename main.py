@@ -1509,6 +1509,7 @@ class Listendings:
                             try:
                                 with open(self.Json_pfad, 'r', encoding='utf-8') as datei:
                                     daten = json.load(datei)
+                                
                                 self.t_nummer.configure(state="normal")
                                 self.t_nummer.delete(0,tk.END)
                                 self.t_nummer.insert(1,self.Anruf_Telefonnummer)
@@ -1516,6 +1517,8 @@ class Listendings:
                                 for kontakt in daten.get("Kontakte", []):
                                     if kontakt.get("Telefonnummer_jsn") == self.Anruf_Telefonnummer: # WENN ES IN DER KTK GEFUNDEN WURDE
                                         Name_gel_für_e = kontakt.get("Name")
+                                        #for Gesperrte_ktk in Gesperrte_geladen.get("Gesperrte", []):
+                                         #   if 
                                         self.kunde_entry.insert(tk.END,Name_gel_für_e)
                                         self.Anruf_Telefonnummer = None
                                         self.Ereignislog.insert(tk.END, "-Anruf wurde beendet.-\n")
