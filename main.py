@@ -123,7 +123,7 @@ class Listendings:
     def __init__(self, master):
         self.master = master
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.4 (13)"
+        self.Version = "Alpha 1.3.4 (14)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -158,6 +158,7 @@ class Listendings:
         self.Db_Ordner_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Db')
         self.Json_pfad = os.path.join(self.Db_Ordner_pfad, 'Db.json')
         self.Einstellung_Theme = os.path.join(self.Einstellungen_ordner, "Theme.txt")
+        self.Blacklist_pfad = os.path.join(self.Db_Ordner_pfad, "Db_Blacklist.json")
         
         
         try: ## das hier sind die Bilder
@@ -427,6 +428,7 @@ class Listendings:
         self.Einstellungen.add_command(label="Netzlaufwerk einstellen...", command=self.ListenDings_speicherort_Netzwerk_ändern)
         self.Einstellungen.add_command(label="Beim SMTP Server anmelden...", command=self.SMTP_Anmeldung_Manuell)
         self.Einstellungen.add_command(label="Einen neuen Kontakt hinzufügen...", command=self.zeugs1)
+        self.Bearbeiten_Menu.add_command(label="Blacklist erweitern...", command=self.zeugs1_blacklist)
         self.Bearbeiten_Menu.add_command(label="Bearbeiten Umschalten", command=self.beb_c)
         self.Bearbeiten_Menu.add_command(label="Alle Einträge löschen", command=self.alles_löschen)
         self.Bearbeiten_Menu.add_command(label="JSON Explorer öffnen", command=self.JSON_Explorer_öffnen)
@@ -1118,6 +1120,68 @@ class Listendings:
                     self.smtp_login_erfolgreich_l.place(x=220,y=320)
             except Exception as Exc21:
                 print(f"Fehler bei der entscheidung ob die Anmeldung bei Server erfolgreich war, wie auch immer das jetzt nun wieder schiefgehen konnte... Fehlercode: {Exc21}")
+
+
+
+    def zeugs1_blacklist(self): # zuegs1 zum zeugs anstarrten
+        print("zuegs1 zum zeugs anstarrten")
+        self.Blacklist_bearbeiten = tk.CTkToplevel()
+        best_bl_add = tk.CTkButton(self.Blacklist_bearbeiten, text="Kontakt speichern",command=self.zeugs_blacklist)
+        self.t_nummer_bl = tk.CTkEntry(self.Blacklist_bearbeiten, placeholder_text="Telefonnummer")
+        self.kunde_entry_bl = tk.CTkEntry(self.Blacklist_bearbeiten, placeholder_text="Name der Person")
+
+        best_bl_add.pack()
+        self.t_nummer_bl.pack()
+        self.kunde_entry_bl.pack()
+
+
+    def zeugs_blacklist(self):
+        DATEI_PFAD = self.Blacklist_pfad
+        def lade_kontakte():
+            try:
+                with open(DATEI_PFAD, 'r', encoding='utf-8') as datei:
+                    return json.load(datei)
+            except FileNotFoundError:
+                return {"Kontakte": []}
+            except json.JSONDecodeError:
+                messagebox.showerror("Fehler", "Fehler beim Lesen der JSON-Datei.")
+                return {"Kontakte": []}
+
+        def speichere_kontakte(kontakte):
+            try:
+                with open(DATEI_PFAD, 'w', encoding='utf-8') as datei:
+                    json.dump(kontakte, datei, ensure_ascii=False, indent=4)
+            except Exception as e:
+                messagebox.showerror("Fehler", f"Fehler beim Speichern der JSON-Datei: {e}")
+
+        def hinzufuegen_kontakt():
+            telefonnummer = self.t_nummer_bl.get()
+            name = self.kunde_entry_bl.get()
+
+            if not telefonnummer or not name:
+                messagebox.showwarning("Warnung", "Bitte beide Felder ausfüllen.")
+                return
+
+            kontakte = lade_kontakte()
+            gefunden = False
+            for kontakt in kontakte['Kontakte']:
+                if kontakt['Telefonnummer_jsn_gesperrt'] == telefonnummer:
+                    #messagebox.showinfo(title="CiM", message=f"Dieser Kontakt existiert bereits unter dem Namen {kontakt['Name']} mit der Telefonnummer {kontakt['Telefonnummer_jsn']}.")
+                    self.Ereignislog.insert(tk.END, "-Der Name besteht bereits.-\n")
+                    kontakt['Name'] = name
+                    gefunden = True
+                    #messagebox.showinfo("Info", "Name der bestehenden Telefonnummer aktualisiert.")
+                    self.Ereignislog.insert(tk.END, "-bestehende Nummer wurde aktualisiert.-\n")
+                    break
+
+            if not gefunden:
+                kontakte['Kontakte'].append({"Telefonnummer_jsn_gesperrt": telefonnummer, "Name": name})
+                self.Ereignislog.insert(tk.END, "-Kontakt wurde hinzugefügt.-\n")
+                #messagebox.showinfo("Erfolg", "Kontakt hinzugefügt.")
+
+            speichere_kontakte(kontakte)
+            self.Kontakt_soll_gleich_mitgespeichert_werden = True
+        hinzufuegen_kontakt()
     
         
     
@@ -1509,23 +1573,33 @@ class Listendings:
                             try:
                                 with open(self.Json_pfad, 'r', encoding='utf-8') as datei:
                                     daten = json.load(datei)
+                                try:
+                                    print("lade die Blacklist...")
+                                    with open(self.Blacklist_pfad, "r", encoding='utf-8') as b_datei:
+                                        daten_blacklist = json.load(b_datei)
+                                except Exception as E:
+                                    self.Ereignislog.insert(tk.END, "-Konnte die Blacklist nicht laden-\n")
+                                    daten_blacklist = ""
                                 
                                 self.t_nummer.configure(state="normal")
                                 self.t_nummer.delete(0,tk.END)
                                 self.t_nummer.insert(1,self.Anruf_Telefonnummer)
                                 self.t_nummer.configure(state="disabled")
-                                for kontakt in daten.get("Kontakte", []):
-                                    if kontakt.get("Telefonnummer_jsn") == self.Anruf_Telefonnummer: # WENN ES IN DER KTK GEFUNDEN WURDE
-                                        Name_gel_für_e = kontakt.get("Name")
-                                        #for Gesperrte_ktk in Gesperrte_geladen.get("Gesperrte", []):
-                                         #   if 
-                                        self.kunde_entry.insert(tk.END,Name_gel_für_e)
+                                for Gesperrte_kontakt in daten_blacklist.get("Name", []):
+                                    if Gesperrte_kontakt.get("Telefonummer_jsn_gesperrt") == self.Anruf_Telefonnummer:
+                                        self.Ereignislog.insert(tk.END, "-Telefonummer in Blacklist gefunden!\n Nummer wurde nicht eingefügt.")
                                         self.Anruf_Telefonnummer = None
-                                        self.Ereignislog.insert(tk.END, "-Anruf wurde beendet.-\n")
-                                        # hier kommen jetzt die Ausnahmen für spezielle Kontakte hin. !!WENN SIE GEFUNDEN WUDEN!!
-                                        if kontakt.get("Telefonnummer_jsn") == 97:
-                                            self.Ereignislog.insert(tk.END, "-Es hat geklingelt.-\n")
-                                            self.senden()
+                                        return ## zurückkehrens wenn in der Blacklist steht, spart in zukunft einen funken Leistung.
+                                    else:
+                                        for kontakt in daten.get("Kontakte", []):
+                                            if kontakt.get("Telefonnummer_jsn") == self.Anruf_Telefonnummer: # WENN ES IN DER KTK GEFUNDEN WURDE
+                                                Name_gel_für_e = kontakt.get("Name")
+                                                
+                                                self.kunde_entry.insert(tk.END,Name_gel_für_e)
+                                                self.Anruf_Telefonnummer = None
+                                                self.Ereignislog.insert(tk.END, "-Anruf wurde beendet.-\n")
+                                                # hier kommen jetzt die Ausnahmen für spezielle Kontakte hin. !!WENN SIE GEFUNDEN WUDEN!!
+                                                
                                         # hier enden die speziellen Ausnahmen für spezielle Kontakte.
                             except Exception as ExcK1:
                                 print(f"Fehler beim Durchsuchen der JSON DB nach dem Kontakt. Fehlercode: {ExcK1}")
