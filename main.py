@@ -1562,16 +1562,21 @@ class Listendings:
                     self.Uhrzeit_anruf_start = self.Zeit
                     tmp_ld.close()
                     os.remove("tmp.txt")
+                    self.Gesperrte_Nummer = False
+                    print("A")
                     if self.Anruf_Telefonnummer.startswith("b") == True:
+                        print("if 1")
                         if self.t_nummer.get() != "" and self.kunde_entry.get() != "": # Nummer und Kunde is da = weiter...
+                            print("If 2")
                             self.ganz = " : " + self.Anruf_Telefonnummer #  es wird hier nun bis zum else eine weitere frisch aufgenommene Nummer hinzugefügt
                             self.t_nummer.configure(state="normal")
-                            self.t_nummer.insert(tk.END,self.ganz)
+                            self.t_nummer.insert(tk.END, self.ganz)
                             self.t_nummer.configure(state="disabled")
                             self.Anruf_Telefonnummer = None
                             self.ganz = None
                         else: # WENN BEIDE ENTRYS LEER SIND
                             try:
+                                print("else 1")
                                 with open(self.Json_pfad, 'r', encoding='utf-8') as datei:
                                     daten = json.load(datei)
                                 try:
@@ -1582,47 +1587,78 @@ class Listendings:
                                     self.Ereignislog.insert(tk.END, "-Konnte die Blacklist nicht laden-\n")
                                     daten_blacklist = ""
                                 
-                                self.t_nummer.configure(state="normal")
-                                self.t_nummer.delete(0,tk.END)
-                                self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                                self.t_nummer.configure(state="disabled")
-                                for Gesperrte_kontakt in daten_blacklist.get("Name", []):
-                                    if Gesperrte_kontakt.get("Telefonummer_jsn_gesperrt") == self.Anruf_Telefonnummer:
-                                        self.Ereignislog.insert(tk.END, "-Telefonummer in Blacklist gefunden!\n Nummer wurde nicht eingefügt.")
+                                #self.t_nummer.configure(state="normal")
+                                #self.t_nummer.delete(0,tk.END)
+                                #self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                                #self.t_nummer.configure(state="disabled")
+                                for Gesperrte_kontakt in daten_blacklist.get("Kontakte", []):
+                                    print("ich durchsuche die Blacklist...")
+                                    if Gesperrte_kontakt.get("Telefonnummer_jsn_gesperrt") == self.Anruf_Telefonnummer:
+                                        print("if 1 A")
+                                        self.Ereignislog.insert(tk.END, "-Telefonnummer in Blacklist gefunden!\n Nummer wurde nicht eingefügt.")
                                         self.Anruf_Telefonnummer = None
-                                        return ## zurückkehrens wenn in der Blacklist steht, spart in zukunft einen funken Leistung.
-                                    else:
-                                        for kontakt in daten.get("Kontakte", []):
-                                            if kontakt.get("Telefonnummer_jsn") == self.Anruf_Telefonnummer: # WENN ES IN DER KTK GEFUNDEN WURDE
-                                                Name_gel_für_e = kontakt.get("Name")
-                                                
-                                                self.kunde_entry.insert(tk.END,Name_gel_für_e)
-                                                self.Anruf_Telefonnummer = None
-                                                self.Ereignislog.insert(tk.END, "-Anruf wurde beendet.-\n")
-                                                # hier kommen jetzt die Ausnahmen für spezielle Kontakte hin. !!WENN SIE GEFUNDEN WUDEN!!
+                                        self.Gesperrte_Nummer = True
+                                        return ## zurückkehren wenns in der Blacklist steht, spart in zukunft einen funken Leistung.
+                                    
+                                if self.Gesperrte_Nummer == False:
+                                    print("die Nummer stand nicht in der Blacklist")
+                                    print("else 1 A")
+                                    self.t_nummer.configure(state="normal")
+                                    self.t_nummer.delete(0,tk.END)
+                                    self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                                    self.t_nummer.configure(state="disabled")
+                                    for kontakt in daten.get("Kontakte", []):
+                                        if kontakt.get("Telefonnummer_jsn") == self.Anruf_Telefonnummer: # WENN ES IN DER KTK GEFUNDEN WURDE
+                                            print("if 1 B")
+                                            Name_gel_für_e = kontakt.get("Name")
+                                            self.kunde_entry.insert(tk.END,Name_gel_für_e)
+                                            self.Anruf_Telefonnummer = None
+                                            self.Ereignislog.insert(tk.END, "-Anruf wurde beendet.-\n")
+                                            # hier kommen jetzt die Ausnahmen für spezielle Kontakte hin. !!WENN SIE GEFUNDEN WUDEN!!
                                                 
                                         # hier enden die speziellen Ausnahmen für spezielle Kontakte.
                             except Exception as ExcK1:
                                 print(f"Fehler beim Durchsuchen der JSON DB nach dem Kontakt. Fehlercode: {ExcK1}")
                     else: # JETZT KOMMT ALLES DAS WENN ES KEIN b IST
                         try:
+                            print("else f")
                             with open(self.Json_pfad, 'r', encoding='utf-8') as datei:
                                 daten = json.load(datei)
-                            self.t_nummer.configure(state="normal")
-                            self.t_nummer.delete(0,tk.END)
-                            self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                            self.t_nummer.configure(state="disabled")
-                            for kontakt in daten.get("Kontakte", []):
-                                if kontakt.get("Telefonnummer_jsn") == self.Anruf_Telefonnummer: # WENN ES IN DER KTK GEFUNDEN WURDE
-                                    Name_gel_für_e = kontakt.get("Name")
-                                    self.kunde_entry.insert(tk.END,Name_gel_für_e)
+                            try:
+                                print("lade die Blacklist...")
+                                with open(self.Blacklist_pfad, "r", encoding='utf-8') as b_datei:
+                                    daten_blacklist = json.load(b_datei)
+                            except Exception as E:
+                                self.Ereignislog.insert(tk.END, "-Konnte die Blacklist nicht laden-\n")
+                                daten_blacklist = ""
+                            for Gesperrte_kontakt in daten_blacklist.get("Kontakte", []):
+                                print(f"ich durchsuche die Blacklist... mit {Gesperrte_kontakt.get("Telefonnummer_jsn_gesperrt")}")
+                                if str(Gesperrte_kontakt.get("Telefonnummer_jsn_gesperrt")) == str(self.Anruf_Telefonnummer):
+                                    print("if f")
+                                    self.Ereignislog.insert(tk.END, "-Telefonnummer in Blacklist gefunden!\n Nummer wurde nicht eingefügt.")
                                     self.Anruf_Telefonnummer = None
-                                    self.Ereignislog.insert(tk.END, "-Anruf wurde beendet.-\n")
-                                    # hier kommen jetzt die Ausnahmen für spezielle Kontakte hin. !!WENN SIE GEFUNDEN WUDEN!!
-                                    if kontakt.get("Telefonnummer_jsn") == 97: # das hier entfernen falls es dann immer doppelt klingeln sollte.
-                                        self.Ereignislog.insert(tk.END, "-Es hat geklingelt.-\n")#
-                                        self.senden()#
-                                    # hier enden die speziellen Ausnahmen für spezielle Kontakte.
+                                    self.Gesperrte_Nummer = True
+                                    return
+                                else:
+                                    print(f"offensichtlicher weise war {str(Gesperrte_kontakt.get("Telefonnummer_jsn_gesperrt"))} nicht das selbe wie {str(self.Anruf_Telefonnummer)}... oder so ähnlich.")
+                                #else:
+                            if self.Gesperrte_Nummer == False:
+                                print("else f 1")
+                                print("die Nummer stand nicht in der Blacklist")
+                                self.t_nummer.configure(state="normal")
+                                self.t_nummer.delete(0,tk.END)
+                                self.t_nummer.insert(1,self.Anruf_Telefonnummer)
+                                self.t_nummer.configure(state="disabled")
+                                for kontakt in daten.get("Kontakte", []):
+                                    if kontakt.get("Telefonnummer_jsn") == self.Anruf_Telefonnummer: # WENN ES IN DER KTK GEFUNDEN WURDE
+                                        print("if f 1")
+                                        Name_gel_für_e = kontakt.get("Name")
+                                        self.kunde_entry.insert(tk.END,Name_gel_für_e)
+                                        self.Anruf_Telefonnummer = None
+                                        self.Ereignislog.insert(tk.END, "-Anruf wurde beendet.-\n")
+                                        # hier kommen jetzt die Ausnahmen für spezielle Kontakte hin. !!WENN SIE GEFUNDEN WUDEN!!
+                                                
+                                        # hier enden die speziellen Ausnahmen für spezielle Kontakte.
                         except Exception as ExcK1:
                                 print(f"Fehler beim Durchsuchen der JSON DB nach dem Kontakt. Fehlercode: {ExcK1}")
             except Exception:
