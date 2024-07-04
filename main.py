@@ -123,7 +123,7 @@ class Listendings:
     def __init__(self, master):
         self.master = master
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.3.4 (14)"
+        self.Version = "Alpha 1.3.5"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -174,8 +174,7 @@ class Listendings:
             self.Kopieren_Bild = tk.CTkImage(Image.open("Bilder/Kopieren.png"))
             self.Schnellnotiz_Bild = tk.CTkImage(Image.open("Bilder/Schnellnotiz.png"))
         except Exception as alk:
-            messagebox.showinfo("", f"self.Bild ging nicht {alk}")
-        
+            messagebox.showinfo("", f"beim laden der Bild Assets ist ein Fehler aufgetreten: {alk}")
         
         self.Monat = time.strftime("%m")
         self.Thread_Kunderuftan = threading.Timer(2, self.Kunde_ruft_an)
@@ -376,20 +375,15 @@ class Listendings:
             self.empfänger_email = ""
             self.smtp_server = ""
             self.pw_email = ""
-            #messagebox.showerror(title="CiM Fehler", message=f"Beim Laden der Email Einstellungen unter {self.Einstellung_Email_Sender_Adresse} ; {self.Einstellung_Email_Empfänge_Adresse} und {self.Einstellung_smtp_server} ist ein Fehler aufgetreten. Fehlercode: {EmailEx3_l}")
             print(f"Beim Laden der Email Einstellungen unter {self.Einstellung_Email_Sender_Adresse} ; {self.Einstellung_Email_Empfänge_Adresse} und {self.Einstellung_smtp_server} ist ein Fehler aufgetreten. Fehlercode: {EmailEx3_l}")
     ########### SHAISE ENDE ###########
     ###################################
-
-
-        
 
     #### Die Stars der Stunde ####
         self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Kunde", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
         self.t_nummer = tk.CTkEntry(master, width=600, placeholder_text="Telefonnummer", state="disabled", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
         self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
         self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
-    
     #### ####
         
 
@@ -435,12 +429,9 @@ class Listendings:
         self.Suchen_Menu.add_command(label="Nach alten Einträgen suchen", command=self.Suche_alte_Einträge)
         self.Suchen_Menu.add_command(label="In der Kundenablage suchen...", command=self.Suche_KDabl)
         self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results)
-        # Initialisierung wichtiger Variablen
-
         self.beb = "0"
         
         try:
-            # Ausgabe-Textfeld aktualisieren
             print("(INFO) versuche die alten Aufzeichenungen zu Laden")
             self.ausgabe_text.configure(state='normal')
             with open(self.Liste_mit_datum, "r") as f:
@@ -460,9 +451,6 @@ class Listendings:
     ############################ GUI INNIT ######################
     ############################ GUI INNIT ######################
         self.menu_frame = tk.CTkFrame(master, width=200, height=400)
-
-
-        
         self.beb_knopp = tk.CTkButton(master, text="Bearbeiten", command=self.beb_c, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.Bearbeiten_Bild)
         self.beb_knopp.place(x=1260, y=100)
         self.alles_löschen_knopp = tk.CTkButton(master, text="durchsuchen...", command=self.Suche1, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Durchsuchen_Bild)
@@ -1017,10 +1005,6 @@ class Listendings:
             except Exception as o1:
                 print("Es ist ein fehler aufgetreten: ",o1)
                     
-
-        
-    
-    
     def Menu_anzeige_wechseln(self): ############# Hier kommt der ganze Text für das Menü rein.
         print("Menu_anzeige_wechseln(def)")
         
@@ -1190,7 +1174,7 @@ class Listendings:
         self.Kontakt_soll_gleich_mitgespeichert_werden = False
         self.zeugs()
 
-    def zeugs(self):
+    def zeugs(self):  # Diese beiden Funtkionen sind dafür da die Telefonummern in ner Json zu speichern, das hab ich nicht selbst geschrieben sondern nur kopiert und eingefügt weil es schnell gehen musste, wenn ich mal Zeit hab mach ichs selbst.
         DATEI_PFAD = self.Json_pfad 
         if self.Kontakt_soll_gleich_mitgespeichert_werden == True: # Es soll mitgespeichert werden
             def lade_kontakte():
@@ -1347,46 +1331,51 @@ class Listendings:
         self.gesucht_zahl_mit_fehlern = 0
         self.Ergebnise_zahl = 0
         try:
+            
             self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
-            self.suchfenster_ergebnisse.resizable(False,False)
-            self.Ergebnisse_des_scans_feld.delete("1.0", tk.END)
         except:
             pass
         self.durchsucht_text = f"bis jetzt wurden {self.gesucht_zahl} Dateien durchsucht."
         self.durchsucht_text_mit_fehlern = f"Fehler: {self.gesucht_zahl_mit_fehlern}"
         try:
             self.suchfenster_ergebnisse = tk.CTkToplevel(root)
+            self.suchfenster_ergebnisse.resizable(False,False)
             try:
-                height = 500
-                width = 500
-                fenster_breite = root.winfo_screenwidth()
-                fenster_höhe = root.winfo_screenheight()
-                x = (fenster_breite - width) // 2
-                y = (fenster_höhe - height) // 2
+                height = 350
+                width = 920
+                x = root.winfo_x() + root.winfo_width()//2 - self.suchfenster_ergebnisse.winfo_width()//2
+                y = root.winfo_y() + root.winfo_height()//2 - self.suchfenster_ergebnisse.winfo_height()//2
                 self.suchfenster_ergebnisse.geometry(f"{width}x{height}+{x}+{y}")
             except:
                 pass
             self.suchfenster_ergebnisse.title("Suchergebnisse")
         except:
             pass
-        self.suchfenster_ergebnisse_frame = tk.CTkScrollableFrame(self.suchfenster_ergebnisse, width=500, height=420, bg_color="Green")
-        self.erg_text_widget = tk.CTkTextbox(self.suchfenster_ergebnisse_frame, width=500, height=500)
-        #self.erg_text_widget.pack()
+        
         print("fenster fürs suchen geladen...")
         self.Zahl_anzeige = tk.CTkLabel(self.suchfenster_ergebnisse, text=self.durchsucht_text)
         self.Zahl_anzeige.pack()
         self.Zahl_anzeige_der_fehler = tk.CTkLabel(self.suchfenster_ergebnisse, text=self.durchsucht_text_mit_fehlern)
         self.Zahl_anzeige_der_fehler.pack()
-        self.knopp_offnen = tk.CTkButton(self.suchfenster_ergebnisse, text="Alle einfach aufmachen", command=self.aufmachen_results_vor)
-        self.knopp_offnen.pack()
-        
-        
+        self.Ergebnisse_Listbox = Atk.Listbox(self.suchfenster_ergebnisse)
+        self.Ergebnisse_Listbox.pack(fill="both", expand=True)
+        self.suchfenster_ergebnisse.protocol("WM_DELETE_WINDOW", self.bye_suchfenster)
+        scrollbar = Atk.Scrollbar(self.Ergebnisse_Listbox, orient=Atk.VERTICAL)
+        scrollbar.pack(side=Atk.RIGHT, fill=Atk.Y)
+        self.Ergebnisse_Listbox.config(yscrollcommand=scrollbar.set)
+        scrollbar.config(command=self.Ergebnisse_Listbox.yview)
         
         if self.Ort_wo_gesucht_wird == "":
             self.Ort_wo_gesucht_wird = filedialog.askdirectory()
         print("pfad wurde ausgewählt")
         such_dialog = tk.CTkInputDialog(title="CiM Suche", text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht. (Groß-und Kleinschreibung wird ignoriert)")
-        
+        try:
+            x = root.winfo_x() + root.winfo_width()//2 - such_dialog.winfo_width()//2
+            y = root.winfo_y() + root.winfo_height()//2 - such_dialog.winfo_height()//2
+            such_dialog.geometry(f"x+{x}+{y}")
+        except:
+            print("Fehler beim zentrieren des Such-Dialogs. selbst wenn ich hier die Fehlermeldung hinschreiben würde, würdest Du sie nicht verstehen denn ich habe auch keine Ahnung.")
+
         self.Suche_suche = such_dialog.get_input()
         such_dialog.destroy()
         if self.Suche_suche != "":
@@ -1413,6 +1402,21 @@ class Listendings:
         else:
             messagebox.showinfo(message="Suche Abgebrochen. self.Suche_suche !='''' ")
             self.suchfenster_ergebnisse.destroy()
+
+    def Eintrag_aufmachen(self, event):
+        print("ich würde jetzt diesen Eintrag aufmachen")
+        auswahl_der_Listbox = self.Ergebnisse_Listbox.curselection()
+        index = auswahl_der_Listbox[0]
+        zu_aufmachen_Eintrag = self.Ergebnisse_Listbox.get(index)
+        if platform.system() == "Windows":
+            os.startfile(zu_aufmachen_Eintrag) # Für Windows
+        elif platform.system() == "Darwin":
+            subprocess.call(["open", zu_aufmachen_Eintrag]) # Für MacOS
+
+    def bye_suchfenster(self):
+        print("Suchfenster wurde geschlossen.")
+        self.Ergebnisse_Listbox.unbind("<Double-1>")
+        self.suchfenster_ergebnisse.destroy()
 
     def Suche_KDabl(self):
         self.Ort_wo_gesucht_wird = "/Volumes/Kundenablage/"
@@ -1453,12 +1457,12 @@ class Listendings:
                                 if content_to_search in file_content:
                                     self.Ergebnise_zahl += 1
                                     results.append(file_path)
+                                    self.Ergebnisse_Listbox.insert(tk.END, file_path)
                                     
                         except Exception as e:
                             self.gesucht_zahl_mit_fehlern += 1
                             self.durchsucht_text_mit_fehlern = f"Fehler: {self.gesucht_zahl_mit_fehlern}"
                             self.Zahl_anzeige_der_fehler.configure(text=self.durchsucht_text_mit_fehlern)
-                            #print(f"irgendwas ging nicht: {file_name}: {e}")
             except Exception as e:
                 self.etwas_suchen1 = False
                 self.Suche_suche = ""
@@ -1470,19 +1474,15 @@ class Listendings:
                     print(f"Konnte den Thread self.thread_suche nicht beenden, Fehlermeldung: {E_t}")
 
             if results:
-                ganzes_ergebnis = "Ich habe in folgenden Dateien " + str(self.Ergebnise_zahl) + " Ergebnisse gefunden:\n\n" + "\n\n".join(results)
+                ganzes_ergebnis = "Ich habe in folgenden Dateien " + str(self.Ergebnise_zahl) + " Ergebnisse gefunden:"
+                erg_l = tk.CTkLabel(self.suchfenster_ergebnisse, text=ganzes_ergebnis)
+                erg_l.pack()
                 self.rearesults = results
                 self.durchsucht_text = f"Es wurden insgesammt: {self.gesucht_zahl} Daten durchsucht. {ganzes_ergebnis}"
-                self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
-                self.suchfenster_ergebnisse.resizable(False,False)
-                try:
-                    self.Ergebnisse_des_scans_feld.pack()
-                except:
-                    pass
-                #self.knopp_offnen = tk.CTkButton(self.suchfenster_ergebnisse, text="Alle einfach aufmachen", command=self.aufmachen_results_vor)
-                #self.knopp_offnen.pack()
+                self.knopp_offnen = tk.CTkButton(self.suchfenster_ergebnisse, text="Alle einfach aufmachen", command=self.aufmachen_results_vor)
+                self.knopp_offnen.pack()
+                self.Ergebnisse_Listbox.bind("<Double-1>", self.Eintrag_aufmachen)
                 self.Anzal_der_Ergebnisse = self.Ergebnise_zahl
-                self.Ergebnisse_des_scans_feld.insert("0.0",ganzes_ergebnis)
                 self.etwas_suchen1 = False
                 self.etwas_suchen = False
                 self.Suche_suche = ""
@@ -1493,6 +1493,7 @@ class Listendings:
                 except Exception as E_t:
                     print(f"Konnte den Thread self.thread_suche nicht beenden, Fehlermeldung: {E_t}")
             else:
+                self.Ergebnisse_Listbox.unbind("<Double-1>")
                 dmsg = "Dazu konnte ich leider nichts finden."
                 try:
                     self.erg_text_widget.insert("0.0", "Keine Ergebnisse")
@@ -1511,8 +1512,8 @@ class Listendings:
                 
         else:
             print("gab nüscht")
+            self.Ergebnisse_Listbox.unbind("<Double-1>")
             dmsg = "Dazu konnte ich leider nichts finden..."
-            self.erg_text_widget.insert("0.0", "Keine Ergebnisse")
             self.Suche_suche = ""
             self.etwas_suchen1 = False
             try:
@@ -1733,7 +1734,7 @@ class Listendings:
 
             if os.path.exists(self.Liste_mit_datum):
                 with open(self.Liste_mit_datum, "a") as f:
-                    f.write(f"Uhrzeit: {self.Uhrzeit_text}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
+                    f.write(f"Uhrzeit: {self.Uhrzeit_text}\nAnrufer: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
                 with open(self.Liste_mit_datum, "r") as f:
                     feedback_text = f.read()
                     self.ausgabe_text.delete("1.0", tk.END)
@@ -1750,7 +1751,7 @@ class Listendings:
             else:
                 print("(INFO) Liste zum beschreiben existiert bereits.")
                 with open(self.Liste_mit_datum, "w+") as f:
-                    f.write(f"Uhrzeit: {self.Uhrzeit_text}\nKunde: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
+                    f.write(f"Uhrzeit: {self.Uhrzeit_text}\nAnrufer: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
                 with open(self.Liste_mit_datum, "r") as f:
                     feedback_text = f.read()
                     self.ausgabe_text.delete("1.0", tk.END)
@@ -1837,11 +1838,6 @@ class Listendings:
     def pause(self):
         print("pause(def)")
         try:
-            #self.alles_löschen_knopp.pack_forget()
-            #self.beb_knopp.grid_forget()
-            self.kunde_label.grid_forget()
-            self.problem_label.grid_forget()
-            self.info_label.grid_forget()
             self.kunde_entry.grid_forget()
             self.problem_entry.grid_forget()
             self.info_entry.grid_forget()
@@ -1905,8 +1901,8 @@ class Listendings:
             for zeile in zeilen:
                 if zeile.startswith("Uhrzeit:"):
                     uhrzeit = zeile.replace("Uhrzeit:", "").strip()
-                elif zeile.startswith("Kunde:"):
-                    kunde = zeile.replace("Kunde:", "").strip()
+                elif zeile.startswith("Anrufer:"):
+                    kunde = zeile.replace("Anrufer:", "").strip()
                 elif zeile.startswith("Problem:"):
                     problem = zeile.replace("Problem:", "").strip()
                 elif zeile.startswith("Info:"):
@@ -1926,7 +1922,7 @@ class Listendings:
                 self.tag_string = str(time.strftime("%d %m %Y"))
                 with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
                     schreiber = csv.writer(datei)
-                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer", "Wollte Sprechen", "Weiterleitung"])
+                    schreiber.writerow(["Uhrzeit", "Anrufer", "Problem", "Info", "Telefonnummer", "Wollte Sprechen", "Weiterleitung"])
                     schreiber.writerows(datensaetze)
                     self.zeit_string = time.strftime("%H:%M:%S")
                     self.tag_string = str(time.strftime("%d %m %Y"))
@@ -1949,8 +1945,8 @@ class Listendings:
             for zeile in zeilen:
                 if zeile.startswith("Uhrzeit:"):
                     uhrzeit = zeile.replace("Uhrzeit:", "").strip()
-                elif zeile.startswith("Kunde:"):
-                    kunde = zeile.replace("Kunde:", "").strip()
+                elif zeile.startswith("Anrufer:"):
+                    kunde = zeile.replace("Anrufer:", "").strip()
                 elif zeile.startswith("Problem:"):
                     problem = zeile.replace("Problem:", "").strip()
                 elif zeile.startswith("Info:"):
@@ -1970,7 +1966,7 @@ class Listendings:
                 self.tag_string = str(time.strftime("%d %m %Y"))
                 with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
                     schreiber = csv.writer(datei)
-                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer", "Wollte Sprechen", "Weiterleitung"])
+                    schreiber.writerow(["Uhrzeit", "Anrufer", "Problem", "Info", "Telefonnummer", "Wollte Sprechen", "Weiterleitung"])
                     schreiber.writerows(datensaetze)
                     self.zeit_string = time.strftime("%H:%M:%S")
                     self.tag_string = str(time.strftime("%d %m %Y"))
@@ -2028,8 +2024,8 @@ class Listendings:
             for zeile in zeilen:
                 if zeile.startswith("Uhrzeit:"):
                     uhrzeit = zeile.replace("Uhrzeit:", "").strip()
-                elif zeile.startswith("Kunde:"):
-                    kunde = zeile.replace("Kunde:", "").strip()
+                elif zeile.startswith("Anrufer:"):
+                    kunde = zeile.replace("Anrufer:", "").strip()
                 elif zeile.startswith("Problem:"):
                     problem = zeile.replace("Problem:", "").strip()
                 elif zeile.startswith("Info:"):
@@ -2049,7 +2045,7 @@ class Listendings:
                 self.tag_string = str(time.strftime("%d %m %Y"))
                 with open(self.Listen_Speicherort_Netzwerk_geladen + self.tag_string + ".csv", 'w', newline='') as datei:
                     schreiber = csv.writer(datei)
-                    schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer", "Wollte Sprechen", "Weiterleitung"])
+                    schreiber.writerow(["Uhrzeit", "Anrufer", "Problem", "Info", "Telefonnummer", "Wollte Sprechen", "Weiterleitung"])
                     schreiber.writerows(datensaetze)
                     self.zeit_string = time.strftime("%H:%M:%S")
                     self.tag_string = str(time.strftime("%d %m %Y"))
@@ -2093,16 +2089,21 @@ class Listendings:
         if auto_speichern == "1":
             self.csv_datei_pfad = Listen_Speicherort_Netzwerk_geladen
             if self.csv_datei_pfad:
-                with open(self.Liste_mit_datum, 'r') as text_datei:
-                    daten = text_datei.read()
+                try:
+                    with open(self.Liste_mit_datum, 'r') as text_datei:
+                        daten = text_datei.read()
+                except FileNotFoundError:
+                    print("Die Liste war leer, beende nun ohne zu speichern.")
+                    print("======================================")
+                    sys.exit()
                 zeilen = daten.strip().split('\n')
                 datensaetze = []
                 uhrzeit, kunde, problem, info, Telefonnummer, wollte_sprechen, Weiterleitung = "", "", "", "", "", "", ""
                 for zeile in zeilen:
                     if zeile.startswith("Uhrzeit:"):
                         uhrzeit = zeile.replace("Uhrzeit:", "").strip()
-                    elif zeile.startswith("Kunde:"):
-                        kunde = zeile.replace("Kunde:", "").strip()
+                    elif zeile.startswith("Anrufer:"):
+                        kunde = zeile.replace("Anrufer:", "").strip()
                     elif zeile.startswith("Problem:"):
                         problem = zeile.replace("Problem:", "").strip()
                     elif zeile.startswith("Info:"):
@@ -2122,7 +2123,7 @@ class Listendings:
                     self.tag_string = str(time.strftime("%d %m %Y"))
                     with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
                         schreiber = csv.writer(datei)
-                        schreiber.writerow(["Uhrzeit", "Kunde", "Problem", "Info", "Telefonnummer", "Wollte Sprechen", "Weiterleitung"])
+                        schreiber.writerow(["Uhrzeit", "Anrufer", "Problem", "Info", "Telefonnummer", "Wollte Sprechen", "Weiterleitung"])
                         schreiber.writerows(datensaetze)
                         self.zeit_string = time.strftime("%H:%M:%S")
                         self.tag_string = str(time.strftime("%d %m %Y"))
