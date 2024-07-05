@@ -290,6 +290,16 @@ class Listendings:
             print("[-EINSTELLUNGEN-] Fehler beim Laden des Autospeicherns. Funktion wurde deaktiviert. self.Auto_speichern_Einstellungsdatei = 0. Fehlercode: ", autpsp_err)
             self.Auto_speichern_Einstellungsdatei_var = "0"
                 
+                
+        try:
+            os.remove("tmp.txt")
+            os.remove("tmp1.txt")
+            print("[-INFO-] fehlerhafte Dateien wurden bereinigt.")
+        except FileNotFound:
+            pass
+        except Exception as Ex_tmp_bug:
+            print(f"Es gibt einen Hinweis auf fehlende Schreibrechte im Programmverzeichnis. Fehlermeldung: {Ex_tmp_bug}")
+            messagebox.showerror(title="CiM Fehler", message=f"Es scheint so als hätten Sie keine Schreibrechte im Programmverzeichnis, das sollre nur mit dem Starface Modul ein Problem werden. Fehlercode: {Ex_tmp_bug}") 
         
         
         try: 
@@ -1502,7 +1512,7 @@ class Listendings:
                 self.etwas_suchen1 = False
                 self.Suche_suche = ""
                 self.Ort_wo_gesucht_wird = ""
-                self.suchfenster_ergebnisse.resizable(False,False)
+                self.suchfenster_ergebnisse.destroy()
                 try:
                     self.thread_suche.join()
                     print("Thread wurde erfolgreich beendet.")
@@ -1522,6 +1532,7 @@ class Listendings:
             except Exception as E_t:
                 print(f"Konnte den Thread self.thread_suche nicht beenden, Fehlermeldung: {E_t}")
             messagebox.showinfo(title="CiM Suche", message=dmsg)
+            self.suchfenster_ergebnisse.destroy()
 
     def aufmachen_results(self):
         try:
@@ -1564,8 +1575,8 @@ class Listendings:
                     os.remove("tmp.txt")
                     self.Gesperrte_Nummer = False
                     print("A")
-                    if self.Anruf_Telefonnummer.startswith("b") == True:
-                        print("if 1")
+                    '''if self.Anruf_Telefonnummer.startswith("b") == True:
+                        print("if 1") #Wenn das hier funktioniert hätte, wär einfach nach jedem beendeten Anruf alles flöten gegangen...
                         if self.t_nummer.get() != "" and self.kunde_entry.get() != "": # Nummer und Kunde is da = weiter...
                             print("If 2")
                             self.ganz = " : " + self.Anruf_Telefonnummer #  es wird hier nun bis zum else eine weitere frisch aufgenommene Nummer hinzugefügt
@@ -1619,8 +1630,8 @@ class Listendings:
                                         # hier enden die speziellen Ausnahmen für spezielle Kontakte.
                             except Exception as ExcK1:
                                 print(f"Fehler beim Durchsuchen der JSON DB nach dem Kontakt. Fehlercode: {ExcK1}")
-                    else: # JETZT KOMMT ALLES DAS WENN ES KEIN b IST
-                        try:
+                    else: # JETZT KOMMT ALLES DAS WENN ES KEIN b IST'''
+                        try: # Das hier muss dann noch nach links gerückt werden sonst gehts net
                             print("else f")
                             with open(self.Json_pfad, 'r', encoding='utf-8') as datei:
                                 daten = json.load(datei)
