@@ -1649,7 +1649,6 @@ class Listendings:
                                 self.Ereignislog.insert(tk.END, "-Telefonnummer in Blacklist gefunden!\n Nummer wurde nicht eingefügt.")
                                 self.Anruf_Telefonnummer = None
                                 self.Gesperrte_Nummer = True
-                                return
                             else:
                                 print(f"offensichtlicher weise war {str(Gesperrte_kontakt.get("Telefonnummer_jsn_gesperrt"))} nicht das selbe wie {str(self.Anruf_Telefonnummer)}... oder so ähnlich.")
                             #else:
