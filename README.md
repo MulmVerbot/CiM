@@ -17,6 +17,8 @@ Hier kommt noch bissl Zeugs dazu.
 - Es kann per Schnellmenü in der Kundenablage, in der Datenbank vorangehender "ListenDingse" oder in einem selbst gewählten Ordner/Laufwerk gesucht werden (klappt auch mit Netzlaufwerken)
 - Es kann per Knopfdruck ein Fenster für eine Schnellnotiz geöffnet werden, diese wird nicht gespeichert und funktioniert ohne Ladezeiten oder irgendeinen anderen Schnickschnack
 - Das JSON Adressbuch kann über ein inkludiertes, externes Script in einer grafischen Ansicht dargestellt werden(genauso wie alle anderen JSON Dateien, das Ding ist universal).
+- Es gibt die möglichkeit eine Blacklist zu erstellen, um Nummern aus dem Starface Modul zu entfernen/ignorieren
+
 
 # Zukünftige Features:
 - Eine Todo Liste mit einstellbaren Timern und Erinnerungen
