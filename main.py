@@ -1445,6 +1445,7 @@ class Listendings:
                                     self.Ergebnise_zahl += 1
                                     results.append(file_path)
                                     self.Ergebnisse_Listbox.insert(tk.END, file_path)
+                                    self.Ergebnisse_Listbox.yview(tk.END)
                         except Exception as e:
                             self.gesucht_zahl_mit_fehlern += 1
                             self.durchsucht_text_mit_fehlern = f"Fehler: {self.gesucht_zahl_mit_fehlern}"
