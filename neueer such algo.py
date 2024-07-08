@@ -123,7 +123,7 @@ class Listendings:
     def __init__(self, master):
         self.master = master
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.4.0"
+        self.Version = "Alpha 1.3.5 (1)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -158,9 +158,8 @@ class Listendings:
         self.Db_Ordner_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Db')
         self.Json_pfad = os.path.join(self.Db_Ordner_pfad, 'Db.json')
         self.Einstellung_Theme = os.path.join(self.Einstellungen_ordner, "Theme.txt")
-        self.Blacklist_pfad = os.path.join(self.Db_Ordner_pfad, "Db_Blacklist.json")
-        self.Listen_Speicherort_Netzwerk_geladen_anders = "Netzwerkspeicherort: "
-        self.Listen_Speicherort_geladen_anders = "Lokaler Speicherpfad: "
+        self.Blacklist_pfad = os.path.join(self.Db_Ordner_pfad, "Db_Blacklist.json") 
+        self.syn_json = os.path.join(self.Benutzerordner, "synonyme.json")
         
         
         try: ## das hier sind die Bilder
@@ -175,7 +174,6 @@ class Listendings:
             self.Dings_Bild = tk.CTkImage(Image.open("Bilder/Dings.png"))
             self.Kopieren_Bild = tk.CTkImage(Image.open("Bilder/Kopieren.png"))
             self.Schnellnotiz_Bild = tk.CTkImage(Image.open("Bilder/Schnellnotiz.png"))
-            self.Durchsuchen_Bild_zu = tk.CTkImage(Image.open("Bilder/Durchsuchen_zu.png"))
         except Exception as alk:
             messagebox.showinfo("", f"beim laden der Bild Assets ist ein Fehler aufgetreten: {alk}")
         
@@ -194,7 +192,6 @@ class Listendings:
         self.smtp_server_anmeldung_thread.daemon = True
         self.smtp_server_anmeldung_thread.start()
         
-    #### Farben ####
         #self.Hintergrund_farbe = "SlateGrey"
         self.Hintergrund_farbe = "AntiqueWhite2"
         self.Hintergrund_farbe_Text_Widget = "AntiqueWhite2" #"AntiqueWhite" #"AntiqueWhite2"
@@ -202,12 +199,6 @@ class Listendings:
         self.Border_Farbe = "AntiqueWhite4"
         self.Entry_Farbe = "AntiqueWhite3"
         self.Ereignislog_farbe = self.Hintergrund_farbe_Text_Widget
-        self.aktiviert_farbe = "aquamarine2"
-        self.deaktiviert_farbe = "White"
-        self.dunkle_ui_farbe = "burlywood2"
-        self.helle_ui_farbe = "burlywood1"
-        self.ja_ui_fabe = "burlywood"
-    #### Farben Ende ####
 
         root.configure(fg_color=self.Hintergrund_farbe)
         root.resizable(False, False)
@@ -449,7 +440,6 @@ class Listendings:
         self.Suchen_Menu.add_command(label="Nach alten Einträgen suchen", command=self.Suche_alte_Einträge)
         self.Suchen_Menu.add_command(label="In der Kundenablage suchen...", command=self.Suche_KDabl)
         self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results)
-        self.Suchen_Menu.add_command(label="Such Menü öffnen", command=self.such_menü_hauptmenu)
         self.beb = "0"
         
         try:
@@ -474,16 +464,21 @@ class Listendings:
         self.menu_frame = tk.CTkFrame(master, width=200, height=400)
         self.beb_knopp = tk.CTkButton(master, text="Bearbeiten", command=self.beb_c, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.Bearbeiten_Bild)
         self.beb_knopp.place(x=1260, y=100)
-        self.Such_menu_haupt_frame = tk.CTkFrame(root, width=180, height=110, fg_color=self.Hintergrund_farbe, border_color=self.Border_Farbe, border_width=3, corner_radius=5)
-        self.irgendwo_suchen = tk.CTkButton(master, text="durchsuchen...", command=self.such_menü_hauptmenu, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Durchsuchen_Bild_zu)
-        self.irgendwo_suchen.place(x=1260, y=130)
+        self.alles_löschen_knopp = tk.CTkButton(master, text="durchsuchen...", command=self.Suche1, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Durchsuchen_Bild)
+        self.alles_löschen_knopp.place(x=1260, y=130)
         self.Menü_Knopp = tk.CTkButton(master, text="Menü", command=self.Menu_anzeige_wechseln, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Menü_Bild)
         self.Menü_Knopp.place(x=1260, y=160)
 
 
         
-        self.Pause_menu = tk.CTkFrame(master, width=769, height=420, fg_color="LightSlateGray", border_color="White", border_width=1, corner_radius=1)
-        
+        self.Pause_menu = tk.CTkFrame(master, width=769, height=420, fg_color="LightSlateGray", border_color="White", border_width=1, corner_radius=0)
+        def rückruf_speichern():
+            print("self.mitspeichern.get() = :", self.mitspeichern.get())
+            self.Kontakt_soll_gleich_mitgespeichert_werden = True
+
+        self.mitspeichern = tk.StringVar(value="on")
+        self.abhgehakt_hinzufügen_box = tk.CTkCheckBox(self.Pause_menu, text="Namen und Telefonnummer in KtDb speichern?", command=rückruf_speichern, variable=self.mitspeichern, onvalue="on", offvalue="off")
+        self.abhgehakt_hinzufügen_box.place(x=400,y=10)
 
         self.Ereignislog = tk.CTkTextbox(root, width=220, height=80, wrap="word", text_color="Black", fg_color=self.Ereignislog_farbe, border_color=self.Border_Farbe, border_width=2)
         self.Ereignislog.place(x=1210,y=10)
@@ -499,8 +494,13 @@ class Listendings:
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
 
-        
-        
+        self.Listen_Speicherort_Netzwerk_geladen_anders = "Netzwerkspeicherort: "
+        self.Listen_Speicherort_geladen_anders = "Lokaler Speicherpfad: "
+        self.Listen_Speicherort_geladen_anders_Entry = tk.CTkEntry(self.Pause_menu, width=300)
+        self.Listen_Speicherort_Netzwerk_geladen_anders_Entry = tk.CTkEntry(self.Pause_menu, width=300)
+
+        self.Netzlaufwerk_pfad_geladen_Label = tk.CTkLabel(self.Pause_menu, text=self.Listen_Speicherort_Netzwerk_geladen_anders, text_color="burlywood1", bg_color=self.das_hübsche_grau, corner_radius=3)
+        self.Pfad_geladen_Label = tk.CTkLabel(self.Pause_menu, text=self.Listen_Speicherort_geladen_anders, text_color="burlywood1", bg_color=self.das_hübsche_grau, corner_radius=3)
 
         self.gel_Email_Empfänger_L = tk.CTkLabel(self.Pause_menu, text="Ziel Email Adresse", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
         self.gel_Email_Sender_L = tk.CTkLabel(self.Pause_menu, text="Absende Email Adresse", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
@@ -518,8 +518,8 @@ class Listendings:
         self.SMTP_Server_erneut_anmelden = tk.CTkButton(self.Pause_menu, text="erneut mit SMTP Server verbinden", command=self.SMTP_Anmeldung_Manuell, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
 
         self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche_alte_Einträge, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
-        
-        
+        self.Starface_Modul_Einstellung_Knopp = tk.CTkButton(self.Pause_menu, text="Starface Modul umschalten", command=self.Starface_Modul_umschalten, hover_color="pink")
+        self.Auto_speichern_ändern_knopp = tk.CTkButton(self.Pause_menu, text="Auto Speichern umschalten", command=self.autospeichern_ä_c, hover_color="pink")
         self.Zhe_Clock = tk.CTkLabel(self.Pause_menu, text=self.Zeit)
         self.Zhe_Clock.place(x=10,y=10)
 
@@ -544,8 +544,6 @@ class Listendings:
                 self.wollte_sprechen = "Mit Mike sprechen"
             elif choice == "Mit Frau Tarnath sprechen":
                 self.wollte_sprechen = "Mit Frau Tarnath sprechen"
-            elif choice == "Mit Irgendwen sprechen":
-                self.wollte_sprechen = "Mit Irgendwen sprechen"
             elif choice == "Keine Weiterleitung":
                 self.wollte_sprechen = "-"
 
@@ -561,7 +559,7 @@ class Listendings:
                 self.Design_Einstellung = "System"
         
 
-        self.optionmenu1 = tk.CTkOptionMenu(root, values=["Mit Chefe sprechen", "Mit Christian sprechen", "Mit Mike sprechen", "Mit Frau Tarnath sprechen", "Irgendwen sprechen", "Keine Anfrage"], command=auswahl_gedingst_sprechen, fg_color="White", text_color="Black", dropdown_hover_color="pink")
+        self.optionmenu1 = tk.CTkOptionMenu(root, values=["Mit Chefe sprechen", "Mit Christian sprechen", "Mit Mike sprechen", "Mit Frau Tarnath sprechen","Keine Anfrage"], command=auswahl_gedingst_sprechen, fg_color="White", text_color="Black", dropdown_hover_color="pink")
         self.optionmenu1.set("Mit Wem sprechen?")
         self.optionmenu1.place(x=1260,y=190)
         self.optionmenu = tk.CTkOptionMenu(root, values=["An Chefe gegeben", "An Christian gegeben", "An Mike gegeben", "An Frau Tarnath gegeben","Keine Weiterleitung"], command=auswahl_gedingst, fg_color="White", text_color="Black", dropdown_hover_color="pink")
@@ -585,6 +583,10 @@ class Listendings:
 
         self.kalender_menü_Knopp = tk.CTkButton(master, text="Kalender öffnen", command=self.Kalender_anzeigen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Kalender_Bild)
         self.kalender_menü_Knopp.place(x=1260,y=480)
+        self.KDabl_durchsuchen_Knopp = tk.CTkButton(root, text="In Kunden-DB suchen", command=self.Suche_KDabl, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Kunde_suchen_Bild)
+        self.KDabl_durchsuchen_Knopp.place(x=1260,y=250)
+        self.In_alten_Einträgen_suchen = tk.CTkButton(root, text="In DB suchen", command=self.Suche_alte_Einträge, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Dings_Liste_Bild)
+        self.In_alten_Einträgen_suchen.place(x=1260,y=280)
         self.Einstellungsseite_Knopp = tk.CTkButton(root, text="Einstellungen", command=self.Einstellungen_öffnen, fg_color="white", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.Dings_Bild)
         self.Einstellungsseite_Knopp.place(x=1260,y=420)
         self.Ticket_erstellen_Knopp = tk.CTkButton(root, text="Ticket erstellen", command=self.Ticket_erstellen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Ticket_Bild)
@@ -629,64 +631,62 @@ class Listendings:
             messagebox.showerror(title="CiM Fehler", message=f"Konnte die Datei json_explorer.py nicht finden, stelle sicher, dass sie sich im Programmverzeichnis befindet! Fehlercode: {JSON_E}")
 
     def Einstellungen_öffnen(self):
+        self.Frame_höhe = 150
+        self.Frame_breite = 200
         print("Einstellungen_öffnen (def)")
-        self.Einstellungsseite_Knopp.configure(command=self.Einstellungen_schließen, text="Einstellungen schließen", fg_color=self.aktiviert_farbe, hover_color="Pink")
-        self.Einstellungen_Frame = tk.CTkFrame(root, width=600, height=380, border_color="Pink", border_width=3, fg_color="transparent")
-        self.tabview = tk.CTkTabview(self.Einstellungen_Frame, width=600, height=380, fg_color=self.Entry_Farbe, segmented_button_fg_color=self.Hintergrund_farbe_Text_Widget, segmented_button_selected_hover_color=self.dunkle_ui_farbe, segmented_button_unselected_hover_color=self.dunkle_ui_farbe, segmented_button_selected_color=self.helle_ui_farbe, text_color="Black", segmented_button_unselected_color=self.ja_ui_fabe)
-        self.tabview.add("Starface Modul")
-        self.tabview.add("Adressbuch")
-        self.tabview.add("Speichern")
-        self.tabview.add("SMTP")
-        self.tabview.add("Speicherorte")
-        self.Einstellungen_Frame.place(x=400,y=120)
-        self.Auto_speichern_ändern_knopp = tk.CTkButton(self.tabview.tab("Speichern"), text="Auto Speichern umschalten", command=self.autospeichern_ä_c, hover_color="pink")
-        self.tabview.place(x=0, y=0)
-        self.Starface_Modul_Einstellung_Knopp = tk.CTkButton(self.tabview.tab("Starface Modul"), text="Starface Modul umschalten", command=self.Starface_Modul_umschalten, hover_color="pink")
-        self.Starface_Modul_Einstellung_Knopp.pack()
-        if self.Starface_Modul == "1":
-            self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist aktiviert.", fg_color="aquamarine", text_color="Black")
-        else:
-            self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist deaktiviert.", fg_color="chocolate1", text_color="White")
-        if self.Auto_speichern_Einstellungsdatei_var == "1":
-            self.Auto_speichern_ändern_knopp.configure(text="Autospeichern aktiviert.",fg_color="aquamarine", text_color="Black")
-        else:
-            self.Auto_speichern_ändern_knopp.configure(text="Autospeichern deaktiviert.", fg_color="chocolate1", text_color="White")  # den shais hier kann man so safe beser machen aber egal, vllt irgendwann mal
-        self.Listen_Speicherort_geladen_anders_Entry = tk.CTkEntry(self.tabview.tab("Speicherorte"), width=300)
-        self.Listen_Speicherort_Netzwerk_geladen_anders_Entry = tk.CTkEntry(self.tabview.tab("Speicherorte"), width=300)
-        self.Netzlaufwerk_pfad_geladen_Label = tk.CTkLabel(self.tabview.tab("Speicherorte"), text=self.Listen_Speicherort_Netzwerk_geladen_anders, text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
-        self.Pfad_geladen_Label = tk.CTkLabel(self.tabview.tab("Speicherorte"), text=self.Listen_Speicherort_geladen_anders, text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
-        self.Netzlaufwerk_pfad_geladen_Label.place(x=10,y=80)
-        self.Pfad_geladen_Label.place(x=10,y=110)
-        self.Listen_Speicherort_geladen_anders_Entry.place(x=160, y=110)
-        self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.place(x=160,y=80)
-        try:
-            self.Listen_Speicherort_geladen_anders_Entry.delete(0, tk.END)
-            self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.delete(0, tk.END)
-        except:
-            print("Konnte den Inhalt der Entrys für die Pfade nicht löschen")
-        try:
-            self.Listen_Speicherort_geladen_anders_Entry.insert(0, self.Listen_Speicherort_geladen)
-            self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.insert(0, self.Listen_Speicherort_Netzwerk_geladen)
-        except:
-            print("Konnte die geladenen Speicherorte nicht in die Entrys übernehmen.")
-        def rückruf_speichern():
-            print("self.mitspeichern.get() = :", self.mitspeichern.get())
-            self.Kontakt_soll_gleich_mitgespeichert_werden = True
+        self.Einstellungen_Frame_einz = tk.CTkFrame(root, width=self.Frame_breite, height=self.Frame_höhe, border_color="Pink", border_width=0, fg_color="Red")
+        self.Einstellungen_Auswahl_Knopp = tk.CTkButton(self.Einstellungen_Frame_einz, text="Seite 1", command=self.Einstellungen_öffnen_Seite_1_thread_start, corner_radius=45, border_spacing=1,text_color="Black", fg_color="White", hover_color="DarkSlateGray1", width=20)
+        self.Einstellungen_Auswahl_Knopp_2 = tk.CTkButton(self.Einstellungen_Frame_einz, text="Seite 2", command=self.Einstellungen_öffnen_Seite_2, corner_radius=45, border_spacing=1,text_color="Black", fg_color="White", hover_color="DarkSlateGray1", width=20)
+        self.Einstellungen_Frame_einz.place(x=960,y=340)
+        self.Einstellungen_Frame_einz_is_da = True
+        self.Einstellungsseite_Knopp.configure(text="Einstellungen schließen", command=self.Einstellungen_schließen)
+        self.Einstellungen_Auswahl_Knopp.place(x=5,y=70)
+        self.Einstellungen_Auswahl_Knopp_2.place(x=60,y=20)
 
-        self.mitspeichern = tk.StringVar(value="on")
+    def Einstellungen_öffnen_Seite_1_thread_start(self):
+        print("starte nun den Thread für die Einstellungsseite...")
+        self.Einstellungs_Thread = threading.Thread(target=self.Einstellungen_öffnen_Seite_1)
+        self.Einstellungs_Thread.start()
+        print("Thread läuft...")
+        
+
+    def Einstellungen_öffnen_Seite_1(self):
+        print("Einstellungen_öffnen_Seite_1")
+        self.Einstellungen_öffnen_Seite_1_is_da = True
+        self.Einstellungen_Frame_einz.place_forget()
+        self.Einstellungen_Auswahl_Knopp.place_forget()
+        print("alles vergessen.")
+        
+        while self.Frame_höhe <= 420: # eigentlich soll sich das Fenster hier bewegen
+            self.Frame_höhe += 10
+            self.Einstellungen_Frame_einz = tk.CTkFrame(root, width=self.Frame_breite, height=self.Frame_höhe, border_color="Pink", border_width=0, fg_color="Red")
+            self.Einstellungen_Frame_einz.place_forget()
+            self.Einstellungen_Frame_einz.place(x=0,y=100)
+            print("rame_höhe = ", self.Frame_höhe)
+        while self.Frame_breite <= 1260:
+            self.Frame_breite += 10
+            print("rame_breite = ", self.Frame_breite)
+            self.Einstellungen_Frame_einz = tk.CTkFrame(root, width=self.Frame_breite, height=self.Frame_höhe, border_color="Pink", border_width=0, fg_color="Red")
+            self.Einstellungen_Frame_einz.place_forget()
+            self.Einstellungen_Frame_einz.place(x=0,y=100)
+        
+        self.Einstellungen_Frame_einz = tk.CTkFrame(root, width=self.Frame_breite, height=self.Frame_höhe, border_color="Pink", border_width=0, fg_color="Red")
+        print("Fenster ist jetzt in der richtigen Größe.")
         try:
-            self.abhgehakt_hinzufügen_box.place_forget()
-        except:
-            pass
-        self.abhgehakt_hinzufügen_box = tk.CTkCheckBox(self.tabview.tab("Speichern"), text_color="Black",text="Namen und Telefonnummer in KtDb speichern?", command=rückruf_speichern, variable=self.mitspeichern, onvalue="on", offvalue="off")
-        self.abhgehakt_hinzufügen_box.place(x=20,y=20)
-        self.Auto_speichern_ändern_knopp.place(x=20,y=60)
+            self.Einstellungs_Thread.join()
+            print("Thread wurde erfolgreich beendet.")
+        except Exception as E_t:
+            print(f"Konnte den Thread self.Einstellungs_Thread nicht beenden, Fehlermeldung: {E_t}")
+        
+
+    def Einstellungen_öffnen_Seite_2(self):
+        print("Einstellungen Seite 2 wurde aufgerufen.")
 
     def Einstellungen_schließen(self):
         print("Einstellungen_schließen(def)")
-        self.Einstellungsseite_Knopp.configure(command=self.Einstellungen_öffnen, text="Einstellungen", fg_color=self.deaktiviert_farbe, hover_color="Pink")
-        self.Einstellungen_Frame.place_forget()
-        self.tabview.place_forget()
+        self.Einstellungen_Frame_einz_is_da = False
+        self.Einstellungsseite_Knopp.configure(text="Einstellungen öffnen", command=self.Einstellungen_öffnen)
+        self.Einstellungen_Frame_einz.place_forget()
 
     def Eintrag_raus_kopieren(self):
         print("Eintrag_raus_kopieren(def)")
@@ -889,6 +889,7 @@ class Listendings:
     def Aufgabe_hinzufügen(self):
         text_des_dings = tk.CTkInputDialog(text="Gib eine neue Aufgabe ein:")
         Aufgabe = self.Zeit + "  --  " + text_des_dings.get_input() 
+
         if Aufgabe:
             try:
                 task = Aufgabe
@@ -913,7 +914,23 @@ class Listendings:
         else:
             print("pass")
             pass
+
+    '''def neuer_such_algo(self):
+        try:
+            with open(self.syn_json, 'r', encoding='utf-8') as file:
+                return json.load(file)
+        except Exception as Ex_syn:
+            messagebox.showerror(title="Cim Fehler", message=Ex_syn)
+
+            word_lower = word.lower()
+            for key, synonyms in synonyms_dict.items():
+                key_lower = key.lower()
+                synonyms_lower = [syn.lower() for syn in synonyms]
+                if word_lower == key_lower or word_lower in synonyms_lower:
+                    self.syn_erg =  [key] + synonyms
             
+        messagebox.showinfo(message=self.syn_erg)'''
+
     def checkbox_event(self):  # löschen der Aufgabe
         print("die self.checkbox hat gerade den folgenden Wert #W3#: ", self.check_var.get())
         #if self.check_var.get() == "an":
@@ -929,6 +946,11 @@ class Listendings:
             chkbx.destroy()  # Zerstöre die Checkbox
         except Exception as exc1:
             print("Fehler: ", exc1)
+
+    
+
+    
+
 
     def Kalender_anzeigen_weg(self):
         print("Kalender_anzeigen_weg")
@@ -1012,24 +1034,55 @@ class Listendings:
                     
     def Menu_anzeige_wechseln(self): ############# Hier kommt der ganze Text für das Menü rein.
         print("Menu_anzeige_wechseln(def)")
+        
+        
+        
+
+        if self.Starface_Modul == "1":
+            self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist aktiviert.", fg_color="aquamarine", text_color="Black")
+        else:
+            self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist deaktiviert.", fg_color="chocolate1", text_color="White")
+
+        if self.Auto_speichern_Einstellungsdatei_var == "1":
+            self.Auto_speichern_ändern_knopp.configure(text="Autospeichern aktiviert.",fg_color="aquamarine", text_color="Black")
+        else:
+            self.Auto_speichern_ändern_knopp.configure(text="Autospeichern deaktiviert.", fg_color="chocolate1", text_color="White")
 
        
         if self.Menü_da == True:
             print("menü == true(Menü war offen)")
             # Menu wird jetzt nicht mehr da sein.
+            #self.Suche_knopp.place_forget()
+            self.Starface_Modul_Einstellung_Knopp.place_forget()
+            self.Auto_speichern_ändern_knopp.place_forget()
             self.Pause_menu.place_forget()
             self.Menü_da = False
+            self.Netzlaufwerk_pfad_geladen_Label.place_forget()
+            self.Pfad_geladen_Label.place_forget()
             self.Menü_Knopp.configure(text="Menü", fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+            self.Listen_Speicherort_geladen_anders_Entry.place_forget()
+            self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.place_forget()
             self.smtp_login_erfolgreich_l.place_forget()
             self.Einstellung_Design_auswahl.place_forget()
+            try:
+                self.Listen_Speicherort_geladen_anders_Entry.delete(0, tk.END)
+                self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.delete(0, tk.END)
+            except:
+                print("Konnte den Inhalt der Entrys für die Pfade nicht löschen")
         elif self.Menü_da == False:
             # Menu wird jetzt angezeigt (Ja, wirklich.)
             print("menü == false (Menü war nicht offen)")
             self.Pause_menu.place(x=300,y=10)
             self.Menü_da = True
             self.Menü_Knopp.configure(text="Menü schließen", fg_color="aquamarine", hover_color="aquamarine3")
+            #self.Suche_knopp.place(x=10,y=110)
+            self.Starface_Modul_Einstellung_Knopp.place(x=10,y=50)
+            self.Auto_speichern_ändern_knopp.place(x=10,y=80)
 
-            
+            self.Netzlaufwerk_pfad_geladen_Label.place(x=220,y=80)
+            self.Pfad_geladen_Label.place(x=220,y=110)
+            self.Listen_Speicherort_geladen_anders_Entry.place(x=370, y=110)
+            self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.place(x=370,y=80)
 
             self.gel_Email_Empfänger_L.place(x=220,y=150)
             self.gel_Email_Sender_L.place(x=220,y=180)
@@ -1063,7 +1116,12 @@ class Listendings:
                 
             except Exception as ExGelEm1:
                 print("Fehler beim einfügen der Email Daten in die Entrys. Fehlercode: ", ExGelEm1)
-            
+
+            try:
+                self.Listen_Speicherort_geladen_anders_Entry.insert(0, self.Listen_Speicherort_geladen)
+                self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.insert(0, self.Listen_Speicherort_Netzwerk_geladen)
+            except:
+                print("Konnte die geladenen Speicherorte nicht in die Entrys übernehmen.")
             try:
                 if self.smtp_login_erfolgreich == True:
                     self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP Server war erfolgreich.", text_color="SeaGreen1")
@@ -1086,25 +1144,7 @@ class Listendings:
         best_bl_add.pack()
         self.t_nummer_bl.pack()
         self.kunde_entry_bl.pack()
-        
-    def such_menü_hauptmenu_schließen(self):
-        print("such_menü_hauptmenu_schließen(def)")
-        self.Such_menu_haupt_frame.place_forget()
-        self.KDabl_durchsuchen_Knopp.place_forget()
-        self.durchsuchen_egal.place_forget()
-        self.In_alten_Einträgen_suchen.place_forget()
-        self.irgendwo_suchen.configure(text="durchsuchen...", command=self.such_menü_hauptmenu, hover_color="pink", fg_color="White", image=self.Durchsuchen_Bild_zu)
 
-    def such_menü_hauptmenu(self):
-        print("def such_menü_hauptmenu(self)")
-        self.irgendwo_suchen.configure(text="schließen", command=self.such_menü_hauptmenu_schließen, hover_color="CadetBlue1", fg_color=self.aktiviert_farbe, image=self.Durchsuchen_Bild)
-        self.Such_menu_haupt_frame.place(x=1060,y=100)
-        self.KDabl_durchsuchen_Knopp = tk.CTkButton(self.Such_menu_haupt_frame, text="In Kndn-DB suchen", command=self.Suche_KDabl, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Kunde_suchen_Bild)
-        self.KDabl_durchsuchen_Knopp.place(x=10,y=70)
-        self.durchsuchen_egal = tk.CTkButton(self.Such_menu_haupt_frame, text="irgendwo suchen...", command=self.Suche1, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Durchsuchen_Bild)
-        self.durchsuchen_egal.place(x=10, y=40)
-        self.In_alten_Einträgen_suchen = tk.CTkButton(self.Such_menu_haupt_frame, text="In DB suchen", command=self.Suche_alte_Einträge, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Dings_Liste_Bild)
-        self.In_alten_Einträgen_suchen.place(x=10,y=10)
 
     def zeugs_blacklist(self):
         DATEI_PFAD = self.Blacklist_pfad
@@ -1445,6 +1485,7 @@ class Listendings:
                                     self.Ergebnise_zahl += 1
                                     results.append(file_path)
                                     self.Ergebnisse_Listbox.insert(tk.END, file_path)
+                                    
                         except Exception as e:
                             self.gesucht_zahl_mit_fehlern += 1
                             self.durchsucht_text_mit_fehlern = f"Fehler: {self.gesucht_zahl_mit_fehlern}"
@@ -1455,9 +1496,9 @@ class Listendings:
                 self.Ort_wo_gesucht_wird = ""
                 try:
                     self.thread_suche.join()
-                    print("Thread wurde erfolgreich beendet. (exception vor der Suche)")
+                    print("Thread wurde erfolgreich beendet.")
                 except Exception as E_t:
-                    print(f"Konnte den Thread self.thread_suche nicht beenden, (vor der Suche) Fehlermeldung: {E_t}")
+                    print(f"Konnte den Thread self.thread_suche nicht beenden, Fehlermeldung: {E_t}")
 
             if results:
                 ganzes_ergebnis = "Ich habe in folgenden Dateien " + str(self.Ergebnise_zahl) + " Ergebnisse gefunden:"
@@ -1475,22 +1516,26 @@ class Listendings:
                 self.Ort_wo_gesucht_wird = ""
                 try:
                     self.thread_suche.join()
-                    print("Thread wurde erfolgreich beendet. (nach dem die Results festehen)")
+                    print("Thread wurde erfolgreich beendet.")
                 except Exception as E_t:
-                    print(f"Konnte den Thread self.thread_suche nicht beenden, (im results) Fehlermeldung: {E_t}")
+                    print(f"Konnte den Thread self.thread_suche nicht beenden, Fehlermeldung: {E_t}")
             else:
                 self.Ergebnisse_Listbox.unbind("<Double-1>")
                 dmsg = "Dazu konnte ich leider nichts finden."
+                try:
+                    self.erg_text_widget.insert("0.0", "Keine Ergebnisse")
+                except:
+                    pass
                 self.etwas_suchen1 = False
                 self.Suche_suche = ""
                 self.Ort_wo_gesucht_wird = ""
+                self.suchfenster_ergebnisse.destroy()
                 try:
                     self.thread_suche.join()
-                    print("Thread wurde erfolgreich beendet. (im else der results)")
+                    print("Thread wurde erfolgreich beendet.")
                 except Exception as E_t:
-                    print(f"Konnte den Thread self.thread_suche nicht beenden, (im else der results) Fehlermeldung: {E_t}")
+                    print(f"Konnte den Thread self.thread_suche nicht beenden, Fehlermeldung: {E_t}")
                 messagebox.showinfo(title="CiM Suche", message=dmsg)
-                self.suchfenster_ergebnisse.destroy()
                 
         else:
             print("gab nüscht")
@@ -1500,7 +1545,7 @@ class Listendings:
             self.etwas_suchen1 = False
             try:
                 self.thread_suche.join()
-                print("Thread wurde erfolgreich beendet. (else des gab nüscht)")
+                print("Thread wurde erfolgreich beendet.")
             except Exception as E_t:
                 print(f"Konnte den Thread self.thread_suche nicht beenden, Fehlermeldung: {E_t}")
             messagebox.showinfo(title="CiM Suche", message=dmsg)
@@ -1621,6 +1666,28 @@ class Listendings:
         except Exception as esx:
             print("auto_sp ist abgekackt. Fehlercode: " , esx)
 
+    def Neuladen_der_Liste(self):
+        try:
+            # Ausgabe-Textfeld aktualisieren
+            print("(INFO) versuche die alten Aufzeichenungen zu Laden")
+            self.ausgabe_text.configure(state='normal')
+            with open(self.Liste_mit_datum, "r") as f:
+                feedback_text = f.read()
+                self.ausgabe_text.delete("1.0", tk.END)
+                self.ausgabe_text.insert(tk.END, feedback_text)
+                self.ausgabe_text.configure(state='disabled')
+                print("-----------------------------------------")
+                print("(DEV) Hier ist nun das geladene aus der bisherigen Liste:")
+                print(feedback_text)
+                print("(DEV) Das War das geladene aus der bisherigen Liste.")
+                print("-----------------------------------------")
+        except FileNotFoundError:
+            print("(INFO) Die Datei Liste.txt gibts net")
+            self.ausgabe_text.configure(state='disabled')
+        except:
+            messagebox.showinfo(title="Fehler", message="Ein Unbekannter Fehler ist aufgetreten beim Versuch während des Programmstarts die bisherigen aufzeichnungen zu laden, es könnte sein dass das Programm trotzdem fehlerfrei funktioniert.")
+            self.ausgabe_text.configure(state='disabled')
+
     def Admin_rechte(self):
         try:
             response = ctypes.windll.user32.MessageBoxW(None, "Möchten Sie Administratorrechte anfordern? Dies wird das Programm mit Adminrechten neustarten. Das funktioniert auch glaube nur auf Windows.", "Administratorrechte erforderlich", 4)
@@ -1650,6 +1717,8 @@ class Listendings:
             self.Uhrzeit_anruf_start = "-"
         if self.Uhrzeit_anruf_ende == None:
             self.Uhrzeit_anruf_ende = self.zeit_string + " (mit abweichung)"
+            
+
         self.Uhrzeit_text = self.Uhrzeit_anruf_start + " bis " + self.Uhrzeit_anruf_ende
         
         if kunde or problem or info != "":

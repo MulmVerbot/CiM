@@ -1,0 +1,7 @@
+{
+    "WLAN-Router": ["Router", "Access-Point", "AP", "Wi-Fi-Router", "WLAN Access-Point", "WLAN AP"],
+    "Computer": ["Rechner", "PC", "Desktop", "Arbeitsplatzrechner", "Workstation"],
+    "Smartphone": ["Handy", "Mobiltelefon", "Phone", "Smartphone", "Mobilgerät"],
+    "Drucker": ["Printer", "Ausgabegerät", "Printgerät", "Multifunktionsdrucker"],
+    "Tablet": ["Tablet", "Tablet-PC", "Flachrechner", "Tab"]
+}
