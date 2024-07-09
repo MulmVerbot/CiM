@@ -1244,7 +1244,7 @@ class Listendings:
                 telefonnummer = entry_telefonnummer.get()
                 name = entry_name.get()
                 if not telefonnummer or not name:
-                    messagebox.showwarning("Warnung", "Bitte beide Felder ausfüllen.")
+                    #messagebox.showwarning("Warnung", "Bitte beide Felder ausfüllen.")
                     return
 
                 kontakte = lade_kontakte()
