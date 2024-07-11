@@ -123,7 +123,7 @@ class Listendings:
     def __init__(self, master):
         self.master = master
         self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.4.0"
+        self.Version = "Alpha 1.4.0 (1)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -135,6 +135,7 @@ class Listendings:
         self.Uhrzeit_anruf_start = None
         self.Pause = True
         self.Menü_da = False
+        self.beb = "0"
         self.Starface_Modul = "0"
         self.Auto_speichern_Einstellung = "0"
         self.Autospeichern_tkvar = "0"
@@ -161,7 +162,6 @@ class Listendings:
         self.Blacklist_pfad = os.path.join(self.Db_Ordner_pfad, "Db_Blacklist.json")
         self.Listen_Speicherort_Netzwerk_geladen_anders = "Netzwerkspeicherort: "
         self.Listen_Speicherort_geladen_anders = "Lokaler Speicherpfad: "
-        
         
         try: ## das hier sind die Bilder
             self.Bearbeiten_Bild = tk.CTkImage(Image.open("Bilder/Bearbeiten.png"))
@@ -301,7 +301,7 @@ class Listendings:
             self.Auto_speichern_Einstellungsdatei_var = "0"
                 
                 
-        try:
+        try:  # vehrindern das n bug geschieht
             os.remove("tmp.txt")
             os.remove("tmp1.txt")
             print("[-INFO-] fehlerhafte Dateien wurden bereinigt.")
@@ -450,7 +450,7 @@ class Listendings:
         self.Suchen_Menu.add_command(label="In der Kundenablage suchen...", command=self.Suche_KDabl)
         self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results)
         self.Suchen_Menu.add_command(label="Such Menü öffnen", command=self.such_menü_hauptmenu)
-        self.beb = "0"
+        
         
         try:
             print("(INFO) versuche die alten Aufzeichenungen zu Laden")
