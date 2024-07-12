@@ -1,20 +1,18 @@
 import json
 import tkinter as Atk
 from tkinter import ttk, filedialog, messagebox
+from tkinter import Menu
+from main import Listendings
 import os
 
 class JSONTreeView:
     def __init__(self, root):
         self.root = root
-        self.Version = "1.0.1"
-        self.root.title("JSON Datei betracher " + self.Version)
+        self.root.title("JSON Tree Viewer and Editor")
         
         self.tree = ttk.Treeview(root)
         self.tree.pack(expand=True, fill='both')
-        scrollbar = Atk.Scrollbar(self.tree, orient=Atk.VERTICAL)
-        scrollbar.pack(side=Atk.RIGHT, fill=Atk.Y)
-        self.tree.config(yscrollcommand=scrollbar.set)
-        scrollbar.config(command=self.tree.yview)
+
 
         laden = Atk.Button(root, text="JSON Datei laden...", command=self.load_json_file)
         laden.pack()
@@ -22,6 +20,7 @@ class JSONTreeView:
         speichern.pack()
         DB_laden = Atk.Button(root, text="DB öffnen", command=self.load_json_file_standard)
         DB_laden.pack()
+
 
     def load_json_file_standard(self):
         self.Benutzerordner = os.path.expanduser('~')
@@ -51,12 +50,10 @@ class JSONTreeView:
         if isinstance(data, dict):
             for key, value in data.items():
                 node_id = self.tree.insert(parent, 'end', text=key, values=(self.get_display_value(value),))
-                self.tree.item(node_id, open=True)  # Knoten sofort ausklappen
                 self.populate_tree(value, node_id)
         elif isinstance(data, list):
             for index, item in enumerate(data):
                 node_id = self.tree.insert(parent, 'end', text=f"[{index}]", values=(self.get_display_value(item),))
-                self.tree.item(node_id, open=True)  # Knoten sofort ausklappen
                 self.populate_tree(item, node_id)
         else:
             self.tree.insert(parent, 'end', text=data)
