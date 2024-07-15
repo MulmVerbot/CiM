@@ -23,6 +23,7 @@ try:
     from email.mime.text import MIMEText
     from tkinterdnd2 import DND_FILES
     from PIL import Image
+    import todo
     #from pypresence import Presence
 except Exception as E:
     print(f"(FATAL) Fehler beim laden der Bibliotheken, Fehlermeldung: {E}")
@@ -1381,17 +1382,11 @@ class Listendings:
                     self.Suche_algo()
                 except Exception as esisx:
                     print("fehler161: ",esisx)
-                        
-                    
-            '''else:
-                messagebox.showinfo(message="Suche Abgebrochen.")
-                self.suchfenster_ergebnisse.destroy()'''
         else:
-            messagebox.showinfo(message="Suche Abgebrochen. self.Suche_suche !='''' ")
+            messagebox.showinfo(message="Suche Abgebrochen.")
             self.suchfenster_ergebnisse.destroy()
 
     def Eintrag_aufmachen(self, event):
-        print("ich würde jetzt diesen Eintrag aufmachen")
         auswahl_der_Listbox = self.Ergebnisse_Listbox.curselection()
         index = auswahl_der_Listbox[0]
         zu_aufmachen_Eintrag = self.Ergebnisse_Listbox.get(index)
