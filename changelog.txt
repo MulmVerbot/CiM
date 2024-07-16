@@ -1,0 +1,6 @@
+- 16.07.2024 Alpha 1.4.0 (3) - 
+    - Es gibt jetzt Changelogs die im Menü einsehbar sind (herzlichen Glückwunsch, Du hast es gefunden :D).
+    - Es wurden ein paar Exceptions besser abgefangen.
+    - Die readme.md Datei wurde angepasst und umfasst jetzt auch die neuen Funktionen aus den neueren Versionen.
+    - Die Knöpfe für die Suche sind nun in der richtigen Reihenfolge.
+    - Die nervige Meldung beim hinzufügen von Kontakten ist endlich weg.

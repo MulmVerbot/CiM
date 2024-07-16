@@ -33,6 +33,9 @@ except Exception as E:
 
 class Listendings:
     Programm_läuft = True
+    class ChangelogLeer(Exception): # Die Exception die kommt, wenn der Changelog leer ist.
+        "- Der Changelog ist leer -"
+
     class RequestHandler(BaseHTTPRequestHandler):
         def do_GET(self):
             saite = "<!DOCTYPE html><html lang='de'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Ganzflächiger Hintergrund</title><style>body {margin: 0;padding: 0;background-color: #40444c;}.content {padding: 20px;color: white;font-family: Arial, sans-serif;}</style></head><body><div class='content'><h1>Meine Seite mit ganzflächigem Hintergrund</h1><p>Hier ist etwas Text auf der Seite.</p></div></body></html>"
@@ -123,7 +126,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M"
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Alpha 1.4.0 (2)"
+        self.Version = "Alpha 1.4.0 (3)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -368,12 +371,7 @@ class Listendings:
         except PermissionError:
                 messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Der Gespeicherte Netzwerkpfad konnte nicht aufgerufen werden.")
         except Exception as e:
-            ex = "Irgendwas ist passiert: ", e
-            print(ex)
-
-        
-
-        
+            print(f"Irgendwas ist passiert: {e}")
 
     ######### JETZT KOMMT HIER DIE SHAISE FÜR DAS EMAIL TICKET ZEUGS ###########
         try:
@@ -400,7 +398,7 @@ class Listendings:
     ###################################
 
     #### Die Stars der Stunde ####
-        self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Kunde", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
+        self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Name des Anrufers", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
         self.t_nummer = tk.CTkEntry(master, width=600, placeholder_text="Telefonnummer", state="disabled", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
         self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
         self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
@@ -428,12 +426,13 @@ class Listendings:
         self.Bearbeiten_Menu = Menu(self.menu, tearoff=0)
         self.Suchen_Menu = Menu(self.menu, tearoff=0)
         self.Menü = Menu(self.menu, tearoff=0)
-        self.menu.add_cascade(label=self.Programm_Name + self.Version, menu=self.menudings)
+        self.menu.add_cascade(label=self.Programm_Name  + " " + self.Version, menu=self.menudings)
         self.menu.add_cascade(label="Einstellungen", menu=self.Einstellungen)
         self.menu.add_cascade(label="Bearbeiten", menu=self.Bearbeiten_Menu)
         self.menu.add_cascade(label="Speichern", menu=self.Speichern_Menu)
         self.menu.add_cascade(label="Suchen", menu=self.Suchen_Menu)
         self.menudings.add_command(label="Info", command=self.info)
+        self.menudings.add_command(label="Changelog", command=self.changelog_aufmachen)
         self.menudings.add_command(label="Admin rechte aktivieren", command=self.Admin_rechte)
         self.Einstellungen.add_command(label="Speicherort des ListenDings ändern...", command=self.ListenDings_speicherort_ändern)
         self.Speichern_Menu.add_command(label="als CSV Speichern", command=self.als_csv_speichern_eigener_ort)
@@ -602,6 +601,44 @@ class Listendings:
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
+
+    def changelog_aufmachen(self):
+        print("changelog_aufmachen(def)")
+        self.changelog_Fenster = tk.CTkToplevel(root)
+        self.changelog_Fenster.title("Changelogs")
+        self.changelog_Fenster.configure(fg_color="White")
+        self.Textfeld_changelog = tk.CTkTextbox(self.changelog_Fenster, width=820, height=420, text_color="Black", fg_color="azure", wrap="word", border_width=0)
+        height = 420
+        width = 820
+        try:
+            x = root.winfo_x() + root.winfo_width()//2 - self.changelog_Fenster.winfo_width()//2
+            y = root.winfo_y() + root.winfo_height()//2 - self.changelog_Fenster.winfo_height()//2
+            self.changelog_Fenster.geometry(f"{width}x{height}+{x}+{y}")
+        except:
+            print("Konnte das changelogfenster nicht zentrieren.")
+            self.changelog_Fenster.geometry(f"{width}x{height}+{x}+{y}")
+        self.changelog_Fenster.resizable(False,False)
+        self.Textfeld_changelog.pack()
+        try:
+            with open("changelog.txt", "r") as chlg:
+                changelog_text = chlg.read()
+                if changelog_text == "":
+                    raise Listendings.ChangelogLeer("Dings is leer.")
+                self.Textfeld_changelog.insert(tk.END, changelog_text)
+                changelog_text = None
+                chlg = None
+        except FileNotFoundError:
+            self.Textfeld_changelog.insert(tk.END,"- Changelog ist existiert nicht oder konnte nicht gefunden werden -")
+            changelog_text = None
+            chlg = None
+        except Listendings.ChangelogLeer as chlg_leer:
+            self.Textfeld_changelog.insert(tk.END,f"- {chlg_leer} -")
+            changelog_text = None
+            chlg = None
+        except Exception as chlg_ex:
+            self.Textfeld_changelog.insert(tk.END,f"- Beim öffnen des Changelogs ist ein Fehler aufgetreten: {chlg_ex} -")
+            changelog_text = None
+            chlg = None
 
     def schnellnotizen_öffnen(self):
         print("schnellnotizen_öffnen(def)")
@@ -1100,11 +1137,11 @@ class Listendings:
         self.irgendwo_suchen.configure(text="schließen", command=self.such_menü_hauptmenu_schließen, hover_color="CadetBlue1", fg_color=self.aktiviert_farbe, image=self.Durchsuchen_Bild)
         self.Such_menu_haupt_frame.place(x=1060,y=100)
         self.KDabl_durchsuchen_Knopp = tk.CTkButton(self.Such_menu_haupt_frame, text="In Kndn-DB suchen", command=self.Suche_KDabl, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Kunde_suchen_Bild)
-        self.KDabl_durchsuchen_Knopp.place(x=10,y=70)
+        self.KDabl_durchsuchen_Knopp.place(x=10,y=40)
         self.durchsuchen_egal = tk.CTkButton(self.Such_menu_haupt_frame, text="irgendwo suchen...", command=self.Suche1, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Durchsuchen_Bild)
-        self.durchsuchen_egal.place(x=10, y=40)
+        self.durchsuchen_egal.place(x=10, y=10)
         self.In_alten_Einträgen_suchen = tk.CTkButton(self.Such_menu_haupt_frame, text="In DB suchen", command=self.Suche_alte_Einträge, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Dings_Liste_Bild)
-        self.In_alten_Einträgen_suchen.place(x=10,y=10)
+        self.In_alten_Einträgen_suchen.place(x=10,y=70)
 
     def zeugs_blacklist(self):
         DATEI_PFAD = self.Blacklist_pfad
@@ -1186,7 +1223,7 @@ class Listendings:
                 name = self.kunde_entry.get()
 
                 if not telefonnummer or not name:
-                    messagebox.showwarning("Warnung", "Bitte beide Felder ausfüllen.")
+                    #messagebox.showwarning("Warnung", "Bitte beide Felder ausfüllen.")
                     return
 
                 kontakte = lade_kontakte()
