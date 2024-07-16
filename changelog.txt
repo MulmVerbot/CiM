@@ -1,3 +1,6 @@
+- 16.07.2024 Alpha 1.4.0 (4) -
+    - Ein Bug wurde behoben bei dem man im Textfeld des Changelogs schreiben kann.
+    
 - 16.07.2024 Alpha 1.4.0 (3) - 
     - Es gibt jetzt Changelogs die im Menü einsehbar sind (herzlichen Glückwunsch, Du hast es gefunden :D).
     - Es wurden ein paar Exceptions besser abgefangen.

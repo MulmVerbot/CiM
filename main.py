@@ -126,7 +126,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M"
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Alpha 1.4.0 (3)"
+        self.Version = "Alpha 1.4.0 (4)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -625,18 +625,22 @@ class Listendings:
                 if changelog_text == "":
                     raise Listendings.ChangelogLeer("Dings is leer.")
                 self.Textfeld_changelog.insert(tk.END, changelog_text)
+                self.Textfeld_changelog.configure(state="disabled")
                 changelog_text = None
                 chlg = None
         except FileNotFoundError:
             self.Textfeld_changelog.insert(tk.END,"- Changelog ist existiert nicht oder konnte nicht gefunden werden -")
+            self.Textfeld_changelog.configure(state="disabled")
             changelog_text = None
             chlg = None
         except Listendings.ChangelogLeer as chlg_leer:
             self.Textfeld_changelog.insert(tk.END,f"- {chlg_leer} -")
+            self.Textfeld_changelog.configure(state="disabled")
             changelog_text = None
             chlg = None
         except Exception as chlg_ex:
             self.Textfeld_changelog.insert(tk.END,f"- Beim öffnen des Changelogs ist ein Fehler aufgetreten: {chlg_ex} -")
+            self.Textfeld_changelog.configure(state="disabled")
             changelog_text = None
             chlg = None
 
