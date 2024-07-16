@@ -23,8 +23,6 @@ try:
     from email.mime.text import MIMEText
     from tkinterdnd2 import DND_FILES
     from PIL import Image
-    import todo
-    #from pypresence import Presence
 except Exception as E:
     print(f"(FATAL) Fehler beim laden der Bibliotheken, Fehlermeldung: {E}")
     try:
@@ -123,8 +121,9 @@ class Listendings:
 # Freude ist bloß ein Mangel an Informationen
     def __init__(self, master):
         self.master = master
-        self.Programm_Name = "ListenDings"
-        self.Version = "Alpha 1.4.0 (1)"
+        self.Programm_Name = "M.U.L.M"
+        self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
+        self.Version = "Alpha 1.4.0 (2)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -1603,7 +1602,7 @@ class Listendings:
 #### ende der werbung ####### was für ne werbung?
     def info(self):
         print("(INFO) Info(def)")
-        messagebox.showinfo(title="Info", message=self.Programm_Name + " " + self.Version + "\n Programmiert von Maximilian Becker, \n https://dings.software für mehr Informationen")
+        messagebox.showinfo(title="Info", message=self.Programm_Name_lang + " " + self.Version + "\n Programmiert von Maximilian Becker, \n https://dings.software für mehr Informationen")
 
     def Auto_sp_ändern(self):
         print("auto_speichern(def)")
