@@ -23,6 +23,9 @@ try:
     from email.mime.text import MIMEText
     from tkinterdnd2 import DND_FILES
     from PIL import Image
+    from collections import defaultdict
+    from nltk.corpus import wordnet
+    import re
 except Exception as E:
     print(f"(FATAL) Fehler beim laden der Bibliotheken, Fehlermeldung: {E}")
     try:
@@ -126,7 +129,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M"
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Alpha 1.4.0 (5)"
+        self.Version = "Alpha 1.4.1"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -235,6 +238,7 @@ class Listendings:
         self.Kalender_offen = False
         self.Kontakt_soll_gleich_mitgespeichert_werden = True
         self.Design_Einstellung = None
+        self.Suche_suche_3 = None
         
         self.zeit_string = time.strftime("%H:%M:%S")
         self.tag_string = str(time.strftime("%d %m %Y"))
@@ -449,7 +453,7 @@ class Listendings:
         self.Suchen_Menu.add_command(label="In der Kundenablage suchen...", command=self.Suche_KDabl)
         self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results)
         self.Suchen_Menu.add_command(label="Such Menü öffnen", command=self.such_menü_hauptmenu)
-        
+        self.Suchen_Menu.add_command(label="Sehr genaue Suche nutzen (Suche 3.0)", command=self.genaue_suche_start)
         
         try:
             print("(INFO) versuche die alten Aufzeichenungen zu Laden")
@@ -788,6 +792,10 @@ class Listendings:
     def Ticket_erstellen_api(self): # Ich denke nicht, dass ich das hier so schnell hinbekommen werde, da das Ding immer wieder nen fehler schmeißt den ich nicht mal verstehe haha.
         print("Ticket_erstellen_api")
         messagebox.showerror(title="Fehler", message="Dieses Feature existiert noch nicht, wie hast Du überhaupt geschafft diese Funktion aufzurufen!?!???")
+
+    def genaue_suche_start(self):
+        self.thread_suche_3 = threading.Thread(target=self.genaue_suche)
+        self.thread_suche_3.start()
 
     
 
@@ -1566,8 +1574,98 @@ class Listendings:
             print(f"Es sind weniger als 20 Suchergbnisse.{self.Anzal_der_Ergebnisse}")
             self.aufmachen_results()
             
-####               
 ####
+    def genaue_suche(self):
+        self.suchedrei_Fenster = tk.CTkToplevel(root)
+        self.suchedrei_Fenster.title("Changelogs")
+        self.suchedrei_Fenster.configure(fg_color="White")
+        self.Textfeld_suchedrei = tk.CTkTextbox(self.suchedrei_Fenster, width=820, height=420, text_color="Black", fg_color="azure", wrap="word", border_width=0)
+        height = 420
+        width = 820
+        try:
+            x = root.winfo_x() + root.winfo_width()//2 - self.suchedrei_Fenster.winfo_width()//2
+            y = root.winfo_y() + root.winfo_height()//2 - self.suchedrei_Fenster.winfo_height()//2
+            self.suchedrei_Fenster.geometry(f"{width}x{height}+{x}+{y}")
+        except:
+            print("Konnte das changelogfenster nicht zentrieren.")
+            self.suchedrei_Fenster.geometry(f"{width}x{height}+{x}+{y}")
+        self.suchedrei_Fenster.resizable(False,False)
+        self.Textfeld_suchedrei.pack()
+        
+        def list_synonyms(word):
+            synonyms = set()
+            for synset in wordnet.synsets(word):
+                for lemma in synset.lemmas():
+                    synonyms.add(lemma.name())
+            return list(synonyms)
+
+        def is_text_file(file_name):
+            text_extensions = {'.txt', '.rtf', '.md', '.html', '.xml', '.csv'}
+            _, ext = os.path.splitext(file_name)
+            return ext.lower() in text_extensions
+
+        def search_files_for_words(path, words):
+            results = defaultdict(list)
+            word_synonyms = defaultdict(list)
+            
+            
+            for word in words:
+                synonyms = list_synonyms(word)
+                word_synonyms[word] = synonyms + [word]  # Include the word itself as a synonym
+            
+            
+            for root, _, files in os.walk(path):
+                for file in files:
+                    if is_text_file(file):
+                        file_path = os.path.join(root, file)
+                        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                            for line_num, line in enumerate(f, 1):
+                                for word, synonyms in word_synonyms.items():
+                                    pattern = r'\b({})\b'.format('|'.join(map(re.escape, synonyms)))
+                                    matches = re.findall(pattern, line, flags=re.IGNORECASE)
+                                    if matches:
+                                        results[word].append((file_path, line_num, line.strip()))
+                                    
+            return results, word_synonyms
+        
+
+        path = filedialog.askdirectory()
+        such_dialog_3 = tk.CTkInputDialog(title="CiM Suche", text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht. (Groß-und Kleinschreibung wird ignoriert)")
+        try:
+            x = root.winfo_x() + root.winfo_width()//2 - such_dialog_3.winfo_width()//2
+            y = root.winfo_y() + root.winfo_height()//2 - such_dialog_3.winfo_height()//2
+            such_dialog_3.geometry(f"x+{x}+{y}")
+        except:
+            print("Fehler beim zentrieren des Such-Dialogs. selbst wenn ich hier die Fehlermeldung hinschreiben würde, würdest Du sie nicht verstehen denn ich habe auch keine Ahnung.")
+
+        self.Suche_suche_3 = such_dialog_3.get_input()
+        if self.Suche_suche_3:
+            words = self.Suche_suche_3
+            print("dann mal los")
+            
+            if not os.path.isdir(path):
+                print("Der angegebene Pfad existiert nicht oder ist kein Verzeichnis.")
+            else:
+                results, word_synonyms = search_files_for_words(path, words)
+                
+                if not results:
+                    print("Keine Ergebnisse gefunden.")
+                    messagebox.showinfo(title="Info", message="Darunter wurde nichts gefunden.")
+                else:
+                    for word, occurrences in results.items():
+                        self.Textfeld_suchedrei.insert(tk.END, f"\nWort: {word}")
+                        self.Textfeld_suchedrei.insert(tk.END, f"   Synonyme: {', '.join(word_synonyms[word])}")
+                        for occurrence in occurrences:
+                            self.Textfeld_suchedrei.insert(tk.END, f"   Datei: {occurrence[0]}")
+                            self.Textfeld_suchedrei.insert(tk.END, f"   Zeile {occurrence[1]}: {occurrence[2]}")
+
+                    
+                    
+                    
+        else:
+            messagebox.showinfo(title="Info", message="Suche abgebrochen.")
+            self.Suche_suche_3 = ""
+
 ####
     def Kunde_ruft_an(self):
         print("Thread gestartet: Kunde_ruft_an (def)")
