@@ -126,7 +126,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M"
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Alpha 1.4.0 (4)"
+        self.Version = "Alpha 1.4.0 (5)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -191,7 +191,7 @@ class Listendings:
         self.Thread_Kunderuftan.daemon = True
         self.thread_uhr.start()
         self.Thread_Kunderuftan.start()
-        self.thread_suche = threading.Thread(target=self.Suche_algo)
+        #self.thread_suche = threading.Thread(target=self.Suche_algo)
         #self.thread_suche.setDaemon(True)
         self.smtp_server_anmeldung_thread = threading.Timer(1, self.SMTP_Anmeldung)
         self.smtp_server_anmeldung_thread.daemon = True
@@ -1410,7 +1410,7 @@ class Listendings:
             try:
                 #if self.etwas_suchen1 == False:
                  #   self.etwas_suchen1 = True
-                
+                self.thread_suche = threading.Thread(target=self.Suche_algo)
                 self.thread_suche.start()
                     #self.Suche_algo()
                 print("Thread für die Suche gestartet.")

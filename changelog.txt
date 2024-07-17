@@ -1,3 +1,7 @@
+- 17.07.2024 Alpha 1.4.0 (5) -
+    - ich habe gerade nicht ernsthaft das "schwierigste" Problem in diesem Programm mit einer Zeile gelöst oder?... oh mann bin ich kacke.
+    - Die Suche kann nun mehrmals genutzt werden, da der Thread richtig beendet wird.
+    
 - 16.07.2024 Alpha 1.4.0 (4) -
     - Ein Bug wurde behoben bei dem man im Textfeld des Changelogs schreiben kann.
     
