@@ -129,7 +129,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M"
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Alpha 1.4.1"
+        self.Version = "Beta 1.0"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -453,7 +453,7 @@ class Listendings:
         self.Suchen_Menu.add_command(label="In der Kundenablage suchen...", command=self.Suche_KDabl)
         self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results)
         self.Suchen_Menu.add_command(label="Such Menü öffnen", command=self.such_menü_hauptmenu)
-        self.Suchen_Menu.add_command(label="Sehr genaue Suche nutzen (Suche 3.0)", command=self.genaue_suche_start)
+        self.Suchen_Menu.add_command(label="Sehr genaue Suche nutzen (Suche 3.0)(verbugt)", command=self.genaue_suche_start)
         
         try:
             print("(INFO) versuche die alten Aufzeichenungen zu Laden")
