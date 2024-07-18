@@ -2,4 +2,3 @@ customtkinter
 tkinterdnd2
 Pillow
 nltk
-tkinter
