@@ -1,4 +1,5 @@
 try:
+    import sys
     import customtkinter as tk
     ###import tkinter as tk
     from tkinter import ttk
@@ -8,7 +9,6 @@ try:
     from tkinter import Menu
     import time
     import os
-    import sys
     import csv
     import ctypes
     import json
