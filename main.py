@@ -65,7 +65,7 @@ class Listendings:
                         tmp.write(besserer_pfad)
                 except Exception as e:
                     print(f"Fehler beim Schreiben in tmp.txt: {e}")
-            self.wfile.write(b"<html><head><title>CiM Modul</title></head>")
+            self.wfile.write(b"<html><head><title>Starface Modul</title></head>")
             self.wfile.write(b"<meta name='viewport' content='width=device-width, initial-scale=1.0'><style>body {margin: 0;padding: 0;background-color: #293136;}.content {padding: 20px;color: white;font-family: Arial, sans-serif;}</style></head><body><div class='content'></div></body></html>")
 
     class WebServerThread(threading.Thread):
