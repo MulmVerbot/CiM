@@ -1,3 +1,7 @@
+- 22.07.2024 Beta 1.0 (0) -
+    - Verbesserung an der CodeBase: ab jetzt kann mit self.Ereignislog_insert(nachricht_f_e="Nachricht") viel besser eine Nachricht in
+        den Ereignislog geschrieben werden.
+
 - 18.07.2024 Beta 1.0 -
     - Erste Veröffentlichung, hinzufügen einer Anleitung für die Ausführung des Scripts in der README.md Datei.
     -  Warnhinweis zur verbuggten Suche 3.0

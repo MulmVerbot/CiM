@@ -42,6 +42,7 @@ class Listendings:
     class RequestHandler(BaseHTTPRequestHandler):
         def do_GET(self):
             saite = "<!DOCTYPE html><html lang='de'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Ganzflächiger Hintergrund</title><style>body {margin: 0;padding: 0;background-color: #40444c;}.content {padding: 20px;color: white;font-family: Arial, sans-serif;}</style></head><body><div class='content'><h1>Meine Seite mit ganzflächigem Hintergrund</h1><p>Hier ist etwas Text auf der Seite.</p></div></body></html>"
+            #neue_saite = "<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><title>Fenster schließen Beispiel</title><script type="text/javascript">window.onload = function() {window.close();};</script></head><body><p>Das Fenster wird nach dem Laden automatisch geschlossen.</p></body></html>"
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
@@ -67,7 +68,7 @@ class Listendings:
                     print(f"Fehler beim Schreiben in tmp.txt: {e}")
             self.wfile.write(b"<html><head><title>Starface Modul</title></head>")
             self.wfile.write(b"<meta name='viewport' content='width=device-width, initial-scale=1.0'><style>body {margin: 0;padding: 0;background-color: #293136;}.content {padding: 20px;color: white;font-family: Arial, sans-serif;}</style></head><body><div class='content'></div></body></html>")
-
+            
     class WebServerThread(threading.Thread):
         def run(self):
             port = 8080
@@ -129,7 +130,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M"
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.0"
+        self.Version = "Beta 1.0 (0)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -183,7 +184,7 @@ class Listendings:
             self.Schnellnotiz_Bild = tk.CTkImage(Image.open("Bilder/Schnellnotiz.png"))
             self.Durchsuchen_Bild_zu = tk.CTkImage(Image.open("Bilder/Durchsuchen_zu.png"))
         except Exception as alk:
-            messagebox.showinfo("", f"beim laden der Bild Assets ist ein Fehler aufgetreten: {alk}")
+            messagebox.showinfo(self.Programm_Name, f"beim laden der Bild Assets ist ein Fehler aufgetreten: {alk}")
         
         self.Monat = time.strftime("%m")
         self.Thread_Kunderuftan = threading.Timer(2, self.Kunde_ruft_an)
@@ -213,6 +214,7 @@ class Listendings:
         self.dunkle_ui_farbe = "burlywood2"
         self.helle_ui_farbe = "burlywood1"
         self.ja_ui_fabe = "burlywood"
+        self.das_hübsche_grau = "LightSlateGray"
     #### Farben Ende ####
 
         root.configure(fg_color=self.Hintergrund_farbe)
@@ -226,8 +228,6 @@ class Listendings:
         self.empfänger_email = ""
         self.smtp_server = ""
         self.pw_email = ""
-        self.smtp_login_erfolgreich = False
-        self.das_hübsche_grau = "LightSlateGray"
 
         self.zachen = 0
         self.fertsch_var = None
@@ -239,6 +239,8 @@ class Listendings:
         self.Kontakt_soll_gleich_mitgespeichert_werden = True
         self.Design_Einstellung = None
         self.Suche_suche_3 = None
+        self.smtp_login_erfolgreich = False
+        nachricht_f_e = None
         
         self.zeit_string = time.strftime("%H:%M:%S")
         self.tag_string = str(time.strftime("%d %m %Y"))
@@ -420,7 +422,6 @@ class Listendings:
         self.info_entry.place(x=5,y=65)
         self.t_nummer.place(x=605,y=5)
         self.ausgabe_text.place(x=0,y=100)
-
         
         self.menu = Menu(root)
         root.configure(menu=self.menu)
@@ -482,18 +483,11 @@ class Listendings:
         self.irgendwo_suchen.place(x=1260, y=130)
         self.Menü_Knopp = tk.CTkButton(master, text="Menü", command=self.Menu_anzeige_wechseln, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Menü_Bild)
         self.Menü_Knopp.place(x=1260, y=160)
-
-
-        
         self.Pause_menu = tk.CTkFrame(master, width=769, height=420, fg_color="LightSlateGray", border_color="White", border_width=1, corner_radius=1)
-        
-
         self.Ereignislog = tk.CTkTextbox(root, width=220, height=80, wrap="word", text_color="Black", fg_color=self.Ereignislog_farbe, border_color=self.Border_Farbe, border_width=2)
         self.Ereignislog.place(x=1210,y=10)
-        self.Ereignislog.insert(tk.END, "[-Ereignislog-]\n")
-
-        
-
+        self.Ereignislog_insert(nachricht_f_e="[-Ereignislog-]")
+        #self.Ereignislog.insert(tk.END, "[-Ereignislog-]\n")
 
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
@@ -501,9 +495,6 @@ class Listendings:
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
-
-        
-        
 
         self.gel_Email_Empfänger_L = tk.CTkLabel(self.Pause_menu, text="Ziel Email Adresse", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
         self.gel_Email_Sender_L = tk.CTkLabel(self.Pause_menu, text="Absende Email Adresse", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
@@ -647,6 +638,14 @@ class Listendings:
             self.Textfeld_changelog.configure(state="disabled")
             changelog_text = None
             chlg = None
+
+    def Ereignislog_insert(self, nachricht_f_e): # wenn ichs richtig gemacht hab, wird mir das mega viel Zeit ersparen.
+        print(f"schreibe nun {nachricht_f_e} in den Ereignislog.")
+        if nachricht_f_e != None:
+            nachricht_f_e_fertsch = nachricht_f_e + "\n"
+            self.Ereignislog.insert(tk.END, nachricht_f_e_fertsch)
+            return
+        return
 
     def schnellnotizen_öffnen(self):
         print("schnellnotizen_öffnen(def)")
