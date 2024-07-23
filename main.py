@@ -7,6 +7,7 @@ try:
     from tkinter import messagebox
     from tkinter import filedialog
     from tkinter import Menu
+    import webbrowser
     import time
     import os
     import csv
@@ -26,6 +27,7 @@ try:
     from collections import defaultdict
     from nltk.corpus import wordnet
     import re
+    import pyperclip
 except Exception as E:
     print(f"(FATAL) Fehler beim laden der Bibliotheken, Fehlermeldung: {E}")
     try:
@@ -130,7 +132,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M"
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.0 (0)"
+        self.Version = "Beta 1.0 (1)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -410,6 +412,7 @@ class Listendings:
         self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
     #### ####
         
+        
 
         self.senden_button = tk.CTkButton(master, text="Senden", command="")
         self.senden_button.bind('<Button-1>', self.senden)
@@ -496,22 +499,9 @@ class Listendings:
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
 
-        self.gel_Email_Empfänger_L = tk.CTkLabel(self.Pause_menu, text="Ziel Email Adresse", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
-        self.gel_Email_Sender_L = tk.CTkLabel(self.Pause_menu, text="Absende Email Adresse", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
-        self.gel_Email_Absender_Passwort_L = tk.CTkLabel(self.Pause_menu, text="Absende Mail Kennwort", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
-        self.gel_SMTP_Server_L = tk.CTkLabel(self.Pause_menu, text="SMTP Server", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
+        
 
-        self.gel_Email_Empfänger_E = tk.CTkEntry(self.Pause_menu, placeholder_text="Empfänger Adresse", width=300)
-        self.gel_Email_Sender_E = tk.CTkEntry(self.Pause_menu, placeholder_text="Sender Email Adresse", width=300)
-        self.gel_Email_Absender_Passwort_E = tk.CTkEntry(self.Pause_menu, placeholder_text="Passwort der Email Adresse", width=300, show="#")
-        self.gel_SMTP_Server_E = tk.CTkEntry(self.Pause_menu, placeholder_text="IPv4 oder Namen des SMTP Eintragen", width=300)
-
-        self.Mail_Einstellungen_speichern = tk.CTkButton(self.Pause_menu, text="Email Einstellungen speichern", command=self.Email_Einstellungen_speichern, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1")
-        self.smtp_login_erfolgreich_l = tk.CTkLabel(self.Pause_menu, text="Anmeldestatus")
-
-        self.SMTP_Server_erneut_anmelden = tk.CTkButton(self.Pause_menu, text="erneut mit SMTP Server verbinden", command=self.SMTP_Anmeldung_Manuell, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
-
-        self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche_alte_Einträge, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        #self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche_alte_Einträge, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         
         
         self.Zhe_Clock = tk.CTkLabel(self.Pause_menu, text=self.Zeit)
@@ -587,7 +577,25 @@ class Listendings:
         self.Eintrag_raus_kopieren_knopp.place(x=1260,y=390)
         self.Notizen_knopp = tk.CTkButton(root, text="Schnellnotiz", command=self.schnellnotizen_öffnen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.Schnellnotiz_Bild)
         self.Notizen_knopp.place(x=1260,y=360)
-
+        self.Berichtsheft_knopp = tk.CTkButton(self.Pause_menu, text="Berichtsheft öffnen", command=self.Berichtsheft_aufmachen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.Einstellungen_Frame = tk.CTkFrame(root, width=600, height=380, border_color="Pink", border_width=3, fg_color="transparent")
+        self.tabview = tk.CTkTabview(self.Einstellungen_Frame, width=600, height=380, fg_color=self.Entry_Farbe, segmented_button_fg_color=self.Hintergrund_farbe_Text_Widget, segmented_button_selected_hover_color=self.dunkle_ui_farbe, segmented_button_unselected_hover_color=self.dunkle_ui_farbe, segmented_button_selected_color=self.helle_ui_farbe, text_color="Black", segmented_button_unselected_color=self.ja_ui_fabe)
+        self.tabview.add("Starface Modul")
+        self.tabview.add("Adressbuch")
+        self.tabview.add("Speichern")
+        self.tabview.add("SMTP")
+        self.tabview.add("Speicherorte")
+        self.gel_Email_Empfänger_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Ziel Email Adresse", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
+        self.gel_Email_Sender_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Absende Email Adresse", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
+        self.gel_Email_Absender_Passwort_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Absende Mail Kennwort", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
+        self.gel_SMTP_Server_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="SMTP Server", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
+        self.gel_Email_Empfänger_E = tk.CTkEntry(self.tabview.tab("SMTP"), placeholder_text="Empfänger Adresse", width=300)
+        self.gel_Email_Sender_E = tk.CTkEntry(self.tabview.tab("SMTP"), placeholder_text="Sender Email Adresse", width=300)
+        self.gel_Email_Absender_Passwort_E = tk.CTkEntry(self.tabview.tab("SMTP"), placeholder_text="Passwort der Email Adresse", width=300, show="#")
+        self.gel_SMTP_Server_E = tk.CTkEntry(self.tabview.tab("SMTP"), placeholder_text="IPv4 oder Hostnamen für SMTP Eintragen", width=300)
+        self.Mail_Einstellungen_speichern = tk.CTkButton(self.tabview.tab("SMTP"), text="Email Einstellungen speichern", command=self.Email_Einstellungen_speichern, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1")
+        self.smtp_login_erfolgreich_l = tk.CTkLabel(self.tabview.tab("SMTP"), text="Anmeldestatus")
+        self.SMTP_Server_erneut_anmelden = tk.CTkButton(self.tabview.tab("SMTP"), text="erneut mit SMTP Server verbinden", command=self.SMTP_Anmeldung_Manuell, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         
 
         
@@ -675,16 +683,10 @@ class Listendings:
     def Einstellungen_öffnen(self):
         print("Einstellungen_öffnen (def)")
         self.Einstellungsseite_Knopp.configure(command=self.Einstellungen_schließen, text="Einstellungen schließen", fg_color=self.aktiviert_farbe, hover_color="Pink")
-        self.Einstellungen_Frame = tk.CTkFrame(root, width=600, height=380, border_color="Pink", border_width=3, fg_color="transparent")
-        self.tabview = tk.CTkTabview(self.Einstellungen_Frame, width=600, height=380, fg_color=self.Entry_Farbe, segmented_button_fg_color=self.Hintergrund_farbe_Text_Widget, segmented_button_selected_hover_color=self.dunkle_ui_farbe, segmented_button_unselected_hover_color=self.dunkle_ui_farbe, segmented_button_selected_color=self.helle_ui_farbe, text_color="Black", segmented_button_unselected_color=self.ja_ui_fabe)
-        self.tabview.add("Starface Modul")
-        self.tabview.add("Adressbuch")
-        self.tabview.add("Speichern")
-        self.tabview.add("SMTP")
-        self.tabview.add("Speicherorte")
         self.Einstellungen_Frame.place(x=400,y=120)
-        self.Auto_speichern_ändern_knopp = tk.CTkButton(self.tabview.tab("Speichern"), text="Auto Speichern umschalten", command=self.autospeichern_ä_c, hover_color="pink")
         self.tabview.place(x=0, y=0)
+        self.Auto_speichern_ändern_knopp = tk.CTkButton(self.tabview.tab("Speichern"), text="Auto Speichern umschalten", command=self.autospeichern_ä_c, hover_color="pink")
+        
         self.Starface_Modul_Einstellung_Knopp = tk.CTkButton(self.tabview.tab("Starface Modul"), text="Starface Modul umschalten", command=self.Starface_Modul_umschalten, hover_color="pink")
         self.Starface_Modul_Einstellung_Knopp.pack()
         if self.Starface_Modul == "1":
@@ -726,17 +728,44 @@ class Listendings:
         self.abhgehakt_hinzufügen_box.place(x=20,y=20)
         self.Auto_speichern_ändern_knopp.place(x=20,y=60)
 
+        self.gel_Email_Empfänger_L.place(x=10,y=150)
+        self.gel_Email_Sender_L.place(x=10,y=180)
+        self.gel_Email_Absender_Passwort_L.place(x=10,y=210)
+        self.gel_SMTP_Server_L.place(x=10,y=240)
+        self.gel_Email_Empfänger_E.place(x=160,y=150)
+        self.gel_Email_Sender_E.place(x=160,y=180)
+        self.gel_Email_Absender_Passwort_E.place(x=160,y=210)
+        self.gel_SMTP_Server_E.place(x=160,y=240)
+        self.Mail_Einstellungen_speichern.place(x=10,y=280)
+        self.SMTP_Server_erneut_anmelden.place(x=250,y=280)
+
     def Einstellungen_schließen(self):
         print("Einstellungen_schließen(def)")
         self.Einstellungsseite_Knopp.configure(command=self.Einstellungen_öffnen, text="Einstellungen", fg_color=self.deaktiviert_farbe, hover_color="Pink")
+        self.Starface_Modul_Einstellung_Knopp.pack_forget()
         self.Einstellungen_Frame.place_forget()
         self.tabview.place_forget()
+        
 
     def Eintrag_raus_kopieren(self):
         print("Eintrag_raus_kopieren(def)")
         self.geladener_Text = self.ausgabe_text.get("0.0", "end")
         self.einzelner_Eintrag = self.geladener_Text.split("\n\n")
-        print(f"Aufgteilter Text: {self.einzelner_Eintrag}")
+        if self.einzelner_Eintrag:
+            print(f"Aufgeteilter Text: {self.einzelner_Eintrag}")
+            # Rückwärts durch die Liste gehen, um den letzten passenden Eintrag zu finden
+            for eintrag in reversed(self.einzelner_Eintrag):
+                if eintrag.startswith("Uhrzeit:") and "Telefonnummer:" in eintrag:
+                    kopierter_text = "Hier nun der kopierte Text aus dem M.U.L.M: \n" + eintrag
+                    pyperclip.copy(kopierter_text)
+                    print(f"Text in der Zwischenablage: {kopierter_text}")
+                    self.Ereignislog_insert(nachricht_f_e="- letzte Nachricht kopiert. -")
+                    break
+            else:
+                print("Kein passender Eintrag gefunden")
+        else:
+            print("Die Liste ist leer")
+        
 
     def Ticket_erstellen_mail(self): # naja das halt dann mit dem Mail.to Befehl.
         print("Ticket_erstellen (Email)")
@@ -796,6 +825,10 @@ class Listendings:
         self.thread_suche_3 = threading.Thread(target=self.genaue_suche)
         self.thread_suche_3.start()
 
+    def Berichtsheft_aufmachen(self):
+        print("öffne nun Berichtsheft...")
+        url = "https://bildung.ihk.de/webcomponent/dibe/AUSZUBILDENDER/berichtsheft/wochenansicht"
+        webbrowser.get("chrome").open(url)
     
 
     def Ticket_erstellen(self): # Die erste frage, ob es per Mail oder API erstellt werden soll.
@@ -1070,6 +1103,7 @@ class Listendings:
             self.Menü_Knopp.configure(text="Menü", fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
             self.smtp_login_erfolgreich_l.place_forget()
             self.Einstellung_Design_auswahl.place_forget()
+            self.Berichtsheft_knopp.place_forget()
         elif self.Menü_da == False:
             # Menu wird jetzt angezeigt (Ja, wirklich.)
             print("menü == false (Menü war nicht offen)")
@@ -1077,19 +1111,8 @@ class Listendings:
             self.Menü_da = True
             self.Menü_Knopp.configure(text="Menü schließen", fg_color="aquamarine", hover_color="aquamarine3")
 
+            self.Berichtsheft_knopp.place(x=200,y=100)
             
-
-            self.gel_Email_Empfänger_L.place(x=220,y=150)
-            self.gel_Email_Sender_L.place(x=220,y=180)
-            self.gel_Email_Absender_Passwort_L.place(x=220,y=210)
-            self.gel_SMTP_Server_L.place(x=220,y=240)
-
-            self.gel_Email_Empfänger_E.place(x=370,y=150)
-            self.gel_Email_Sender_E.place(x=370,y=180)
-            self.gel_Email_Absender_Passwort_E.place(x=370,y=210)
-            self.gel_SMTP_Server_E.place(x=370,y=240)
-            self.Mail_Einstellungen_speichern.place(x=420,y=280)
-            self.SMTP_Server_erneut_anmelden.place(x=420,y=360)
 
             self.Einstellung_Design_auswahl.place(x=10,y=200)
             self.Einstellung_Design_L.place(x=10,y=170)

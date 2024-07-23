@@ -1,24 +1,42 @@
-- 22.07.2024 Beta 1.0 (0) -
-    - Verbesserung an der CodeBase: ab jetzt kann mit self.Ereignislog_insert(nachricht_f_e="Nachricht") viel besser eine Nachricht in
-        den Ereignislog geschrieben werden.
-
-- 18.07.2024 Beta 1.0 -
-    - Erste Veröffentlichung, hinzufügen einer Anleitung für die Ausführung des Scripts in der README.md Datei.
-    -  Warnhinweis zur verbuggten Suche 3.0
-
-- 17.07.2024 Alpha 1.4.1 -
-    - es gibt nen neuen Such Algo, der aber noch nen fetten Bug hat
-
-- 17.07.2024 Alpha 1.4.0 (5) -
-    - ich habe gerade nicht ernsthaft das "schwierigste" Problem in diesem Programm mit einer Zeile gelöst oder?... oh mann bin ich kacke.
-    - Die Suche kann nun mehrmals genutzt werden, da der Thread richtig beendet wird.
-    
-- 16.07.2024 Alpha 1.4.0 (4) -
-    - Ein Bug wurde behoben bei dem man im Textfeld des Changelogs schreiben kann.
-    
-- 16.07.2024 Alpha 1.4.0 (3) - 
-    - Es gibt jetzt Changelogs die im Menü einsehbar sind (herzlichen Glückwunsch, Du hast es gefunden :D).
-    - Es wurden ein paar Exceptions besser abgefangen.
-    - Die readme.md Datei wurde angepasst und umfasst jetzt auch die neuen Funktionen aus den neueren Versionen.
-    - Die Knöpfe für die Suche sind nun in der richtigen Reihenfolge.
-    - Die nervige Meldung beim hinzufügen von Kontakten ist endlich weg.
+|- 23.07.2024 Beta 1.0.1 -
+|    - Jetzt gibt es einen Knopf um das IHK Berichtsheft zu öffnen.
+|    - Die Email Einstellungen stehen jetzt in der Einstellungsseite
+|    - Der Knopf "letztes kopieren, hat nun eine Funktion und kopiert den letzten Eintrag mit einem kleinen Infotext heraus.
+|
+|=================================================================================================
+|
+|- 22.07.2024 Beta 1.0 (0) -
+|    - Verbesserung an der CodeBase: ab jetzt kann mit self.Ereignislog_insert(nachricht_f_e="Nachricht") viel besser eine Nachricht in den Ereignislog geschrieben werden.
+|
+|=================================================================================================
+|
+|- 18.07.2024 Beta 1.0 -
+|    - Erste Veröffentlichung, hinzufügen einer Anleitung für die Ausführung des Scripts in der README.md Datei.
+|    -  Warnhinweis zur verbuggten Suche 3.0
+|
+|=================================================================================================
+|
+|- 17.07.2024 Alpha 1.4.1 -
+|    - es gibt nen neuen Such Algo, der aber noch nen fetten Bug hat
+|
+|=================================================================================================
+|
+|- 17.07.2024 Alpha 1.4.0 (5) -
+|    - ich habe gerade nicht ernsthaft das "schwierigste" Problem in diesem Programm mit einer Zeile gelöst oder?... oh mann bin ich kacke.
+|    - Die Suche kann nun mehrmals genutzt werden, da der Thread richtig beendet wird.
+|
+|=================================================================================================
+|
+|- 16.07.2024 Alpha 1.4.0 (4) -
+|    - Ein Bug wurde behoben bei dem man im Textfeld des Changelogs schreiben kann.
+|
+|=================================================================================================
+|
+|- 16.07.2024 Alpha 1.4.0 (3) - 
+|    - Es gibt jetzt Changelogs die im Menü einsehbar sind (herzlichen Glückwunsch, Du hast es gefunden :D).
+|    - Es wurden ein paar Exceptions besser abgefangen.
+|    - Die readme.md Datei wurde angepasst und umfasst jetzt auch die neuen Funktionen aus den neueren Versionen.
+|    - Die Knöpfe für die Suche sind nun in der richtigen Reihenfolge.
+|    - Die nervige Meldung beim hinzufügen von Kontakten ist endlich weg.
+|
+=================================================================================================

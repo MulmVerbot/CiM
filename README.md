@@ -1,6 +1,6 @@
 # Multifunktionaler Unternehmens-Logbuch-Manager (M.U.L.M)
-Der Multifunktionaler Unternehmens-Logbuch-Manager
-Zum aufschreiben von Dingen zum Beispiel wenn jemand in einer Firma anruft und irgendwas will
+Der Multifunktionaler Unternehmens-Logbuch-Manager, 
+zum aufschreiben von Dingen zum Beispiel wenn jemand in einer Firma anruft und irgendwas will
 
 Hier kommt noch bissl Zeugs dazu.
 ## Features bis jetzt:
@@ -18,6 +18,7 @@ Hier kommt noch bissl Zeugs dazu.
 - Es kann per Knopfdruck ein Fenster für eine Schnellnotiz geöffnet werden, diese wird nicht gespeichert und funktioniert ohne Ladezeiten oder irgendeinen anderen Schnickschnack
 - Das JSON Adressbuch kann über ein inkludiertes, externes Script in einer grafischen Ansicht dargestellt werden(genauso wie alle anderen JSON Dateien, das Ding ist universal).
 - Es gibt die möglichkeit eine Blacklist zu erstellen, um Nummern aus dem Starface Modul zu entfernen/ignorieren
+- Das IHK Berichtsheft kann geöffnet werden
 
 
 ## Zukünftige Features:
@@ -25,14 +26,14 @@ Hier kommt noch bissl Zeugs dazu.
 - Account System für mehrere Benutzer
 - "DingsListen" verschlüsseln und ausschließlich schreibgeschützt im Programm auslesbar machen alternativ auch mit Passwort
 - Ki gestützte Formulierung von texten um die Weiterleitung der Stichpunkte als Email zu erleichtern und zu verschnellern
--  Der Such Algo wird noch verbessert und soll die möglichkeit bieten, mit Akronymen zu suchen (erste Alpha bereits separat vorhanden).
+- Der Such Algo wird noch verbessert und soll die möglichkeit bieten, mit Akronymen zu suchen (erste Alpha bereits vorhanden).
 
 
 # Installation:
 ### vorrausgetzt dass Python 3.12 und pip bereits installiert sind:
-- 1.  pip install -r requirements.txt
+- 1. pip install -r requirements.txt
 - 2. Python3 setup.py
 - 3. zum starten: Python3 main.py oder den MacOS Kurzbefehl nutzen.
 
-### manchmal muss man statt '''Python3''' auch '''Python''' schreiben
+#### manchmal muss man statt '''Python3''' auch '''Python''' schreiben
   
