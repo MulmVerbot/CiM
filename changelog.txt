@@ -3,6 +3,7 @@
 |    - Die Email Einstellungen stehen jetzt in der Einstellungsseite
 |    - Der Knopf "letztes kopieren, hat nun eine Funktion und kopiert den letzten Eintrag mit einem kleinen Infotext heraus.
 |    - Die Umstellung der Ereignislog_insert Funktion ist vollendet.
+|    - Bugfix ereignislog
 |
 |=================================================================================================
 |

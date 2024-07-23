@@ -132,7 +132,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M"
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.0 (1)"
+        self.Version = "Beta 1.0.1"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -781,7 +781,7 @@ class Listendings:
             print(self.empfänger_email)
             print(self.alternative_empfänger_adresse)
             print("[-TICKET ERSTELLEN-] Ticket wird an die hinterlegte Emailadresse versendet...")
-            self.Ereignislog_insert(nachricht_f_e="-[-TICKET ERSTELLEN-] Ticket wird an die hinterlegte Emailadresse versendet...-\n")
+            self.Ereignislog_insert(nachricht_f_e="-[-TICKET ERSTELLEN-] Ticket wird an die hinterlegte Emailadresse versendet...-")
         elif self.alternative_empfänger_adresse != "":
             msg["To"] = self.alternative_empfänger_adresse
             print(self.alternative_empfänger_adresse)
@@ -799,17 +799,17 @@ class Listendings:
                 self.smtp_login_erfolgreich = False
                 try:
                     self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP fehlgeschlagen.", text_color="Red")
-                    self.Ereignislog_insert(nachricht_f_e="-Anmeldung am SMTP fehlgeschlagen.-\n")
+                    self.Ereignislog_insert(nachricht_f_e="-Anmeldung am SMTP fehlgeschlagen.-")
                 except:
                     pass
                 messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim Anmelden am Mailserver. Fehlercode: {self.smtp_server}")
             if self.alternative_empfänger_adresse == "":
                 try:
                     server.sendmail(self.sender_email, self.empfänger_email, msg.as_string())
-                    self.Ereignislog_insert(nachricht_f_e="-Email an SMTP Server versendet.-\n")
+                    self.Ereignislog_insert(nachricht_f_e="-Email an SMTP Server versendet.-")
                 except Exception as EmailEx2:
                     print("Fehler beim anmelden beim senden an den Mailserver. Fehlercode: ", EmailEx2)
-                    self.Ereignislog_insert(nachricht_f_e="-Anmeldung am SMTP fehlgeschlagen.-\n")
+                    self.Ereignislog_insert(nachricht_f_e="-Anmeldung am SMTP fehlgeschlagen.-")
                     messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der Nachricht an den Mailserver. Fehlercode: {EmailEx2}")
                 self.Ticket_Fenster.destroy()
                 messagebox.showinfo(title="CiM", message="Das Ticket wurde erfolgreich erstellt.")
@@ -1210,16 +1210,16 @@ class Listendings:
             for kontakt in kontakte['Kontakte']:
                 if kontakt['Telefonnummer_jsn_gesperrt'] == telefonnummer:
                     #messagebox.showinfo(title="CiM", message=f"Dieser Kontakt existiert bereits unter dem Namen {kontakt['Name']} mit der Telefonnummer {kontakt['Telefonnummer_jsn']}.")
-                    self.Ereignislog_insert(nachricht_f_e="-Der Name besteht bereits.-\n")
+                    self.Ereignislog_insert(nachricht_f_e="-Der Name besteht bereits.-")
                     kontakt['Name'] = name
                     gefunden = True
                     #messagebox.showinfo("Info", "Name der bestehenden Telefonnummer aktualisiert.")
-                    self.Ereignislog_insert(nachricht_f_e="-bestehende Nummer wurde aktualisiert.-\n")
+                    self.Ereignislog_insert(nachricht_f_e="-bestehende Nummer wurde aktualisiert.-")
                     break
 
             if not gefunden:
                 kontakte['Kontakte'].append({"Telefonnummer_jsn_gesperrt": telefonnummer, "Name": name})
-                self.Ereignislog_insert(nachricht_f_e="-Kontakt wurde hinzugefügt.-\n")
+                self.Ereignislog_insert(nachricht_f_e="-Kontakt wurde hinzugefügt.-")
                 #messagebox.showinfo("Erfolg", "Kontakt hinzugefügt.")
 
             speichere_kontakte(kontakte)
@@ -1266,16 +1266,16 @@ class Listendings:
                 for kontakt in kontakte['Kontakte']:
                     if kontakt['Telefonnummer_jsn'] == telefonnummer:
                         #messagebox.showinfo(title="CiM", message=f"Dieser Kontakt existiert bereits unter dem Namen {kontakt['Name']} mit der Telefonnummer {kontakt['Telefonnummer_jsn']}.")
-                        self.Ereignislog_insert(nachricht_f_e="-Der Name besteht bereits.-\n")
+                        self.Ereignislog_insert(nachricht_f_e="-Der Name besteht bereits.-")
                         kontakt['Name'] = name
                         gefunden = True
                         #messagebox.showinfo("Info", "Name der bestehenden Telefonnummer aktualisiert.")
-                        self.Ereignislog_insert(nachricht_f_e="-bestehende Nummer wurde aktualisiert.-\n")
+                        self.Ereignislog_insert(nachricht_f_e="-bestehende Nummer wurde aktualisiert.-")
                         break
 
                 if not gefunden:
                     kontakte['Kontakte'].append({"Telefonnummer_jsn": telefonnummer, "Name": name})
-                    self.Ereignislog_insert(nachricht_f_e="-Kontakt wurde hinzugefügt.-\n")
+                    self.Ereignislog_insert(nachricht_f_e="-Kontakt wurde hinzugefügt.-")
                     #messagebox.showinfo("Erfolg", "Kontakt hinzugefügt.")
 
                 speichere_kontakte(kontakte)
@@ -1290,7 +1290,7 @@ class Listendings:
                 else:
                     kontakte['Kontakte'] = neue_kontakte
                     speichere_kontakte(kontakte)
-                    self.Ereignislog_insert(nachricht_f_e="-Kontakt wurde gelöscht.-\n")
+                    self.Ereignislog_insert(nachricht_f_e="-Kontakt wurde gelöscht.-")
                     #messagebox.showinfo("Erfolg", "Kontakt gelöscht.")
             hinzufuegen_kontakt()
         else: # Es soll nicht mitgespeichert werden.
@@ -1697,7 +1697,7 @@ class Listendings:
                 with open("tmp.txt", "r") as tmp_ld:
                     gel_tmp = tmp_ld.read()
                     self.Anruf_Telefonnummer = gel_tmp
-                    print1 = "-abgefangene Telefonummer: " + self.Anruf_Telefonnummer + "-\n"
+                    print1 = "-abgefangene Telefonummer: " + self.Anruf_Telefonnummer + "-"
                     self.Ereignislog_insert(nachricht_f_e=print1)
                     self.Uhrzeit_anruf_start = self.Zeit
                     tmp_ld.close()
@@ -1712,7 +1712,7 @@ class Listendings:
                             with open(self.Blacklist_pfad, "r", encoding='utf-8') as b_datei:
                                 daten_blacklist = json.load(b_datei)
                         except Exception as E:
-                            self.Ereignislog_insert(nachricht_f_e="-Konnte die Blacklist nicht laden-\n")
+                            self.Ereignislog_insert(nachricht_f_e="-Konnte die Blacklist nicht laden-")
                             daten_blacklist = ""
                         for Gesperrte_kontakt in daten_blacklist.get("Kontakte", []):
                             print(f"ich durchsuche die Blacklist... mit {Gesperrte_kontakt.get("Telefonnummer_jsn_gesperrt")}")
@@ -1737,7 +1737,7 @@ class Listendings:
                                     Name_gel_für_e = kontakt.get("Name")
                                     self.kunde_entry.insert(tk.END,Name_gel_für_e)
                                     self.Anruf_Telefonnummer = None
-                                    self.Ereignislog_insert(nachricht_f_e="-Anruf wurde beendet.-\n")
+                                    self.Ereignislog_insert(nachricht_f_e="-Anruf wurde beendet.-")
                                     # hier kommen jetzt die Ausnahmen für spezielle Kontakte hin. !!WENN SIE GEFUNDEN WUDEN!!
                                                 
                                         # hier enden die speziellen Ausnahmen für spezielle Kontakte.
