@@ -490,7 +490,7 @@ class Listendings:
         self.Ereignislog = tk.CTkTextbox(root, width=220, height=80, wrap="word", text_color="Black", fg_color=self.Ereignislog_farbe, border_color=self.Border_Farbe, border_width=2)
         self.Ereignislog.place(x=1210,y=10)
         self.Ereignislog_insert(nachricht_f_e="[-Ereignislog-]")
-        #self.Ereignislog.insert(tk.END, "[-Ereignislog-]\n")
+        #self.Ereignislog_insert(nachricht_f_e="[-Ereignislog-]\n")
 
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
@@ -781,7 +781,7 @@ class Listendings:
             print(self.empfänger_email)
             print(self.alternative_empfänger_adresse)
             print("[-TICKET ERSTELLEN-] Ticket wird an die hinterlegte Emailadresse versendet...")
-            self.Ereignislog.insert(tk.END, "-[-TICKET ERSTELLEN-] Ticket wird an die hinterlegte Emailadresse versendet...-\n")
+            self.Ereignislog_insert(nachricht_f_e="-[-TICKET ERSTELLEN-] Ticket wird an die hinterlegte Emailadresse versendet...-\n")
         elif self.alternative_empfänger_adresse != "":
             msg["To"] = self.alternative_empfänger_adresse
             print(self.alternative_empfänger_adresse)
@@ -799,17 +799,17 @@ class Listendings:
                 self.smtp_login_erfolgreich = False
                 try:
                     self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP fehlgeschlagen.", text_color="Red")
-                    self.Ereignislog.insert(tk.END, "-Anmeldung am SMTP fehlgeschlagen.-\n")
+                    self.Ereignislog_insert(nachricht_f_e="-Anmeldung am SMTP fehlgeschlagen.-\n")
                 except:
                     pass
                 messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim Anmelden am Mailserver. Fehlercode: {self.smtp_server}")
             if self.alternative_empfänger_adresse == "":
                 try:
                     server.sendmail(self.sender_email, self.empfänger_email, msg.as_string())
-                    self.Ereignislog.insert(tk.END, "-Email an SMTP Server versendet.-\n")
+                    self.Ereignislog_insert(nachricht_f_e="-Email an SMTP Server versendet.-\n")
                 except Exception as EmailEx2:
                     print("Fehler beim anmelden beim senden an den Mailserver. Fehlercode: ", EmailEx2)
-                    self.Ereignislog.insert(tk.END, "-Anmeldung am SMTP fehlgeschlagen.-\n")
+                    self.Ereignislog_insert(nachricht_f_e="-Anmeldung am SMTP fehlgeschlagen.-\n")
                     messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der Nachricht an den Mailserver. Fehlercode: {EmailEx2}")
                 self.Ticket_Fenster.destroy()
                 messagebox.showinfo(title="CiM", message="Das Ticket wurde erfolgreich erstellt.")
@@ -960,6 +960,7 @@ class Listendings:
                     pass
             except Exception as EmailEx1:
                 print("[-SMTP ANMELDUNG-] Fehler beim anmelden beim Mailserver. Fehlercode: ", EmailEx1)
+                self.Ereignislog_insert(nachricht_f_e="- [-SMTP ANMELDUNG-] Fehler beim anmelden beim Mailserver. -")
                 self.smtp_login_erfolgreich = False
                 try:
                     self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP fehlgeschlagen.", text_color="Red")
@@ -1209,16 +1210,16 @@ class Listendings:
             for kontakt in kontakte['Kontakte']:
                 if kontakt['Telefonnummer_jsn_gesperrt'] == telefonnummer:
                     #messagebox.showinfo(title="CiM", message=f"Dieser Kontakt existiert bereits unter dem Namen {kontakt['Name']} mit der Telefonnummer {kontakt['Telefonnummer_jsn']}.")
-                    self.Ereignislog.insert(tk.END, "-Der Name besteht bereits.-\n")
+                    self.Ereignislog_insert(nachricht_f_e="-Der Name besteht bereits.-\n")
                     kontakt['Name'] = name
                     gefunden = True
                     #messagebox.showinfo("Info", "Name der bestehenden Telefonnummer aktualisiert.")
-                    self.Ereignislog.insert(tk.END, "-bestehende Nummer wurde aktualisiert.-\n")
+                    self.Ereignislog_insert(nachricht_f_e="-bestehende Nummer wurde aktualisiert.-\n")
                     break
 
             if not gefunden:
                 kontakte['Kontakte'].append({"Telefonnummer_jsn_gesperrt": telefonnummer, "Name": name})
-                self.Ereignislog.insert(tk.END, "-Kontakt wurde hinzugefügt.-\n")
+                self.Ereignislog_insert(nachricht_f_e="-Kontakt wurde hinzugefügt.-\n")
                 #messagebox.showinfo("Erfolg", "Kontakt hinzugefügt.")
 
             speichere_kontakte(kontakte)
@@ -1265,16 +1266,16 @@ class Listendings:
                 for kontakt in kontakte['Kontakte']:
                     if kontakt['Telefonnummer_jsn'] == telefonnummer:
                         #messagebox.showinfo(title="CiM", message=f"Dieser Kontakt existiert bereits unter dem Namen {kontakt['Name']} mit der Telefonnummer {kontakt['Telefonnummer_jsn']}.")
-                        self.Ereignislog.insert(tk.END, "-Der Name besteht bereits.-\n")
+                        self.Ereignislog_insert(nachricht_f_e="-Der Name besteht bereits.-\n")
                         kontakt['Name'] = name
                         gefunden = True
                         #messagebox.showinfo("Info", "Name der bestehenden Telefonnummer aktualisiert.")
-                        self.Ereignislog.insert(tk.END, "-bestehende Nummer wurde aktualisiert.-\n")
+                        self.Ereignislog_insert(nachricht_f_e="-bestehende Nummer wurde aktualisiert.-\n")
                         break
 
                 if not gefunden:
                     kontakte['Kontakte'].append({"Telefonnummer_jsn": telefonnummer, "Name": name})
-                    self.Ereignislog.insert(tk.END, "-Kontakt wurde hinzugefügt.-\n")
+                    self.Ereignislog_insert(nachricht_f_e="-Kontakt wurde hinzugefügt.-\n")
                     #messagebox.showinfo("Erfolg", "Kontakt hinzugefügt.")
 
                 speichere_kontakte(kontakte)
@@ -1289,7 +1290,7 @@ class Listendings:
                 else:
                     kontakte['Kontakte'] = neue_kontakte
                     speichere_kontakte(kontakte)
-                    self.Ereignislog.insert(tk.END, "-Kontakt wurde gelöscht.-\n")
+                    self.Ereignislog_insert(nachricht_f_e="-Kontakt wurde gelöscht.-\n")
                     #messagebox.showinfo("Erfolg", "Kontakt gelöscht.")
             hinzufuegen_kontakt()
         else: # Es soll nicht mitgespeichert werden.
@@ -1697,7 +1698,7 @@ class Listendings:
                     gel_tmp = tmp_ld.read()
                     self.Anruf_Telefonnummer = gel_tmp
                     print1 = "-abgefangene Telefonummer: " + self.Anruf_Telefonnummer + "-\n"
-                    self.Ereignislog.insert(tk.END, print1)
+                    self.Ereignislog_insert(nachricht_f_e=print1)
                     self.Uhrzeit_anruf_start = self.Zeit
                     tmp_ld.close()
                     os.remove("tmp.txt")
@@ -1711,13 +1712,13 @@ class Listendings:
                             with open(self.Blacklist_pfad, "r", encoding='utf-8') as b_datei:
                                 daten_blacklist = json.load(b_datei)
                         except Exception as E:
-                            self.Ereignislog.insert(tk.END, "-Konnte die Blacklist nicht laden-\n")
+                            self.Ereignislog_insert(nachricht_f_e="-Konnte die Blacklist nicht laden-\n")
                             daten_blacklist = ""
                         for Gesperrte_kontakt in daten_blacklist.get("Kontakte", []):
                             print(f"ich durchsuche die Blacklist... mit {Gesperrte_kontakt.get("Telefonnummer_jsn_gesperrt")}")
                             if str(Gesperrte_kontakt.get("Telefonnummer_jsn_gesperrt")) == str(self.Anruf_Telefonnummer):
                                 print("if f")
-                                self.Ereignislog.insert(tk.END, "-Telefonnummer in Blacklist gefunden!\n Nummer wurde nicht eingefügt.")
+                                self.Ereignislog_insert(nachricht_f_e="-Telefonnummer in Blacklist gefunden!\n Nummer wurde nicht eingefügt.")
                                 self.Anruf_Telefonnummer = None
                                 self.Gesperrte_Nummer = True
                             else:
@@ -1736,7 +1737,7 @@ class Listendings:
                                     Name_gel_für_e = kontakt.get("Name")
                                     self.kunde_entry.insert(tk.END,Name_gel_für_e)
                                     self.Anruf_Telefonnummer = None
-                                    self.Ereignislog.insert(tk.END, "-Anruf wurde beendet.-\n")
+                                    self.Ereignislog_insert(nachricht_f_e="-Anruf wurde beendet.-\n")
                                     # hier kommen jetzt die Ausnahmen für spezielle Kontakte hin. !!WENN SIE GEFUNDEN WUDEN!!
                                                 
                                         # hier enden die speziellen Ausnahmen für spezielle Kontakte.
@@ -2155,8 +2156,6 @@ class Listendings:
         Listendings.Programm_läuft = False
         self.Uhr_läuft = False
         self.thread_uhr.cancel()
-        ##self.Thread_Kunderuftan.cancel()
-        ##self.thread_webserver.cancel()
         zeit_string = time.strftime("%H:%M:%S")
         tag_string = str(time.strftime("%d %m %Y"))
         print(zeit_string , tag_string)
