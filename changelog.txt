@@ -1,7 +1,14 @@
 |- 29.07.2024 Beta 1.0.1 (1) -
+|   - Ein paar Kleinigkeiten und tests
+|   - self.Speicherort_lokal_ändern_knopp & self.Speicherort_lokal_ändern_l = t muss die dinger noch spawnen lassen
+|
+|=================================================================================================
+|
+|- 29.07.2024 Beta 1.0.1 (1) -
 |   - Ein visueller Bug wurde behoben bei dem im Menü die hintegrurnd farbe der Labels grau war statt dieses komische Beige.
 |   - Der Ereignislog scrollt nun automatisch nach einem Eintrag nach unten.
 |
+|=================================================================================================
 |- 23.07.2024 Beta 1.0.1 -
 |    - Jetzt gibt es einen Knopf um das IHK Berichtsheft zu öffnen.
 |    - Die Email Einstellungen stehen jetzt in der Einstellungsseite

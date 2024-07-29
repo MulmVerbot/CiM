@@ -1,4 +1,4 @@
-import markdown
+import markdown as markdown
 
 md_text = """
 # Überschrift 1

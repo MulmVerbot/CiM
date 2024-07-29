@@ -216,6 +216,7 @@ class Listendings:
         self.helle_ui_farbe = "burlywood1"
         self.ja_ui_fabe = "burlywood"
         self.das_hübsche_grau = "LightSlateGray"
+        self.helle_farbe_für_knopfe = "LightSkyBlue"
     #### Farben Ende ####
 
         root.configure(fg_color=self.Hintergrund_farbe)
@@ -599,6 +600,8 @@ class Listendings:
         self.SMTP_Server_erneut_anmelden = tk.CTkButton(self.tabview.tab("SMTP"), text="erneut mit SMTP Server verbinden", command=self.SMTP_Anmeldung_Manuell, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         
 
+        self.Speicherort_lokal_ändern_knopp = tk.CTkButton(self.tabview.tab("Speichern"), text="ändern", command=self.ListenDings_speicherort_ändern, fg=self.helle_farbe_für_knopfe, border=self.Border_Farbe)
+        self.Speicherort_lokal_ändern_l = tk.CTkLabel(self.tabview("Speichern"), text="den lokalen Speicherort ändern")
         
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
