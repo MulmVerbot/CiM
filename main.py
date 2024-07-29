@@ -132,7 +132,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M"
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.0.1"
+        self.Version = "Beta 1.0.1 (1)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -169,8 +169,7 @@ class Listendings:
         self.Json_pfad = os.path.join(self.Db_Ordner_pfad, 'Db.json')
         self.Einstellung_Theme = os.path.join(self.Einstellungen_ordner, "Theme.txt")
         self.Blacklist_pfad = os.path.join(self.Db_Ordner_pfad, "Db_Blacklist.json")
-        self.Listen_Speicherort_Netzwerk_geladen_anders = "Netzwerkspeicherort: "
-        self.Listen_Speicherort_geladen_anders = "Lokaler Speicherpfad: "
+        
         
         try: ## das hier sind die Bilder
             self.Bearbeiten_Bild = tk.CTkImage(Image.open("Bilder/Bearbeiten.png"))
@@ -230,6 +229,8 @@ class Listendings:
         self.empfänger_email = ""
         self.smtp_server = ""
         self.pw_email = ""
+        self.Listen_Speicherort_Netzwerk_geladen_anders = "Netzwerkspeicherort: "
+        self.Listen_Speicherort_geladen_anders = "Lokaler Speicherpfad: "
 
         self.zachen = 0
         self.fertsch_var = None
@@ -585,10 +586,10 @@ class Listendings:
         self.tabview.add("Speichern")
         self.tabview.add("SMTP")
         self.tabview.add("Speicherorte")
-        self.gel_Email_Empfänger_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Ziel Email Adresse", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
-        self.gel_Email_Sender_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Absende Email Adresse", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
-        self.gel_Email_Absender_Passwort_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Absende Mail Kennwort", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
-        self.gel_SMTP_Server_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="SMTP Server", text_color="White", bg_color=self.das_hübsche_grau, corner_radius=3)
+        self.gel_Email_Empfänger_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Ziel Email Adresse", text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
+        self.gel_Email_Sender_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Absende Email Adresse", text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
+        self.gel_Email_Absender_Passwort_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Absende Mail Kennwort", text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
+        self.gel_SMTP_Server_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="SMTP Server", text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
         self.gel_Email_Empfänger_E = tk.CTkEntry(self.tabview.tab("SMTP"), placeholder_text="Empfänger Adresse", width=300)
         self.gel_Email_Sender_E = tk.CTkEntry(self.tabview.tab("SMTP"), placeholder_text="Sender Email Adresse", width=300)
         self.gel_Email_Absender_Passwort_E = tk.CTkEntry(self.tabview.tab("SMTP"), placeholder_text="Passwort der Email Adresse", width=300, show="#")
@@ -652,6 +653,7 @@ class Listendings:
         if nachricht_f_e != None:
             nachricht_f_e_fertsch = nachricht_f_e + "\n"
             self.Ereignislog.insert(tk.END, nachricht_f_e_fertsch)
+            self.Ereignislog.see(tk.END)
             return
         return
 
@@ -710,11 +712,13 @@ class Listendings:
             self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.delete(0, tk.END)
         except:
             print("Konnte den Inhalt der Entrys für die Pfade nicht löschen")
+            self.Ereignislog_insert(nachricht_f_e="Konnte den Inhalt der Entrys für die Pfade nicht löschen")
         try:
             self.Listen_Speicherort_geladen_anders_Entry.insert(0, self.Listen_Speicherort_geladen)
             self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.insert(0, self.Listen_Speicherort_Netzwerk_geladen)
         except:
             print("Konnte die geladenen Speicherorte nicht in die Entrys übernehmen.")
+            self.Ereignislog_insert(nachricht_f_e="Konnte den Inhalt der Entrys für die Pfade nicht löschen")
         def rückruf_speichern():
             print("self.mitspeichern.get() = :", self.mitspeichern.get())
             self.Kontakt_soll_gleich_mitgespeichert_werden = True
@@ -738,6 +742,26 @@ class Listendings:
         self.gel_SMTP_Server_E.place(x=160,y=240)
         self.Mail_Einstellungen_speichern.place(x=10,y=280)
         self.SMTP_Server_erneut_anmelden.place(x=250,y=280)
+        try:
+            try:
+                self.gel_Email_Empfänger_E.delete(0, tk.END)
+                self.gel_Email_Sender_E.delete(0, tk.END)
+                self.gel_Email_Absender_Passwort_E.delete(0, tk.END)
+                self.gel_SMTP_Server_E.delete(0, tk.END)
+                self.gel_Email_Empfänger_E.delete(0, tk.END)
+            except:
+                self.Ereignislog_insert(nachricht_f_e="konnte die Entrys nicht leeren")
+                print("konnte die entrys nicht leeren")
+
+            self.gel_Email_Empfänger_E.insert(0, self.empfänger_email)
+            self.gel_Email_Sender_E.insert(0, self.sender_email)
+            self.gel_Email_Absender_Passwort_E.insert(0, self.pw_email)
+            self.gel_SMTP_Server_E.insert(0, self.smtp_server)
+            print("Alles was mit den Email Einstellungen zu tun hat wurde erfolgreich gelade")
+            self.Ereignislog_insert(nachricht_f_e="Alles was mit den Email Einstellungen zu tun hat wurde erfolgreich geladen")
+            
+        except Exception as ExGelEm1:
+            print("Fehler beim einfügen der Email Daten in die Entrys. Fehlercode: ", ExGelEm1)
 
     def Einstellungen_schließen(self):
         print("Einstellungen_schließen(def)")
