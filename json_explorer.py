@@ -40,7 +40,7 @@ class JSONTreeView:
             self.populate_tree(self.json_data)
 
     def save_json_file(self):
-        file_path = filedialog.asksaveasfilename(defaultextension=".json", filetypes=[("JSON files", "*.json")])
+        file_path = filedialog.asksaveasfilename(defaultextension=".json", filetypes=[("JSON files", "*.")])
         if file_path:
             self.json_data = self.tree_to_dict(self.tree.get_children())
             with open(file_path, 'w') as f:

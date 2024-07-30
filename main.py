@@ -6,6 +6,7 @@ try:
     import tkinter as Atk
     from tkinter import messagebox
     from tkinter import filedialog
+    from tkinter import simpledialog
     from tkinter import Menu
     import webbrowser
     import time
@@ -134,7 +135,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M"
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.0.2"
+        self.Version = "Beta 1.0.3"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -171,6 +172,8 @@ class Listendings:
         self.Json_pfad = os.path.join(self.Db_Ordner_pfad, 'Db.json')
         self.Einstellung_Theme = os.path.join(self.Einstellungen_ordner, "Theme.txt")
         self.Blacklist_pfad = os.path.join(self.Db_Ordner_pfad, "Db_Blacklist.json")
+        self.TASKS_FILE = 'tasks.json'
+
         
         
         try: ## das hier sind die Bilder
@@ -248,6 +251,8 @@ class Listendings:
         self.smtp_login_erfolgreich = False
         nachricht_f_e = None
         self.Mail_Anhang = None
+        self.task = None
+        self.Todo_offen = False
         
         self.zeit_string = time.strftime("%H:%M:%S")
         self.tag_string = str(time.strftime("%d %m %Y"))
@@ -378,7 +383,6 @@ class Listendings:
             with open(self.Listen_Speicherort_Netzwerk_Einstellungsdatei , "r") as Liste_Speicherort_Netzwerk_data:
                 self.Listen_Speicherort_Netzwerk = json.load(Liste_Speicherort_Netzwerk_data)
                 self.Listen_Speicherort_Netzwerk_geladen = (self.Listen_Speicherort_Netzwerk["ListenDings_Speicherort_Netzwerk"])
-               # self.Listen_Speicherort_Netzwerk_geladen = os.path.join(self.Listen_Speicherort_Netzwerk_geladen, self.Jahr,self.Monat, self.tag_string + ".csv")
                 self.Listen_Speicherort_Netzwerk_geladen_ordner = os.path.join(self.Listen_Speicherort_Netzwerk_geladen, self.Jahr, self.Monat)
         except PermissionError:
                 messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Der Gespeicherte Netzwerkpfad konnte nicht aufgerufen werden.")
@@ -421,7 +425,6 @@ class Listendings:
         self.senden_button = tk.CTkButton(master, text="Senden", command="")
         self.senden_button.bind('<Button-1>', self.senden)
         root.bind('<Return>', self.senden)
-        #self.alles_löschen_knopp = tk.CTkButton(master, text="Alle Eintrage löschen", command=self.alles_löschen)
         self.ausgabe_text = tk.CTkTextbox(master, width=1255, height=420, wrap="word", fg_color=self.Hintergrund_farbe_Text_Widget, text_color=self.Textfarbe, border_color=self.Border_Farbe, border_width=2)
         self.ausgabe_text.configure(state='disabled')
         self.kunde_entry.place(x=5,y=5)
@@ -446,21 +449,15 @@ class Listendings:
         self.menudings.add_command(label="Info", command=self.info)
         self.menudings.add_command(label="Changelog", command=self.changelog_aufmachen)
         self.menudings.add_command(label="Admin rechte aktivieren", command=self.Admin_rechte)
-        #self.Einstellungen.add_command(label="Speicherort des ListenDings ändern...", command=self.ListenDings_speicherort_ändern)
+        self.Bearbeiten_Menu.add_command(label="Todo öffnen", command=self.todo_aufmachen)
         self.Speichern_Menu.add_command(label="als CSV Speichern", command=self.als_csv_speichern_eigener_ort)
         self.Speichern_Menu.add_command(label="als CSV Speichern unter...", command=self.als_csv_speichern)
         self.Speichern_Menu.add_command(label="als CSV Speichern auf Netzlaufwerk", command=self.Netzlaufwerk_speichern)
-        #self.Einstellungen.add_command(label="Netzlaufwerk einstellen...", command=self.ListenDings_speicherort_Netzwerk_ändern)
-        #self.Einstellungen.add_command(label="Beim SMTP Server anmelden...", command=self.SMTP_Anmeldung_Manuell)
         self.Einstellungen.add_command(label="Einen neuen Kontakt hinzufügen...", command=self.zeugs1)
         self.Bearbeiten_Menu.add_command(label="Blacklist erweitern...", command=self.zeugs1_blacklist)
-        #self.Bearbeiten_Menu.add_command(label="Bearbeiten Umschalten", command=self.beb_c)
         self.Bearbeiten_Menu.add_command(label="Alle Einträge löschen", command=self.alles_löschen)
         self.Bearbeiten_Menu.add_command(label="JSON Explorer öffnen", command=self.JSON_Explorer_öffnen)
-        #self.Suchen_Menu.add_command(label="Nach alten Einträgen suchen", command=self.Suche_alte_Einträge)
-        #self.Suchen_Menu.add_command(label="In der Kundenablage suchen...", command=self.Suche_KDabl)
         self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results_vor)
-        #self.Suchen_Menu.add_command(label="Such Menü öffnen", command=self.such_menü_hauptmenu)
         self.Suchen_Menu.add_command(label="Sehr genaue Suche nutzen (Suche 3.0)(verbugt)", command=self.genaue_suche_start)
         
         try:
@@ -563,7 +560,7 @@ class Listendings:
 
         self.kalender_menü = tk.CTkFrame(master, width=1250, height=520, fg_color="White", border_color="Black", border_width=2)
         self.Liste_mit_zeugs =  tk.CTkScrollableFrame(self.kalender_menü, width=500, height=420, bg_color="Green")
-        self.Aufgabe_hinzufügen_Knopp = tk.CTkButton(self.kalender_menü, text="Eintrag Hinzufügen", command=self.Aufgabe_hinzufügen)
+        
 
 
         ################################ MENU FRAMES ENDE ################################
@@ -571,8 +568,7 @@ class Listendings:
         ################################ MENU FRAMES ENDE ################################
         ################################ MENU FRAMES ENDE ################################
 
-        self.kalender_menü_Knopp = tk.CTkButton(master, text="Kalender öffnen", command=self.Kalender_anzeigen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Kalender_Bild)
-        self.kalender_menü_Knopp.place(x=1260,y=480)
+        
         self.Einstellungsseite_Knopp = tk.CTkButton(root, text="Einstellungen", command=self.Einstellungen_öffnen, fg_color="white", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.Dings_Bild)
         self.Einstellungsseite_Knopp.place(x=1260,y=420)
         self.Ticket_erstellen_Knopp = tk.CTkButton(root, text="Ticket erstellen", command=self.Ticket_erstellen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Ticket_Bild)
@@ -603,7 +599,13 @@ class Listendings:
         
         #self.Speicherort_lokal_ändern_knopp = tk.CTkButton(self.tabview.tab("Speichern"), text="ändern", command=self.ListenDings_speicherort_ändern, fg=self.helle_farbe_für_knopfe, border=self.Border_Farbe)
         #self.Speicherort_lokal_ändern_l = tk.CTkLabel(self.tabview("Speichern"), text="den lokalen Speicherort ändern")
+    #### todo gui ####
+        self.Todo_aufmachen_main_knopp = tk.CTkButton(root, text="Totdo öffnen", command=self.todo_aufmachen)
+        self.Todo_aufmachen_main_knopp.place(x=1260,y=480)
         
+        #self.todo_hinzufügen_knopp = tk.CTkButton(self.todo_frame, text="Aufgabe hinzufügen", command=self.todo_hinzufügen)
+
+    #### ende todo gui ####
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
@@ -956,49 +958,13 @@ class Listendings:
             print("Beim versuch die Email Daten zu speichern ist ein Fehler aufgetreten. Fehlercode: ", EmailEx3_l)
             messagebox.showerror(title="CiM Fehler", message=f"Beim speichern der Email Einstellungen unter {self.Einstellung_Email_Sender_Adresse} ; {self.Einstellung_Email_Empfänge_Adresse} und {self.Einstellung_smtp_server} ist ein Fehler aufgetreten. Fehlercode: {EmailEx3_l}")
         
-    def Kalender_anzeigen(self):
-        if self.Kalender_offen == True:
-            print("Kalender ist bereits geöffnet, ich ignoriere diese Anfrage einfach.")
-        elif self.Kalender_offen == False:
-            print("kalender_anzeigen(def)")
-            self.kalender_menü.place(x=0,y=0)
-            self.Liste_mit_zeugs.place(x=100,y=50)
-            self.kalender_menü_Knopp.configure(text="Kalender schließen", command=self.Kalender_anzeigen_weg, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
-            self.Aufgabe_hinzufügen_Knopp = tk.CTkButton(self.kalender_menü, text="Eintrag Hinzufügen", command=self.Aufgabe_hinzufügen)
-            self.Aufgabe_hinzufügen_Knopp.place(x=620,y=50)
 
-            try:
-                print("Lade nun die alten Aufgaben...")
-                with open("tasks.json", "r") as f:
-                    self.tasks = json.load(f)
-                    print("Daten der alten Aufgaben erfolgreich geladen..")
-                    self.D1 = tk.CTkToplevel(root)
-                    self.D1.protocol("WM_DELETE_WINDOW", self.D1_schließen)
-                    self.D1.configure(title="Aufgabenliste")
-                    self.Kalender_offen = True
-                    
-                    for task in self.tasks:
-                        self.check_var = tk.StringVar(value="aus")
-                        ##self.checkbox = tk.CTkCheckBox(self.D1, text=task, command=self.checkbox_event,variable=self.check_var, onvalue="an", offvalue="aus")
-                        self.checkbox = tk.CTkCheckBox(self.D1, text=task, command=self.checkbox_event,variable=self.check_var, onvalue="an", offvalue="aus")
-                        self.checkbox.place(x=10,y=self.zeile_zahl)
-                        print("Aufgabe platziert...")
-                        self.zeile_zahl +=30
-                print("Alle Aufgaben wurden platziert.")
-            except FileNotFoundError:
-                print("File not found beim laden der Aufgaben aufgetrenen. Versuche fortzufahren...")
-                pass
-        
-    def save_tasks(self):
-        with open("Aufgaben.json", "w") as f:
-            json.dump(self.tasks, f)
-    
-    def D1_schließen(self):
-        print("D1_schließen(def)")
-        self.D1.destroy()
-        self.zeile_zahl = 0
-        self.Kalender_offen = False
-        self.checkbox = None
+    def todo_aufmachen(self):
+        try:
+            exec(open('totdo.py').read())
+        except Exception as JSON_E:
+            messagebox.showerror(title="CiM Fehler", message=f"Konnte die Datei totdo.py nicht finden, stelle sicher, dass sie sich im Programmverzeichnis befindet! Fehlercode: {JSON_E}")
+
     
     def SMTP_Anmeldung_Manuell(self):
         print("[-SMTP Anmeldung-] Führe nun eine Manuelle Anmeldung beim SMTP Server durch...")
@@ -1097,7 +1063,6 @@ class Listendings:
         self.D1.destroy()
         self.kalender_menü.place_forget()
         self.Liste_mit_zeugs.place_forget()
-        self.Aufgabe_hinzufügen_Knopp.place_forget()
         self.kalender_menü_Knopp.configure(text="Kalender öffnen", command=self.Kalender_anzeigen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Kalender_Bild)
         
     def Starface_Modul_umschalten(self):
