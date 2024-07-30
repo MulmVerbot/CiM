@@ -22,6 +22,8 @@ try:
     import smtplib
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
+    from email.mime.base import MIMEBase
+    from email import encoders
     from tkinterdnd2 import DND_FILES
     from PIL import Image
     from collections import defaultdict
@@ -132,7 +134,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M"
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.0.1 (1)"
+        self.Version = "Beta 1.0.2"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -245,6 +247,7 @@ class Listendings:
         self.Suche_suche_3 = None
         self.smtp_login_erfolgreich = False
         nachricht_f_e = None
+        self.Mail_Anhang = None
         
         self.zeit_string = time.strftime("%H:%M:%S")
         self.tag_string = str(time.strftime("%d %m %Y"))
@@ -419,7 +422,7 @@ class Listendings:
         self.senden_button = tk.CTkButton(master, text="Senden", command="")
         self.senden_button.bind('<Button-1>', self.senden)
         root.bind('<Return>', self.senden)
-        self.alles_löschen_knopp = tk.CTkButton(master, text="Alle Eintrage löschen", command=self.alles_löschen)
+        #self.alles_löschen_knopp = tk.CTkButton(master, text="Alle Eintrage löschen", command=self.alles_löschen)
         self.ausgabe_text = tk.CTkTextbox(master, width=1255, height=420, wrap="word", fg_color=self.Hintergrund_farbe_Text_Widget, text_color=self.Textfarbe, border_color=self.Border_Farbe, border_width=2)
         self.ausgabe_text.configure(state='disabled')
         self.kunde_entry.place(x=5,y=5)
@@ -599,7 +602,6 @@ class Listendings:
         self.smtp_login_erfolgreich_l = tk.CTkLabel(self.tabview.tab("SMTP"), text="Anmeldestatus")
         self.SMTP_Server_erneut_anmelden = tk.CTkButton(self.tabview.tab("SMTP"), text="erneut mit SMTP Server verbinden", command=self.SMTP_Anmeldung_Manuell, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         
-
         #self.Speicherort_lokal_ändern_knopp = tk.CTkButton(self.tabview.tab("Speichern"), text="ändern", command=self.ListenDings_speicherort_ändern, fg=self.helle_farbe_für_knopfe, border=self.Border_Farbe)
         #self.Speicherort_lokal_ändern_l = tk.CTkLabel(self.tabview("Speichern"), text="den lokalen Speicherort ändern")
         
@@ -652,7 +654,7 @@ class Listendings:
             chlg = None
 
     def Ereignislog_insert(self, nachricht_f_e): # wenn ichs richtig gemacht hab, wird mir das mega viel Zeit ersparen.
-        print(f"schreibe nun {nachricht_f_e} in den Ereignislog.")
+        print(f"[-EREIGNISLOG-] schreibe nun {nachricht_f_e} in den Ereignislog.")
         if nachricht_f_e != None:
             nachricht_f_e_fertsch = nachricht_f_e + "\n"
             self.Ereignislog.insert(tk.END, nachricht_f_e_fertsch)
@@ -755,14 +757,12 @@ class Listendings:
             except:
                 self.Ereignislog_insert(nachricht_f_e="konnte die Entrys nicht leeren")
                 print("konnte die entrys nicht leeren")
-
             self.gel_Email_Empfänger_E.insert(0, self.empfänger_email)
             self.gel_Email_Sender_E.insert(0, self.sender_email)
             self.gel_Email_Absender_Passwort_E.insert(0, self.pw_email)
             self.gel_SMTP_Server_E.insert(0, self.smtp_server)
             print("Alles was mit den Email Einstellungen zu tun hat wurde erfolgreich gelade")
             self.Ereignislog_insert(nachricht_f_e="Alles was mit den Email Einstellungen zu tun hat wurde erfolgreich geladen")
-            
         except Exception as ExGelEm1:
             print("Fehler beim einfügen der Email Daten in die Entrys. Fehlercode: ", ExGelEm1)
 
@@ -774,7 +774,7 @@ class Listendings:
         self.tabview.place_forget()
         
 
-    def Eintrag_raus_kopieren(self):
+    def Eintrag_raus_kopieren(self): # kopiert den letzten in der Liste stehenden Eintrag in die Zwischenablage.
         print("Eintrag_raus_kopieren(def)")
         self.geladener_Text = self.ausgabe_text.get("0.0", "end")
         self.einzelner_Eintrag = self.geladener_Text.split("\n\n")
@@ -800,25 +800,41 @@ class Listendings:
         self.Betreff_Mail = self.Betreff_Ticket_e.get()
         self.alternative_empfänger_adresse = self.alternative_empfänger_adresse_e.get()
         self.Nachricht_Mail_Inhalt = self.Nachricht_Ticket_e.get("0.0", "end")
-
         msg = MIMEMultipart()
         msg["From"] = self.sender_email
         if self.alternative_empfänger_adresse == "":
-            msg["To"] = self.empfänger_email
-            print(self.empfänger_email)
-            print(self.alternative_empfänger_adresse)
+            empf_alle = f"{self.empfänger_email}, {self.sender_email}"
+            msg["To"] = empf_alle
             print("[-TICKET ERSTELLEN-] Ticket wird an die hinterlegte Emailadresse versendet...")
             self.Ereignislog_insert(nachricht_f_e="-[-TICKET ERSTELLEN-] Ticket wird an die hinterlegte Emailadresse versendet...-")
         elif self.alternative_empfänger_adresse != "":
             msg["To"] = self.alternative_empfänger_adresse
-            print(self.alternative_empfänger_adresse)
-            print(self.empfänger_email)
             print("[-TICKET ERSTELLEN-] Ticket wird an alternative Emailadresse versendet...")
+            self.Ereignislog_insert(nachricht_f_e="[-TICKET ERSTELLEN-] Ticket wird an alternative Emailadresse versendet...")
         msg["Subject"] = self.Betreff_Mail
         msg.attach(MIMEText(self.Nachricht_Mail_Inhalt, "plain"))
 
+        ##### Anhänge an die Mail packen ####
+        if self.Mail_Anhang:
+            try:
+                part = MIMEBase("application", "octet-stream")
+                with open(self.Mail_Anhang, "rb") as attachment:
+                    part.set_payload(attachment.read())
+                encoders.encode_base64(part)
+                filename = self.Mail_Anhang.split('/')[-1]
+                part.add_header("Content-Disposition", f"attachment; filename={filename}")
+                msg.attach(part)
+                self.Mail_Anhang = None
+                filename = None
+                print("Datei an Ticket angehängt.")
+            except Exception as ez3:
+                print("Fehler beim Anhängen der Datei: ", ez3)
+                messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim Anhängen der Datei. Fehlercode: {ez3}")
+                return
+
         with smtplib.SMTP_SSL(self.smtp_server, 465) as server:
             try:
+                ###server.set_debuglevel(1)
                 server.login(self.sender_email, self.pw_email)
                 self.smtp_login_erfolgreich = True
             except Exception as EmailEx1:
@@ -833,6 +849,17 @@ class Listendings:
             if self.alternative_empfänger_adresse == "":
                 try:
                     server.sendmail(self.sender_email, self.empfänger_email, msg.as_string())
+                    self.Ereignislog_insert(nachricht_f_e="-Email an SMTP Server versendet.-")
+                except Exception as EmailEx2:
+                    print("Fehler beim anmelden beim senden an den Mailserver. Fehlercode: ", EmailEx2)
+                    self.Ereignislog_insert(nachricht_f_e="-Anmeldung am SMTP fehlgeschlagen.-")
+                    messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der Nachricht an den Mailserver. Fehlercode: {EmailEx2}")
+                self.Ticket_Fenster.destroy()
+                messagebox.showinfo(title="CiM", message="Das Ticket wurde erfolgreich erstellt.")
+                print("E-Mail erfolgreich gesendet!")
+            elif self.alternative_empfänger_adresse != "":
+                try:
+                    server.sendmail(self.sender_email, self.alternative_empfänger_adresse, msg.as_string())
                     self.Ereignislog_insert(nachricht_f_e="-Email an SMTP Server versendet.-")
                 except Exception as EmailEx2:
                     print("Fehler beim anmelden beim senden an den Mailserver. Fehlercode: ", EmailEx2)
@@ -856,13 +883,21 @@ class Listendings:
         print("öffne nun Berichtsheft...")
         url = "https://bildung.ihk.de/webcomponent/dibe/AUSZUBILDENDER/berichtsheft/wochenansicht"
         webbrowser.get("chrome").open(url)
-    
+
+    def anhang_suchen_ticket(self):
+        print("anhang_suchen_ticket(def)")
+        self.Mail_Anhang = filedialog.askopenfilename()
+        if self.Mail_Anhang:
+            self.Mail_Anhang_status_l.configure(text=f"Anhang: {self.Mail_Anhang}")
+        
 
     def Ticket_erstellen(self): # Die erste frage, ob es per Mail oder API erstellt werden soll.
         print("Ticket_erstellen(def)")
         self.Ticket_Fenster = tk.CTkToplevel()
+        self.Ticket_Fenster.configure(fg_color=self.Hintergrund_farbe)
         self.Ticket_Fenster.title(self.Programm_Name + " " + "                          Ein Ticket erstellen                          ")
         self.Ticket_Fenster.configure(resizeable=False)
+        
         try:
             height = 520
             width = 680
@@ -873,15 +908,19 @@ class Listendings:
             self.Ticket_Fenster.geometry(f"{width}x{height}+{x}+{y}")
         except:
             pass
-        #self.Ticket_Fenster.geometry("680x520")
-        self.Betreff_Ticket_e = tk.CTkEntry(self.Ticket_Fenster, width=300, placeholder_text="Betreffzeile")
-        self.Nachricht_Ticket_e = tk.CTkTextbox(self.Ticket_Fenster, width=300, height=420, wrap="word")
-        self.Ticket_abschicken_mail = tk.CTkButton(self.Ticket_Fenster, text="Ticket erstellen und versenden", command=self.Ticket_erstellen_mail)
-        self.alternative_empfänger_adresse_e = tk.CTkEntry(self.Ticket_Fenster, placeholder_text="Alternative Empfänger", width=300)
+        self.Betreff_Ticket_e = tk.CTkEntry(self.Ticket_Fenster, width=300, placeholder_text="Betreffzeile", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
+        self.Nachricht_Ticket_e = tk.CTkTextbox(self.Ticket_Fenster, width=300, height=420, wrap="word", fg_color=self.Hintergrund_farbe_Text_Widget, text_color=self.Textfarbe, border_color=self.Border_Farbe, border_width=2)
+        self.Ticket_abschicken_mail = tk.CTkButton(self.Ticket_Fenster, text="Ticket erstellen und versenden", command=self.Ticket_erstellen_mail, fg_color="aquamarine", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1")
+        self.alternative_empfänger_adresse_e = tk.CTkEntry(self.Ticket_Fenster, placeholder_text="Alternative Empfänger", width=300, fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
+        self.Ticket_erstellen_anhang_suchen_knopp = tk.CTkButton(self.Ticket_Fenster, text="Anhang hinzufügen", command=self.anhang_suchen_ticket, fg_color="white", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1")
+        self.Mail_Anhang_status_l = tk.CTkLabel(self.Ticket_Fenster, text=f"Anhang: ", text_color="Black", bg_color=self.Hintergrund_farbe, corner_radius=3)
+
         self.alternative_empfänger_adresse_e.place(x=330,y=120)
-        self.Ticket_abschicken_mail.place(x=330,y=50)
+        self.Ticket_abschicken_mail.place(x=330,y=420)
         self.Betreff_Ticket_e.place(x=10,y=50)
         self.Nachricht_Ticket_e.place(x=10,y=80)
+        self.Mail_Anhang_status_l.place(x=10,y=10)
+        self.Ticket_erstellen_anhang_suchen_knopp.place(x=330,y=180)
 
     def Email_Einstellungen_speichern(self):
         print("Email_Einstellungen_speichern (def)")
@@ -1418,7 +1457,7 @@ class Listendings:
         self.Ergebnise_zahl = 0
         try:
             
-            self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500)
+            self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500, fg_color=self.Hintergrund_farbe_Text_Widget, text_color=self.Textfarbe, border_color=self.Border_Farbe, border_width=2)
         except:
             pass
         self.durchsucht_text = f"bis jetzt wurden {self.gesucht_zahl} Dateien durchsucht."
@@ -1998,7 +2037,6 @@ class Listendings:
                 print(e)
             if self.Zeit_text:
                 self.Zeit_text.configure(text=lokaler_zeit_string)
-                
             time.sleep(1)
         print("Thread Beendet: Uhr(def)")
         

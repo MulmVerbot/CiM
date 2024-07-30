@@ -1,3 +1,10 @@
+|=================================================================================================
+|- 30.07.2024 Beta 1.0.2 -
+|   - Es kann einem Ticket jetzt eine Datei angehängt werden.
+|   - Ein Bug wurde behoben bei dem
+|   - Ab jetzt wird eine kopie ins cc an sich selbst damit man die erstellten Tickets im eigenen Mailprogramm nachlesen kann.
+|   - Das Fenster für die Ticket erstellung wurde optisch angepasst und spiegelt nun das Design des Hauptfensters wieder.
+|
 |- 29.07.2024 Beta 1.0.1 (1) -
 |   - Ein paar Kleinigkeiten und tests
 |   - self.Speicherort_lokal_ändern_knopp & self.Speicherort_lokal_ändern_l = t muss die dinger noch spawnen lassen
