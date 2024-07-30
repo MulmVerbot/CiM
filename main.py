@@ -600,8 +600,8 @@ class Listendings:
         self.SMTP_Server_erneut_anmelden = tk.CTkButton(self.tabview.tab("SMTP"), text="erneut mit SMTP Server verbinden", command=self.SMTP_Anmeldung_Manuell, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         
 
-        self.Speicherort_lokal_ändern_knopp = tk.CTkButton(self.tabview.tab("Speichern"), text="ändern", command=self.ListenDings_speicherort_ändern, fg=self.helle_farbe_für_knopfe, border=self.Border_Farbe)
-        self.Speicherort_lokal_ändern_l = tk.CTkLabel(self.tabview("Speichern"), text="den lokalen Speicherort ändern")
+        #self.Speicherort_lokal_ändern_knopp = tk.CTkButton(self.tabview.tab("Speichern"), text="ändern", command=self.ListenDings_speicherort_ändern, fg=self.helle_farbe_für_knopfe, border=self.Border_Farbe)
+        #self.Speicherort_lokal_ändern_l = tk.CTkLabel(self.tabview("Speichern"), text="den lokalen Speicherort ändern")
         
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
@@ -987,7 +987,7 @@ class Listendings:
                     pass
             except Exception as EmailEx1:
                 print("[-SMTP ANMELDUNG-] Fehler beim anmelden beim Mailserver. Fehlercode: ", EmailEx1)
-                self.Ereignislog_insert(nachricht_f_e="- [-SMTP ANMELDUNG-] Fehler beim anmelden beim Mailserver. -")
+                self.Ereignislog_insert(nachricht_f_e="- [-SMTP ANMELDUNG-] Fehler bei der Anmeldung beim Mailserver. -")
                 self.smtp_login_erfolgreich = False
                 try:
                     self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP fehlgeschlagen.", text_color="Red")
