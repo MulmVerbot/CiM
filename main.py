@@ -960,10 +960,10 @@ class Listendings:
         
 
     def todo_aufmachen(self):
-        try:
-            exec(open('totdo.py').read())
-        except Exception as JSON_E:
-            messagebox.showerror(title="CiM Fehler", message=f"Konnte die Datei totdo.py nicht finden, stelle sicher, dass sie sich im Programmverzeichnis befindet! Fehlercode: {JSON_E}")
+        #try:
+        exec(open('totdo.py').read())
+        #except Exception as JSON_E:
+         #   messagebox.showerror(title="CiM Fehler", message=f"Konnte die Datei totdo.py nicht finden, stelle sicher, dass sie sich im Programmverzeichnis befindet! Fehlercode: {JSON_E}")
 
     
     def SMTP_Anmeldung_Manuell(self):

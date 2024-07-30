@@ -2,24 +2,25 @@ import customtkinter as tk
 import json
 import os
 import time
-Benutzerordner = os.path.expanduser('~')
-tasks_pfad = os.path.join(Benutzerordner, 'CiM', 'Db')
-tasks_pfad_datei = os.path.join(tasks_pfad, 'tasks.json')
 
-try:
-    if not os.path.exists(tasks_pfad):
-        print("[-INFO-] Der Db Ordner scheint nicht zu existieren. Erstelle ihn nun.")
-        os.mkdir(tasks_pfad)
-        print("[-INFO-] Der Db Ordner wurde erfolgreich erstellt.")
-except Exception as ex_einst:
-    print("[-ERR-] Fehler beim Erstellen des Db Ordners. Fehlercode:", ex_einst)
-TASKS_FILE = tasks_pfad_datei
 
 class TodoApp:
     def __init__(self, root):
         self.root = root
         self.root.title("TotDo Liste Alpha 1.1")
         self.Todo_offen = False
+        Benutzerordner = os.path.expanduser('~')
+        tasks_pfad = os.path.join(Benutzerordner, 'CiM', 'Db')
+        tasks_pfad_datei = os.path.join(tasks_pfad, 'tasks.json')
+
+        try:
+            if not os.path.exists(tasks_pfad):
+                print("[-INFO-] Der Db Ordner scheint nicht zu existieren. Erstelle ihn nun.")
+                os.mkdir(tasks_pfad)
+                print("[-INFO-] Der Db Ordner wurde erfolgreich erstellt.")
+        except Exception as ex_einst:
+            print("[-ERR-] Fehler beim Erstellen des Db Ordners. Fehlercode:", ex_einst)
+        self.TASK_FILE = tasks_pfad_datei
         
         self.Zeit = time.strftime("%H:%M:%S")
         self.todo_aufmachen()
@@ -97,7 +98,7 @@ class TodoApp:
     def save_task(self, task):
         tasks = self.load_tasks_from_file()
         tasks.append(task)
-        with open(TASKS_FILE, 'w') as file:
+        with open(self.TASK_FILE, 'w') as file:
             json.dump(tasks, file, indent=4)
 
     def load_tasks(self):
@@ -107,15 +108,15 @@ class TodoApp:
             self.create_task_button(task)
 
     def load_tasks_from_file(self):
-        if os.path.exists(TASKS_FILE):
-            with open(TASKS_FILE, 'r') as file:
+        if os.path.exists(self.TASK_FILE):
+            with open(self.TASK_FILE, 'r') as file:
                 return json.load(file)
         return []
 
     def delete_task(self, task):
         tasks = self.load_tasks_from_file()
         tasks = [t for t in tasks if t['name'] != task['name']]
-        with open(TASKS_FILE, 'w') as file:
+        with open(self.TASK_FILE, 'w') as file:
             json.dump(tasks, file, indent=4)
         self.refresh_tasks()
 
