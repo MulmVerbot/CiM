@@ -312,7 +312,6 @@ class Listendings:
                     print("[-EINSTELLUNGEN-] Die Autospeichern Var welche aus den Einstellungen zum Programmstart geladen wurde ist: ", self.Auto_speichern_Einstellungsdatei_var)
                     self.Auto_speichern_Einstellungsdatei_var = "0"
         except Exception as autpsp_err:
-            messagebox.showerror(title="CiM Fehler", message="Konnte die Datei zum Autospeichern nicht finden, vielleicht gibt es sie auch einfach nicht.")
             print("[-EINSTELLUNGEN-] Fehler beim Laden des Autospeicherns. Funktion wurde deaktiviert. self.Auto_speichern_Einstellungsdatei = 0. Fehlercode: ", autpsp_err)
             self.Auto_speichern_Einstellungsdatei_var = "0"
                 
@@ -347,7 +346,7 @@ class Listendings:
                                 print("Das Starface Modul ist nicht aktiviert: self.Starface_Modul == ", self.Starface_Modul)
                     except Exception as Exp:
                         print("Konnte die Einstellungsdatei nicht öffnen. Fehlercode: ", Exp)
-                        messagebox.showerror(title="CiM Fehler", message="Konnte die Einstellungsdatei nicht öffnen. Bitte in die Logs schauen.")
+                        
             else:
                 try:
                     with open(self.Starface_Einstellungsdatei, "r") as SternGesicht_data:
@@ -359,7 +358,7 @@ class Listendings:
                             print("Das Starface Modul ist nicht aktiviert: self.Starface_Modul == ", self.Starface_Modul)
                 except Exception as Exp:
                     print("Konnte die Einstellungsdatei nicht öffnen. Fehlercode: ", Exp)
-                    messagebox.showerror(title="CiM Fehler", message="Konnte die Einstellungsdatei nicht öffnen. Bitte in die Logs schauen.")
+                   
 
             
         except Exception as ex_stern2:
@@ -373,7 +372,7 @@ class Listendings:
         except PermissionError:
                 messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Die Speicherorte konnten nicht geladen werden")
         except:
-            messagebox.showerror(title="Listendings Speicherort", message="Die Einstellung scheint nicht zu existieren")
+            print("Die Einstellung scheint nicht zu existieren")
 
         try:
             with open(self.Listen_Speicherort_Netzwerk_Einstellungsdatei , "r") as Liste_Speicherort_Netzwerk_data:
@@ -447,21 +446,21 @@ class Listendings:
         self.menudings.add_command(label="Info", command=self.info)
         self.menudings.add_command(label="Changelog", command=self.changelog_aufmachen)
         self.menudings.add_command(label="Admin rechte aktivieren", command=self.Admin_rechte)
-        self.Einstellungen.add_command(label="Speicherort des ListenDings ändern...", command=self.ListenDings_speicherort_ändern)
+        #self.Einstellungen.add_command(label="Speicherort des ListenDings ändern...", command=self.ListenDings_speicherort_ändern)
         self.Speichern_Menu.add_command(label="als CSV Speichern", command=self.als_csv_speichern_eigener_ort)
         self.Speichern_Menu.add_command(label="als CSV Speichern unter...", command=self.als_csv_speichern)
         self.Speichern_Menu.add_command(label="als CSV Speichern auf Netzlaufwerk", command=self.Netzlaufwerk_speichern)
-        self.Einstellungen.add_command(label="Netzlaufwerk einstellen...", command=self.ListenDings_speicherort_Netzwerk_ändern)
-        self.Einstellungen.add_command(label="Beim SMTP Server anmelden...", command=self.SMTP_Anmeldung_Manuell)
+        #self.Einstellungen.add_command(label="Netzlaufwerk einstellen...", command=self.ListenDings_speicherort_Netzwerk_ändern)
+        #self.Einstellungen.add_command(label="Beim SMTP Server anmelden...", command=self.SMTP_Anmeldung_Manuell)
         self.Einstellungen.add_command(label="Einen neuen Kontakt hinzufügen...", command=self.zeugs1)
         self.Bearbeiten_Menu.add_command(label="Blacklist erweitern...", command=self.zeugs1_blacklist)
-        self.Bearbeiten_Menu.add_command(label="Bearbeiten Umschalten", command=self.beb_c)
+        #self.Bearbeiten_Menu.add_command(label="Bearbeiten Umschalten", command=self.beb_c)
         self.Bearbeiten_Menu.add_command(label="Alle Einträge löschen", command=self.alles_löschen)
         self.Bearbeiten_Menu.add_command(label="JSON Explorer öffnen", command=self.JSON_Explorer_öffnen)
-        self.Suchen_Menu.add_command(label="Nach alten Einträgen suchen", command=self.Suche_alte_Einträge)
-        self.Suchen_Menu.add_command(label="In der Kundenablage suchen...", command=self.Suche_KDabl)
-        self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results)
-        self.Suchen_Menu.add_command(label="Such Menü öffnen", command=self.such_menü_hauptmenu)
+        #self.Suchen_Menu.add_command(label="Nach alten Einträgen suchen", command=self.Suche_alte_Einträge)
+        #self.Suchen_Menu.add_command(label="In der Kundenablage suchen...", command=self.Suche_KDabl)
+        self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results_vor)
+        #self.Suchen_Menu.add_command(label="Such Menü öffnen", command=self.such_menü_hauptmenu)
         self.Suchen_Menu.add_command(label="Sehr genaue Suche nutzen (Suche 3.0)(verbugt)", command=self.genaue_suche_start)
         
         try:
@@ -708,8 +707,14 @@ class Listendings:
         self.Listen_Speicherort_Netzwerk_geladen_anders_Entry = tk.CTkEntry(self.tabview.tab("Speicherorte"), width=300)
         self.Netzlaufwerk_pfad_geladen_Label = tk.CTkLabel(self.tabview.tab("Speicherorte"), text=self.Listen_Speicherort_Netzwerk_geladen_anders, text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
         self.Pfad_geladen_Label = tk.CTkLabel(self.tabview.tab("Speicherorte"), text=self.Listen_Speicherort_geladen_anders, text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
+
+        self.Normaler_Speicherort_change = tk.CTkButton(self.tabview.tab("Speicherorte"), text="ändern", command=self.ListenDings_speicherort_ändern, width=100)
+        self.Netzwerk_Speicherort_change = tk.CTkButton(self.tabview.tab("Speicherorte"), text="ändern", command=self.ListenDings_speicherort_Netzwerk_ändern, width=100)
+
         self.Netzlaufwerk_pfad_geladen_Label.place(x=10,y=80)
         self.Pfad_geladen_Label.place(x=10,y=110)
+        self.Normaler_Speicherort_change.place(x=470,y=110)
+        self.Netzwerk_Speicherort_change.place(x=470,y=80)
         self.Listen_Speicherort_geladen_anders_Entry.place(x=160, y=110)
         self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.place(x=160,y=80)
         try:
@@ -747,6 +752,15 @@ class Listendings:
         self.gel_SMTP_Server_E.place(x=160,y=240)
         self.Mail_Einstellungen_speichern.place(x=10,y=280)
         self.SMTP_Server_erneut_anmelden.place(x=250,y=280)
+        try:
+            if self.smtp_login_erfolgreich == True:
+                self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP Server war erfolgreich.", text_color="SeaGreen1")
+                self.smtp_login_erfolgreich_l.place(x=20,y=20)
+            elif self.smtp_login_erfolgreich == False:
+                self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP fehlgeschlagen.", text_color="Red")
+                self.smtp_login_erfolgreich_l.place(x=20,y=20)
+        except Exception as Exc21:
+            print(f"Fehler bei der entscheidung ob die Anmeldung bei Server erfolgreich war, wie auch immer das jetzt nun wieder schiefgehen konnte... Fehlercode: {Exc21}")
         try:
             try:
                 self.gel_Email_Empfänger_E.delete(0, tk.END)
@@ -1125,7 +1139,7 @@ class Listendings:
                             print("Das Starface Modul ist nicht aktiviert: self.Starface_Modul == ", self.Starface_Modul)
                 except Exception as Exp:
                     print("Konnte die Einstellungsdatei nicht öffnen. Fehlercode: ", Exp)
-                    messagebox.showerror(title="CiM Fehler", message="Konnte die Einstellungsdatei nicht öffnen. Bitte in die Logs schauen.")
+                    
             else:
                 try:
                     with open(self.Starface_Einstellungsdatei, "w+") as SternGesicht_data_neu:
@@ -1202,15 +1216,7 @@ class Listendings:
             except Exception as ExGelEm1:
                 print("Fehler beim einfügen der Email Daten in die Entrys. Fehlercode: ", ExGelEm1)
             
-            try:
-                if self.smtp_login_erfolgreich == True:
-                    self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP Server war erfolgreich.", text_color="SeaGreen1")
-                    self.smtp_login_erfolgreich_l.place(x=220,y=320)
-                elif self.smtp_login_erfolgreich == False:
-                    self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP fehlgeschlagen.", text_color="Red")
-                    self.smtp_login_erfolgreich_l.place(x=220,y=320)
-            except Exception as Exc21:
-                print(f"Fehler bei der entscheidung ob die Anmeldung bei Server erfolgreich war, wie auch immer das jetzt nun wieder schiefgehen konnte... Fehlercode: {Exc21}")
+            
 
 
 
