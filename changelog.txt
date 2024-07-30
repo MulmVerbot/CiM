@@ -3,8 +3,6 @@
 | - Es gibt jetzt eine funktionierende Todo Liste, wenn auch etwas Roh im Anblick.
 | - TotDo Liste Alpha 1.0
 |
-|
-|
 |=================================================================================================
 |- 30.07.2024 Beta 1.0.2 -
 |   - Es kann einem Ticket jetzt eine Datei angehängt werden.
