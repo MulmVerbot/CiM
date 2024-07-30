@@ -1013,58 +1013,7 @@ class Listendings:
                 except:
                     pass
                 messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim Anmelden am Mailserver. Fehlercode: {EmailEx1}")
-
-    def Aufgabe_hinzufügen(self):
-        text_des_dings = tk.CTkInputDialog(text="Gib eine neue Aufgabe ein:")
-        Aufgabe = self.Zeit + "  --  " + text_des_dings.get_input() 
-        if Aufgabe:
-            try:
-                task = Aufgabe
-                if task:
-                    self.tasks.append(task)
-                    #self.task_menu.add_checkbutton(label=task, onvalue=True, offvalue=False)
-                    #self.save_tasks()
-                    self.check_var = tk.StringVar(value="Numero Uno")
-                    self.checkbox = tk.CTkCheckBox(self.Liste_mit_zeugs, text=task, command=self.checkbox_event,variable=self.check_var, onvalue="an", offvalue="aus")
-                    self.checkbox.place(x=10,y=self.zeile_zahl)
-                    self.zeile_zahl +=30
-                    with open("tasks.json", "w") as f: # Speichern der gerade eben hinzugefügten Aufgabe
-                        json.dump(self.tasks, f)
-            except Exception as Excio:
-                print("Fehler beim hinzufügen der Aufgabe Fehlercode: ",Excio)
-            try:
-                with open(self.index_liste_pfad_Einstellungsdatei, "w+") as Datei_offn:
-                    Datei_offn.write(self.zeile_zahl)
-                    print("Index Datei geschrieben. geschriebener Wert: ", self.zeile_zahl)
-            except Exception as edx:
-                print("Fehler aber Programm läuft weiter: ",edx)
-        else:
-            print("pass")
-            pass
-            
-    def checkbox_event(self):  # löschen der Aufgabe
-        print("die self.checkbox hat gerade den folgenden Wert #W3#: ", self.check_var.get())
-        #if self.check_var.get() == "an":
-        self.checkbox.place_forget()
-
-    def callback_fertsch_var(self, fertsch_var):
-        try:
-            index = self.fertsch_vars.index(fertsch_var)
-            print("Index beim löschen lautet: ", index)
-            del self.fertsch_vars[index]
-            chkbx = self.Liste_mit_zeugs.grid_slaves(row=index+1, column=0)[0]
-            self.zachen -= 1
-            chkbx.destroy()  # Zerstöre die Checkbox
-        except Exception as exc1:
-            print("Fehler: ", exc1)
-
-    def Kalender_anzeigen_weg(self):
-        print("Kalender_anzeigen_weg")
-        self.D1.destroy()
-        self.kalender_menü.place_forget()
-        self.Liste_mit_zeugs.place_forget()
-        self.kalender_menü_Knopp.configure(text="Kalender öffnen", command=self.Kalender_anzeigen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Kalender_Bild)
-        
+                 
     def Starface_Modul_umschalten(self):
         print("Starface_Modul_umschalten(def)")
         try:
