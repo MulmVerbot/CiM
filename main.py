@@ -600,7 +600,7 @@ class Listendings:
         #self.Speicherort_lokal_ändern_knopp = tk.CTkButton(self.tabview.tab("Speichern"), text="ändern", command=self.ListenDings_speicherort_ändern, fg=self.helle_farbe_für_knopfe, border=self.Border_Farbe)
         #self.Speicherort_lokal_ändern_l = tk.CTkLabel(self.tabview("Speichern"), text="den lokalen Speicherort ändern")
     #### todo gui ####
-        self.Todo_aufmachen_main_knopp = tk.CTkButton(root, text="Totdo öffnen", command=self.todo_aufmachen)
+        self.Todo_aufmachen_main_knopp = tk.CTkButton(root, text="Totdo öffnen", command=self.todo_aufmachen, fg_color="white", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1")
         self.Todo_aufmachen_main_knopp.place(x=1260,y=480)
         
         #self.todo_hinzufügen_knopp = tk.CTkButton(self.todo_frame, text="Aufgabe hinzufügen", command=self.todo_hinzufügen)
@@ -1105,10 +1105,7 @@ class Listendings:
             self.Pause_menu.place(x=300,y=10)
             self.Menü_da = True
             self.Menü_Knopp.configure(text="Menü schließen", fg_color="aquamarine", hover_color="aquamarine3")
-
             self.Berichtsheft_knopp.place(x=200,y=100)
-            
-
             self.Einstellung_Design_auswahl.place(x=10,y=200)
             self.Einstellung_Design_L.place(x=10,y=170)
             try:
@@ -1120,19 +1117,14 @@ class Listendings:
                     self.gel_Email_Empfänger_E.delete(0, tk.END)
                 except:
                     print("konnte die entrys nicht leeren")
-
                 self.gel_Email_Empfänger_E.insert(0, self.empfänger_email)
                 self.gel_Email_Sender_E.insert(0, self.sender_email)
                 self.gel_Email_Absender_Passwort_E.insert(0, self.pw_email)
                 self.gel_SMTP_Server_E.insert(0, self.smtp_server)
                 print("Alles was mit den Email Einstellungen zu tun hat wurde erfolgreich gelade")
-                
             except Exception as ExGelEm1:
                 print("Fehler beim einfügen der Email Daten in die Entrys. Fehlercode: ", ExGelEm1)
             
-            
-
-
 
     def zeugs1_blacklist(self): # zuegs1 zum zeugs anstarrten
         print("zuegs1 zum zeugs anstarrten")
@@ -2153,8 +2145,7 @@ class Listendings:
         except Exception as e:
             ex = "Irgendwas ist passiert: ", e
             messagebox.showerror(title="Listendings Speicherort", message=ex)
-        print("ende des Programms, fange nun an zu speichern")
-        #try:
+        print("ende des Programms, fange nun an zu speichern...")
         try:
             auto_speichern = "1"
             with open(self.Auto_speichern_Einstellungsdatei, "r") as aSp:
@@ -2170,8 +2161,6 @@ class Listendings:
                     with open(self.Liste_mit_datum, 'r') as text_datei:
                         daten = text_datei.read()
                 except FileNotFoundError:
-                    print("Die Liste war leer, beende nun ohne zu speichern.")
-                    print("======================================")
                     sys.exit()
                 zeilen = daten.strip().split('\n')
                 datensaetze = []
