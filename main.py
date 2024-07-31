@@ -135,7 +135,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M"
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.0.3"
+        self.Version = "Beta 1.0.3 (1)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -189,6 +189,7 @@ class Listendings:
             self.Kopieren_Bild = tk.CTkImage(Image.open("Bilder/Kopieren.png"))
             self.Schnellnotiz_Bild = tk.CTkImage(Image.open("Bilder/Schnellnotiz.png"))
             self.Durchsuchen_Bild_zu = tk.CTkImage(Image.open("Bilder/Durchsuchen_zu.png"))
+            self.totdo_Bild = tk.CTkImage(Image.open("Bilder/totdo.png"))
         except Exception as alk:
             messagebox.showinfo(self.Programm_Name, f"beim laden der Bild Assets ist ein Fehler aufgetreten: {alk}")
         
@@ -600,7 +601,7 @@ class Listendings:
         #self.Speicherort_lokal_ändern_knopp = tk.CTkButton(self.tabview.tab("Speichern"), text="ändern", command=self.ListenDings_speicherort_ändern, fg=self.helle_farbe_für_knopfe, border=self.Border_Farbe)
         #self.Speicherort_lokal_ändern_l = tk.CTkLabel(self.tabview("Speichern"), text="den lokalen Speicherort ändern")
     #### todo gui ####
-        self.Todo_aufmachen_main_knopp = tk.CTkButton(root, text="Totdo öffnen", command=self.todo_aufmachen, fg_color="white", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1")
+        self.Todo_aufmachen_main_knopp = tk.CTkButton(root, text="Totdo öffnen", command=self.todo_aufmachen, fg_color="white", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.totdo_Bild)
         self.Todo_aufmachen_main_knopp.place(x=1260,y=480)
         
         #self.todo_hinzufügen_knopp = tk.CTkButton(self.todo_frame, text="Aufgabe hinzufügen", command=self.todo_hinzufügen)
