@@ -85,6 +85,16 @@ class TodoApp:
             print("konnte den Listennamen nicht speichern.")
             self.top_ln_f.destroy()
 
+    def fake_laden(self):
+        print("lade nun die ganzen Konzept Sachen")
+        y1 = 100
+        i = 1
+        while i <= 10:
+            l = tk.CTkLabel(self.todo_frame_links, text=f"{i}. Liste (zukünftig anclickbar)", text_color="Black")
+            l.place(x=10,y=y1)
+            y1 += 40
+            i += 1
+        print("Alle Fakes/ Konzepte wurden geladen")
 
     def todo_aufmachen(self):
         self.Todo_offen = True
@@ -118,6 +128,7 @@ class TodoApp:
         self.Aufgaben_name_e.place(x=1060, y=110)
         self.Aufgaben_Beschreibung_e.place(x=1060, y=150)
 
+        self.fake_laden()
         self.load_tasks()
 
     def info(self):
