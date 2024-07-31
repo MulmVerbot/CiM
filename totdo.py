@@ -128,6 +128,8 @@ class TodoApp:
         self.Aufgaben_name_e.place(x=1060, y=110)
         self.Aufgaben_Beschreibung_e.place(x=1060, y=150)
 
+        
+
         self.fake_laden()
         self.load_tasks()
 
@@ -174,16 +176,14 @@ class TodoApp:
         if task_name:
             task_description = self.Aufgaben_Beschreibung_e.get()
             if task_description:
-                #task_name = f"{self.Zeit}\n{task_name}"
-                self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit}
+                self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'Notizen': "-"}
                 self.Aufgaben_name_e.delete(0, tk.END)
                 self.Aufgaben_Beschreibung_e.delete(0, tk.END)
                 self.save_task(self.task)
                 self.create_task_button(self.task)
             else:
                 task_description = "-"
-                #task_name = f"Titel: {task_name}\nBeschreibung: {task_description}"
-                self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit}
+                self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'Notizen': "-"}
                 self.Aufgaben_name_e.delete(0, tk.END)
                 self.Aufgaben_Beschreibung_e.delete(0, tk.END)
                 self.save_task(self.task)
@@ -205,6 +205,7 @@ class TodoApp:
             self.Aufgaben_Titel.place_forget()
             self.Aufgabe_entfernen.place_forget()
             self.Aufgaben_Beschreibung_l.place_forget()
+            self.Notizen_feld.place_forget()
         except:
             pass
 
@@ -215,9 +216,12 @@ class TodoApp:
         self.Aufgaben_Titel = tk.CTkLabel(self.todo_frame_rechts, text=f"Titel: {task['name']}", text_color="Black", justify="left", font=self.Schriftart)
         self.Aufgaben_Beschreibung_l = tk.CTkLabel(self.todo_frame_rechts, text=f"Uhrzeit: {task['Uhrzeit']}\nBeschreibung:\n{task['description']}", text_color="Black", justify="left", font=self.Schriftart_k)
         self.Aufgabe_entfernen = tk.CTkButton(self.todo_frame_rechts, text="Aufgabe entfernen", command=self.aufgabe_loeschen_frage, fg_color="White", border_color=self.Border_Farbe, border_width=2, text_color="Black", hover_color="pink")
+        self.Notizen_feld = tk.CTkTextbox(self.todo_frame_rechts, width=320, height=440, text_color="Black", fg_color="azure", wrap="word", border_width=0)
         self.Aufgaben_Titel.place(x=20,y=20)
         self.Aufgaben_Beschreibung_l.place(x=20,y=100)
         self.Aufgabe_entfernen.place(x=20,y=930)
+        self.Notizen_feld.place(x=20,y=300)
+        self.Notizen_feld.insert(tk.END, f"{task['Notizen']}")
 
     def aufgabe_loeschen_frage(self):
         self.top_show_f = tk.CTkToplevel()
