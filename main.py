@@ -133,7 +133,7 @@ class Listendings:
 # Freude ist bloß ein Mangel an Informationen
     def __init__(self, master):
         self.master = master
-        self.Programm_Name = "M.U.L.M"
+        self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
         self.Version = "Beta 1.0.3 (1)"
         self.Zeit = "Die Zeit ist eine Illusion."
