@@ -1,32 +1,34 @@
 import customtkinter as tk
 from tkinter import Menu
 from tkinter import font
+from tkinter import messagebox
 import json
 import os
+import sys
 import time
+import threading
 
 
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        
         self.Version = "Alpha 1.2.1"
         self.Programm_Name = "TotDo Liste"
+        self.Zeit = "Die Zeit ist eine Illusion."
+        self.Zeit_text = None
         self.root.title(self.Programm_Name + " " + self.Version)
         self.Todo_offen = False
+        self.Programm_läuft = True
         Benutzerordner = os.path.expanduser('~')
         tasks_pfad = os.path.join(Benutzerordner, 'CiM', 'Db')
         tasks_pfad_datei = os.path.join(tasks_pfad, 'tasks.json')
         self.Einstellungsordner_pfad = os.path.join(Benutzerordner, 'CiM', 'Einstellungen')
         self.Listenname_speicherort = os.path.join(self.Einstellungsordner_pfad, 'Listenname.txt')
+        
 
-        try:
-            if not os.path.exists(self.Einstellungsordner_pfad):
-                os.mkdir(self.Einstellungsordner_pfad)
-        except Exception as ex1:
-            print(f"konnte den Einstellungsordner nicht erstellen. Fehlercode: {ex1}")
 
-        #### Farben #### , fg_color="White", border_color=self.Border_Farbe, border_width=2, text_color="Black", hover_color="pink"
+
+    #### Farben #### , fg_color="White", border_color=self.Border_Farbe, border_width=2, text_color="Black", hover_color="pink"
         self.Hintergrund_farbe = "AntiqueWhite2"
         self.Hintergrund_farbe_Text_Widget = "AntiqueWhite2"
         self.Textfarbe = "Black"
@@ -45,6 +47,10 @@ class TodoApp:
         self.Schriftart = ("Helvetica", 20, "bold")
         self.Schriftart_k = ("Helvetica", 20, "normal")
         self.root.configure(fg_color=self.Hintergrund_farbe)
+        self.Uhr_läuft = True
+        self.thread_uhr = threading.Timer(1, self.Uhr)
+        self.thread_uhr.daemon = True
+        self.thread_uhr.start()
 
         try:
             if not os.path.exists(tasks_pfad):
@@ -56,6 +62,12 @@ class TodoApp:
         self.TASK_FILE = tasks_pfad_datei
         
         self.Zeit = time.strftime("%H:%M:%S")
+        try:
+            if not os.path.exists(self.Einstellungsordner_pfad):
+                os.mkdir(self.Einstellungsordner_pfad)
+        except Exception as ex1:
+            print(f"konnte den Einstellungsordner nicht erstellen. Fehlercode: {ex1}")
+
         self.Listennamen_laden()
         self.todo_aufmachen()
 
@@ -77,7 +89,7 @@ class TodoApp:
     def Listennamen_speichern(self):
         try:
             with open(self.Listenname_speicherort, "w+") as ln:
-                ln.write(self.Ln_beb_e.get())
+                ln.write(self.Ln_beb_e.get()) # nimmt sich aus der Entry für den Listennamen den Namen
                 print("Listenname gespeichert.")
             self.top_ln_f.destroy()
             self.Listennamen_laden()
@@ -98,11 +110,9 @@ class TodoApp:
 
     def todo_aufmachen(self):
         self.Todo_offen = True
-
         self.menu = Menu(root)
         root.configure(menu=self.menu)
         self.menudings = Menu(self.menu, tearoff=0)
-        
         self.Einstellungen = Menu(self.menu, tearoff=0)
         self.Bearbeiten_Menu = Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label=self.Programm_Name  + " " + self.Version, menu=self.menudings)
@@ -110,23 +120,22 @@ class TodoApp:
         self.menu.add_cascade(label="Bearbeiten", menu=self.Bearbeiten_Menu)
         self.menudings.add_command(label="Info", command=self.info)
         self.Bearbeiten_Menu.add_command(label="Listenmamen ändern", command=self.Listenname_change)
-
         self.todo_frame_links = tk.CTkFrame(self.root, width=200, height=1000, fg_color=self.Hintergrund_farbe, border_color=self.Border_Farbe, border_width=3, corner_radius=5)
         self.todo_frame_links.place(x=0, y=0)
         self.todo_frame_rechts = tk.CTkFrame(self.root, width=400, height=1000, fg_color=self.Hintergrund_farbe, border_color=self.Border_Farbe, border_width=3, corner_radius=5)
         self.todo_frame_rechts.place(x=1520, y=0)
         self.todo_frame_einz = tk.CTkScrollableFrame(self.root, width=820, height=800, fg_color=self.Hintergrund_farbe, border_color=self.Border_Farbe, border_width=3, corner_radius=5)
         self.todo_frame_einz.place(x=200, y=100)
-
         self.Aufgabe_hinzufuegen_Knopp = tk.CTkButton(self.root, text="Aufgabe erstellen", command="", fg_color="White", border_color=self.Border_Farbe, border_width=2, text_color="Black", hover_color="pink")
         self.Aufgabe_hinzufuegen_Knopp.bind('<Button-1>', self.create_task_button_vor)
         self.root.bind('<Return>', self.create_task_button_vor)
         self.Aufgabe_hinzufuegen_Knopp.place(x=1120, y=240)
-
         self.Aufgaben_name_e = tk.CTkEntry(self.root, placeholder_text="Titel", width=300, fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
         self.Aufgaben_Beschreibung_e = tk.CTkEntry(self.root, placeholder_text="Beschreibung", width=300, fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
         self.Aufgaben_name_e.place(x=1060, y=110)
         self.Aufgaben_Beschreibung_e.place(x=1060, y=150)
+        self.Zhe_Clock = tk.CTkLabel(self.todo_frame_links, text=self.Zeit, text_color="Black")
+        self.Zhe_Clock.place(x=10,y=10)
 
         
 
@@ -135,6 +144,21 @@ class TodoApp:
 
     def info(self):
         print("Programmiert von Maximilian Becker")
+
+    def Uhr(self):
+        print("Thread gestartet: Uhr(def)")
+        while self.Uhr_läuft == True:
+            lokaler_zeit_string = time.strftime("%H:%M:%S")
+            self.Zeit = time.strftime("%H:%M:%S")
+            try:
+                self.Zhe_Clock.configure(text=self.Zeit)
+                root.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
+            except Exception as e:
+                print(e)
+            if self.Zeit_text:
+                self.Zeit_text.configure(text=lokaler_zeit_string)
+            time.sleep(1)
+        print("Thread Beendet: Uhr(def)")
 
     def Listenname_change(self):
         print("Listenname_change (def)")
@@ -277,6 +301,13 @@ class TodoApp:
     def clear_tasks_frame(self):
         for widget in self.todo_frame_einz.winfo_children():
             widget.destroy()
+
+    def bye(self):
+        print("(ENDE) Das Programm wurde Beendet, auf wiedersehen! :3 ")
+        self.Programm_läuft = False
+        self.Uhr_läuft = False
+        self.thread_uhr.cancel()
+        sys.exit()
 
 if __name__ == "__main__":
     root = tk.CTk()
