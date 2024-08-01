@@ -46,6 +46,7 @@ class TodoApp:
 
         self.Schriftart = ("Helvetica", 20, "bold")
         self.Schriftart_k = ("Helvetica", 20, "normal")
+        self.Schriftart_n = ("Helvetica", 13, "bold")
         self.root.configure(fg_color=self.Hintergrund_farbe)
         self.Uhr_läuft = True
         self.thread_uhr = threading.Timer(1, self.Uhr)
@@ -80,10 +81,13 @@ class TodoApp:
                 ID_g.close()
         except FileNotFoundError:
             print("Die Datei id.txt wurde nicht gefunden.")
+            self.ID = 7572469420
         except ValueError:
             print("Der Inhalt der Datei id.txt ist keine gültige Zahl.")
+            self.ID = 7572469420
         except Exception as eid1:
             print(f"Konnte den neusten ID Stand nicht speichern. Fehlercode: {eid1}")
+            self.ID = 7572469420
     
     def ID_speichern(self):
         try:
@@ -152,15 +156,24 @@ class TodoApp:
         self.Aufgabe_hinzufuegen_Knopp = tk.CTkButton(self.root, text="Aufgabe erstellen", fg_color="White", border_color=self.Border_Farbe, border_width=2, text_color="Black", hover_color="pink")
         self.Aufgabe_hinzufuegen_Knopp.bind('<Button-1>', self.create_task_button_vor)
         self.root.bind('<Return>', self.create_task_button_vor)
-        self.Aufgabe_hinzufuegen_Knopp.place(x=1120, y=240)
-        self.Aufgaben_name_e = tk.CTkEntry(self.root, placeholder_text="Titel", width=300, fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
-        self.Aufgaben_Beschreibung_e = tk.CTkEntry(self.root, placeholder_text="Beschreibung", width=300, fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
-        self.Aufgaben_name_e.place(x=1060, y=110)
-        self.Aufgaben_Beschreibung_e.place(x=1060, y=150)
+        self.Aufgabe_hinzufuegen_Knopp.place(x=1150,y=760)
+        #self.Aufgaben_name_e = tk.CTkEntry(self.root, placeholder_text="Titel", width=300, fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
+        #self.Aufgaben_Beschreibung_e = tk.CTkEntry(self.root, placeholder_text="Beschreibung", width=300, fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
+        #self.Aufgaben_name_e.place(x=1060, y=110)
+        #self.Aufgaben_Beschreibung_e.place(x=1060, y=150)
         self.Zhe_Clock = tk.CTkLabel(self.todo_frame_links, text=self.Zeit, text_color="Black")
         self.Zhe_Clock.place(x=10,y=10)
+        #self.Notizen_feld_e = tk.CTkTextbox(self.root, width=320, height=440, text_color="Black", fg_color="azure", wrap="word", border_width=0)
+        #self.Notizen_feld_e.place(x=1060,y=270)
+        task = {'name': " ", 'description': "", 'Uhrzeit': self.Zeit, 'notizen': "", 'id': self.ID}
+        self.show_task(task)
+            
+    #### todo frame links
 
+    #### todo frame links ENDE '''''''''
+    #### todo frame rechts
         
+    #### todo frame links NENDE '''''''''
 
         self.fake_laden()
         self.load_tasks()
@@ -212,15 +225,15 @@ class TodoApp:
         self.todo_frame_links.place_forget()
         self.todo_frame_rechts.place_forget()
         self.todo_frame_einz.place_forget()
-        self.Aufgaben_name_e.place_forget()
-        self.Aufgaben_Beschreibung_e.place_forget()
+        self.Aufgaben_Titel_t.place_forget()
+        self.Aufgaben_Beschreibung_t.place_forget()
         self.Aufgabe_hinzufuegen_Knopp.place_forget()
         self.Todo_offen = False
 
     def create_task_button_vor(self, event):
-        task_name = self.Aufgaben_name_e.get()
-        task_description = self.Aufgaben_Beschreibung_e.get()
-        task_notizen = "-" # hier dann später die entry hin aus der das gezogen wird.
+        task_name = self.Aufgaben_Titel_t.get("0.0", "end")
+        task_description = self.Aufgaben_Beschreibung_t.get("0.0", "end")
+        task_notizen = self.Notizen_feld.get("0.0", "end")
         self.Zeit = time.strftime("%H:%M:%S")
         if task_name:
             if not task_description:
@@ -230,10 +243,12 @@ class TodoApp:
             self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': self.ID}
             self.ID += 1
             self.ID_speichern()
-            self.Aufgaben_name_e.delete(0, tk.END)
-            self.Aufgaben_Beschreibung_e.delete(0, tk.END)
+            self.Notizen_feld.delete("0.0", tk.END)
+            self.Aufgaben_Beschreibung_t.delete("0.0", tk.END)
+            self.Aufgaben_Titel_t.delete("0.0", tk.END)
             self.save_task(self.task)
             self.create_task_button(self.task)
+            self.button.invoke()
         else:
             messagebox.showinfo(title=self.Programm_Name, message="Bitte geben Sie zuerst einen Aufgabentitel ein.")
         
@@ -259,6 +274,7 @@ class TodoApp:
             self.Aufgaben_Beschreibung_t.place_forget()
             self.Notizen_feld.place_forget()
             self.Uhrzeit_text_l.place_forget()
+            self.ID_label.place_forget()
         except:
             pass
 
@@ -271,13 +287,17 @@ class TodoApp:
         self.Aufgabe_entfernen.place(x=20,y=930)
         self.Notizen_feld.place(x=20,y=300)
         self.Notizen_feld.insert(tk.END, f"{task['notizen']}")
+        self.ID_label = tk.CTkLabel(self.todo_frame_rechts, text=f"Aufgaben-ID:  {self.ID}", text_color="Black", font=self.Schriftart_n)
+        self.ID_label.place(x=230,y=60)
 
-        self.Aufgaben_Titel_t = tk.CTkTextbox(self.todo_frame_rechts, width=330, height=40, text_color="Black", fg_color="azure", wrap="word", border_width=0)
+        self.Aufgaben_Titel_t = tk.CTkTextbox(self.todo_frame_rechts, width=330, height=40, text_color="Black", fg_color="azure", wrap="word", border_width=0) # , font=self.Schriftart_n
         self.Aufgaben_Titel_t.place(x=20,y=20) 
         self.Aufgaben_Titel_t.insert(tk.END, f"{task['name']}")
         self.Aufgaben_Beschreibung_t = tk.CTkTextbox(self.todo_frame_rechts, width=330, height=120, text_color="Black", fg_color="azure", wrap="word", border_width=0)
-        self.Aufgaben_Beschreibung_t.place(x=20,y=100)
-        self.Aufgaben_Beschreibung_t.insert(tk.END, f"ID: {task['id']}\nBeschreibung:\n{task['description']}")
+        self.Aufgaben_Beschreibung_t.place(x=20,y=110)
+        self.Aufgaben_Beschreibung_l = tk.CTkLabel(self.todo_frame_rechts, text="Beschreibung:", text_color="Black")
+        self.Aufgaben_Beschreibung_l.place(x=20,y=82)
+        self.Aufgaben_Beschreibung_t.insert(tk.END, f"{task['description']}")
 
         self.Uhrzeit_text_l = tk.CTkLabel(self.todo_frame_rechts, text=f"Aufgabe von: {task['Uhrzeit']}Uhr", text_color="Black")
         self.Uhrzeit_text_l.place(x=20,y=60)
@@ -315,7 +335,7 @@ class TodoApp:
         tasks = self.load_tasks_from_file()
         for task in tasks:
             self.create_task_button(task)
-
+                            # DAS IST BRILLIANTER CODE OMEINGOTT!
     def load_tasks_from_file(self):
         if os.path.exists(self.TASK_FILE):
             with open(self.TASK_FILE, 'r') as file:
