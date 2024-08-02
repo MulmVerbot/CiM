@@ -818,6 +818,8 @@ class Listendings:
         try:
             with open(self.Benutzerordner + "/CiM/cim.txt", "w") as cim_s:
                 cim_s.write(self.cim)
+                cim_s.close()
+                self.Ereignislog_insert(nachricht_f_e="-Auftrag ans Totdo übermittelt.-")
         except Exception as exooo:
             print(f"Fehler beim senden ans Totdo. Fehlermeldung: {exooo}")    
 
@@ -971,10 +973,13 @@ class Listendings:
         
 
     def todo_aufmachen(self):
-        #try:
-        exec(open('totdo.py').read())
-        #except Exception as JSON_E:
-         #   messagebox.showerror(title="CiM Fehler", message=f"Konnte die Datei totdo.py nicht finden, stelle sicher, dass sie sich im Programmverzeichnis befindet! Fehlercode: {JSON_E}")
+        try:
+            script_path = "totdo.py"
+            subprocess.Popen([sys.executable, script_path],creationflags=subprocess.CREATE_NO_WINDOW) # Windoof
+        except Exception as e:
+            # Unix (macOS, Linux)
+            subprocess.Popen([sys.executable, script_path],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            print(f"Fehler beim Starten des Skripts: {e}")
 
     
     def SMTP_Anmeldung_Manuell(self):

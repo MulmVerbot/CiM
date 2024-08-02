@@ -7,12 +7,13 @@ import os
 import sys
 import time
 import threading
+import re
 
 
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Alpha 1.2.2"
+        self.Version = "Alpha 1.2.2 (1)"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -343,7 +344,7 @@ class TodoApp:
         self.Aufgaben_Beschreibung_l.place(x=20,y=82)
         self.Aufgaben_Beschreibung_t.insert(tk.END, f"{task['description']}")
 
-        self.Uhrzeit_text_l = tk.CTkLabel(self.todo_frame_rechts, text=f"Aufgabe von: {task['Uhrzeit']}Uhr", text_color="White")
+        self.Uhrzeit_text_l = tk.CTkLabel(self.todo_frame_rechts, text=f"Aufg3be von: {task['Uhrzeit']}Uhr", text_color="White")
         self.Uhrzeit_text_l.place(x=20,y=60)
 
 
@@ -377,26 +378,38 @@ class TodoApp:
                     cim_g.close()
                     try:
                         os.remove(self.cim_txt_pfad)
+                        print("cim.txt wieder gelöscht.")
                     except:
                         pass
-                    if self.cim != None:
-                        task_name = "Aus dem M.U.L.M\nAufgabe von " + self.Zeit + " Uhr"
-                        task_description = self.cim
-                        task_notizen = " "
-                        self.Zeit = time.strftime("%H:%M:%S")
-                        if task_name:
-                            if not task_description:
-                                task_description = "-"
-                            if not task_notizen:
-                                task_notizen = "-"
-                            self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': self.ID}
-                            self.ID += 1
-                            self.cim = None
-                            self.ID_speichern()
-                            self.save_task(self.task)
-                            self.create_task_button(self.task)
-                            self.button.invoke()
-                            self.refresh_tasks()
+                if self.cim != None:
+                    match = None
+                    print("wir haben nun eine Aufgabe vom M.U.L.M erhalten")
+                    match = re.search(r'Anrufer: (.+)', self.cim)
+                    if match != None:
+                        anrufer_info = match.group(1)
+                        print(f'Anrufer: {anrufer_info}')
+                    else:
+                        print('Anrufer nicht gefunden')
+                        anrufer_info = "Aufgabe aus dem Mulm"
+
+                    task_name = anrufer_info
+                    task_description = self.cim
+                    task_notizen = "Aufgabe aus dem M.U.L.M"
+                    self.Zeit = time.strftime("%H:%M:%S")
+                    if task_name:
+                        if not task_description:
+                            task_description = "-"
+                        if not task_notizen:
+                            task_notizen = "-"
+                        self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': self.ID}
+                        print(f"ich speichere jetzt das hier: {self.task}")
+                        self.ID += 1
+                        self.cim = None
+                        self.ID_speichern()
+                        self.save_task(self.task)
+                        self.create_task_button(self.task)
+                        self.button.invoke()
+                        self.refresh_tasks()
             except:
                 pass
             time.sleep(1)
