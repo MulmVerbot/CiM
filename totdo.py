@@ -170,7 +170,7 @@ class TodoApp:
         self.Aufgabe_hinzufuegen_Knopp.bind('<Button-1>', self.create_task_button_vor)
         self.root.bind('<Return>', self.create_task_button_vor)
         self.Aufgabe_hinzufuegen_Knopp.place(x=200,y=930)
-        self.Zhe_Clock = tk.CTkLabel(self.todo_frame_links, text=self.Zeit, text_color="Black")
+        self.Zhe_Clock = tk.CTkLabel(self.todo_frame_links, text=self.Zeit, text_color="White")
         self.Zhe_Clock.place(x=10,y=10)
         task = {'name': " ", 'description': "", 'Uhrzeit': "Fake ", 'notizen': "", 'id': self.ID}
         self.Aufgaben_Titel_e = tk.CTkEntry(self.root, width=1300, height=30, text_color="White", fg_color=self.f_e, border_color=self.f_border, border_width=1, corner_radius=5)
