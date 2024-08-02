@@ -12,7 +12,7 @@ import threading
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Alpha 1.2.1"
+        self.Version = "Alpha 1.2.2"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -160,6 +160,7 @@ class TodoApp:
         self.menu.add_cascade(label="Bearbeiten", menu=self.Bearbeiten_Menu)
         self.menudings.add_command(label="Info", command=self.info)
         self.Bearbeiten_Menu.add_command(label="Listenmamen ändern", command=self.Listenname_change)
+        self.Einstellungen.add_command(label="Liste aktualisieren", command=self.refresh_tasks)
         self.todo_frame_links = tk.CTkFrame(self.root, width=200, height=1000, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
         self.todo_frame_links.place(x=0, y=0)
         self.todo_frame_rechts = tk.CTkFrame(self.root, width=400, height=1000, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
@@ -188,6 +189,7 @@ class TodoApp:
 
     def info(self):
         print("Programmiert von Maximilian Becker")
+        messagebox.showinfo(title=self.Programm_Name, message=f"{self.Programm_Name}\nProgrammiert von: Maximilian Becker\n Version: {self.Version}\nTeil des Listendings Sets\n2024")
 
     def Uhr(self):
         print("Thread gestartet: Uhr(def)")
