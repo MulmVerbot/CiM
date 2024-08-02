@@ -19,16 +19,18 @@ class TodoApp:
         self.root.title(self.Programm_Name + " " + self.Version)
         self.Todo_offen = False
         self.Programm_läuft = True
+        self.Mod_Suche_aktiv = True
         self.Benutzerordner = os.path.expanduser('~')
         self.tasks_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Db')
         self.tasks_pfad_datei = os.path.join(self.tasks_pfad, 'tasks.json')
         self.Einstellungsordner_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Einstellungen')
         self.Listenname_speicherort = os.path.join(self.Einstellungsordner_pfad, 'Listenname.txt')
+        self.cim_txt_pfad = os.path.join(self.Benutzerordner , "CiM", "cim.txt")
         
 
 
 
-    #### Farben #### , fg_color="White", border_color=self.Border_Farbe, border_width=2, text_color="Black", hover_color="pink"
+    #### Farben #### , fg_color="White", border_color=self.Border_Farbe, border_width=2, text_color="Black", hover_color=self.f_r_1
         self.Hintergrund_farbe = "AntiqueWhite2"
         self.Hintergrund_farbe_Text_Widget = "AntiqueWhite2"
         self.Textfarbe = "Black"
@@ -42,16 +44,27 @@ class TodoApp:
         self.ja_ui_fabe = "burlywood"
         self.das_hübsche_grau = "LightSlateGray"
         self.helle_farbe_für_knopfe = "LightSkyBlue"
+
+    #wichtige
+        self.f_bg = "gray11"
+        self.f_l = "gray13"
+        self.f_r = "#272727"
+        self.f_e = "#2A2A2A"
+        self.f_border = "#232323"
+        self.f_r_1 = "#323232"
     #### Farben Ende ####
 
         self.Schriftart = ("Helvetica", 20, "bold")
         self.Schriftart_k = ("Helvetica", 20, "normal")
         self.Schriftart_n = ("Helvetica", 13, "bold")
-        self.root.configure(fg_color=self.Hintergrund_farbe)
+        self.root.configure(fg_color=self.f_bg)
         self.Uhr_läuft = True
         self.thread_uhr = threading.Timer(1, self.Uhr)
         self.thread_uhr.daemon = True
         self.thread_uhr.start()
+        self.thread_CiM = threading.Timer(2, self.Mod_suche)
+        self.thread_CiM.daemon = True
+        self.thread_CiM.start()
 
         try:
             if not os.path.exists(self.tasks_pfad):
@@ -107,7 +120,7 @@ class TodoApp:
         try:
             with open(self.Listenname_speicherort, "r") as ln:
                 self.Listenname = ln.read()
-            self.Listenname_l = tk.CTkLabel(self.root, text=self.Listenname, font=self.Schriftart, text_color="Black")
+            self.Listenname_l = tk.CTkLabel(self.root, text=self.Listenname, font=self.Schriftart, text_color="DarkSlateGray1")
             self.Listenname_l.place(x=220,y=50)
         except:
             print("konnte den Listennamen nicht lesen.")
@@ -147,35 +160,26 @@ class TodoApp:
         self.menu.add_cascade(label="Bearbeiten", menu=self.Bearbeiten_Menu)
         self.menudings.add_command(label="Info", command=self.info)
         self.Bearbeiten_Menu.add_command(label="Listenmamen ändern", command=self.Listenname_change)
-        self.todo_frame_links = tk.CTkFrame(self.root, width=200, height=1000, fg_color=self.Hintergrund_farbe, border_color=self.Border_Farbe, border_width=3, corner_radius=5)
+        self.todo_frame_links = tk.CTkFrame(self.root, width=200, height=1000, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
         self.todo_frame_links.place(x=0, y=0)
-        self.todo_frame_rechts = tk.CTkFrame(self.root, width=400, height=1000, fg_color=self.Hintergrund_farbe, border_color=self.Border_Farbe, border_width=3, corner_radius=5)
+        self.todo_frame_rechts = tk.CTkFrame(self.root, width=400, height=1000, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
         self.todo_frame_rechts.place(x=1520, y=0)
-        self.todo_frame_einz = tk.CTkScrollableFrame(self.root, width=820, height=800, fg_color=self.Hintergrund_farbe, border_color=self.Border_Farbe, border_width=3, corner_radius=5)
+        self.todo_frame_einz = tk.CTkScrollableFrame(self.root, width=1300, height=800, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
         self.todo_frame_einz.place(x=200, y=100)
-        self.Aufgabe_hinzufuegen_Knopp = tk.CTkButton(self.root, text="Aufgabe erstellen", fg_color="White", border_color=self.Border_Farbe, border_width=2, text_color="Black", hover_color="pink")
+        self.Aufgabe_hinzufuegen_Knopp = tk.CTkButton(self.todo_frame_rechts, text="Aufgabe erstellen", fg_color=self.f_bg, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1)
         self.Aufgabe_hinzufuegen_Knopp.bind('<Button-1>', self.create_task_button_vor)
         self.root.bind('<Return>', self.create_task_button_vor)
-        self.Aufgabe_hinzufuegen_Knopp.place(x=1150,y=760)
-        #self.Aufgaben_name_e = tk.CTkEntry(self.root, placeholder_text="Titel", width=300, fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
-        #self.Aufgaben_Beschreibung_e = tk.CTkEntry(self.root, placeholder_text="Beschreibung", width=300, fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
-        #self.Aufgaben_name_e.place(x=1060, y=110)
-        #self.Aufgaben_Beschreibung_e.place(x=1060, y=150)
+        self.Aufgabe_hinzufuegen_Knopp.place(x=200,y=930)
         self.Zhe_Clock = tk.CTkLabel(self.todo_frame_links, text=self.Zeit, text_color="Black")
         self.Zhe_Clock.place(x=10,y=10)
-        #self.Notizen_feld_e = tk.CTkTextbox(self.root, width=320, height=440, text_color="Black", fg_color="azure", wrap="word", border_width=0)
-        #self.Notizen_feld_e.place(x=1060,y=270)
-        task = {'name': " ", 'description': "", 'Uhrzeit': self.Zeit, 'notizen': "", 'id': self.ID}
+        task = {'name': " ", 'description': "", 'Uhrzeit': "Fake ", 'notizen': "", 'id': self.ID}
+        self.Aufgaben_Titel_e = tk.CTkEntry(self.root, width=1300, height=30, text_color="White", fg_color=self.f_e, border_color=self.f_border, border_width=1, corner_radius=5)
+        self.Aufgaben_Titel_e.place(x=210,y=940)
+        self.Aufgaben_Titel_e.bind("<FocusIn>", self.entry_rein)
+        self.root.bind("<Double-1>", self.entry_rein)
+
         self.show_task(task)
-            
-    #### todo frame links
-
-    #### todo frame links ENDE '''''''''
-    #### todo frame rechts
-        
-    #### todo frame links NENDE '''''''''
-
-        self.fake_laden()
+        #self.fake_laden()
         self.load_tasks()
 
     def info(self):
@@ -231,7 +235,7 @@ class TodoApp:
         self.Todo_offen = False
 
     def create_task_button_vor(self, event):
-        task_name = self.Aufgaben_Titel_t.get("0.0", "end")
+        task_name = self.Aufgaben_Titel_e.get()
         task_description = self.Aufgaben_Beschreibung_t.get("0.0", "end")
         task_notizen = self.Notizen_feld.get("0.0", "end")
         self.Zeit = time.strftime("%H:%M:%S")
@@ -256,8 +260,8 @@ class TodoApp:
                 
 
     def create_task_button(self, task):
-        self.button = tk.CTkButton(self.todo_frame_einz, text=f"{task['name']}", command=lambda t=task: self.show_task(t), fg_color="White", border_color=self.Border_Farbe, border_width=2, text_color="Black", hover_color="pink", width=800)
-        self.button.pack(padx=10, pady=5)
+        self.button = tk.CTkButton(self.todo_frame_einz, text=f"{task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290)
+        self.button.pack(padx=10, pady=1)
         
 
     def l_ja(self):
@@ -267,6 +271,10 @@ class TodoApp:
     def l_nein(self):
         self.top_show_f.destroy()
 
+    def entry_rein(self, event):
+        print("Dings")
+        self.todo_r_dispawn()
+
     def todo_r_dispawn(self):
         try:
             self.Aufgaben_Titel_t.place_forget()
@@ -275,6 +283,7 @@ class TodoApp:
             self.Notizen_feld.place_forget()
             self.Uhrzeit_text_l.place_forget()
             self.ID_label.place_forget()
+            self.Aufgaben_Beschreibung_l.place_forget()
         except:
             pass
 
@@ -282,24 +291,24 @@ class TodoApp:
         print("Aufgabe anzeigen")
         self.task = task
         self.todo_r_dispawn()
-        self.Aufgabe_entfernen = tk.CTkButton(self.todo_frame_rechts, text="Aufgabe entfernen", command=self.aufgabe_loeschen_frage, fg_color="White", border_color=self.Border_Farbe, border_width=2, text_color="Black", hover_color="pink")
-        self.Notizen_feld = tk.CTkTextbox(self.todo_frame_rechts, width=320, height=440, text_color="Black", fg_color="azure", wrap="word", border_width=0)
+        self.Aufgabe_entfernen = tk.CTkButton(self.todo_frame_rechts, text="Aufgabe entfernen", command=self.aufgabe_loeschen_frage, fg_color=self.f_bg, border_color=self.Border_Farbe, border_width=1, text_color="White", hover_color=self.f_r_1)
+        self.Notizen_feld = tk.CTkTextbox(self.todo_frame_rechts, width=320, height=440, text_color="White", fg_color=self.f_r_1, wrap="word", border_width=0)
         self.Aufgabe_entfernen.place(x=20,y=930)
         self.Notizen_feld.place(x=20,y=300)
         self.Notizen_feld.insert(tk.END, f"{task['notizen']}")
-        self.ID_label = tk.CTkLabel(self.todo_frame_rechts, text=f"Aufgaben-ID:  {self.ID}", text_color="Black", font=self.Schriftart_n)
+        self.ID_label = tk.CTkLabel(self.todo_frame_rechts, text=f"Aufgaben-ID:  {task['id']}", text_color="White", font=self.Schriftart_n)
         self.ID_label.place(x=230,y=60)
 
-        self.Aufgaben_Titel_t = tk.CTkTextbox(self.todo_frame_rechts, width=330, height=40, text_color="Black", fg_color="azure", wrap="word", border_width=0) # , font=self.Schriftart_n
+        self.Aufgaben_Titel_t = tk.CTkTextbox(self.todo_frame_rechts, width=330, height=40, text_color="White", fg_color=self.f_r_1, wrap="word", border_width=0, activate_scrollbars=False) # , font=self.Schriftart_n
         self.Aufgaben_Titel_t.place(x=20,y=20) 
         self.Aufgaben_Titel_t.insert(tk.END, f"{task['name']}")
-        self.Aufgaben_Beschreibung_t = tk.CTkTextbox(self.todo_frame_rechts, width=330, height=120, text_color="Black", fg_color="azure", wrap="word", border_width=0)
+        self.Aufgaben_Beschreibung_t = tk.CTkTextbox(self.todo_frame_rechts, width=330, height=120, text_color="White", fg_color=self.f_r_1, wrap="word", border_width=0)
         self.Aufgaben_Beschreibung_t.place(x=20,y=110)
-        self.Aufgaben_Beschreibung_l = tk.CTkLabel(self.todo_frame_rechts, text="Beschreibung:", text_color="Black")
+        self.Aufgaben_Beschreibung_l = tk.CTkLabel(self.todo_frame_rechts, text="Beschreibung:", text_color="White")
         self.Aufgaben_Beschreibung_l.place(x=20,y=82)
         self.Aufgaben_Beschreibung_t.insert(tk.END, f"{task['description']}")
 
-        self.Uhrzeit_text_l = tk.CTkLabel(self.todo_frame_rechts, text=f"Aufgabe von: {task['Uhrzeit']}Uhr", text_color="Black")
+        self.Uhrzeit_text_l = tk.CTkLabel(self.todo_frame_rechts, text=f"Aufgabe von: {task['Uhrzeit']}Uhr", text_color="White")
         self.Uhrzeit_text_l.place(x=20,y=60)
 
 
@@ -307,9 +316,9 @@ class TodoApp:
         self.top_show_f = tk.CTkToplevel()
         self.top_show_f.configure(resizeable=False)
         self.top_show_f.title=("Diese Aufgabe löschen")
-        ja = tk.CTkButton(self.top_show_f, text="Ja", command=self.l_ja, fg_color="White", border_color=self.Border_Farbe, border_width=2, text_color="Black", hover_color="pink")
+        ja = tk.CTkButton(self.top_show_f, text="Ja", command=self.l_ja, fg_color="White", border_color=self.Border_Farbe, border_width=2, text_color="Black", hover_color=self.f_r_1)
         ja.pack(pady=5,padx=5)
-        nein = tk.CTkButton(self.top_show_f, text="Nein", command=self.l_nein, fg_color="White", border_color=self.Border_Farbe, border_width=2, text_color="Black", hover_color="pink")
+        nein = tk.CTkButton(self.top_show_f, text="Nein", command=self.l_nein, fg_color="White", border_color=self.Border_Farbe, border_width=2, text_color="Black", hover_color=self.f_r_1)
         nein.pack(pady=5,padx=5)
         width = 290
         height = 100
@@ -323,6 +332,39 @@ class TodoApp:
             self.top_show_f.geometry(f"{width}x{height}+{x}+{y}")
         mittig_fenster(width, height)
         
+    def Mod_suche(self):
+        print("Mod suche läuft")
+        print(self.cim_txt_pfad)
+        while self.Mod_Suche_aktiv == True:
+            try:
+                with open(self.cim_txt_pfad, "r") as cim_g:
+                    self.cim = cim_g.read()
+                    cim_g.close()
+                    try:
+                        os.remove(self.cim_txt_pfad)
+                    except:
+                        pass
+                    if self.cim != None:
+                        task_name = "Aus dem M.U.L.M\nAufgabe von " + self.Zeit + " Uhr"
+                        task_description = self.cim
+                        task_notizen = " "
+                        self.Zeit = time.strftime("%H:%M:%S")
+                        if task_name:
+                            if not task_description:
+                                task_description = "-"
+                            if not task_notizen:
+                                task_notizen = "-"
+                            self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': self.ID}
+                            self.ID += 1
+                            self.cim = None
+                            self.ID_speichern()
+                            self.save_task(self.task)
+                            self.create_task_button(self.task)
+                            self.button.invoke()
+                            self.refresh_tasks()
+            except:
+                pass
+            time.sleep(1)
 
     def save_task(self, task):
         tasks = self.load_tasks_from_file()
@@ -368,7 +410,7 @@ class TodoApp:
 if __name__ == "__main__":
     root = tk.CTk()
     width = 1920
-    height = 1080
+    height = 1000
     def mittig_fenster(root, width, height):
         fenster_breite = root.winfo_screenwidth()
         fenster_hoehe = root.winfo_screenheight()
