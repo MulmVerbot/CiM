@@ -268,7 +268,6 @@ class TodoApp:
     def create_task_button(self, task):
         self.button = tk.CTkButton(self.todo_frame_einz, text=f"{task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290)
         self.button.pack(padx=10, pady=1)
-        self.Aufgaben_Beschreibung_t = None
 
     def l_ja(self):
         self.delete_task(self.task)
@@ -278,20 +277,48 @@ class TodoApp:
         self.top_show_f.destroy()
 
     def entry_rein(self, event):
-        print("Dings")
+        print("despawn durch entry")
+        self.todo_r_dispawn()
         self.todo_r_dispawn()
 
     def todo_r_dispawn(self):
         try:
+            self.Aufgaben_Beschreibung_t.delete("1.0", tk.END)
+        except Exception as e:
+            print(f"Fehler beim Löschen von Aufgaben_Beschreibung_t: {e}")
+        try:
+            self.Notizen_feld.delete("1.0", tk.END)
+        except Exception as e:
+            print(f"Fehler beim Löschen von Notizen_feld: {e}")
+        try:
             self.Aufgaben_Titel_t.place_forget()
+        except Exception as e:
+            print(f"Fehler beim Verstecken von Aufgaben_Titel_t: {e}")
+        try:
             self.Aufgabe_entfernen.place_forget()
+        except Exception as e:
+            print(f"Fehler beim Verstecken von Aufgabe_entfernen: {e}")
+        try:
             self.Aufgaben_Beschreibung_t.place_forget()
+        except Exception as e:
+            print(f"Fehler beim Verstecken von Aufgaben_Beschreibung_t: {e}")
+        try:
             self.Notizen_feld.place_forget()
+        except Exception as e:
+            print(f"Fehler beim Verstecken von Notizen_feld: {e}")
+        try:
             self.Uhrzeit_text_l.place_forget()
+        except Exception as e:
+            print(f"Fehler beim Verstecken von Uhrzeit_text_l: {e}")
+        try:
             self.ID_label.place_forget()
+        except Exception as e:
+            print(f"Fehler beim Verstecken von ID_label: {e}")
+        try:
             self.Aufgaben_Beschreibung_l.place_forget()
-        except:
-            pass
+        except Exception as e:
+            print(f"Fehler beim Verstecken von Aufgaben_Beschreibung_l: {e}")
+
 
     def show_task(self, task): # Das hier wird jedesmal ausgeführt wenn jemand eine Aufgabe anclickt
         print("Aufgabe anzeigen")
