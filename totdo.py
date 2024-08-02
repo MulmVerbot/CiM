@@ -177,6 +177,10 @@ class TodoApp:
         self.Aufgaben_Titel_e.place(x=210,y=940)
         self.Aufgaben_Titel_e.bind("<FocusIn>", self.entry_rein)
         self.root.bind("<Double-1>", self.entry_rein)
+        try:
+            self.Aufgaben_Beschreibung_t.delete("0.0", "end")
+        except:
+            pass
 
         self.show_task(task)
         #self.fake_laden()
@@ -235,6 +239,7 @@ class TodoApp:
         self.Todo_offen = False
 
     def create_task_button_vor(self, event):
+        task_description = None
         task_name = self.Aufgaben_Titel_e.get()
         task_description = self.Aufgaben_Beschreibung_t.get("0.0", "end")
         task_notizen = self.Notizen_feld.get("0.0", "end")
@@ -256,13 +261,14 @@ class TodoApp:
         else:
             messagebox.showinfo(title=self.Programm_Name, message="Bitte geben Sie zuerst einen Aufgabentitel ein.")
         
+        ## kriegt immer die des als letztes gesetzen 
                 
                 
 
     def create_task_button(self, task):
         self.button = tk.CTkButton(self.todo_frame_einz, text=f"{task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290)
         self.button.pack(padx=10, pady=1)
-        
+        self.Aufgaben_Beschreibung_t = None
 
     def l_ja(self):
         self.delete_task(self.task)
