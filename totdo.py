@@ -256,6 +256,7 @@ class TodoApp:
             self.ID += 1
             self.ID_speichern()
             self.Notizen_feld.delete("0.0", tk.END)
+            self.Aufgaben_Titel_e.delete(0, tk.END)
             self.Aufgaben_Beschreibung_t.delete("0.0", tk.END)
             self.Aufgaben_Titel_t.delete("0.0", tk.END)
             self.save_task(self.task)
@@ -269,15 +270,14 @@ class TodoApp:
                 
 
     def create_task_button(self, task):
-        self.button = tk.CTkButton(self.todo_frame_einz, text=f"{task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290)
+        self.button = tk.CTkButton(self.todo_frame_einz, text=f"Nr. {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290)
         self.button.pack(padx=10, pady=1)
 
     def l_ja(self):
         self.delete_task(self.task)
-        self.top_show_f.destroy()
 
     def l_nein(self):
-        self.top_show_f.destroy()
+        pass
 
     def entry_rein(self, event):
         print("despawn durch entry")
@@ -349,24 +349,12 @@ class TodoApp:
 
 
     def aufgabe_loeschen_frage(self):
-        self.top_show_f = tk.CTkToplevel()
-        self.top_show_f.configure(resizeable=False)
-        self.top_show_f.title=("Diese Aufgabe löschen")
-        ja = tk.CTkButton(self.top_show_f, text="Ja", command=self.l_ja, fg_color="White", border_color=self.Border_Farbe, border_width=2, text_color="Black", hover_color=self.f_r_1)
-        ja.pack(pady=5,padx=5)
-        nein = tk.CTkButton(self.top_show_f, text="Nein", command=self.l_nein, fg_color="White", border_color=self.Border_Farbe, border_width=2, text_color="Black", hover_color=self.f_r_1)
-        nein.pack(pady=5,padx=5)
-        width = 290
-        height = 100
-        def mittig_fenster(width, height):
-            fenster_breite = root.winfo_screenwidth()
-            fenster_hoehe = root.winfo_screenheight()
-            x = (fenster_breite - width) // 2
-            y = (fenster_hoehe - height) // 2
-
-            # Leg die Position des Fensters fest
-            self.top_show_f.geometry(f"{width}x{height}+{x}+{y}")
-        mittig_fenster(width, height)
+        antw = messagebox.askyesno(title=self.Programm_Name, message=f"INFO: Aufgaben werden anhand des Namens gelöscht!")
+        if antw:
+            if antw == True:
+                self.l_ja()
+            elif antw == False:
+                self.l_nein()
         
     def Mod_suche(self):
         print("Mod suche läuft")
