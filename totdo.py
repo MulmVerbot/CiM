@@ -321,6 +321,10 @@ class TodoApp:
             self.Aufgaben_Beschreibung_l.place_forget()
         except Exception as e:
             print(f"Fehler beim Verstecken von Aufgaben_Beschreibung_l: {e}")
+        try:
+            self.Aufgaben_Notizen_l.place_forget()
+        except Exception as e:
+            print(f"Fehler beim Verstecken von Aufgaben_Beschreibung_l: {e}")
 
 
     def show_task(self, task): # Das hier wird jedesmal ausgeführt wenn jemand eine Aufgabe anclickt
@@ -342,9 +346,11 @@ class TodoApp:
         self.Aufgaben_Beschreibung_t.place(x=20,y=110)
         self.Aufgaben_Beschreibung_l = tk.CTkLabel(self.todo_frame_rechts, text="Beschreibung:", text_color="White")
         self.Aufgaben_Beschreibung_l.place(x=20,y=82)
+        self.Aufgaben_Notizen_l = tk.CTkLabel(self.todo_frame_rechts, text="Notizen:")
+        self.Aufgaben_Notizen_l.place(x=20,y=270)
         self.Aufgaben_Beschreibung_t.insert(tk.END, f"{task['description']}")
 
-        self.Uhrzeit_text_l = tk.CTkLabel(self.todo_frame_rechts, text=f"Aufg3be von: {task['Uhrzeit']}Uhr", text_color="White")
+        self.Uhrzeit_text_l = tk.CTkLabel(self.todo_frame_rechts, text=f"Aufgabe von: {task['Uhrzeit']}Uhr", text_color="White")
         self.Uhrzeit_text_l.place(x=20,y=60)
 
 
