@@ -450,7 +450,6 @@ class Listendings:
         self.menudings.add_command(label="Info", command=self.info)
         self.menudings.add_command(label="Changelog", command=self.changelog_aufmachen)
         self.menudings.add_command(label="Admin rechte aktivieren", command=self.Admin_rechte)
-        self.Bearbeiten_Menu.add_command(label="Todo öffnen", command=self.todo_aufmachen)
         self.Speichern_Menu.add_command(label="als CSV Speichern", command=self.als_csv_speichern_eigener_ort)
         self.Speichern_Menu.add_command(label="als CSV Speichern unter...", command=self.als_csv_speichern)
         self.Speichern_Menu.add_command(label="als CSV Speichern auf Netzlaufwerk", command=self.Netzlaufwerk_speichern)
