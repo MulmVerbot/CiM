@@ -19,18 +19,20 @@ Hier kommt noch bissl Zeugs dazu.
 - Das JSON Adressbuch kann über ein inkludiertes, externes Script in einer grafischen Ansicht dargestellt werden(genauso wie alle anderen JSON Dateien, das Ding ist universal).
 - Es gibt die möglichkeit eine Blacklist zu erstellen, um Nummern aus dem Starface Modul zu entfernen/ignorieren
 - Das IHK Berichtsheft kann geöffnet werden
+- Es gibt ein eigenes Todo Programm, "Totdo - jetzt kannst Du Dir sogar aufschreiben wie Du Dich totarbeitest". Es können aus vergangenen Anrufen mittels One-Click Aufgaben erstellt werden.
 
 
 ## Zukünftige Features:
-- Eine Todo Liste mit einstellbaren Timern und Erinnerungen
+- Das Totdo soll mit einstellbaren Timern und Erinnerungen ausgestattet werden:
 - Account System für mehrere Benutzer
 - "DingsListen" verschlüsseln und ausschließlich schreibgeschützt im Programm auslesbar machen alternativ auch mit Passwort
 - Ki gestützte Formulierung von texten um die Weiterleitung der Stichpunkte als Email zu erleichtern und zu verschnellern
 - Der Such Algo wird noch verbessert und soll die möglichkeit bieten, mit Akronymen zu suchen (erste Alpha bereits vorhanden).
+- besseres graisches Design und UX/UI
 
 
 # Installation:
-### vorrausgetzt dass Python 3.12 und pip bereits installiert sind:
+### vorrausgesetzt dass Python 3.12 und pip bereits installiert sind:
 - 1. pip install -r requirements.txt
 - 2. Python3 setup.py
 - 3. zum starten: Python3 main.py oder den MacOS Kurzbefehl nutzen.
