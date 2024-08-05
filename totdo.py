@@ -162,6 +162,7 @@ class TodoApp:
         self.menudings.add_command(label="Info", command=self.info)
         self.Bearbeiten_Menu.add_command(label="Listenmamen ändern", command=self.Listenname_change)
         self.Einstellungen.add_command(label="Liste aktualisieren", command=self.refresh_tasks)
+        self.Einstellungen.add_command(label="Change", command=self.task_update)
         self.todo_frame_links = tk.CTkFrame(self.root, width=200, height=1000, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
         self.todo_frame_links.place(x=0, y=0)
         self.todo_frame_rechts = tk.CTkFrame(self.root, width=400, height=1000, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
@@ -267,6 +268,27 @@ class TodoApp:
         
         ## kriegt immer die des als letztes gesetzen 
                 
+        
+    def task_update(self):
+        print("task_updatae(def)")
+        
+        task_name = self.Aufgaben_Titel_t.get("0.0", "end")
+        task_description = self.Aufgaben_Beschreibung_t.get("0.0", "end")
+        task_notizen = self.Notizen_feld.get("0.0", "end")
+        self.Zeit = self.task['Uhrzeit']
+        print(f"Die Uhrzeit sollte bei {self.task['Uhrzeit']} stehen.")
+        if task_name:
+            if not task_description:
+                task_description = "-"
+            if not task_notizen:
+                task_notizen = "-"
+            self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': self.ID}
+            self.save_task(self.task)
+            self.create_task_button(self.task)
+            self.button.invoke()
+        else:
+            messagebox.showinfo(title=self.Programm_Name, message="Bitte geben Sie zuerst einen Aufgabentitel ein.")
+        
                 
 
     def create_task_button(self, task):
@@ -428,7 +450,7 @@ class TodoApp:
 
     def delete_task(self, task):
         tasks = self.load_tasks_from_file()
-        tasks = [t for t in tasks if t['name'] != task['name']]
+        tasks = [t for t in tasks if t['id'] != task['id']]
         with open(self.TASK_FILE, 'w') as file:
             json.dump(tasks, file, indent=4)
         self.refresh_tasks()
