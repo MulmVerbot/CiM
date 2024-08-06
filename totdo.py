@@ -270,7 +270,20 @@ class TodoApp:
         else:
             messagebox.showinfo(title=self.Programm_Name, message="Bitte geben Sie zuerst einen Aufgabentitel ein.")
         
-        ## kriegt immer die des als letztes gesetzen 
+        ## kriegt immer die des als letztes gesetzen
+
+    def jsons_durchsuchen(self): # das hier ist teoretisch der Code zum durchsuchen der json dateien (unfertig))
+        try:
+            print("lade die momentan gespeicherten Tasks.json...")
+            with open(self.tasks_pfad_datei, "r", encoding='utf-8') as t_datei:
+                daten_tasks_datei = json.load(t_datei)
+                print(f"Das hier hab ich darin gefunden: \n\n {daten_tasks_datei}\n\n")
+        except Exception as E:
+            daten_tasks_datei = ""
+        for Bums in daten_tasks_datei.get("id", []):
+            print(f"ich durchsuche die Blacklist... mit {daten_tasks_datei.get("id")}")
+            if str(daten_tasks_datei.get("id")) == str("self.DAS WONACH HIER GESUCHT WIRD"):
+                pass
                 
         
     def task_update(self):
