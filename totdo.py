@@ -185,6 +185,9 @@ class TodoApp:
         except:
             pass
 
+        self.Datum_fertsch_e = tk.CTkEntry(self.todo_frame_rechts, text_color="White") # hier hinter noch die ganze funktionalität mit einbauen
+        self.Datum_fertsch_e.place(x=250,y=840)
+
         self.show_task(task)
         #self.fake_laden()
         self.load_tasks()
@@ -248,6 +251,7 @@ class TodoApp:
         task_description = self.Aufgaben_Beschreibung_t.get("0.0", "end")
         task_notizen = self.Notizen_feld.get("0.0", "end")
         self.Zeit = time.strftime("%H:%M:%S")
+        self.Datum_fertsch = self.Datum_fertsch_e.get()
         if task_name:
             if not task_description:
                 task_description = "-"
