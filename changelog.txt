@@ -1,4 +1,9 @@
 |=================================================================================================
+|- 06.07.2024 Beta 1.0.4 (1)-
+|   - seit dem letzten Changelog hat sich zu viel getan
+|   - Es ist nun möglich beim erstellen eines Tickets, den letzten Anrufer direkt einzufügen
+|
+|=================================================================================================
 |- 31.07.2024 Beta 1.0.3 -
 | - Es gibt jetzt eine funktionierende Todo Liste, wenn auch etwas Roh im Anblick.
 | - TotDo Liste Alpha 1.0

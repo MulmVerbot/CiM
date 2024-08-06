@@ -135,7 +135,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.0.4"
+        self.Version = "Beta 1.0.4 (1)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -145,6 +145,7 @@ class Listendings:
         self.Listen_Speicherort_Netzwerk_geladen = None
         self.Zeit_text = None
         self.Uhrzeit_anruf_start = None
+        self.letzter_eintrag_text = None
         self.Pause = True
         self.Menü_da = False
         self.beb = "0"
@@ -917,6 +918,28 @@ class Listendings:
         self.Mail_Anhang = filedialog.askopenfilename()
         if self.Mail_Anhang:
             self.Mail_Anhang_status_l.configure(text=f"Anhang: {self.Mail_Anhang}")
+
+    def letzten_text_erhalten(self):
+        print("letzten_importieren(def)")
+        self.geladener_Text = self.ausgabe_text.get("0.0", "end")
+        self.einzelner_Eintrag = self.geladener_Text.split("\n\n")
+        if self.einzelner_Eintrag:
+            for eintrag in reversed(self.einzelner_Eintrag):
+                if eintrag.startswith("Uhrzeit:") and "Telefonnummer:" in eintrag:
+                    self.cim = eintrag
+                    self.letzter_eintrag_text = eintrag
+                    break
+            else:
+                print("Kein passender Eintrag gefunden")
+        else:
+            print("Die Liste ist leer")
+
+    def letzten_importieren(self):
+        self.letzten_text_erhalten()
+        self.Nachricht_Ticket_e.insert("0.0", self.letzter_eintrag_text)
+        self.letzter_eintrag_text = None
+
+        
         
 
     def Ticket_erstellen(self): # Die erste frage, ob es per Mail oder API erstellt werden soll.
@@ -943,12 +966,18 @@ class Listendings:
         self.Ticket_erstellen_anhang_suchen_knopp = tk.CTkButton(self.Ticket_Fenster, text="Anhang hinzufügen", command=self.anhang_suchen_ticket, fg_color="white", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1")
         self.Mail_Anhang_status_l = tk.CTkLabel(self.Ticket_Fenster, text=f"Anhang: ", text_color="Black", bg_color=self.Hintergrund_farbe, corner_radius=3)
 
+        self.letztes_einfügen_knopp = tk.CTkButton(self.Ticket_Fenster, text="Letzten Anruf Importieren", command=self.letzten_importieren)
+        self.letztes_einfügen_knopp.place(x=500,y=230)
+
         self.alternative_empfänger_adresse_e.place(x=330,y=120)
         self.Ticket_abschicken_mail.place(x=330,y=420)
         self.Betreff_Ticket_e.place(x=10,y=50)
         self.Nachricht_Ticket_e.place(x=10,y=80)
         self.Mail_Anhang_status_l.place(x=10,y=10)
         self.Ticket_erstellen_anhang_suchen_knopp.place(x=330,y=180)
+
+    
+ 
 
     def Email_Einstellungen_speichern(self):
         print("Email_Einstellungen_speichern (def)")
@@ -1540,7 +1569,7 @@ class Listendings:
                     print(f"Konnte den Thread self.thread_suche nicht beenden, (im results) Fehlermeldung: {E_t}")
             else:
                 self.Ergebnisse_Listbox.unbind("<Double-1>")
-                dmsg = "Dazu konnte ich leider nichts finden."
+                dmsg = f"Dazu konnte ich leider nichts finden. Ich hab in {self.gesucht_zahl} Dateien gesucht."
                 self.etwas_suchen1 = False
                 self.Suche_suche = ""
                 self.Ort_wo_gesucht_wird = ""
@@ -1555,7 +1584,7 @@ class Listendings:
         else:
             print("gab nüscht")
             self.Ergebnisse_Listbox.unbind("<Double-1>")
-            dmsg = "Dazu konnte ich leider nichts finden..."
+            dmsg = f"Dazu konnte ich leider nichts finden. Ich hab in {self.gesucht_zahl} Dateien gesucht."
             self.Suche_suche = ""
             self.etwas_suchen1 = False
             try:
