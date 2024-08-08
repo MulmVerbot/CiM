@@ -154,7 +154,7 @@ class Listendings:
         self.Autospeichern_tkvar = "0"
         self.Uhrzeit_anruf_ende = None
         self.zeile_zahl = 0
-        self.Anzal_der_Ergebnisse = 0
+        self.Anzahl_der_Ergebnisse = 0
         self.tag_string = str(time.strftime("%d %m %Y"))
         self.Benutzerordner = os.path.expanduser('~')
         self.Listen_Speicherort_standard = os.path.join(self.Benutzerordner, 'CiM', 'Listen')
@@ -168,11 +168,12 @@ class Listendings:
         self.Einstellung_Email_Sender_Adresse = os.path.join(self.Einstellungen_ordner , "Email_sender.txt")
         self.Einstellung_Email_Empfänge_Adresse = os.path.join(self.Einstellungen_ordner, "Email_Empfänger.txt")
         self.Einstellung_smtp_server = os.path.join(self.Einstellungen_ordner, "SMTP_Server.txt")
-        self.Einstellung_smtp_Passwort = os.path.join(self.Einstellungen_ordner, "SMTP_Passwort.txt")
+        self.ung_smtp_Passwort = os.path.join(self.Einstellungen_ordner, "SMTP_Passwort.txt")
         self.Db_Ordner_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Db')
         self.Json_pfad = os.path.join(self.Db_Ordner_pfad, 'Db.json')
         self.Einstellung_Theme = os.path.join(self.Einstellungen_ordner, "Theme.txt")
         self.Blacklist_pfad = os.path.join(self.Db_Ordner_pfad, "Db_Blacklist.json")
+        self.Weiterleitungs_ordner_datei = os.path.join(self.Einstellungen_ordner, "Weiterleitung.txt")
         self.TASKS_FILE = 'tasks.json'
 
         
@@ -255,6 +256,7 @@ class Listendings:
         self.Mail_Anhang = None
         self.task = None
         self.Todo_offen = False
+        self.Weiterleitungen = None
         
         self.zeit_string = time.strftime("%H:%M:%S")
         self.tag_string = str(time.strftime("%d %m %Y"))
@@ -310,7 +312,7 @@ class Listendings:
                 print(f"[-ERR-] Fehler beim erstellen der Ordner. Fehlercode: {EX1_Monat_ordn}")
 
         try:
-            with open(self.Auto_speichern_Einstellungsdatei, "r") as einst_gel_autsp:
+            with open(self.Auto_speichern_ungsdatei, "r") as einst_gel_autsp:
                 self.Auto_speichern_Einstellungsdatei_var = einst_gel_autsp.read()
                 print("[-EINSTELLUNGEN-] Einstellunsgdatei zum Autospeichern geladen. Dateipfad: ", self.Auto_speichern_Einstellungsdatei)
                 if self.Auto_speichern_Einstellungsdatei_var == "1":
@@ -586,6 +588,7 @@ class Listendings:
         self.tabview.add("Speichern")
         self.tabview.add("SMTP")
         self.tabview.add("Speicherorte")
+        self.tabview.add("Weiterleitungen")
         self.gel_Email_Empfänger_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Ziel Email Adresse", text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
         self.gel_Email_Sender_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Absende Email Adresse", text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
         self.gel_Email_Absender_Passwort_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Absende Mail Kennwort", text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
@@ -598,6 +601,12 @@ class Listendings:
         self.smtp_login_erfolgreich_l = tk.CTkLabel(self.tabview.tab("SMTP"), text="Anmeldestatus")
         self.SMTP_Server_erneut_anmelden = tk.CTkButton(self.tabview.tab("SMTP"), text="erneut mit SMTP Server verbinden", command=self.SMTP_Anmeldung_Manuell, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         
+        self.weiterleitungen_l = tk.CTkLabel(self.tabview.tab("Weiterleitungen"), text="Namen für die Weiterleitungen einstellen")
+        self.weiterleitungen_einz_e = tk.CTkEntry(self.tabview.tab("Weiterleitungen"), placeholder_text="erstes", width=300)
+        self.weiterleitungen_zwei_e = tk.CTkEntry(self.tabview.tab("Weiterleitungen"), placeholder_text="zweites", width=300)
+        self.weiterleitungen_drei_e = tk.CTkEntry(self.tabview.tab("Weiterleitungen"), placeholder_text="drittes", width=300)
+        self.weiterleitungen_vier_e = tk.CTkEntry(self.tabview.tab("Weiterleitungen"), placeholder_text="erstexs", width=300)
+        self.Weiterleitungen_speichern_knopp = tk.CTkButton(self.tabview.tab("Weiterleitungen"), text="Speichern", command=self.weiterleitungen_speichern)
         #self.Speicherort_lokal_ändern_knopp = tk.CTkButton(self.tabview.tab("Speichern"), text="ändern", command=self.ListenDings_speicherort_ändern, fg=self.helle_farbe_für_knopfe, border=self.Border_Farbe)
         #self.Speicherort_lokal_ändern_l = tk.CTkLabel(self.tabview("Speichern"), text="den lokalen Speicherort ändern")
     #### todo gui ####
@@ -608,12 +617,43 @@ class Listendings:
         
         #self.todo_hinzufügen_knopp = tk.CTkButton(self.todo_frame, text="Aufgabe hinzufügen", command=self.todo_hinzufügen)
 
+        self.weiterleitung_laden()
     #### ende todo gui ####
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
+
+    def weiterleitungen_speichern(self):
+        print("weiterleitungen_speichern(def)")
+        alles = self.weiterleitungen_einz_e.get() + ","+ self.weiterleitungen_zwei_e.get() + ","+ self.weiterleitungen_drei_e.get() + ","+ self.weiterleitungen_vier_e.get() 
+        try:
+            with open(self.Weiterleitungs_ordner_datei, "w+") as schreiben_weiterl:
+                schreiben_weiterl.write(alles)
+                schreiben_weiterl.close()
+                print("Die neuen Weiterleitungen wurden gespeichert.")
+                self.weiterleitungen_einz_e.delete(0, tk.END)
+                self.weiterleitungen_zwei_e.delete(0, tk.END)
+                self.weiterleitungen_drei_e.delete(0, tk.END)
+                self.weiterleitungen_vier_e.delete(0, tk.END)
+            alles = None
+
+        except Exception as Ex1w:
+            print(f"Es gab einen Fehler beim speichern der Weiterleitungen: {Ex1w}")
+            alles = None
+    
+    def weiterleitung_laden(self):
+        print("[-INFO-] Weiterleitungenladen(def)")
+        try:
+            with open(self.Weiterleitungs_ordner_datei, "r" ) as gel_weiterleitung:
+                self.Weiterleitungen = gel_weiterleitung.read()
+                print(f"Hier sind die Weiterleitungen vor der Konvertierung: {self.Weiterleitungen}")
+                self.Weiterleitungen.strip(",")
+                print(f"Hier sind sie nun formatiert: {self.Weiterleitungen.strip("," )}")
+                print("Weiterleitungen wurden erfolgreich geladen.")
+        except Exception as Exwtl:
+            print(f"Beim laden der Weiterleitungen ist ein Fehler aufgetreten. Fehlermeldung: {Exwtl}")
 
     def changelog_aufmachen(self):
         print("changelog_aufmachen(def)")
@@ -735,7 +775,7 @@ class Listendings:
             print("Konnte die geladenen Speicherorte nicht in die Entrys übernehmen.")
             self.Ereignislog_insert(nachricht_f_e="Konnte den Inhalt der Entrys für die Pfade nicht löschen")
         def rückruf_speichern():
-            print("self.mitspeichern.get() = :", self.mitspeichern.get())
+            print(f"self.mitspeichern.get() = : {self.mitspeichern.get()}")
             self.Kontakt_soll_gleich_mitgespeichert_werden = True
 
         self.mitspeichern = tk.StringVar(value="on")
@@ -757,6 +797,12 @@ class Listendings:
         self.gel_SMTP_Server_E.place(x=160,y=240)
         self.Mail_Einstellungen_speichern.place(x=10,y=280)
         self.SMTP_Server_erneut_anmelden.place(x=250,y=280)
+        self.weiterleitungen_einz_e.place(x=10,y=100)
+        self.weiterleitungen_zwei_e.place(x=10,y=130)
+        self.weiterleitungen_drei_e.place(x=10,y=160)
+        self.weiterleitungen_vier_e.place(x=10,y=190)
+        self.Weiterleitungen_speichern_knopp.place(x=10,y=240)
+
         try:
             if self.smtp_login_erfolgreich == True:
                 self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP Server war erfolgreich.", text_color="SeaGreen1")
@@ -1557,7 +1603,7 @@ class Listendings:
                 self.knopp_offnen = tk.CTkButton(self.suchfenster_ergebnisse, text="Alle einfach aufmachen", command=self.aufmachen_results_vor)
                 self.knopp_offnen.pack()
                 self.Ergebnisse_Listbox.bind("<Double-1>", self.Eintrag_aufmachen)
-                self.Anzal_der_Ergebnisse = self.Ergebnise_zahl
+                self.Anzahl_der_Ergebnisse = self.Ergebnise_zahl
                 self.etwas_suchen1 = False
                 self.etwas_suchen = False
                 self.Suche_suche = ""
@@ -1607,16 +1653,16 @@ class Listendings:
 
     def aufmachen_results_vor(self):
         print("suche_alles aufamachen davor warnmeldung dings")
-        if self.Anzal_der_Ergebnisse >= 20:
-            print(f"Es sind >= 20 Suchergebnisse... {self.Anzal_der_Ergebnisse}")
-            antw = messagebox.askyesno(title="CiM Suche", message=f"Sind Sie sicher dass sie wirklich alle {self.Anzal_der_Ergebnisse} Ergbnisse öffnen möchten? (Unter Windows könnte Ihr System einfrieren)")
+        if self.Anzahl_der_Ergebnisse >= 20:
+            print(f"Es sind >= 20 Suchergebnisse... {self.Anzahl_der_Ergebnisse}")
+            antw = messagebox.askyesno(title="CiM Suche", message=f"Sind Sie sicher dass sie wirklich alle {self.Anzahl_der_Ergebnisse} Ergbnisse öffnen möchten? (Unter Windows könnte Ihr System einfrieren)")
             if antw:
                 if antw == True:
                     self.aufmachen_results()
                 elif antw == False:
                     print("[-INFO-] Nutzer wollte doch nicht alles aufmachen")
-        elif self.Anzal_der_Ergebnisse <= 20:
-            print(f"Es sind weniger als 20 Suchergbnisse.{self.Anzal_der_Ergebnisse}")
+        elif self.Anzahl_der_Ergebnisse <= 20:
+            print(f"Es sind weniger als 20 Suchergbnisse.{self.Anzahl_der_Ergebnisse}")
             self.aufmachen_results()
             
 ####
