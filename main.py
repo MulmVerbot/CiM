@@ -42,7 +42,7 @@ except Exception as E:
 class Listendings:
     Programm_läuft = True
     class ChangelogLeer(Exception): # Die Exception die kommt, wenn der Changelog leer ist.
-        "- Der Changelog ist leer -"
+        "[-INFO-] Der Changelog ist leer -"
 
     class RequestHandler(BaseHTTPRequestHandler):
         def do_GET(self):
@@ -52,9 +52,9 @@ class Listendings:
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             parsed_path = urllib.parse.urlparse(self.path)
-            print("Angeforderter Pfad:", parsed_path.path)
+            print("[-INFO-] Angeforderter Pfad:", parsed_path.path)
             besserer_pfad = parsed_path.path.replace("/", "")
-            print("Nummer die angerufen hat/wurde: ", besserer_pfad)
+            print("[-INFO-] Nummer die angerufen hat/wurde: ", besserer_pfad)
             if besserer_pfad == "b":
                 ende_des_anrufs = time.strftime("%H:%M:%S")
                 try:
@@ -62,9 +62,9 @@ class Listendings:
                             tmp.write(ende_des_anrufs)
                 except Exception as e:
                     print(f"Fehler beim Schreiben in tmp1.txt: {e}")
-                print("Der Anruf war wohl fertig. var: ", besserer_pfad)
+                print("[-INFO-] Der Anruf war wohl fertig. var: ", besserer_pfad)
             elif besserer_pfad == "a":
-                print("Der bessere Pfad ist ein a.")
+                print("[-INFO-] Der bessere Pfad ist ein a.")
             else:
                 try:
                     with open("tmp.txt", "w+") as tmp:
@@ -86,12 +86,12 @@ class Listendings:
                     if Listendings.Programm_läuft == False: # wenn diese funktion hier jemals funktionieren würde, könnten hier auch Fehler erscheinen.
                         httpd.shutdown()
                         httpd.server_close()
-                        print(f'Server auf Port {port} gestoppt.')
+                        print(f'[-INFO-] Server auf Port {port} gestoppt.')
                         sys.exit()
             except KeyboardInterrupt:
                 httpd.server_close()
                 httpd.shutdown()
-                print(f'Server auf Port {port} gestoppt.')
+                print(f'[-INFO-] Server auf Port {port} gestoppt.')
 
     class Logger(object):
         def __init__(self): #eine init welche nur das "unwichtige" vorgeplänkel macht (Logs und so)
@@ -135,7 +135,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.0.4 (1)"
+        self.Version = "Beta 1.0.4 (2)"
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -175,8 +175,6 @@ class Listendings:
         self.Blacklist_pfad = os.path.join(self.Db_Ordner_pfad, "Db_Blacklist.json")
         self.Weiterleitungs_ordner_datei = os.path.join(self.Einstellungen_ordner, "Weiterleitung.txt")
         self.TASKS_FILE = 'tasks.json'
-
-        
         
         try: ## das hier sind die Bilder
             self.Bearbeiten_Bild = tk.CTkImage(Image.open("Bilder/Bearbeiten.png"))
@@ -238,6 +236,10 @@ class Listendings:
         self.empfänger_email = ""
         self.smtp_server = ""
         self.pw_email = ""
+        self.einz = "1. Kontakt"
+        self.zwee = "2. Kontakt"
+        self.dree = "3. Kontakt"
+        self.vir = "4. Kontakt"
         self.Listen_Speicherort_Netzwerk_geladen_anders = "Netzwerkspeicherort: "
         self.Listen_Speicherort_geladen_anders = "Lokaler Speicherpfad: "
 
@@ -267,6 +269,7 @@ class Listendings:
 
     ################ Jetzt werden hier so Dinge geladen wie Einstellungen, oder es wird hier geguckt, ob alle benötigten Ordner Existieren ############
         
+
         try:
             p1 = Atk.PhotoImage(file = "CiM_icon.png")
             root.iconphoto(False, p1)
@@ -275,11 +278,11 @@ class Listendings:
             try:
                 root.iconphoto(False, Atk.PhotoImage(file = self.icon_pfad))
             except Exception as err:
-                err1 = "Es ist ein Fehler beim setzen des Icons aufgetreten. Fehlerlode: ", err
+                err1 = "[-ERR-] Es ist ein Fehler beim setzen des Icons aufgetreten. Fehlerlode: ", err
                 messagebox.showinfo(message=err1)
                 print("icon gibt heute nicht.")
         try:
-            print(f"Ich lade nun die Theme Einstellungen...")
+            print(f"[-INFO-] Ich lade nun die Theme Einstellungen...")
             with open(self.Einstellung_Theme, "r") as E_theme_gel:
                 self.Einstellungen_Theme_Inhalt = E_theme_gel.read()
                 if self.Einstellungen_Theme_Inhalt == "dunkel":
@@ -287,14 +290,14 @@ class Listendings:
                 elif self.Einstellungen_Theme_Inhalt == "hell":
                     tk.set_default_color_theme("Designs/hell.json")
                 elif self.Design_Einstellung == "System":
-                    print("Es wird versucht die System Design Einstellung zu laden.")
+                    print("[-ERR-] Es wird versucht die System Design Einstellung zu laden.")
                     tk.set_appearance_mode("System")
                 else:
-                    print("Es gab einen Fehler bei der geladenen Designeinstellung, es wird nun der Systemstandard geladen...")
+                    print("[-ERR-] Es gab einen Fehler bei der geladenen Designeinstellung, es wird nun der Systemstandard geladen...")
                     tk.set_appearance_mode("System")
-                    print("Die System Design Einstellung wurde geladen.")
+                    print("[-INFO-] Die System Design Einstellung wurde geladen.")
         except Exception as exko:
-            print(f"Es ist ein Fehler beim Laden der Theme Einstellungen aufgetreten. Fehlercode: {exko}")
+            print(f"[-ERR-] Es ist ein Fehler beim Laden der Theme Einstellungen aufgetreten. Fehlercode: {exko}")
         try:
             if not os.path.exists(self.Db_Ordner_pfad):
                 print("[-INFO-] Der Db Ordner scheint nicht zu existieren. Erstelle ihn nun.")
@@ -415,6 +418,8 @@ class Listendings:
             self.pw_email = ""
             print(f"Beim Laden der Email Einstellungen unter {self.Einstellung_Email_Sender_Adresse} ; {self.Einstellung_Email_Empfänge_Adresse} und {self.Einstellung_smtp_server} ist ein Fehler aufgetreten. Fehlercode: {EmailEx3_l}")
     ########### SHAISE ENDE ###########
+
+        self.weiterleitung_laden()
     ###################################
 
     #### Die Stars der Stunde ####
@@ -512,27 +517,26 @@ class Listendings:
         self.Zhe_Clock.place(x=10,y=10)
 
         def auswahl_gedingst(choice):
-            if choice == "An Chefe gegeben":
-                self.Weiterleitung_an = "An el Chefe weitergeleitet."
-            elif choice == "An Christian gegeben":
-                self.Weiterleitung_an = "An Christian Melges weitergeleitet."
-            elif choice == "An Mike gegeben":
-                self.Weiterleitung_an = "An Mike Bosse weitergeleitet."
-            elif choice == "An Frau Tarnath gegeben":
-                self.Weiterleitung_an = "An Frau Tarnath weitergeleitet"
+            if choice == f"An {self.einz} gegeben":
+                self.Weiterleitung_an = f"An {self.einz} weitergeleitet."
+            elif choice == f"An {self.zwee} gegeben":
+                self.Weiterleitung_an = f"An {self.zwee} weitergeleitet."
+            elif choice == f"An {self.dree} gegeben":
+                self.Weiterleitung_an = f"An {self.dree} weitergeleitet."
+            elif choice == f"An {self.vir} gegeben":
+                self.Weiterleitung_an = f"An {self.vir} weitergeleitet"
             elif choice == "Keine Weiterleitung":
                 self.Weiterleitung_an = ""
 
         def auswahl_gedingst_sprechen(choice):
-            if choice == "Mit Chefe sprechen":
-                self.wollte_sprechen = "Mit el Chefe sprechen"
-            elif choice == "Mit Christian sprechen":
-                self.wollte_sprechen = "Mit Christian sprechen"
-            elif choice == "Mit Mike sprechen":
-                self.wollte_sprechen = "Mit Mike sprechen"
-            elif choice == "Mit Frau Tarnath sprechen":
-                self.wollte_sprechen = "Mit Frau Tarnath sprechen"
-            elif choice == "Mit Irgendwen sprechen":
+            if choice == f"Mit {self.einz} sprechen":
+                self.Weiterleitung_an = f"An {self.einz} sprechen"
+            elif choice == f"Mit {self.zwee} gegeben":
+                self.Weiterleitung_an = f"An {self.zwee} sprechen."
+            elif choice == f"Mit {self.dree} gegeben":
+                self.Weiterleitung_an = f"An {self.dree} sprechen."
+            elif choice == f"Mit {self.vir} gegeben":
+                self.Weiterleitung_an = f"Mit {self.vir} sprechen"
                 self.wollte_sprechen = "Mit Irgendwen sprechen"
             elif choice == "Keine Weiterleitung":
                 self.wollte_sprechen = "-"
@@ -547,12 +551,13 @@ class Listendings:
             else:
                 print("[-ERR-] Fehler bei der Auswahl der Designeinstellung, nutze nun den Systemstandard.")
                 self.Design_Einstellung = "System"
+                
         
 
-        self.optionmenu1 = tk.CTkOptionMenu(root, values=["Mit Chefe sprechen", "Mit Christian sprechen", "Mit Mike sprechen", "Mit Frau Tarnath sprechen", "Irgendwen sprechen", "Keine Anfrage"], command=auswahl_gedingst_sprechen, fg_color="White", text_color="Black", dropdown_hover_color="pink")
+        self.optionmenu1 = tk.CTkOptionMenu(root, values=[f"An {self.einz} sprechen", f"An {self.zwee} sprechen.", f"An {self.dree} sprechen.", f"Mit {self.vir} sprechen", "Irgendwen sprechen", "Keine Anfrage"], command=auswahl_gedingst_sprechen, fg_color="White", text_color="Black", dropdown_hover_color="pink")
         self.optionmenu1.set("Mit Wem sprechen?")
         self.optionmenu1.place(x=1260,y=190)
-        self.optionmenu = tk.CTkOptionMenu(root, values=["An Chefe gegeben", "An Christian gegeben", "An Mike gegeben", "An Frau Tarnath gegeben","Keine Weiterleitung"], command=auswahl_gedingst, fg_color="White", text_color="Black", dropdown_hover_color="pink")
+        self.optionmenu = tk.CTkOptionMenu(root, values=[f"An {self.einz} weitergeleitet.", f"An {self.zwee} weitergeleitet.", f"An {self.dree} weitergeleitet.", f"An {self.vir} weitergeleitet", "Keine Weiterleitung"], command=auswahl_gedingst, fg_color="White", text_color="Black", dropdown_hover_color="pink")
         self.optionmenu.set("Keine Weiterleitung")
         self.optionmenu.place(x=1260,y=220)
 
@@ -617,7 +622,7 @@ class Listendings:
         
         #self.todo_hinzufügen_knopp = tk.CTkButton(self.todo_frame, text="Aufgabe hinzufügen", command=self.todo_hinzufügen)
 
-        self.weiterleitung_laden()
+        
     #### ende todo gui ####
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
@@ -646,17 +651,33 @@ class Listendings:
     def weiterleitung_laden(self):
         print("[-INFO-] Weiterleitungenladen(def)")
         try:
+             self.optionmenu1.place_forget()
+             self.optionmenu.place_forget()
+        except:
+            pass
+        try:
+            self.optionmenu1 = tk.CTkOptionMenu(root, values=[f"An {self.einz} sprechen", f"An {self.zwee} sprechen.", f"An {self.dree} sprechen.", f"Mit {self.vir} sprechen", "Irgendwen sprechen", "Keine Anfrage"], command=Listendings.auswahl_gedingst_sprechen, fg_color="White", text_color="Black", dropdown_hover_color="pink")
+            self.optionmenu1.set("Mit Wem sprechen?")
+            self.optionmenu1.place(x=1260,y=190)
+            self.optionmenu = tk.CTkOptionMenu(root, values=[f"An {self.einz} weitergeleitet.", f"An {self.zwee} weitergeleitet.", f"An {self.dree} weitergeleitet.", f"An {self.vir} weitergeleitet", "Keine Weiterleitung"], command=Listendings.auswahl_gedingst, fg_color="White", text_color="Black", dropdown_hover_color="pink")
+            self.optionmenu.set("Keine Weiterleitung")
+            self.optionmenu.place(x=1260,y=220)
+        except Exception as ellkk:
+            print(ellkk)
+
+        try:
             with open(self.Weiterleitungs_ordner_datei, "r" ) as gel_weiterleitung:
                 self.Weiterleitungen = gel_weiterleitung.read()
-                print(f"Hier sind die Weiterleitungen vor der Konvertierung: {self.Weiterleitungen}")
+                print(f"[-INFO-] Hier sind die Weiterleitungen vor der Konvertierung: {self.Weiterleitungen}")
                 self.Weiterleitungen.strip(",")
-                print(f"Hier sind sie nun formatiert: {self.Weiterleitungen.strip("," )}")
-                print("Weiterleitungen wurden erfolgreich geladen.")
+                self.einz, self.zwee, self.dree, self.vir = self.Weiterleitungen
+                print(f"[-INFO-] Hier sind sie nun formatiert: {self.einz, self.zwee, self.dree, self.vir}")
+                print("[-INFO-] Weiterleitungen wurden erfolgreich geladen.")
         except Exception as Exwtl:
-            print(f"Beim laden der Weiterleitungen ist ein Fehler aufgetreten. Fehlermeldung: {Exwtl}")
+            print(f"[-ERR-] Beim laden der Weiterleitungen ist ein Fehler aufgetreten. Fehlermeldung: {Exwtl}")
 
     def changelog_aufmachen(self):
-        print("changelog_aufmachen(def)")
+        print("[-INFO-] changelog_aufmachen(def)")
         self.changelog_Fenster = tk.CTkToplevel(root)
         self.changelog_Fenster.title("Changelogs")
         self.changelog_Fenster.configure(fg_color="White")
@@ -668,7 +689,7 @@ class Listendings:
             y = root.winfo_y() + root.winfo_height()//2 - self.changelog_Fenster.winfo_height()//2
             self.changelog_Fenster.geometry(f"{width}x{height}+{x}+{y}")
         except:
-            print("Konnte das changelogfenster nicht zentrieren.")
+            print("[-ERR-] Konnte das changelogfenster nicht zentrieren.")
             self.changelog_Fenster.geometry(f"{width}x{height}+{x}+{y}")
         self.changelog_Fenster.resizable(False,False)
         self.Textfeld_changelog.pack()
@@ -707,7 +728,7 @@ class Listendings:
         return
 
     def schnellnotizen_öffnen(self):
-        print("schnellnotizen_öffnen(def)")
+        print("[-INFO-] schnellnotizen_öffnen(def)")
         self.schnellnotizen_Fenster = tk.CTkToplevel(root)
         self.schnellnotizen_Fenster.title("Schnellnotiz (wird NICHT gespeichert)")
         self.schnellnotizen_Fenster.configure(fg_color="White")
@@ -732,7 +753,7 @@ class Listendings:
             messagebox.showerror(title="CiM Fehler", message=f"Konnte die Datei json_explorer.py nicht finden, stelle sicher, dass sie sich im Programmverzeichnis befindet! Fehlercode: {JSON_E}")
 
     def Einstellungen_öffnen(self):
-        print("Einstellungen_öffnen (def)")
+        print("[-INFO-] Einstellungen_öffnen (def)")
         self.Einstellungsseite_Knopp.configure(command=self.Einstellungen_schließen, text="Einstellungen schließen", fg_color=self.aktiviert_farbe, hover_color="Pink")
         self.Einstellungen_Frame.place(x=400,y=120)
         self.tabview.place(x=0, y=0)
@@ -832,7 +853,7 @@ class Listendings:
             print("Fehler beim einfügen der Email Daten in die Entrys. Fehlercode: ", ExGelEm1)
 
     def Einstellungen_schließen(self):
-        print("Einstellungen_schließen(def)")
+        print("[-INFO-] Einstellungen_schließen(def)")
         self.Einstellungsseite_Knopp.configure(command=self.Einstellungen_öffnen, text="Einstellungen", fg_color=self.deaktiviert_farbe, hover_color="Pink")
         self.Starface_Modul_Einstellung_Knopp.pack_forget()
         self.Einstellungen_Frame.place_forget()
@@ -840,7 +861,7 @@ class Listendings:
         
 
     def Eintrag_raus_kopieren(self): # kopiert den letzten in der Liste stehenden Eintrag in die Zwischenablage.
-        print("Eintrag_raus_kopieren(def)")
+        print("[-INFO-] Eintrag_raus_kopieren(def)")
         self.geladener_Text = self.ausgabe_text.get("0.0", "end")
         self.einzelner_Eintrag = self.geladener_Text.split("\n\n")
         if self.einzelner_Eintrag:
@@ -865,12 +886,12 @@ class Listendings:
             with open(self.Benutzerordner + "/CiM/cim.txt", "w") as cim_s:
                 cim_s.write(self.cim)
                 cim_s.close()
-                self.Ereignislog_insert(nachricht_f_e="-Auftrag ans Totdo übermittelt.-")
+                self.Ereignislog_insert(nachricht_f_e="[-INFO-] Auftrag ans Totdo übermittelt.-")
         except Exception as exooo:
             print(f"Fehler beim senden ans Totdo. Fehlermeldung: {exooo}")    
 
     def Ticket_erstellen_mail(self): # naja das halt dann mit dem Mail.to Befehl.
-        print("Ticket_erstellen (Email)")
+        print("[-INFO-] Ticket_erstellen (Email)")
         self.alternative_empfänger_adresse = ""
         self.Betreff_Mail = self.Betreff_Ticket_e.get()
         self.alternative_empfänger_adresse = self.alternative_empfänger_adresse_e.get()
@@ -2304,8 +2325,6 @@ if __name__ == "__main__":
         fenster_höhe = root.winfo_screenheight()
         x = (fenster_breite - width) // 2
         y = (fenster_höhe - height) // 2
-
-        # Leg die Position des Fensters fest
         root.geometry(f"{width}x{height}+{x}+{y}")
     mittig_fenster(root, width, height)
     Listendings = Listendings(root)
