@@ -46,7 +46,7 @@ class Listendings:
 
     class RequestHandler(BaseHTTPRequestHandler):
         def do_GET(self):
-            saite = "<!DOCTYPE html><html lang='de'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Ganzflächiger Hintergrund</title><style>body {margin: 0;padding: 0;background-color: #40444c;}.content {padding: 20px;color: white;font-family: Arial, sans-serif;}</style></head><body><div class='content'><h1>Meine Seite mit ganzflächigem Hintergrund</h1><p>Hier ist etwas Text auf der Seite.</p></div></body></html>"
+            # saite = "<!DOCTYPE html><html lang='de'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Ganzflächiger Hintergrund</title><style>body {margin: 0;padding: 0;background-color: #40444c;}.content {padding: 20px;color: white;font-family: Arial, sans-serif;}</style></head><body><div class='content'><h1>Meine Seite mit ganzflächigem Hintergrund</h1><p>Hier ist etwas Text auf der Seite.</p></div></body></html>"
             #neue_saite = "<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><title>Fenster schließen Beispiel</title><script type="text/javascript">window.onload = function() {window.close();};</script></head><body><p>Das Fenster wird nach dem Laden automatisch geschlossen.</p></body></html>"
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
