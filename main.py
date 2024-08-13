@@ -136,6 +136,7 @@ class Listendings:
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
         self.Version = "Beta 1.0.4 (2)"
+        print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
         root.configure(resizeable=False)
@@ -168,7 +169,7 @@ class Listendings:
         self.Einstellung_Email_Sender_Adresse = os.path.join(self.Einstellungen_ordner , "Email_sender.txt")
         self.Einstellung_Email_Empfänge_Adresse = os.path.join(self.Einstellungen_ordner, "Email_Empfänger.txt")
         self.Einstellung_smtp_server = os.path.join(self.Einstellungen_ordner, "SMTP_Server.txt")
-        self.ung_smtp_Passwort = os.path.join(self.Einstellungen_ordner, "SMTP_Passwort.txt")
+        self.Einstellung_smtp_Passwort = os.path.join(self.Einstellungen_ordner, "SMTP_Passwort.txt")
         self.Db_Ordner_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Db')
         self.Json_pfad = os.path.join(self.Db_Ordner_pfad, 'Db.json')
         self.Einstellung_Theme = os.path.join(self.Einstellungen_ordner, "Theme.txt")
@@ -191,7 +192,7 @@ class Listendings:
             self.Durchsuchen_Bild_zu = tk.CTkImage(Image.open("Bilder/Durchsuchen_zu.png"))
             self.totdo_Bild = tk.CTkImage(Image.open("Bilder/totdo.png"))
         except Exception as alk:
-            messagebox.showinfo(self.Programm_Name, f"beim laden der Bild Assets ist ein Fehler aufgetreten: {alk}")
+            messagebox.showinfo(self.Programm_Name, f"Beim laden der Bild Assets ist ein Fehler aufgetreten: {alk}")
         
         self.Monat = time.strftime("%m")
         self.Thread_Kunderuftan = threading.Timer(2, self.Kunde_ruft_an)
@@ -202,8 +203,6 @@ class Listendings:
         self.Thread_Kunderuftan.daemon = True
         self.thread_uhr.start()
         self.Thread_Kunderuftan.start()
-        #self.thread_suche = threading.Thread(target=self.Suche_algo)
-        #self.thread_suche.setDaemon(True)
         self.smtp_server_anmeldung_thread = threading.Timer(1, self.SMTP_Anmeldung)
         self.smtp_server_anmeldung_thread.daemon = True
         self.smtp_server_anmeldung_thread.start()
@@ -260,6 +259,7 @@ class Listendings:
         self.Todo_offen = False
         self.Weiterleitungen = None
         self.Kontakte_aus_json_gel = None
+        self.Einstellung_smtp_Passwort = None
         
         self.zeit_string = time.strftime("%H:%M:%S")
         self.tag_string = str(time.strftime("%d %m %Y"))
@@ -316,7 +316,6 @@ class Listendings:
                 print(f"[-ERR-] Fehler beim erstellen der Ordner. Fehlercode: {EX1_Monat_ordn}")
 
         try:
-            with open(self.Auto_speichern_ungsdatei, "r") as einst_gel_autsp:
                 self.Auto_speichern_Einstellungsdatei_var = einst_gel_autsp.read()
                 print("[-EINSTELLUNGEN-] Einstellunsgdatei zum Autospeichern geladen. Dateipfad: ", self.Auto_speichern_Einstellungsdatei)
                 if self.Auto_speichern_Einstellungsdatei_var == "1":
@@ -409,7 +408,7 @@ class Listendings:
                 self.smtp_server = SMTP_Server_Datei.read()
                 print("[-EINSTLLUNGEN LADEN-] SMTP Server Adresse geladen.")
             with open(self.Einstellung_smtp_Passwort, "r") as SMTP_Server_Passwort_Datei:
-                self.pw_email= SMTP_Server_Passwort_Datei.read()
+                self.pw_email = SMTP_Server_Passwort_Datei.read()
                 print("[-EINSTLLUNGEN LADEN-] Absender Kennwort geladen.s")
         except Exception as EmailEx3_l:
             print(EmailEx3_l)
@@ -420,7 +419,7 @@ class Listendings:
             print(f"Beim Laden der Email Einstellungen unter {self.Einstellung_Email_Sender_Adresse} ; {self.Einstellung_Email_Empfänge_Adresse} und {self.Einstellung_smtp_server} ist ein Fehler aufgetreten. Fehlercode: {EmailEx3_l}")
     ########### SHAISE ENDE ###########
 
-        self.weiterleitung_laden()
+        
     ###################################
 
     #### Die Stars der Stunde ####
@@ -430,8 +429,6 @@ class Listendings:
         self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
     #### ####
         
-        
-
         self.senden_button = tk.CTkButton(master, text="Senden", command="")
         self.senden_button.bind('<Button-1>', self.senden)
         root.bind('<Return>', self.senden)
@@ -484,7 +481,6 @@ class Listendings:
             messagebox.showinfo(title="Fehler", message="Ein Unbekannter Fehler ist aufgetreten beim Versuch während des Programmstarts die bisherigen aufzeichnungen zu laden, es könnte sein dass das Programm trotzdem fehlerfrei funktioniert.")
             self.ausgabe_text.configure(state='disabled')
 
-
     ############################ GUI INNIT ######################
     ############################ GUI INNIT ######################
     ############################ GUI INNIT ######################
@@ -509,38 +505,10 @@ class Listendings:
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
 
-        
-
         #self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche_alte_Einträge, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
-        
         
         self.Zhe_Clock = tk.CTkLabel(self.Pause_menu, text=self.Zeit)
         self.Zhe_Clock.place(x=10,y=10)
-
-        def auswahl_gedingst(choice):
-            if choice == f"An {self.einz} gegeben":
-                self.Weiterleitung_an = f"An {self.einz} weitergeleitet."
-            elif choice == f"An {self.zwee} gegeben":
-                self.Weiterleitung_an = f"An {self.zwee} weitergeleitet."
-            elif choice == f"An {self.dree} gegeben":
-                self.Weiterleitung_an = f"An {self.dree} weitergeleitet."
-            elif choice == f"An {self.vir} gegeben":
-                self.Weiterleitung_an = f"An {self.vir} weitergeleitet"
-            elif choice == "Keine Weiterleitung":
-                self.Weiterleitung_an = ""
-
-        def auswahl_gedingst_sprechen(choice):
-            if choice == f"Mit {self.einz} sprechen":
-                self.Weiterleitung_an = f"An {self.einz} sprechen"
-            elif choice == f"Mit {self.zwee} gegeben":
-                self.Weiterleitung_an = f"An {self.zwee} sprechen."
-            elif choice == f"Mit {self.dree} gegeben":
-                self.Weiterleitung_an = f"An {self.dree} sprechen."
-            elif choice == f"Mit {self.vir} gegeben":
-                self.Weiterleitung_an = f"Mit {self.vir} sprechen"
-                self.wollte_sprechen = "Mit Irgendwen sprechen"
-            elif choice == "Keine Weiterleitung":
-                self.wollte_sprechen = "-"
 
         def auswahl_design_gedingst(choice):
             if choice == "hell":
@@ -552,31 +520,17 @@ class Listendings:
             else:
                 print("[-ERR-] Fehler bei der Auswahl der Designeinstellung, nutze nun den Systemstandard.")
                 self.Design_Einstellung = "System"
-                
-        
-
-        self.optionmenu1 = tk.CTkOptionMenu(root, values=[f"An {self.einz} sprechen", f"An {self.zwee} sprechen.", f"An {self.dree} sprechen.", f"Mit {self.vir} sprechen", "Irgendwen sprechen", "Keine Anfrage"], command=auswahl_gedingst_sprechen, fg_color="White", text_color="Black", dropdown_hover_color="pink")
-        self.optionmenu1.set("Mit Wem sprechen?")
-        self.optionmenu1.place(x=1260,y=190)
-        self.optionmenu = tk.CTkOptionMenu(root, values=[f"An {self.einz} weitergeleitet.", f"An {self.zwee} weitergeleitet.", f"An {self.dree} weitergeleitet.", f"An {self.vir} weitergeleitet", "Keine Weiterleitung"], command=auswahl_gedingst, fg_color="White", text_color="Black", dropdown_hover_color="pink")
-        self.optionmenu.set("Keine Weiterleitung")
-        self.optionmenu.place(x=1260,y=220)
 
         self.Einstellung_Design_auswahl = tk.CTkOptionMenu(self.Pause_menu, values=["hell", "dunkel", "System"], command=auswahl_design_gedingst)
         self.Einstellung_Design_L = tk.CTkLabel(self.Pause_menu, text="Design Einstellung:")
         
-
-
         self.kalender_menü = tk.CTkFrame(master, width=1250, height=520, fg_color="White", border_color="Black", border_width=2)
         self.Liste_mit_zeugs =  tk.CTkScrollableFrame(self.kalender_menü, width=500, height=420, bg_color="Green")
         
-
-
         ################################ MENU FRAMES ENDE ################################
         ################################ MENU FRAMES ENDE ################################
         ################################ MENU FRAMES ENDE ################################
         ################################ MENU FRAMES ENDE ################################
-
         
         self.Einstellungsseite_Knopp = tk.CTkButton(root, text="Einstellungen", command=self.Einstellungen_öffnen, fg_color="white", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.Dings_Bild)
         self.Einstellungsseite_Knopp.place(x=1260,y=420)
@@ -623,13 +577,19 @@ class Listendings:
         
         #self.todo_hinzufügen_knopp = tk.CTkButton(self.todo_frame, text="Aufgabe hinzufügen", command=self.todo_hinzufügen)
         self.Adressbuch_anzeigen_frame = tk.CTkFrame(self.tabview.tab("Adressbuch"), width=575, height=300, fg_color=self.Hintergrund_farbe, border_color=self.Ja_UI_Farbe, border_width=1, corner_radius=0)
-        
+        self.innit_auf_wish()
     #### ende todo gui ####
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
+
+    def innit_auf_wish(self):
+        print("innit auf wish bestellt...")
+        self.Kontakte_aus_json_laden()
+        self.weiterleitung_laden()
+        print("Die Wish shaise is vorbei.")
 
     def weiterleitungen_speichern(self):
         print("weiterleitungen_speichern(def)")
@@ -644,7 +604,6 @@ class Listendings:
                 self.weiterleitungen_drei_e.delete(0, tk.END)
                 self.weiterleitungen_vier_e.delete(0, tk.END)
             alles = None
-
         except Exception as Ex1w:
             print(f"Es gab einen Fehler beim speichern der Weiterleitungen: {Ex1w}")
             alles = None
@@ -660,31 +619,60 @@ class Listendings:
     
     def weiterleitung_laden(self):
         print("[-INFO-] Weiterleitungenladen(def)")
-        try:
-             self.optionmenu1.place_forget()
-             self.optionmenu.place_forget()
-        except:
-            pass
-        try:
-            self.optionmenu1 = tk.CTkOptionMenu(root, values=[f"An {self.einz} sprechen", f"An {self.zwee} sprechen.", f"An {self.dree} sprechen.", f"Mit {self.vir} sprechen", "Irgendwen sprechen", "Keine Anfrage"], command=Listendings.auswahl_gedingst_sprechen, fg_color="White", text_color="Black", dropdown_hover_color="pink")
-            self.optionmenu1.set("Mit Wem sprechen?")
-            self.optionmenu1.place(x=1260,y=190)
-            self.optionmenu = tk.CTkOptionMenu(root, values=[f"An {self.einz} weitergeleitet.", f"An {self.zwee} weitergeleitet.", f"An {self.dree} weitergeleitet.", f"An {self.vir} weitergeleitet", "Keine Weiterleitung"], command=Listendings.auswahl_gedingst, fg_color="White", text_color="Black", dropdown_hover_color="pink")
-            self.optionmenu.set("Keine Weiterleitung")
-            self.optionmenu.place(x=1260,y=220)
-        except Exception as ellkk:
-            print(ellkk)
+        def auswahl_gedingst(choice):
+            print("WAI !")
+            if choice == f"An {self.einz} gegeben":
+                self.Weiterleitung_an = f"An {self.einz} weitergeleitet."
+            elif choice == f"An {self.zwee} gegeben":
+                self.Weiterleitung_an = f"An {self.zwee} weitergeleitet."
+            elif choice == f"An {self.dree} gegeben":
+                self.Weiterleitung_an = f"An {self.dree} weitergeleitet."
+            elif choice == f"An {self.vir} gegeben":
+                self.Weiterleitung_an = f"An {self.vir} weitergeleitet"
+            elif choice == "Keine Weiterleitung":
+                self.Weiterleitung_an = ""
 
+        def auswahl_gedingst_sprechen(choice):
+            print("WAI !")
+            if choice == f"Mit {self.einz} sprechen":
+                self.Weiterleitung_an = f"An {self.einz} sprechen"
+            elif choice == f"Mit {self.zwee} gegeben":
+                self.Weiterleitung_an = f"An {self.zwee} sprechen."
+            elif choice == f"Mit {self.dree} gegeben":
+                self.Weiterleitung_an = f"An {self.dree} sprechen."
+            elif choice == f"Mit {self.vir} gegeben":
+                self.Weiterleitung_an = f"Mit {self.vir} sprechen"
+                self.wollte_sprechen = "Mit Irgendwen sprechen"
+            elif choice == "Keine Weiterleitung":
+                self.wollte_sprechen = "-"
         try:
             with open(self.Weiterleitungs_ordner_datei, "r" ) as gel_weiterleitung:
                 self.Weiterleitungen = gel_weiterleitung.read()
                 print(f"[-INFO-] Hier sind die Weiterleitungen vor der Konvertierung: {self.Weiterleitungen}")
-                self.Weiterleitungen.strip(",")
+                self.Weiterleitungen = self.Weiterleitungen.split(",")
+                print("EXTRAHIERT!!")
+                print(self.Weiterleitungen)
                 self.einz, self.zwee, self.dree, self.vir = self.Weiterleitungen
                 print(f"[-INFO-] Hier sind sie nun formatiert: {self.einz, self.zwee, self.dree, self.vir}")
                 print("[-INFO-] Weiterleitungen wurden erfolgreich geladen.")
         except Exception as Exwtl:
             print(f"[-ERR-] Beim laden der Weiterleitungen ist ein Fehler aufgetreten. Fehlermeldung: {Exwtl}")
+            return
+        try:
+            self.optionmenu1.place_forget()
+            self.optionmenu.place_forget()
+        except:
+            pass
+        try:
+            self.optionmenu1 = tk.CTkOptionMenu(root, values=[f"An {self.einz} sprechen", f"An {self.zwee} sprechen.", f"An {self.dree} sprechen.", f"Mit {self.vir} sprechen", "Irgendwen sprechen", "Keine Anfrage"], command=auswahl_gedingst_sprechen, fg_color="White", text_color="Black", dropdown_hover_color="pink")
+            self.optionmenu1.set("Mit Wem sprechen?")
+            self.optionmenu1.place(x=1260,y=190)
+            self.optionmenu = tk.CTkOptionMenu(root, values=[f"An {self.einz} weitergeleitet.", f"An {self.zwee} weitergeleitet.", f"An {self.dree} weitergeleitet.", f"An {self.vir} weitergeleitet", "Keine Weiterleitung"], command=auswahl_gedingst, fg_color="White", text_color="Black", dropdown_hover_color="pink")
+            self.optionmenu.set("Keine Weiterleitung")
+            self.optionmenu.place(x=1260,y=220)
+            print(f"[WEITERLEITUNG LADEN] Die Weiterleitungen wurden wieder ")
+        except Exception as ellkk:
+            print(f"[-ERR-] Konnte die Weiterleitungen nicht platzieren: {ellkk}")
 
     def changelog_aufmachen(self):
         print("[-INFO-] changelog_aufmachen(def)")
