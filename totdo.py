@@ -42,7 +42,7 @@ class TodoApp:
         self.deaktiviert_farbe = "White"
         self.dunkle_ui_farbe = "burlywood2"
         self.helle_ui_farbe = "burlywood1"
-        self.ja_ui_fabe = "burlywood"
+        self.Ja_UI_Farbe = "burlywood"
         self.das_hübsche_grau = "LightSlateGray"
         self.helle_farbe_für_knopfe = "LightSkyBlue"
 

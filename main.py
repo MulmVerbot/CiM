@@ -220,7 +220,7 @@ class Listendings:
         self.deaktiviert_farbe = "White"
         self.dunkle_ui_farbe = "burlywood2"
         self.helle_ui_farbe = "burlywood1"
-        self.ja_ui_fabe = "burlywood"
+        self.Ja_UI_Farbe = "burlywood"
         self.das_hübsche_grau = "LightSlateGray"
         self.helle_farbe_für_knopfe = "LightSkyBlue"
     #### Farben Ende ####
@@ -259,6 +259,7 @@ class Listendings:
         self.task = None
         self.Todo_offen = False
         self.Weiterleitungen = None
+        self.Kontakte_aus_json_gel = None
         
         self.zeit_string = time.strftime("%H:%M:%S")
         self.tag_string = str(time.strftime("%d %m %Y"))
@@ -587,7 +588,7 @@ class Listendings:
         self.Notizen_knopp.place(x=1260,y=360)
         self.Berichtsheft_knopp = tk.CTkButton(self.Pause_menu, text="Berichtsheft öffnen", command=self.Berichtsheft_aufmachen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         self.Einstellungen_Frame = tk.CTkFrame(root, width=600, height=380, border_color="Pink", border_width=3, fg_color="transparent")
-        self.tabview = tk.CTkTabview(self.Einstellungen_Frame, width=600, height=380, fg_color=self.Entry_Farbe, segmented_button_fg_color=self.Hintergrund_farbe_Text_Widget, segmented_button_selected_hover_color=self.dunkle_ui_farbe, segmented_button_unselected_hover_color=self.dunkle_ui_farbe, segmented_button_selected_color=self.helle_ui_farbe, text_color="Black", segmented_button_unselected_color=self.ja_ui_fabe)
+        self.tabview = tk.CTkTabview(self.Einstellungen_Frame, width=600, height=380, fg_color=self.Entry_Farbe, segmented_button_fg_color=self.Hintergrund_farbe_Text_Widget, segmented_button_selected_hover_color=self.dunkle_ui_farbe, segmented_button_unselected_hover_color=self.dunkle_ui_farbe, segmented_button_selected_color=self.helle_ui_farbe, text_color="Black", segmented_button_unselected_color=self.Ja_UI_Farbe)
         self.tabview.add("Starface Modul")
         self.tabview.add("Adressbuch")
         self.tabview.add("Speichern")
@@ -621,7 +622,7 @@ class Listendings:
         self.ans_totdo_senden_knopp.place(x=1260,y=330)
         
         #self.todo_hinzufügen_knopp = tk.CTkButton(self.todo_frame, text="Aufgabe hinzufügen", command=self.todo_hinzufügen)
-
+        self.Adressbuch_anzeigen_frame = tk.CTkFrame(self.tabview.tab("Adressbuch"), width=575, height=300, fg_color=self.Hintergrund_farbe, border_color=self.Ja_UI_Farbe, border_width=1, corner_radius=0)
         
     #### ende todo gui ####
     ####### ======================== init ende ======================== #######
@@ -647,6 +648,15 @@ class Listendings:
         except Exception as Ex1w:
             print(f"Es gab einen Fehler beim speichern der Weiterleitungen: {Ex1w}")
             alles = None
+
+    def Kontakte_aus_json_laden(self):
+        print("self.Kontakte_aus_JSON_laden(def)")
+        self.Benutzerordner = os.path.expanduser('~')
+        self.Db_Ordner_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Db')
+        self.Json_pfad = os.path.join(self.Db_Ordner_pfad, 'Db.json')
+        file_path = self.Json_pfad
+        with open(file_path, 'r+') as f:
+            self.Kontakte_aus_json_gel = json.load(f)
     
     def weiterleitung_laden(self):
         print("[-INFO-] Weiterleitungenladen(def)")
@@ -823,6 +833,7 @@ class Listendings:
         self.weiterleitungen_drei_e.place(x=10,y=160)
         self.weiterleitungen_vier_e.place(x=10,y=190)
         self.Weiterleitungen_speichern_knopp.place(x=10,y=240)
+        self.Adressbuch_anzeigen_frame.place(x=5,y=20)
 
         try:
             if self.smtp_login_erfolgreich == True:
