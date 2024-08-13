@@ -316,6 +316,7 @@ class Listendings:
                 print(f"[-ERR-] Fehler beim erstellen der Ordner. Fehlercode: {EX1_Monat_ordn}")
 
         try:
+            with open(self.Weiterleitungs_ordner_datei, "r") as einst_gel_autsp:
                 self.Auto_speichern_Einstellungsdatei_var = einst_gel_autsp.read()
                 print("[-EINSTELLUNGEN-] Einstellunsgdatei zum Autospeichern geladen. Dateipfad: ", self.Auto_speichern_Einstellungsdatei)
                 if self.Auto_speichern_Einstellungsdatei_var == "1":
