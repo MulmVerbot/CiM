@@ -343,11 +343,11 @@ class Listendings:
         try: 
             if not os.path.exists(self.Einstellungen_ordner):
                 try:
-                    print("Der Einstellungsordner scheint nicht zu existieren. Erstelle ihn nun.")
+                    print("[-init-] Der Einstellungsordner scheint nicht zu existieren. Erstelle ihn nun.")
                     os.mkdir(self.Einstellungen_ordner)
-                    print("Der Einstellungsornder wurde erfolgreich erstellt.")
+                    print("[-INFO-] Der Einstellungsornder wurde erfolgreich erstellt.")
                 except Exception as ex_einst:
-                    print("Fehler beim Erstellen des Einstellungsordners. Fehlercode:", ex_einst)
+                    print("[-ERR-] Fehler beim Erstellen des Einstellungsordners. Fehlercode:", ex_einst)
                     messagebox.showerror(title="CiM Fehler", message=ex_einst)
                     try:
                         with open(self.Starface_Einstellungsdatei, "r") as SternGesicht_data:
@@ -365,10 +365,10 @@ class Listendings:
                     with open(self.Starface_Einstellungsdatei, "r") as SternGesicht_data:
                         self.Starface_Modul = SternGesicht_data.read()
                         if self.Starface_Modul == "1":
-                            print("Starface Modul wird aktiviert.")
+                            print("[ INIT - Starface - INFO ] Starface Modul wird aktiviert.")
                             self.thread_webserver.start()
                         else:
-                            print("Das Starface Modul ist nicht aktiviert: self.Starface_Modul == ", self.Starface_Modul)
+                            print("[ INIT - Starface - INFO ] Das Starface Modul ist nicht aktiviert: self.Starface_Modul == ", self.Starface_Modul)
                 except Exception as Exp:
                     print("Konnte die Einstellungsdatei nicht öffnen. Fehlercode: ", Exp)
                    
@@ -385,7 +385,7 @@ class Listendings:
         except PermissionError:
                 messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Die Speicherorte konnten nicht geladen werden")
         except:
-            print("Die Einstellung scheint nicht zu existieren")
+            print("[ INIT - EINSTELLUNGEN - ERR ]Die Einstellung scheint nicht zu existieren")
 
         try:
             with open(self.Listen_Speicherort_Netzwerk_Einstellungsdatei , "r") as Liste_Speicherort_Netzwerk_data:
@@ -395,7 +395,7 @@ class Listendings:
         except PermissionError:
                 messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Der Gespeicherte Netzwerkpfad konnte nicht aufgerufen werden.")
         except Exception as e:
-            print(f"Irgendwas ist passiert: {e}")
+            print(f"[-FATAL-] Irgendwas ist passiert: {e}")
 
     ######### JETZT KOMMT HIER DIE SHAISE FÜR DAS EMAIL TICKET ZEUGS ###########
         try:
@@ -482,9 +482,9 @@ class Listendings:
             messagebox.showinfo(title="Fehler", message="Ein Unbekannter Fehler ist aufgetreten beim Versuch während des Programmstarts die bisherigen aufzeichnungen zu laden, es könnte sein dass das Programm trotzdem fehlerfrei funktioniert.")
             self.ausgabe_text.configure(state='disabled')
 
-    ############################ GUI INNIT ######################
-    ############################ GUI INNIT ######################
-    ############################ GUI INNIT ######################
+    ############################ GUI init ######################
+    ############################ GUI init ######################
+    ############################ GUI init ######################
         self.menu_frame = tk.CTkFrame(master, width=200, height=400)
         self.beb_knopp = tk.CTkButton(master, text="Bearbeiten", command=self.beb_c, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.Bearbeiten_Bild)
         self.beb_knopp.place(x=1260, y=100)
@@ -578,7 +578,7 @@ class Listendings:
         
         #self.todo_hinzufügen_knopp = tk.CTkButton(self.todo_frame, text="Aufgabe hinzufügen", command=self.todo_hinzufügen)
         self.Adressbuch_anzeigen_frame = tk.CTkFrame(self.tabview.tab("Adressbuch"), width=575, height=300, fg_color=self.Hintergrund_farbe, border_color=self.Ja_UI_Farbe, border_width=1, corner_radius=0)
-        self.innit_auf_wish()
+        self.init_auf_wish()
     #### ende todo gui ####
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
@@ -586,31 +586,31 @@ class Listendings:
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
 
-    def innit_auf_wish(self):
-        print("innit auf wish bestellt...")
+    def init_auf_wish(self):
+        print("[-init-] init auf wish bestellt...")
         self.Kontakte_aus_json_laden()
         self.weiterleitung_laden()
-        print("Die Wish shaise is vorbei.")
+        print("[-init-] Die Wish shaise is vorbei.")
 
     def weiterleitungen_speichern(self):
-        print("weiterleitungen_speichern(def)")
+        print("[-INFO-] weiterleitungen_speichern(def)")
         alles = self.weiterleitungen_einz_e.get() + ","+ self.weiterleitungen_zwei_e.get() + ","+ self.weiterleitungen_drei_e.get() + ","+ self.weiterleitungen_vier_e.get() 
         try:
             with open(self.Weiterleitungs_ordner_datei, "w+") as schreiben_weiterl:
                 schreiben_weiterl.write(alles)
                 schreiben_weiterl.close()
-                print("Die neuen Weiterleitungen wurden gespeichert.")
+                print("[-INFO-] Die neuen Weiterleitungen wurden gespeichert.")
                 self.weiterleitungen_einz_e.delete(0, tk.END)
                 self.weiterleitungen_zwei_e.delete(0, tk.END)
                 self.weiterleitungen_drei_e.delete(0, tk.END)
                 self.weiterleitungen_vier_e.delete(0, tk.END)
             alles = None
         except Exception as Ex1w:
-            print(f"Es gab einen Fehler beim speichern der Weiterleitungen: {Ex1w}")
+            print(f"[-ERR-] Es gab einen Fehler beim speichern der Weiterleitungen: {Ex1w}")
             alles = None
 
     def Kontakte_aus_json_laden(self):
-        print("self.Kontakte_aus_JSON_laden(def)")
+        print("[-INFO-] self.Kontakte_aus_JSON_laden(def)")
         self.Benutzerordner = os.path.expanduser('~')
         self.Db_Ordner_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Db')
         self.Json_pfad = os.path.join(self.Db_Ordner_pfad, 'Db.json')
@@ -775,6 +775,11 @@ class Listendings:
 
         self.Normaler_Speicherort_change = tk.CTkButton(self.tabview.tab("Speicherorte"), text="ändern", command=self.ListenDings_speicherort_ändern, width=100)
         self.Netzwerk_Speicherort_change = tk.CTkButton(self.tabview.tab("Speicherorte"), text="ändern", command=self.ListenDings_speicherort_Netzwerk_ändern, width=100)
+
+        # Adressbuch
+        self.Adressbuch_anzeige_Einstellungen_t = tk.CTkTextbox(self.Adressbuch_anzeigen_frame, width=300, height=200, fg_color=self.Ja_UI_Farbe)
+        self.Adressbuch_anzeige_Einstellungen_t.place(x=10,y=10) 
+    # Adressbuch ende
 
         self.Netzlaufwerk_pfad_geladen_Label.place(x=10,y=80)
         self.Pfad_geladen_Label.place(x=10,y=110)
