@@ -262,6 +262,8 @@ class Listendings:
         self.Weiterleitungen = None
         self.Kontakte_aus_json_gel = None
         self.Einstellung_smtp_Passwort = None
+        self.pfad_der_suche = None
+        self.Suchwort = None
         
         self.zeit_string = time.strftime("%H:%M:%S")
         self.tag_string = str(time.strftime("%d %m %Y"))
@@ -467,7 +469,7 @@ class Listendings:
         self.Bearbeiten_Menu.add_command(label="Alle Einträge löschen", command=self.alles_löschen)
         self.Bearbeiten_Menu.add_command(label="JSON Explorer öffnen", command=self.JSON_Explorer_öffnen)
         self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results_vor)
-        self.Suchen_Menu.add_command(label="Sehr genaue Suche nutzen (Suche 3.0)(verbugt)", command=self.genaue_suche_start)
+        self.Suchen_Menu.add_command(label="Sehr genaue Suche nutzen (Suche 3.0)(Beta)", command=self.frage_nach_string_suche3)
         
         try:
             print("(INFO) versuche die alten Aufzeichenungen zu Laden")
@@ -1065,9 +1067,22 @@ class Listendings:
         print("Ticket_erstellen_api")
         messagebox.showerror(title="Fehler", message="Dieses Feature existiert noch nicht, wie hast Du überhaupt geschafft diese Funktion aufzurufen!?!???")
 
+    def frage_nach_string_suche3(self):
+        suche3_fr_fenster = tk.CTkToplevel()
+        suchwort_frage_e = tk.CTkEntry(suche3_fr_fenster)
+        suchwort_frage_e.pack()
+        self.pfad_der_suche = filedialog.askdirectory()
+        self.Suchwort = suchwort_frage_e.get()
+        suche3_start_knopp = tk.CTkButton(suche3_fr_fenster, text="Starten", command=self.genaue_suche_start)
+        suche3_start_knopp.pack() 
+
     def genaue_suche_start(self):
-        self.thread_suche_3 = threading.Thread(target=self.genaue_suche)
-        self.thread_suche_3.start()
+        if self.pfad_der_suche and self.Suchwort != None:
+            self.thread_suche_3 = threading.Thread(target=self.genaue_suche)
+            self.thread_suche_3.start()
+            print(f"Suche nun mit {self.Suchwort} im Verzeichnis {self.pfad_der_suche}")
+        else:
+            print("Suche wurde abgebrochen.")
 
     def Berichtsheft_aufmachen(self):
         print("öffne nun Berichtsheft...")
@@ -1785,24 +1800,13 @@ class Listendings:
             print(f"Es sind weniger als 20 Suchergbnisse.{self.Anzahl_der_Ergebnisse}")
             self.aufmachen_results()
             
-####
     def genaue_suche(self):
-        self.suchedrei_Fenster = tk.CTkToplevel(root)
-        self.suchedrei_Fenster.title("Changelogs")
+        self.suchedrei_Fenster = tk.CTkToplevel()
+        self.suchedrei_Fenster.title("Suche")
         self.suchedrei_Fenster.configure(fg_color="White")
-        self.Textfeld_suchedrei = tk.CTkTextbox(self.suchedrei_Fenster, width=820, height=420, text_color="Black", fg_color="azure", wrap="word", border_width=0)
-        height = 420
-        width = 820
-        try:
-            x = root.winfo_x() + root.winfo_width()//2 - self.suchedrei_Fenster.winfo_width()//2
-            y = root.winfo_y() + root.winfo_height()//2 - self.suchedrei_Fenster.winfo_height()//2
-            self.suchedrei_Fenster.geometry(f"{width}x{height}+{x}+{y}")
-        except:
-            print("Konnte das changelogfenster nicht zentrieren.")
-            self.suchedrei_Fenster.geometry(f"{width}x{height}+{x}+{y}")
-        self.suchedrei_Fenster.resizable(False,False)
+        self.Textfeld_suchedrei = tk.CTkTextbox(self.suchedrei_Fenster, width=100, height=30, wrap="word")
         self.Textfeld_suchedrei.pack()
-        
+
         def list_synonyms(word):
             synonyms = set()
             for synset in wordnet.synsets(word):
@@ -1815,69 +1819,50 @@ class Listendings:
             _, ext = os.path.splitext(file_name)
             return ext.lower() in text_extensions
 
-        def search_files_for_words(path, words):
-            results = defaultdict(list)
-            word_synonyms = defaultdict(list)
-            
-            
-            for word in words:
-                synonyms = list_synonyms(word)
-                word_synonyms[word] = synonyms + [word]  # Include the word itself as a synonym
-            
-            
+        def search_files_for_word(path, word):
+            results = []
+            synonyms = list_synonyms(word) + [word]  # Include the word itself as a synonym
+
             for root, _, files in os.walk(path):
+                print("suche1")
                 for file in files:
+                    print("suche2")
                     if is_text_file(file):
                         file_path = os.path.join(root, file)
                         with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                             for line_num, line in enumerate(f, 1):
-                                for word, synonyms in word_synonyms.items():
-                                    pattern = r'\b({})\b'.format('|'.join(map(re.escape, synonyms)))
-                                    matches = re.findall(pattern, line, flags=re.IGNORECASE)
-                                    if matches:
-                                        results[word].append((file_path, line_num, line.strip()))
-                                    
-            return results, word_synonyms
-        
-
-        path = filedialog.askdirectory()
-        such_dialog_3 = tk.CTkInputDialog(title="CiM Suche", text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht. (Groß-und Kleinschreibung wird ignoriert)")
-        try:
-            x = root.winfo_x() + root.winfo_width()//2 - such_dialog_3.winfo_width()//2
-            y = root.winfo_y() + root.winfo_height()//2 - such_dialog_3.winfo_height()//2
-            such_dialog_3.geometry(f"x+{x}+{y}")
-        except:
-            print("Fehler beim zentrieren des Such-Dialogs. selbst wenn ich hier die Fehlermeldung hinschreiben würde, würdest Du sie nicht verstehen denn ich habe auch keine Ahnung.")
-
-        self.Suche_suche_3 = such_dialog_3.get_input()
-        if self.Suche_suche_3:
-            words = self.Suche_suche_3
-            print("dann mal los")
+                                pattern = r'\b({})\b'.format('|'.join(map(re.escape, synonyms)))
+                                matches = re.findall(pattern, line, flags=re.IGNORECASE)
+                                if matches:
+                                    results.append((file_path, line_num, line.strip()))
             
-            if not os.path.isdir(path):
-                print("Der angegebene Pfad existiert nicht oder ist kein Verzeichnis.")
-            else:
-                results, word_synonyms = search_files_for_words(path, words)
-                
-                if not results:
-                    print("Keine Ergebnisse gefunden.")
-                    messagebox.showinfo(title="Info", message="Darunter wurde nichts gefunden.")
-                else:
-                    for word, occurrences in results.items():
-                        self.Textfeld_suchedrei.insert(tk.END, f"\nWort: {word}")
-                        self.Textfeld_suchedrei.insert(tk.END, f"   Synonyme: {', '.join(word_synonyms[word])}")
-                        for occurrence in occurrences:
-                            self.Textfeld_suchedrei.insert(tk.END, f"   Datei: {occurrence[0]}")
-                            self.Textfeld_suchedrei.insert(tk.END, f"   Zeile {occurrence[1]}: {occurrence[2]}")
+            return results
 
-                    
-                    
-                    
+        path = self.pfad_der_suche
+        word = self.Suchwort
+        print("dann mal los")
+        
+        if not os.path.isdir(path):
+            print("Der angegebene Pfad existiert nicht oder ist kein Verzeichnis.")
+            self.pfad_der_suche = None
+            self.Suchwort = None
         else:
-            messagebox.showinfo(title="Info", message="Suche abgebrochen.")
-            self.Suche_suche_3 = ""
+            results = search_files_for_word(path, word)
+            
+            if not results:
+                print("Keine Ergebnisse gefunden.")
+                self.pfad_der_suche = None
+                self.Suchwort = None
+                messagebox.showinfo(title="Info", message="Darunter wurde nichts gefunden.")
+            else:
+                self.Textfeld_suchedrei.delete(1.0, tk.END)
+                self.Textfeld_suchedrei.insert(tk.END, f"Wort: {word}\n")
+                self.Textfeld_suchedrei.insert(tk.END, f"   Synonyme: {', '.join(list_synonyms(word))}\n")
+                for occurrence in results:
+                    self.Textfeld_suchedrei.insert(tk.END, f"   Datei: {occurrence[0]}\n")
+                    self.Textfeld_suchedrei.insert(tk.END, f"   Zeile {occurrence[1]}: {occurrence[2]}\n")
 
-####
+
     def Kunde_ruft_an(self):
         print("Thread gestartet: Kunde_ruft_an (def)")
         while self.Programm_läuft == True:
