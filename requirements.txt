@@ -2,3 +2,6 @@ customtkinter
 tkinterdnd2
 Pillow
 nltk
+pyperclip
+numpy
+matplotlib

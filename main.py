@@ -30,7 +30,9 @@ try:
     from collections import defaultdict
     from nltk.corpus import wordnet
     import re
+    import matplotlib.pyplot as plt
     import pyperclip
+    import numpy as np
 except Exception as E:
     print(f"(FATAL) Fehler beim laden der Bibliotheken, Fehlermeldung: {E}")
     try:
@@ -135,7 +137,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.0.4 (2)"
+        self.Version = "Beta 1.0.5"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -591,6 +593,93 @@ class Listendings:
         self.Kontakte_aus_json_laden()
         self.weiterleitung_laden()
         print("[-init-] Die Wish shaise is vorbei.")
+
+    def Anrufstatistiken_anzeigen_saeule(self):
+        # Muster, um die Uhrzeit zu extrahieren
+        uhrzeit_muster = re.compile(r'bis (\d{2}:\d{2}:\d{2})')
+
+        # Funktion zum Durchsuchen eines Verzeichnisses und seiner Unterverzeichnisse
+        def durchsuche_ordner(pfad):
+            ergebnisse = {}
+            
+            # Durchlaufe alle Dateien und Unterordner
+            for root, dirs, files in os.walk(pfad):
+                uhrzeiten = []
+                for file in files:
+                    dateipfad = os.path.join(root, file)
+                    # Nur Textdateien durchsuchen
+                    if file.endswith('.txt'):
+                        with open(dateipfad, 'r') as datei:
+                            for zeile in datei:
+                                uhrzeit_match = uhrzeit_muster.search(zeile)
+                                if uhrzeit_match:
+                                    uhrzeit = uhrzeit_match.group(1)
+                                    uhrzeiten.append(uhrzeit)
+                
+                # Speichere die Anzahl der gefundenen Uhrzeiten für diesen Ordner
+                if uhrzeiten:
+                    ordnername = os.path.basename(root)
+                    ergebnisse[ordnername] = len(uhrzeiten)
+            
+            return ergebnisse
+
+        # Hauptverzeichnis, das durchsucht werden soll
+        hauptverzeichnis = self.Listen_Speicherort_standard
+
+        # Durchsuche das Hauptverzeichnis und Unterordner
+        ergebnisse = durchsuche_ordner(hauptverzeichnis)
+
+        # Bereite Daten für das Diagramm vor
+        ordner = list(ergebnisse.keys())
+        anzahl = list(ergebnisse.values())
+
+        # Erstelle ein Diagramm mit matplotlib
+        plt.figure(figsize=(12, 8))
+        plt.bar(ordner, anzahl, color=self.Starface_Farbe)
+        plt.xlabel('Monat')
+        plt.ylabel('Anrufe')
+        plt.title('Anrufstatistiken nach Monaten (Angaben können ungenau sein)')
+        plt.grid(True, axis='both')
+        max_y = max(anzahl)
+        plt.yticks(np.arange(0, max_y + 1, 1.0))
+
+        # Zeige das Diagramm an
+        plt.tight_layout()  # Optimiere das Layout
+        plt.show()
+
+    def Anrufstatistiken_anzeigen_linie(self):
+        uhrzeit_muster = re.compile(r'bis (\d{2}:\d{2}:\d{2})')
+        def durchsuche_ordner(pfad):
+            ergebnisse = {}
+            for root, dirs, files in os.walk(pfad):
+                uhrzeiten = []
+                for file in files:
+                    dateipfad = os.path.join(root, file)
+                    if file.endswith('.txt'):
+                        with open(dateipfad, 'r') as datei:
+                            for zeile in datei:
+                                uhrzeit_match = uhrzeit_muster.search(zeile)
+                                if uhrzeit_match:
+                                    uhrzeit = uhrzeit_match.group(1)
+                                    uhrzeiten.append(uhrzeit)
+                if uhrzeiten:
+                    ordnername = os.path.basename(root)
+                    ergebnisse[ordnername] = len(uhrzeiten)
+            return ergebnisse
+        hauptverzeichnis = self.Listen_Speicherort_standard
+        ergebnisse = durchsuche_ordner(hauptverzeichnis)
+        ordner = list(ergebnisse.keys())
+        anzahl = list(ergebnisse.values())
+        plt.figure(figsize=(12, 8))
+        plt.plot(ordner, anzahl, marker='o', linestyle='-', color='blue')
+        plt.xlabel('Monat')
+        plt.ylabel('Anrufe')
+        plt.title('Anrufstatistiken nach Monaten (Angaben können ungenau sein)')
+        max_y = max(anzahl) if anzahl else 1
+        plt.yticks(np.arange(0, max_y + 1, 1.0))
+        plt.grid(True, axis='y')
+        plt.tight_layout()
+        plt.show()
 
     def weiterleitungen_speichern(self):
         print("[-INFO-] weiterleitungen_speichern(def)")
@@ -1128,7 +1217,6 @@ class Listendings:
                     self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP fehlgeschlagen.", text_color="Red")
                 except:
                     pass
-                messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim Anmelden am Mailserver. Fehlercode: {EmailEx1}")
                  
     def Starface_Modul_umschalten(self):
         print("Starface_Modul_umschalten(def)")
@@ -1215,15 +1303,21 @@ class Listendings:
             self.smtp_login_erfolgreich_l.place_forget()
             self.Einstellung_Design_auswahl.place_forget()
             self.Berichtsheft_knopp.place_forget()
+            self.Statistiken_anzeigen_linie_knopp.place_forget()
+            self.Statistiken_anzeigen_saeule_knopp.place_forget()
         elif self.Menü_da == False:
             # Menu wird jetzt angezeigt (Ja, wirklich.)
             print("menü == false (Menü war nicht offen)")
             self.Pause_menu.place(x=300,y=10)
             self.Menü_da = True
             self.Menü_Knopp.configure(text="Menü schließen", fg_color="aquamarine", hover_color="aquamarine3")
-            self.Berichtsheft_knopp.place(x=200,y=100)
+            self.Berichtsheft_knopp.place(x=400,y=100)
             self.Einstellung_Design_auswahl.place(x=10,y=200)
             self.Einstellung_Design_L.place(x=10,y=170)
+            self.Statistiken_anzeigen_linie_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Liniendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_linie, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+            self.Statistiken_anzeigen_saeule_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Säulendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_saeule, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+            self.Statistiken_anzeigen_linie_knopp.place(x=10,y=100)
+            self.Statistiken_anzeigen_saeule_knopp.place(x=10,y=140)
             try:
                 try:
                     self.gel_Email_Empfänger_E.delete(0, tk.END)

@@ -1,5 +1,10 @@
 |=================================================================================================
-|- 06.07.2024 Beta 1.0.4 (1)-
+|- 17.08.2024 Beta 1.0.5 -
+|   - Es können nun Anrufstatistiken abgerufen werden bei denen,
+|     die Anzahl der Anrufe aus den vor-ort gespeicherten listen Grafisch
+|     dargestellt wird. 
+|=================================================================================================
+|- 06.07.2024 Beta 1.0.4 (1) -
 |   - seit dem letzten Changelog hat sich zu viel getan
 |   - Es ist nun möglich beim erstellen eines Tickets, den letzten Anrufer direkt einzufügen
 |
