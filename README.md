@@ -20,6 +20,7 @@ Hier kommt noch bissl Zeugs dazu.
 - Es gibt die möglichkeit eine Blacklist zu erstellen, um Nummern aus dem Starface Modul zu entfernen/ignorieren
 - Das IHK Berichtsheft kann geöffnet werden
 - Es gibt ein eigenes Todo Programm, "Totdo - jetzt kannst Du Dir sogar aufschreiben wie Du Dich totarbeitest". Es können aus vergangenen Anrufen mittels One-Click Aufgaben erstellt werden.
+- Es kann eine Statistik zur Anrufhäufgigkeit als Diagram dargestellt werden.
 
 
 ## Zukünftige Features:
