@@ -530,7 +530,7 @@ class Listendings:
         self.Einstellung_Design_L = tk.CTkLabel(self.Pause_menu, text="Design Einstellung:")
         
         self.kalender_menü = tk.CTkFrame(master, width=1250, height=520, fg_color="White", border_color="Black", border_width=2)
-        self.Liste_mit_zeugs =  tk.CTkScrollableFrame(self.kalender_menü, width=500, height=420, bg_color="Green")
+        self.Liste_mit_zeugs = tk.CTkScrollableFrame(self.kalender_menü, width=500, height=420, bg_color="Green")
         
         ################################ MENU FRAMES ENDE ################################
         ################################ MENU FRAMES ENDE ################################
@@ -594,6 +594,7 @@ class Listendings:
         print("[-init-] init auf wish bestellt...")
         self.Kontakte_aus_json_laden()
         self.weiterleitung_laden()
+        self.SMTP_Anmeldung_Manuell()
         print("[-init-] Die Wish shaise is vorbei.")
 
     def Anrufstatistiken_anzeigen_saeule(self):
@@ -713,27 +714,28 @@ class Listendings:
         print("[-INFO-] Weiterleitungenladen(def)")
         def auswahl_gedingst(choice):
             print("WAI !")
-            if choice == f"An {self.einz} gegeben":
+            if choice == f"An {self.einz} weitergeleitet.":
                 self.Weiterleitung_an = f"An {self.einz} weitergeleitet."
-            elif choice == f"An {self.zwee} gegeben":
+            elif choice == f"An {self.zwee} weitergeleitet.":
                 self.Weiterleitung_an = f"An {self.zwee} weitergeleitet."
-            elif choice == f"An {self.dree} gegeben":
+            elif choice == f"An {self.dree} weitergeleitet.":
                 self.Weiterleitung_an = f"An {self.dree} weitergeleitet."
-            elif choice == f"An {self.vir} gegeben":
+            elif choice == f"An {self.vir} weitergeleitet.":
                 self.Weiterleitung_an = f"An {self.vir} weitergeleitet"
             elif choice == "Keine Weiterleitung":
                 self.Weiterleitung_an = ""
+                
 
         def auswahl_gedingst_sprechen(choice):
             print("WAI !")
             if choice == f"Mit {self.einz} sprechen":
-                self.Weiterleitung_an = f"An {self.einz} sprechen"
-            elif choice == f"Mit {self.zwee} gegeben":
-                self.Weiterleitung_an = f"An {self.zwee} sprechen."
-            elif choice == f"Mit {self.dree} gegeben":
-                self.Weiterleitung_an = f"An {self.dree} sprechen."
-            elif choice == f"Mit {self.vir} gegeben":
-                self.Weiterleitung_an = f"Mit {self.vir} sprechen"
+                self.wollte_sprechen = f"Mit {self.einz} sprechen"
+            elif choice == f"Mit {self.zwee} sprechen":
+                self.wollte_sprechen = f"Mit {self.zwee} sprechen."
+            elif choice == f"Mit {self.dree} sprechen":
+                self.wollte_sprechen = f"Mit {self.dree} sprechen."
+            elif choice == f"Mit {self.vir} sprechen":
+                self.wollte_sprechen = f"Mit {self.vir} sprechen"
                 self.wollte_sprechen = "Mit Irgendwen sprechen"
             elif choice == "Keine Weiterleitung":
                 self.wollte_sprechen = "-"
@@ -756,7 +758,7 @@ class Listendings:
         except:
             pass
         try:
-            self.optionmenu1 = tk.CTkOptionMenu(root, values=[f"An {self.einz} sprechen", f"An {self.zwee} sprechen.", f"An {self.dree} sprechen.", f"Mit {self.vir} sprechen", "Irgendwen sprechen", "Keine Anfrage"], command=auswahl_gedingst_sprechen, fg_color="White", text_color="Black", dropdown_hover_color="pink")
+            self.optionmenu1 = tk.CTkOptionMenu(root, values=[f"Mit {self.einz} sprechen", f"Mit {self.zwee} sprechen.", f"Mit {self.dree} sprechen.", f"Mit {self.vir} sprechen", "Irgendwen sprechen", "Keine Anfrage"], command=auswahl_gedingst_sprechen, fg_color="White", text_color="Black", dropdown_hover_color="pink")
             self.optionmenu1.set("Mit Wem sprechen?")
             self.optionmenu1.place(x=1260,y=190)
             self.optionmenu = tk.CTkOptionMenu(root, values=[f"An {self.einz} weitergeleitet.", f"An {self.zwee} weitergeleitet.", f"An {self.dree} weitergeleitet.", f"An {self.vir} weitergeleitet", "Keine Weiterleitung"], command=auswahl_gedingst, fg_color="White", text_color="Black", dropdown_hover_color="pink")
@@ -1996,7 +1998,9 @@ class Listendings:
                 T_Nummer = "-"
             if self.Weiterleitung_an == "":
                 self.Weiterleitung_an = "Keine Weiterleitung"
+                messagebox.showinfo(title="", message=self.Weiterleitung_an)
             if self.wollte_sprechen == "":
+                messagebox.showinfo(title="", message=self.wollte_sprechen)
                 self.wollte_sprechen = "Nein"
 
             if os.path.exists(self.Liste_mit_datum):
