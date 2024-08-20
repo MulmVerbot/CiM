@@ -13,7 +13,7 @@ import re
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Alpha 1.2.2 (1)"
+        self.Version = "Alpha 1.2.2 (2)"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -324,7 +324,7 @@ class TodoApp:
         self.todo_r_dispawn()
 
     def todo_r_dispawn(self):
-        try:
+        try: ### Bitte frag nicht wie es zu diesem shais hier gekommen ist...
             self.Aufgaben_Beschreibung_t.delete("1.0", tk.END)
         except Exception as e:
             print(f"Fehler beim Löschen von Aufgaben_Beschreibung_t: {e}")

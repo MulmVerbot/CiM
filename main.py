@@ -54,9 +54,9 @@ class Listendings:
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             parsed_path = urllib.parse.urlparse(self.path)
-            print("[-INFO-] Angeforderter Pfad:", parsed_path.path)
+            print("[- Starface-Modul - HTTP - INFO -] Angeforderter Pfad:", parsed_path.path)
             besserer_pfad = parsed_path.path.replace("/", "")
-            print("[-INFO-] Nummer die angerufen hat/wurde: ", besserer_pfad)
+            print("[- Starface-Modul - HTTP - INFO -] Nummer die angerufen hat/wurde: ", besserer_pfad)
             if besserer_pfad == "b":
                 ende_des_anrufs = time.strftime("%H:%M:%S")
                 try:
@@ -64,9 +64,9 @@ class Listendings:
                             tmp.write(ende_des_anrufs)
                 except Exception as e:
                     print(f"Fehler beim Schreiben in tmp1.txt: {e}")
-                print("[-INFO-] Der Anruf war wohl fertig. var: ", besserer_pfad)
+                print("[- Starface-Modul - HTTP - INFO -] Der Anruf war wohl fertig. var: ", besserer_pfad)
             elif besserer_pfad == "a":
-                print("[-INFO-] Der bessere Pfad ist ein a.")
+                print("[- Starface-Modul - HTTP - INFO -] Der bessere Pfad ist ein a.")
             else:
                 try:
                     with open("tmp.txt", "w+") as tmp:
@@ -80,20 +80,24 @@ class Listendings:
         def run(self):
             port = 8080
             server_address = ('', port)
-            httpd = HTTPServer(server_address, Listendings.RequestHandler)
+            try:
+                httpd = HTTPServer(server_address, Listendings.RequestHandler)
+            except Exception as exhttp:
+                print(f"[- Starface-Modul - HTTP - ERR -] {exhttp}")
+                return
             try:
                 while Listendings.Programm_läuft == True:
-                    print(f'Ich horche mal auf Port {port}...') 
+                    print(f'[- Starface-Modul - HTTP - INFO -] Ich horche mal auf Port {port}...') 
                     httpd.handle_request()
                     if Listendings.Programm_läuft == False: # wenn diese funktion hier jemals funktionieren würde, könnten hier auch Fehler erscheinen.
                         httpd.shutdown()
                         httpd.server_close()
-                        print(f'[-INFO-] Server auf Port {port} gestoppt.')
+                        print(f'[- Starface-Modul - HTTP - INFO -] Server auf Port {port} gestoppt.')
                         sys.exit()
             except KeyboardInterrupt:
                 httpd.server_close()
                 httpd.shutdown()
-                print(f'[-INFO-] Server auf Port {port} gestoppt.')
+                print(f'[- Starface-Modul - HTTP - INFO -] Server auf Port {port} gestoppt.')
 
     class Logger(object):
         def __init__(self): #eine init welche nur das "unwichtige" vorgeplänkel macht (Logs und so)
@@ -137,7 +141,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.0.5"
+        self.Version = "Beta 1.0.5 (1)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -205,7 +209,7 @@ class Listendings:
         self.Thread_Kunderuftan.daemon = True
         self.thread_uhr.start()
         self.Thread_Kunderuftan.start()
-        self.smtp_server_anmeldung_thread = threading.Timer(1, self.SMTP_Anmeldung)
+        self.smtp_server_anmeldung_thread = threading.Timer(5, self.SMTP_Anmeldung)
         self.smtp_server_anmeldung_thread.daemon = True
         self.smtp_server_anmeldung_thread.start()
         
@@ -233,10 +237,10 @@ class Listendings:
         self.Starface_Farbe = "#4d4d4d"
         self.Starface_Farbe_Neu = "#293136"#-> Das hier ist die Dunklere Version und das hier
         self.Ort_wo_gesucht_wird = ""
-        self.sender_email = ""
+        self.sender_email = None
         self.empfänger_email = ""
         self.smtp_server = ""
-        self.pw_email = ""
+        self.pw_email = None
         self.einz = "1. Kontakt"
         self.zwee = "2. Kontakt"
         self.dree = "3. Kontakt"
@@ -375,8 +379,6 @@ class Listendings:
                             print("[ INIT - Starface - INFO ] Das Starface Modul ist nicht aktiviert: self.Starface_Modul == ", self.Starface_Modul)
                 except Exception as Exp:
                     print("Konnte die Einstellungsdatei nicht öffnen. Fehlercode: ", Exp)
-                   
-
             
         except Exception as ex_stern2:
             print(f"Die Starface Moduleinstelllungen konten nicht überprüft werden. Fehlercode: {ex_stern2}")
@@ -402,26 +404,39 @@ class Listendings:
             print(f"[-FATAL-] Irgendwas ist passiert: {e}")
 
     ######### JETZT KOMMT HIER DIE SHAISE FÜR DAS EMAIL TICKET ZEUGS ###########
+        print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die Mail Einstellungen")
         try:
+            print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail Sender Einstellungen")
             with open(self.Einstellung_Email_Sender_Adresse, "r") as Email_S_Datei:
                 self.sender_email = Email_S_Datei.read()
-                print("[-EINSTLLUNGEN LADEN-] Sender Email geladen.")
+                print(f"[-EINSTLLUNGEN LADEN-] Sender Email geladen: {self.sender_email}")
+        except Exception as EmailEx3_l:
+            print(f"Fehler beim laden der Maileinstellungen: {EmailEx3_l}")
+            self.sender_email = "Fehler"
+        try:
+            print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail Empfänger Einstellungen")
             with open(self.Einstellung_Email_Empfänge_Adresse, "r") as Email_E_Datei:
                 self.empfänger_email = Email_E_Datei.read()
-                print("[-EINSTLLUNGEN LADEN-] Empfänger Adresse geladen.")
+                print(f"[-EINSTLLUNGEN LADEN-] Empfänger Adresse geladen: {self.empfänger_email}")
+        except Exception as EmailEx3_l:
+            print(f"Fehler beim laden der Maileinstellungen: {EmailEx3_l}")
+            self.empfänger_email = "Fehler"
+        try:
+            print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail SMTP Einstellungen")
             with open(self.Einstellung_smtp_server, "r") as SMTP_Server_Datei:
                 self.smtp_server = SMTP_Server_Datei.read()
                 print("[-EINSTLLUNGEN LADEN-] SMTP Server Adresse geladen.")
+        except Exception as EmailEx3_l:
+            print(f"Fehler beim laden der Maileinstellungen: {EmailEx3_l}")
+            self.smtp_server = "Fehler"
+        try:
+            print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail Passwörters")
             with open(self.Einstellung_smtp_Passwort, "r") as SMTP_Server_Passwort_Datei:
                 self.pw_email = SMTP_Server_Passwort_Datei.read()
-                print("[-EINSTLLUNGEN LADEN-] Absender Kennwort geladen.s")
+                print("[-EINSTLLUNGEN LADEN-] Absender Kennwort geladen.")
         except Exception as EmailEx3_l:
-            print(EmailEx3_l)
-            self.sender_email = ""
-            self.empfänger_email = ""
-            self.smtp_server = ""
+            print(f"Fehler beim laden der Passwort Maileinstellungen: {EmailEx3_l}")
             self.pw_email = ""
-            print(f"Beim Laden der Email Einstellungen unter {self.Einstellung_Email_Sender_Adresse} ; {self.Einstellung_Email_Empfänge_Adresse} und {self.Einstellung_smtp_server} ist ein Fehler aufgetreten. Fehlercode: {EmailEx3_l}")
     ########### SHAISE ENDE ###########
 
         
@@ -590,11 +605,47 @@ class Listendings:
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
 
+    def Einstellungen_laden(self): # hier sollen zukünftig alle Einstellungen geladen werden
+        print("[-Einstellungen_laden - INFO -] Lade nun alle Einstellungen")
+        print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die Mail Einstellungen")
+        try:
+            print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail Sender Einstellungen")
+            with open(self.Einstellung_Email_Sender_Adresse, "r") as Email_S_Datei:
+                self.sender_email = Email_S_Datei.read()
+                print(f"[-EINSTLLUNGEN LADEN-] Sender Email geladen: {self.sender_email}")
+        except Exception as EmailEx3_l:
+            print(f"Fehler beim laden der Maileinstellungen: {EmailEx3_l}")
+            self.sender_email = "Fehler"
+        try:
+            print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail Empfänger Einstellungen")
+            with open(self.Einstellung_Email_Empfänge_Adresse, "r") as Email_E_Datei:
+                self.empfänger_email = Email_E_Datei.read()
+                print(f"[-EINSTLLUNGEN LADEN-] Empfänger Adresse geladen: {self.empfänger_email}")
+        except Exception as EmailEx3_l:
+            print(f"Fehler beim laden der Maileinstellungen: {EmailEx3_l}")
+            self.empfänger_email = "Fehler"
+        try:
+            print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail SMTP Einstellungen")
+            with open(self.Einstellung_smtp_server, "r") as SMTP_Server_Datei:
+                self.smtp_server = SMTP_Server_Datei.read()
+                print("[-EINSTLLUNGEN LADEN-] SMTP Server Adresse geladen.")
+        except Exception as EmailEx3_l:
+            print(f"Fehler beim laden der Maileinstellungen: {EmailEx3_l}")
+            self.smtp_server = "Fehler"
+        try:
+            print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail Passwörters")
+            with open(self.Einstellung_smtp_Passwort, "r") as SMTP_Server_Passwort_Datei:
+                self.pw_email = SMTP_Server_Passwort_Datei.read()
+                print("[-EINSTLLUNGEN LADEN-] Absender Kennwort geladen.")
+        except Exception as EmailEx3_l:
+            print(f"Fehler beim laden der Passwort Maileinstellungen: {EmailEx3_l}")
+            self.pw_email = ""
+        
+
     def init_auf_wish(self):
         print("[-init-] init auf wish bestellt...")
         self.Kontakte_aus_json_laden()
         self.weiterleitung_laden()
-        self.SMTP_Anmeldung_Manuell()
         print("[-init-] Die Wish shaise is vorbei.")
 
     def Anrufstatistiken_anzeigen_saeule(self):
@@ -811,7 +862,6 @@ class Listendings:
             chlg = None
 
     def Ereignislog_insert(self, nachricht_f_e): # wenn ichs richtig gemacht hab, wird mir das mega viel Zeit ersparen.
-        print(f"[-EREIGNISLOG-] schreibe nun {nachricht_f_e} in den Ereignislog.")
         if nachricht_f_e != None:
             nachricht_f_e_fertsch = nachricht_f_e + "\n"
             self.Ereignislog.insert(tk.END, nachricht_f_e_fertsch)
@@ -1089,7 +1139,10 @@ class Listendings:
     def Berichtsheft_aufmachen(self):
         print("öffne nun Berichtsheft...")
         url = "https://bildung.ihk.de/webcomponent/dibe/AUSZUBILDENDER/berichtsheft/wochenansicht"
-        webbrowser.get("chrome").open(url)
+        try:
+            webbrowser.get("chrome").open(url)
+        except:
+            messagebox.showerror(title=self.Programm_Name_lang, message="Konnte die Seite nicht öffnen.")
 
     def anhang_suchen_ticket(self):
         print("anhang_suchen_ticket(def)")
@@ -1206,7 +1259,7 @@ class Listendings:
                 print("[-EINSTLLUNGEN LADEN-] Absender Kennwort geladen.s")
         except Exception as EmailEx3_l:
             print(EmailEx3_l)
-            self.sender_email = ""
+            #self.sender_email = ""
             self.empfänger_email = ""
             self.smtp_server = ""
             self.pw_email = ""
@@ -1219,6 +1272,7 @@ class Listendings:
         print("[-SMTP ANMELDUNG-] Melde mich nun am SMTP Server an...")
         with smtplib.SMTP_SSL(self.smtp_server, 465) as server:
             try:
+                print(f"[-SMTP ANMELDUNG - INFO ] melde mich nun mit dem Nutzer {self.sender_email} an dem Server {self.smtp_server} an..")
                 server.login(self.sender_email, self.pw_email)
                 print("[-SMTP ANMELDUNG-] Anmeldung beim SMTP Server erfolgreich.")
                 self.smtp_login_erfolgreich = True
@@ -1998,9 +2052,9 @@ class Listendings:
                 T_Nummer = "-"
             if self.Weiterleitung_an == "":
                 self.Weiterleitung_an = "Keine Weiterleitung"
-                messagebox.showinfo(title="", message=self.Weiterleitung_an)
+                #messagebox.showinfo(title="", message=self.Weiterleitung_an)
             if self.wollte_sprechen == "":
-                messagebox.showinfo(title="", message=self.wollte_sprechen)
+                #messagebox.showinfo(title="", message=self.wollte_sprechen)
                 self.wollte_sprechen = "Nein"
 
             if os.path.exists(self.Liste_mit_datum):
