@@ -265,7 +265,7 @@ class Listendings:
         self.Todo_offen = False
         self.Weiterleitungen = None
         self.Kontakte_aus_json_gel = None
-        self.Einstellung_smtp_Passwort = None
+        # self.Einstellung_smtp_Passwort = None
         self.pfad_der_suche = None
         self.Suchwort = None
         
@@ -636,7 +636,7 @@ class Listendings:
             print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail Passwörters")
             with open(self.Einstellung_smtp_Passwort, "r") as SMTP_Server_Passwort_Datei:
                 self.pw_email = SMTP_Server_Passwort_Datei.read()
-                print("[-EINSTLLUNGEN LADEN-] Absender Kennwort geladen.")
+                print(f"[-EINSTLLUNGEN LADEN-] Absender Kennwort geladen. {self.pw_email}")
         except Exception as EmailEx3_l:
             print(f"Fehler beim laden der Passwort Maileinstellungen: {EmailEx3_l}")
             self.pw_email = ""
@@ -1255,7 +1255,7 @@ class Listendings:
                 self.smtp_server = SMTP_Server_Datei.read()
                 print("[-EINSTLLUNGEN LADEN-] SMTP Server Adresse geladen.")
             with open(self.Einstellung_smtp_Passwort, "r") as SMTP_Server_Passwort_Datei:
-                self.pw_email= SMTP_Server_Passwort_Datei.read()
+                self.pw_email = SMTP_Server_Passwort_Datei.read()
                 print("[-EINSTLLUNGEN LADEN-] Absender Kennwort geladen.s")
         except Exception as EmailEx3_l:
             print(EmailEx3_l)
