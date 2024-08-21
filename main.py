@@ -141,7 +141,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.0.5 (1)"
+        self.Version = "Beta 1.0.5 (2)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -268,6 +268,7 @@ class Listendings:
         # self.Einstellung_smtp_Passwort = None
         self.pfad_der_suche = None
         self.Suchwort = None
+        self.kopie_der_mail_erhalten = True
         
         self.zeit_string = time.strftime("%H:%M:%S")
         self.tag_string = str(time.strftime("%d %m %Y"))
@@ -1038,7 +1039,7 @@ class Listendings:
         except Exception as exooo:
             print(f"Fehler beim senden ans Totdo. Fehlermeldung: {exooo}")    
 
-    def Ticket_erstellen_mail(self): # naja das halt dann mit dem Mail.to Befehl.
+    def Ticket_erstellen_mail(self): # naja das halt dann mit dem Mail.to Befehl. // nee hamwa selbst gemacht ez.
         print("[-INFO-] Ticket_erstellen (Email)")
         self.alternative_empfänger_adresse = ""
         self.Betreff_Mail = self.Betreff_Ticket_e.get()
@@ -1047,7 +1048,7 @@ class Listendings:
         msg = MIMEMultipart()
         msg["From"] = self.sender_email
         if self.alternative_empfänger_adresse == "":
-            empf_alle = f"{self.empfänger_email}, {self.sender_email}"
+            empf_alle = f"{self.empfänger_email}"
             msg["To"] = empf_alle
             print("[-TICKET ERSTELLEN-] Ticket wird an die hinterlegte Emailadresse versendet...")
             self.Ereignislog_insert(nachricht_f_e="-[-TICKET ERSTELLEN-] Ticket wird an die hinterlegte Emailadresse versendet...-")
@@ -1093,6 +1094,9 @@ class Listendings:
             if self.alternative_empfänger_adresse == "":
                 try:
                     server.sendmail(self.sender_email, self.empfänger_email, msg.as_string())
+                    if self.kopie_der_mail_erhalten == True:
+                        server.sendmail(self.sender_email, self.sender_email, msg.as_string())
+                        self.Ereignislog_insert(nachricht_f_e="-Email Kopie an SMTP Server versendet.-")
                     self.Ereignislog_insert(nachricht_f_e="-Email an SMTP Server versendet.-")
                 except Exception as EmailEx2:
                     print("Fehler beim anmelden beim senden an den Mailserver. Fehlercode: ", EmailEx2)
@@ -1112,8 +1116,6 @@ class Listendings:
                 self.Ticket_Fenster.destroy()
                 messagebox.showinfo(title="CiM", message="Das Ticket wurde erfolgreich erstellt.")
                 print("E-Mail erfolgreich gesendet!")
-            
-
 
     def Ticket_erstellen_api(self): # Ich denke nicht, dass ich das hier so schnell hinbekommen werde, da das Ding immer wieder nen fehler schmeißt den ich nicht mal verstehe haha.
         print("Ticket_erstellen_api")
