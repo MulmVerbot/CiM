@@ -59,6 +59,7 @@ class Listendings:
             print("[- Starface-Modul - HTTP - INFO -] Nummer die angerufen hat/wurde: ", besserer_pfad)
             if besserer_pfad == "b":
                 ende_des_anrufs = time.strftime("%H:%M:%S")
+                
                 try:
                     with open("tmp1.txt", "w+") as tmp:
                             tmp.write(ende_des_anrufs)
@@ -265,7 +266,6 @@ class Listendings:
         self.Todo_offen = False
         self.Weiterleitungen = None
         self.Kontakte_aus_json_gel = None
-        # self.Einstellung_smtp_Passwort = None
         self.pfad_der_suche = None
         self.Suchwort = None
         self.kopie_der_mail_erhalten = True
@@ -445,9 +445,10 @@ class Listendings:
 
     #### Die Stars der Stunde ####
         self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Name des Anrufers", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
-        self.t_nummer = tk.CTkEntry(master, width=600, placeholder_text="Telefonnummer", state="disabled", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
+        self.t_nummer = tk.CTkEntry(master, width=250, placeholder_text="Telefonnummer", state="disabled", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
         self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
         self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
+        self.Anruf_Zeit = tk.CTkLabel(master, text_color="Black", text=f"Kein akiver Anruf             ", bg_color=self.Entry_Farbe)
     #### ####
         
         self.senden_button = tk.CTkButton(master, text="Senden", command="")
@@ -460,6 +461,7 @@ class Listendings:
         self.info_entry.place(x=5,y=65)
         self.t_nummer.place(x=605,y=5)
         self.ausgabe_text.place(x=0,y=100)
+        self.Anruf_Zeit.place(x=860,y=5)
         
         self.menu = Menu(root)
         root.configure(menu=self.menu)
@@ -1000,6 +1002,22 @@ class Listendings:
             self.Ereignislog_insert(nachricht_f_e="Alles was mit den Email Einstellungen zu tun hat wurde erfolgreich geladen")
         except Exception as ExGelEm1:
             print("Fehler beim einfügen der Email Daten in die Entrys. Fehlercode: ", ExGelEm1)
+        
+        try:
+            try:
+                self.weiterleitungen_einz_e.delete(0, tk.END)
+                self.weiterleitungen_zwei_e.delete(0, tk.END)
+                self.weiterleitungen_drei_e.delete(0, tk.END)
+                self.weiterleitungen_vier_e.delete(0, tk.END)
+            except:
+                print("")
+            self.weiterleitungen_einz_e.insert(0, self.einz)
+            self.weiterleitungen_zwei_e.insert(0, self.zwee)
+            self.weiterleitungen_drei_e.insert(0, self.dree)
+            self.weiterleitungen_vier_e.insert(0, self.vir)
+        except:
+            print(f"[-EINSTELLUNGEN - ERR -]")
+            pass
 
     def Einstellungen_schließen(self):
         print("[-INFO-] Einstellungen_schließen(def)")
@@ -1931,6 +1949,7 @@ class Listendings:
                     print1 = "-abgefangene Telefonummer: " + self.Anruf_Telefonnummer + "-"
                     self.Ereignislog_insert(nachricht_f_e=print1)
                     self.Uhrzeit_anruf_start = self.Zeit
+                    self.Anruf_Zeit.configure(text=f"🔴 aktiver Anruf seit: {self.Uhrzeit_anruf_start}")
                     tmp_ld.close()
                     os.remove("tmp.txt")
                     self.Gesperrte_Nummer = False
@@ -1976,12 +1995,13 @@ class Listendings:
                             print(f"Fehler beim Durchsuchen der JSON DB nach dem Kontakt. Fehlercode: {ExcK1}")
             except Exception:
                 pass
-            try:
+            try:    ##### Das hier lädt nachdem der webserver aufm localhost die Datei tmp1.txt geschrieben hat, genau diese Datei und holt sich daraus die end-Uhrzeit des Anrufs
                 with open("tmp1.txt", "r") as tmp1_ld:
                     gel_tmp1 = tmp1_ld.read()
                     self.Uhrzeit_anruf_ende = gel_tmp1
                     print("End-Uhrzeit: ", self.Uhrzeit_anruf_ende)
                     tmp1_ld.close()
+                    self.Anruf_Zeit.configure(text=f"Kein akiver Anruf             ")
                     try:
                         os.remove("tmp1.txt")
                     except:
