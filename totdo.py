@@ -27,9 +27,6 @@ class TodoApp:
         self.Einstellungsordner_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Einstellungen')
         self.Listenname_speicherort = os.path.join(self.Einstellungsordner_pfad, 'Listenname.txt')
         self.cim_txt_pfad = os.path.join(self.Benutzerordner , "CiM", "cim.txt")
-        
-
-
 
     #### Farben #### , fg_color="White", border_color=self.Border_Farbe, border_width=2, text_color="Black", hover_color=self.f_r_1
         self.Hintergrund_farbe = "AntiqueWhite2"
