@@ -1,0 +1,928 @@
+{
+    "Kontakte": [
+        {
+            "Telefonnummer_jsn": "00491772446952",
+            "Name": "Holger Beese (Mobil)"
+        },
+        {
+            "Telefonnummer_jsn": "004915233836862",
+            "Name": "Christian Melges (Mobil)"
+        },
+        {
+            "Telefonnummer_jsn": "004915229048779",
+            "Name": "Mike Bosse (Mobil)"
+        },
+        {
+            "Telefonnummer_jsn": "97",
+            "Name": "Klingel (vorn)"
+        },
+        {
+            "Telefonnummer_jsn": "00491624416003",
+            "Name": "Lars Timpe, Sternwaschmittel"
+        },
+        {
+            "Telefonnummer_jsn": "00491629119224",
+            "Name": "Willma Kunze"
+        },
+        {
+            "Telefonnummer_jsn": "00491738504760",
+            "Name": "Sigrun Gründger"
+        },
+        {
+            "Telefonnummer_jsn": "00491736553257",
+            "Name": "Hilbert (Werkplatz)"
+        },
+        {
+            "Telefonnummer_jsn": "00493419616731",
+            "Name": "TAS ZAP Stürze, Anja"
+        },
+        {
+            "Telefonnummer_jsn": "00491726063900",
+            "Name": "Christoph Hermann TAS"
+        },
+        {
+            "Telefonnummer_jsn": "10",
+            "Name": "Chefe"
+        },
+        {
+            "Telefonnummer_jsn": "00493443441628",
+            "Name": "BCS, Ronny"
+        },
+        {
+            "Telefonnummer_jsn": "00491704807858",
+            "Name": "Went, Praxisklinik Malcharek Leipzig"
+        },
+        {
+            "Telefonnummer_jsn": "004915785588414",
+            "Name": "Steuerbüro Hülßner"
+        },
+        {
+            "Telefonnummer_jsn": "004917684874685",
+            "Name": "Manfred Rauner (Privatkunde)"
+        },
+        {
+            "Telefonnummer_jsn": "004915229432449",
+            "Name": "Anne LorberAnne Lorber"
+        },
+        {
+            "Telefonnummer_jsn": "004915758382618",
+            "Name": "Maximilian Becker (Mobil)"
+        },
+        {
+            "Telefonnummer_jsn": "00493443391525",
+            "Name": "Frau Bach, Autohaus Kittel"
+        },
+        {
+            "Telefonnummer_jsn": "00491702834664",
+            "Name": "Herr Strohbach, TC Servicecenter"
+        },
+        {
+            "Telefonnummer_jsn": "004934732217983",
+            "Name": "Christoph Hermann, TAS"
+        },
+        {
+            "Telefonnummer_jsn": "004934464366307",
+            "Name": "Frau Dr. Günther (ehemals ZAP Dr. Günther)"
+        },
+        {
+            "Telefonnummer_jsn": "00491742625087",
+            "Name": "Christin Esbenhain, (Privatkundin)"
+        },
+        {
+            "Telefonnummer_jsn": "00493443802728",
+            "Name": "ZAP Rosenhahn, Horst Rosenhahn"
+        },
+        {
+            "Telefonnummer_jsn": "0031203233197",
+            "Name": "Panisch, Dato"
+        },
+        {
+            "Telefonnummer_jsn": "00493443302592",
+            "Name": "Frau Eckert, Raumkunst"
+        },
+        {
+            "Telefonnummer_jsn": "004917625634180",
+            "Name": "Tino Temmler, Metallbau Temmler"
+        },
+        {
+            "Telefonnummer_jsn": "00491723410890",
+            "Name": "Thomas Vogel, Autohaus Kittel VW"
+        },
+        {
+            "Telefonnummer_jsn": "00491729765203",
+            "Name": "Fatehi ZAP, Herr Fatehi"
+        },
+        {
+            "Telefonnummer_jsn": "004936413114185",
+            "Name": "Saking ESET"
+        },
+        {
+            "Telefonnummer_jsn": "004915156168652",
+            "Name": "Claudia Kuenzel"
+        },
+        {
+            "Telefonnummer_jsn": "00493443333691",
+            "Name": "Marcel Goldberg Helo"
+        },
+        {
+            "Telefonnummer_jsn": "00491705908688",
+            "Name": "Herr Mewes, Securepoint"
+        },
+        {
+            "Telefonnummer_jsn": "00493582872339",
+            "Name": "ZAP Kinscher, Schwester Birgitt"
+        },
+        {
+            "Telefonnummer_jsn": "00491733991880",
+            "Name": "Lars Franke, Helo"
+        },
+        {
+            "Telefonnummer_jsn": "00491793635810",
+            "Name": "Frau Rischpeter, WSD"
+        },
+        {
+            "Telefonnummer_jsn": "00495361933020",
+            "Name": "Christoph vom EVA Support"
+        },
+        {
+            "Telefonnummer_jsn": "00493443391546",
+            "Name": "Alexander Toeppner, AhKi VW"
+        },
+        {
+            "Telefonnummer_jsn": "00493413581500",
+            "Name": "Junker Malcharek, Schwester Anja"
+        },
+        {
+            "Telefonnummer_jsn": "004915157146724",
+            "Name": "Frau Kistritz, Schröder Holding"
+        },
+        {
+            "Telefonnummer_jsn": "004934732217973",
+            "Name": "Andre Bittner TAS"
+        },
+        {
+            "Telefonnummer_jsn": "034732217977",
+            "Name": "Schubert Katrin"
+        },
+        {
+            "Telefonnummer_jsn": "034732217978",
+            "Name": "Katrin Janik, TAS"
+        },
+        {
+            "Telefonnummer_jsn": "034732217980",
+            "Name": "Rainer Herrmann, TAS"
+        },
+        {
+            "Telefonnummer_jsn": "034732255811",
+            "Name": "Christopher Gierak, TAS"
+        },
+        {
+            "Telefonnummer_jsn": "004934732217976",
+            "Name": "Andre Bittner, TAS"
+        },
+        {
+            "Telefonnummer_jsn": "00491638470949",
+            "Name": "Dental Labor,  Burgoreh"
+        },
+        {
+            "Telefonnummer_jsn": "00491736137765",
+            "Name": "Andreas Schaf, Henry Schein"
+        },
+        {
+            "Telefonnummer_jsn": "004915157146751",
+            "Name": "Hermann Schröder, Schröder Holding"
+        },
+        {
+            "Telefonnummer_jsn": "00493448755160",
+            "Name": "Herr Kretschmar, Bluechip"
+        },
+        {
+            "Telefonnummer_jsn": "004915129501864",
+            "Name": "Gloria Hülßner"
+        },
+        {
+            "Telefonnummer_jsn": "004915221648585",
+            "Name": "Dirk (BCS)"
+        },
+        {
+            "Telefonnummer_jsn": "00493414798973",
+            "Name": "ZAP Dr. Anja Harzendorf"
+        },
+        {
+            "Telefonnummer_jsn": "00491733786273",
+            "Name": "Thomas Gossler, Autohaus Kittel"
+        },
+        {
+            "Telefonnummer_jsn": "00493420436970",
+            "Name": "Frau Urner, TAS"
+        },
+        {
+            "Telefonnummer_jsn": "00491627486423",
+            "Name": "Mathias Kahl, Sternwaschmittel"
+        },
+        {
+            "Telefonnummer_jsn": "00493473888529",
+            "Name": "Herr Ortmann, TAS (Aschersleben)"
+        },
+        {
+            "Telefonnummer_jsn": "00498954715111",
+            "Name": "Lexcom, Armin Darchwich"
+        },
+        {
+            "Telefonnummer_jsn": "00493463322429",
+            "Name": "ZAP Christine Dominke"
+        },
+        {
+            "Telefonnummer_jsn": "00493441631130",
+            "Name": "Herr Mewes, Stiftung Seniorenhilfering"
+        },
+        {
+            "Telefonnummer_jsn": "0049511495979",
+            "Name": "ZAP Fatehi, Herr Fatehi"
+        },
+        {
+            "Telefonnummer_jsn": "00493461200037",
+            "Name": "ZMVZ Merseburg, Alena"
+        },
+        {
+            "Telefonnummer_jsn": "00493443391535",
+            "Name": "Frau Scholler AhKi"
+        },
+        {
+            "Telefonnummer_jsn": "00491718623582",
+            "Name": "Dr. Detlef Zimmer, Sternwaschmittel"
+        },
+        {
+            "Telefonnummer_jsn": "00491735767153",
+            "Name": "Ronny, BCS"
+        },
+        {
+            "Telefonnummer_jsn": "00493443333690",
+            "Name": "lars Franke, Helo"
+        },
+        {
+            "Telefonnummer_jsn": "0049435291710",
+            "Name": "Krüger Dampsoft,"
+        },
+        {
+            "Telefonnummer_jsn": "0049634120490",
+            "Name": "ZAP Kandler, Frau Kandler"
+        },
+        {
+            "Telefonnummer_jsn": "015157146725",
+            "Name": "Frau Becker, S-Architekten"
+        },
+        {
+            "Telefonnummer_jsn": "004928418824175",
+            "Name": "Markus EC Cash?? "
+        },
+        {
+            "Telefonnummer_jsn": "00491795638938",
+            "Name": "ZAP, Junker Macharek"
+        },
+        {
+            "Telefonnummer_jsn": "00491727511747",
+            "Name": "Frau Kandler (Private Handynummer)"
+        },
+        {
+            "Telefonnummer_jsn": "004915157146725",
+            "Name": "Frau Becker, Schröder Holding"
+        },
+        {
+            "Telefonnummer_jsn": "00491774765827",
+            "Name": "Annett Vitting"
+        },
+        {
+            "Telefonnummer_jsn": "00491608743564",
+            "Name": "Frau Ermisch, ZACK"
+        },
+        {
+            "Telefonnummer_jsn": "004927617520350",
+            "Name": "Sandra Breitenbach, Werkdigital"
+        },
+        {
+            "Telefonnummer_jsn": "004981413556086",
+            "Name": "Melges, Exiro"
+        },
+        {
+            "Telefonnummer_jsn": "90",
+            "Name": "Chefe (Homeoffice)"
+        },
+        {
+            "Telefonnummer_jsn": "004934433398761",
+            "Name": "Dr.Zenker"
+        },
+        {
+            "Telefonnummer_jsn": "00493448755520",
+            "Name": "Frau klöppenljadhsfkahsdkf, Bluechip"
+        },
+        {
+            "Telefonnummer_jsn": "0049364349343931",
+            "Name": "Yvonne Söffing, S-Architekten"
+        },
+        {
+            "Telefonnummer_jsn": "00494718062080",
+            "Name": "CI  Gate, Laudenbach"
+        },
+        {
+            "Telefonnummer_jsn": "00493444122164",
+            "Name": "Notariat Hoffmann"
+        },
+        {
+            "Telefonnummer_jsn": "00491729519851",
+            "Name": "Herr Bartlau,  Schröder Holding"
+        },
+        {
+            "Telefonnummer_jsn": "00493443391511",
+            "Name": "Betinna Hartmann"
+        },
+        {
+            "Telefonnummer_jsn": "00493443334616",
+            "Name": "Wolf, ASB (Ladegast Str.)"
+        },
+        {
+            "Telefonnummer_jsn": "0049344339150",
+            "Name": "Ah Kittel, VW, Counter, Frau Vogel -> Herr Sumionka"
+        },
+        {
+            "Telefonnummer_jsn": "00493443391529",
+            "Name": "Ah Kittel, VW, Herr Christiani"
+        },
+        {
+            "Telefonnummer_jsn": "00493443391528",
+            "Name": "AhKi VW, Frau Günther"
+        },
+        {
+            "Telefonnummer_jsn": "00493445233406",
+            "Name": "Thomas Kopp"
+        },
+        {
+            "Telefonnummer_jsn": "00491709107867",
+            "Name": "SYNAXON AG, Herr Habighorst"
+        },
+        {
+            "Telefonnummer_jsn": "004934204379935",
+            "Name": "Holger Schlecht, TAS"
+        },
+        {
+            "Telefonnummer_jsn": "004915752547396",
+            "Name": "ZAP Dr.Richter, Katarina Richter"
+        },
+        {
+            "Telefonnummer_jsn": "00493443347612",
+            "Name": "Doreen Tannewitz, AhKi Audi"
+        },
+        {
+            "Telefonnummer_jsn": "00493443333692",
+            "Name": "Frau Moebius, Helo"
+        },
+        {
+            "Telefonnummer_jsn": "004915153252742",
+            "Name": "Katrin Uhlemann, Sternwaschmittel"
+        },
+        {
+            "Telefonnummer_jsn": "004934487550",
+            "Name": "Bluechip, Herr ???"
+        },
+        {
+            "Telefonnummer_jsn": "00493444522312",
+            "Name": "Frau Weidner, Abfallwirtschaft,"
+        },
+        {
+            "Telefonnummer_jsn": "00491791352605",
+            "Name": "Gebaäudetechnik, Müller"
+        },
+        {
+            "Telefonnummer_jsn": "00493443391517",
+            "Name": "Sylvia Börnicke (Autohaus Kittel GmbH)"
+        },
+        {
+            "Telefonnummer_jsn": "004915151116783",
+            "Name": "Frau Dr. Anja Harzendorf, ZAP Harzendorf"
+        },
+        {
+            "Telefonnummer_jsn": "00492921992655",
+            "Name": "Andreas Kresing, ALSO"
+        },
+        {
+            "Telefonnummer_jsn": "004934441367159",
+            "Name": "Herr Babo (Privatkunde)"
+        },
+        {
+            "Telefonnummer_jsn": "00493443347618",
+            "Name": "Norman Ertel, AhKi VW"
+        },
+        {
+            "Telefonnummer_jsn": "004934191358665",
+            "Name": "Marcus Lorenz"
+        },
+        {
+            "Telefonnummer_jsn": "00493443279160",
+            "Name": "Frau Scheffler, (Privatkundin)"
+        },
+        {
+            "Telefonnummer_jsn": "004915212291396",
+            "Name": "?????"
+        },
+        {
+            "Telefonnummer_jsn": "004915140242911",
+            "Name": "Steffi Timpe, Sternwaschmittel"
+        },
+        {
+            "Telefonnummer_jsn": "004917641028688",
+            "Name": "Her Moorbach (Privatkunde)"
+        },
+        {
+            "Telefonnummer_jsn": "00491736661454",
+            "Name": "Alarmanlagen Techniker der Fr. Dr. Dominke"
+        },
+        {
+            "Telefonnummer_jsn": "004934433839873",
+            "Name": "Niehle und Kramer, Frau Seifert"
+        },
+        {
+            "Telefonnummer_jsn": "00493443808216",
+            "Name": "Olaf Günther"
+        },
+        {
+            "Telefonnummer_jsn": "004915157146752",
+            "Name": "Sabine Schröder"
+        },
+        {
+            "Telefonnummer_jsn": "00493441617012",
+            "Name": "Christian Winter, Reddy Küchen"
+        },
+        {
+            "Telefonnummer_jsn": "00493443347617",
+            "Name": "Sven Müller, Aurohaus Kittel"
+        },
+        {
+            "Telefonnummer_jsn": "00493444522504",
+            "Name": "Frau Grübe, GeSe"
+        },
+        {
+            "Telefonnummer_jsn": "00493444522567",
+            "Name": "GeSe Werner,"
+        },
+        {
+            "Telefonnummer_jsn": "00493443237905",
+            "Name": "Tina Hülßner, Stb Hülßner"
+        },
+        {
+            "Telefonnummer_jsn": "00493444522444",
+            "Name": "Frau Reichelt, ZAP Richter und SpornFrau Richter Ritter, GeSe"
+        },
+        {
+            "Telefonnummer_jsn": "00491723016158",
+            "Name": "Mirko Lach, Helo"
+        },
+        {
+            "Telefonnummer_jsn": "00493444522500",
+            "Name": "Simone Zirnstein, GeSe GmbH"
+        },
+        {
+            "Telefonnummer_jsn": "004915165053718",
+            "Name": "Herr ??? von der VAPS"
+        },
+        {
+            "Telefonnummer_jsn": "004915157017665",
+            "Name": "Mike Suske, GeSe"
+        },
+        {
+            "Telefonnummer_jsn": "00493444522331",
+            "Name": "Frau Weidner, Abfallwirtschaft"
+        },
+        {
+            "Telefonnummer_jsn": "004934122170040",
+            "Name": "WSoft, Herr Woletzki"
+        },
+        {
+            "Telefonnummer_jsn": "00491727951232",
+            "Name": "Anke Pfauter"
+        },
+        {
+            "Telefonnummer_jsn": "004915140136233",
+            "Name": "Frau Hanna Timpe, Sternwaschmittel"
+        },
+        {
+            "Telefonnummer_jsn": "004972196518555",
+            "Name": "Ewald Schmidt, PTV Logistik"
+        },
+        {
+            "Telefonnummer_jsn": "00491729711759",
+            "Name": "Thomas Schmidt, FESW"
+        },
+        {
+            "Telefonnummer_jsn": "004970219284647",
+            "Name": "Frau Hain, Redox"
+        },
+        {
+            "Telefonnummer_jsn": "004934433398724",
+            "Name": "Frau Montag, Sternwaschmittel"
+        },
+        {
+            "Telefonnummer_jsn": "00491771942585",
+            "Name": "Schwester Anja"
+        },
+        {
+            "Telefonnummer_jsn": "00493034677282",
+            "Name": "Rüdemann, Henry Schein"
+        },
+        {
+            "Telefonnummer_jsn": "004936603510020",
+            "Name": "Hehlmann"
+        },
+        {
+            "Telefonnummer_jsn": "004917698665328",
+            "Name": "Löffler, B2B IT"
+        },
+        {
+            "Telefonnummer_jsn": "004934438204328",
+            "Name": "Hehlmann, FESW (Festnetz Heim)"
+        },
+        {
+            "Telefonnummer_jsn": "004915111786497",
+            "Name": "Dr. Schlee"
+        },
+        {
+            "Telefonnummer_jsn": "00491735139656",
+            "Name": "Nina Krasberg, Abrechnung(Fatehi)"
+        },
+        {
+            "Telefonnummer_jsn": "00491726493181",
+            "Name": "Möbel Göpfert"
+        },
+        {
+            "Telefonnummer_jsn": "00493444124054",
+            "Name": "Benkel Immobilien, Herr Griesbach"
+        },
+        {
+            "Telefonnummer_jsn": "004934602999118",
+            "Name": "Fellmann, Dövel GmbH"
+        },
+        {
+            "Telefonnummer_jsn": "004936603510022",
+            "Name": "Herr Löffler B2B IT (für Sternwaschmittel)"
+        },
+        {
+            "Telefonnummer_jsn": "00491728649612",
+            "Name": "Kuhnert, Sternwaschmittel"
+        },
+        {
+            "Telefonnummer_jsn": "004915124090192",
+            "Name": "Herr Geigenmüller, TAS"
+        },
+        {
+            "Telefonnummer_jsn": "004989262034700",
+            "Name": "Acronis"
+        },
+        {
+            "Telefonnummer_jsn": "00491752060336",
+            "Name": "Uwe Scheibel, Benderproject GmbH"
+        },
+        {
+            "Telefonnummer_jsn": "004936413114220",
+            "Name": "ESET Partner Support"
+        },
+        {
+            "Telefonnummer_jsn": "004934433398722",
+            "Name": "Frau Naundorf, Sternwaschmittel"
+        },
+        {
+            "Telefonnummer_jsn": "00491754150402",
+            "Name": "Frau Rascke, TAS"
+        },
+        {
+            "Telefonnummer_jsn": "004917662380741",
+            "Name": "Frau Gessen, Handynummer"
+        },
+        {
+            "Telefonnummer_jsn": "004971172238130",
+            "Name": "Frau ? , Pragmaltik"
+        },
+        {
+            "Telefonnummer_jsn": "004952079299279",
+            "Name": "Sussane Fetcher, Synaxis"
+        },
+        {
+            "Telefonnummer_jsn": "004936520500560",
+            "Name": "Nexory, Dietzhold"
+        },
+        {
+            "Telefonnummer_jsn": "004934633900901",
+            "Name": "Herr Michael Titus"
+        },
+        {
+            "Telefonnummer_jsn": "00493443237588",
+            "Name": "Sternwaschmittel Fr. Dr. Pyontek"
+        },
+        {
+            "Telefonnummer_jsn": "00497114605202351",
+            "Name": "Medicabs, Herr Martin"
+        },
+        {
+            "Telefonnummer_jsn": "00493463220757",
+            "Name": "Herr Brettschneider"
+        },
+        {
+            "Telefonnummer_jsn": "004934433398751",
+            "Name": "Sternwaschmittel, Diethe"
+        },
+        {
+            "Telefonnummer_jsn": "00493028484959",
+            "Name": "ZAP Heintzenberg, Katrin Stobehannewald"
+        },
+        {
+            "Telefonnummer_jsn": "0049692044600336",
+            "Name": "???? (höchstwahrscheinlich scam)"
+        },
+        {
+            "Telefonnummer_jsn": "004917621227993",
+            "Name": "Doreen Kanne, Spielcafe Eldora"
+        },
+        {
+            "Telefonnummer_jsn": "00493521453275",
+            "Name": "Frau Reichelt, ZAP Richter und Sporn"
+        },
+        {
+            "Telefonnummer_jsn": "004934433396299",
+            "Name": "Hauke, ASB (Max Planck Str.)"
+        },
+        {
+            "Telefonnummer_jsn": "004937183652227",
+            "Name": "PDP  Frau Büllert"
+        },
+        {
+            "Telefonnummer_jsn": "00493443302659",
+            "Name": "Möbel Göpfert, Frau Kokowski"
+        },
+        {
+            "Telefonnummer_jsn": "00493443347615",
+            "Name": "Weigelt, AhKi"
+        },
+        {
+            "Telefonnummer_jsn": "00491754048586",
+            "Name": "Stößel Gerl"
+        },
+        {
+            "Telefonnummer_jsn": "004924191706854",
+            "Name": "Frau Bach, aPI"
+        },
+        {
+            "Telefonnummer_jsn": "004989248836934",
+            "Name": "MRN Distribution"
+        },
+        {
+            "Telefonnummer_jsn": "004916096618079",
+            "Name": "Martin Knapp, Autoservice Beuditz"
+        },
+        {
+            "Telefonnummer_jsn": "004921133992844",
+            "Name": "\"Beschissjuden\" (laut chefe)"
+        },
+        {
+            "Telefonnummer_jsn": "13",
+            "Name": "Frau tarnath"
+        },
+        {
+            "Telefonnummer_jsn": "0049302423090",
+            "Name": "ZAP am Alex, Fererars"
+        },
+        {
+            "Telefonnummer_jsn": "004915798184422",
+            "Name": "Kowalski Luge"
+        },
+        {
+            "Telefonnummer_jsn": "00493473888516",
+            "Name": "Frau Zylinski, Herr Geigenmüller"
+        },
+        {
+            "Telefonnummer_jsn": "00493443347623",
+            "Name": "Glöckner AhKi Audi"
+        },
+        {
+            "Telefonnummer_jsn": "004915773000416",
+            "Name": "Krötzner Sternwaschmittel"
+        },
+        {
+            "Telefonnummer_jsn": "00493443391533",
+            "Name": "Frau Petrie"
+        },
+        {
+            "Telefonnummer_jsn": "00493443391545",
+            "Name": "Kerstin Borger"
+        },
+        {
+            "Telefonnummer_jsn": "00493443347616",
+            "Name": "Frau Heike Veit, Audi"
+        },
+        {
+            "Telefonnummer_jsn": "0049344334760",
+            "Name": "Frau Ehret, Audi Counter"
+        },
+        {
+            "Telefonnummer_jsn": "00493443335530",
+            "Name": "Frau Rockstroh, Skoda"
+        },
+        {
+            "Telefonnummer_jsn": "004915152527877",
+            "Name": "Schließer, Utah"
+        },
+        {
+            "Telefonnummer_jsn": "00493444322465",
+            "Name": "Baufirma, Frau Meißner,"
+        },
+        {
+            "Telefonnummer_jsn": "0049615463410",
+            "Name": "Herr Bechtold, Bauern und Baumann"
+        },
+        {
+            "Telefonnummer_jsn": "00491724015437",
+            "Name": "Herr Goering, Service GmbH"
+        },
+        {
+            "Telefonnummer_jsn": "00493444134865",
+            "Name": "Benkel Immobilien, Benkel"
+        },
+        {
+            "Telefonnummer_jsn": "00499561867419091",
+            "Name": "Max Hofmann, Immobilie"
+        },
+        {
+            "Telefonnummer_jsn": "004915157146726",
+            "Name": "Herr Heatrelmann, Schröder Holding"
+        },
+        {
+            "Telefonnummer_jsn": "0049364349343930",
+            "Name": "Frau Becker, Schröder Holding"
+        },
+        {
+            "Telefonnummer_jsn": "00491739487078",
+            "Name": "Frank Schwarze"
+        },
+        {
+            "Telefonnummer_jsn": "00493443300731",
+            "Name": "Frau Drobig, "
+        },
+        {
+            "Telefonnummer_jsn": "004915906483403",
+            "Name": "Herr Lehmann"
+        },
+        {
+            "Telefonnummer_jsn": "0049391287842719",
+            "Name": "Utah Schließer"
+        },
+        {
+            "Telefonnummer_jsn": "00493443391538",
+            "Name": "Thomas Vogel"
+        },
+        {
+            "Telefonnummer_jsn": "00491772087795",
+            "Name": "Jan Vogel"
+        },
+        {
+            "Telefonnummer_jsn": "004915231829505",
+            "Name": "???"
+        },
+        {
+            "Telefonnummer_jsn": "00491797666511",
+            "Name": "Herr Quente"
+        },
+        {
+            "Telefonnummer_jsn": "004915255604279",
+            "Name": "Torsten Loose"
+        },
+        {
+            "Telefonnummer_jsn": "00491733680503",
+            "Name": "Stefan Zirnstein"
+        },
+        {
+            "Telefonnummer_jsn": "00491636285982",
+            "Name": "Herr Karl-Heinz Lehmann"
+        },
+        {
+            "Telefonnummer_jsn": "00491713893043",
+            "Name": "Iven Meyer"
+        },
+        {
+            "Telefonnummer_jsn": "00493443830211",
+            "Name": "Herr Wendler"
+        },
+        {
+            "Telefonnummer_jsn": "0049781607814",
+            "Name": "Herr Risch, Tekno"
+        },
+        {
+            "Telefonnummer_jsn": "00491729551553",
+            "Name": "Herr klökner, Kloster Weißenfels"
+        },
+        {
+            "Telefonnummer_jsn": "004934190413420",
+            "Name": "Renos Data Office, Azubi"
+        },
+        {
+            "Telefonnummer_jsn": "004927131390710",
+            "Name": "ZAP Marciniak, Frau Marciniak"
+        },
+        {
+            "Telefonnummer_jsn": "00493473888515",
+            "Name": "Schröder TAS"
+        },
+        {
+            "Telefonnummer_jsn": "00493024729135",
+            "Name": "ZAA"
+        },
+        {
+            "Telefonnummer_jsn": "004934432386513",
+            "Name": "Herr Blume, (Privatkunde)"
+        },
+        {
+            "Telefonnummer_jsn": "00431340111843",
+            "Name": "Martin Krunkhe enAble"
+        },
+        {
+            "Telefonnummer_jsn": "00493473888519",
+            "Name": "Yvonne Wetzel, TAS"
+        },
+        {
+            "Telefonnummer_jsn": "0049413124010",
+            "Name": "Securepoint Schließmann"
+        },
+        {
+            "Telefonnummer_jsn": "004934434224125",
+            "Name": "Herr Blume"
+        },
+        {
+            "Telefonnummer_jsn": "004917664793854",
+            "Name": "Frau Karin Peterson ZAP Peterson"
+        },
+        {
+            "Telefonnummer_jsn": "00492283822567",
+            "Name": "Frau Röhmer, Institut für angewandte Sozialwissenschaft"
+        },
+        {
+            "Telefonnummer_jsn": "00493443347315",
+            "Name": "Swantje Landsmann, (unser) Steuerbüro"
+        },
+        {
+            "Telefonnummer_jsn": "00491627361462",
+            "Name": "Frau Rauholz, Stadt Naumburg"
+        },
+        {
+            "Telefonnummer_jsn": "004917657682366",
+            "Name": "Herr Lehmann, Techikdoc"
+        },
+        {
+            "Telefonnummer_jsn": "0049644167118533",
+            "Name": "Herr Dahl, Elovate (ehm. Ebertlang)"
+        },
+        {
+            "Telefonnummer_jsn": "00493443236059",
+            "Name": "Herr Arndt, (Privatkunde)"
+        },
+        {
+            "Telefonnummer_jsn": "004963429243981",
+            "Name": "Frau Graf, Abrechnung Kandler"
+        },
+        {
+            "Telefonnummer_jsn": "00493443802792",
+            "Name": "Elektro Neitsch"
+        },
+        {
+            "Telefonnummer_jsn": "004934465707466",
+            "Name": "Landartz Praxis Kunkhe"
+        },
+        {
+            "Telefonnummer_jsn": "004934434236117",
+            "Name": "Frau Urban,  (Privatkundin)"
+        },
+        {
+            "Telefonnummer_jsn": "004934443599839",
+            "Name": "Herr Blatt, Antivurs"
+        },
+        {
+            "Telefonnummer_jsn": "00491722019871",
+            "Name": "Horst Rosenhahn (ZAP Rosenhahn)"
+        },
+        {
+            "Telefonnummer_jsn": "004963429243980",
+            "Name": "Frau Wetzel"
+        },
+        {
+            "Telefonnummer_jsn": "00491775048157",
+            "Name": "Ulrike Heintzenberg"
+        },
+        {
+            "Telefonnummer_jsn": "004915777445447",
+            "Name": "Krause Technidoc"
+        },
+        {
+            "Telefonnummer_jsn": "00493448755330",
+            "Name": "Bluechip Technischer Support, Frau Wild"
+        },
+        {
+            "Telefonnummer_jsn": "004997216469448",
+            "Name": "Joshua Kittke, BBNet Media, "
+        }
+    ]
+}

@@ -27,7 +27,7 @@ try:
     from email import encoders
     from tkinterdnd2 import DND_FILES
     from PIL import Image
-    from collections import defaultdict
+    #from collections import defaultdict
     #from nltk.corpus import wordnet
     import re
     import matplotlib.pyplot as plt
@@ -165,6 +165,7 @@ class Listendings:
         self.Anzahl_der_Ergebnisse = 0
         self.tag_string = str(time.strftime("%d %m %Y"))
         self.Benutzerordner = os.path.expanduser('~')
+        self.Asset_ordner = os.path.join(self.Benutzerordner, 'CiM', 'Assets')
         self.Listen_Speicherort_standard = os.path.join(self.Benutzerordner, 'CiM', 'Listen')
         self.Einstellungen_ordner = os.path.join(self.Benutzerordner, 'CiM', "Einstellungen")
         self.Starface_Einstellungsdatei = os.path.join(self.Einstellungen_ordner , "Starface_Modul.txt")
@@ -183,21 +184,34 @@ class Listendings:
         self.Blacklist_pfad = os.path.join(self.Db_Ordner_pfad, "Db_Blacklist.json")
         self.Weiterleitungs_ordner_datei = os.path.join(self.Einstellungen_ordner, "Weiterleitung.txt")
         self.TASKS_FILE = 'tasks.json'
+        self.Asset_ordner_beb_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Bearbeiten.png')
+        self.Asset_ordner_dur_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Durchsuchen.png') 
+        self.Asset_ordner_spr_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Speichern.png')
+        self.Asset_ordner_menu_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Menü.png"')
+        self.Asset_ordner_tickt_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Ticket.png')
+        self.Asset_ordner_Kal_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Kalender.png')
+        self.Asset_ordner_kunds_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Kunde_suchen.png')
+        self.Asset_ordner_dlist_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Dings_Liste.png')
+        self.Asset_ordner_dings_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Dings.png')
+        self.Asset_ordner_kop_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Kopieren.png')
+        self.Asset_ordner_schnelln_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Schnellnotiz.png')
+        self.Asset_ordner_durch_zu_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Durchsuchen_zu.png')
+        self.Asset_totdo_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'totdo.png')
         
         try: ## das hier sind die Bilder
-            self.Bearbeiten_Bild = tk.CTkImage(Image.open("Bilder/Bearbeiten.png"))
-            self.Durchsuchen_Bild = tk.CTkImage(Image.open("Bilder/Durchsuchen.png"))
-            self.Speichern_Bild = tk.CTkImage(Image.open("Bilder/Speichern.png"))
-            self.Menü_Bild = tk.CTkImage(Image.open("Bilder/Menü.png"))
-            self.Ticket_Bild = tk.CTkImage(Image.open("Bilder/Ticket.png"))
-            self.Kalender_Bild = tk.CTkImage(Image.open("Bilder/Kalender.png"))
-            self.Kunde_suchen_Bild = tk.CTkImage(Image.open("Bilder/Kunde_suchen.png"))
-            self.Dings_Liste_Bild = tk.CTkImage(Image.open("Bilder/Dings_Liste.png"))
-            self.Dings_Bild = tk.CTkImage(Image.open("Bilder/Dings.png"))
-            self.Kopieren_Bild = tk.CTkImage(Image.open("Bilder/Kopieren.png"))
-            self.Schnellnotiz_Bild = tk.CTkImage(Image.open("Bilder/Schnellnotiz.png"))
-            self.Durchsuchen_Bild_zu = tk.CTkImage(Image.open("Bilder/Durchsuchen_zu.png"))
-            self.totdo_Bild = tk.CTkImage(Image.open("Bilder/totdo.png"))
+            self.Bearbeiten_Bild = tk.CTkImage(Image.open(self.Asset_ordner_beb_pfad))
+            self.Durchsuchen_Bild = tk.CTkImage(Image.open(self.Asset_ordner_dur_pfad))
+            self.Speichern_Bild = tk.CTkImage(Image.open(self.Asset_ordner_spr_pfad))
+            self.Menü_Bild = tk.CTkImage(Image.open(self.Asset_ordner_menu_pfad))
+            self.Ticket_Bild = tk.CTkImage(Image.open(self.Asset_ordner_tickt_pfad))
+            self.Kalender_Bild = tk.CTkImage(Image.open(self.Asset_ordner_Kal_pfad ))
+            self.Kunde_suchen_Bild = tk.CTkImage(Image.open(self.Asset_ordner_kunds_pfad))
+            self.Dings_Liste_Bild = tk.CTkImage(Image.open(self.Asset_ordner_dlist_pfad))
+            self.Dings_Bild = tk.CTkImage(Image.open(self.Asset_ordner_dings_pfad))
+            self.Kopieren_Bild = tk.CTkImage(Image.open(self.Asset_ordner_kop_pfad))
+            self.Schnellnotiz_Bild = tk.CTkImage(Image.open(self.Asset_ordner_schnelln_pfad))
+            self.Durchsuchen_Bild_zu = tk.CTkImage(Image.open(self.Asset_ordner_durch_zu_pfad))
+            self.totdo_Bild = tk.CTkImage(Image.open(self.Asset_totdo_pfad))
         except Exception as alk:
             messagebox.showinfo(self.Programm_Name, f"Beim laden der Bild Assets ist ein Fehler aufgetreten: {alk}")
         
