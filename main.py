@@ -2218,13 +2218,6 @@ class Listendings:
     
     def Netzlaufwerk_speichern(self):
         print("Netzlaufwerk_speichern(def)")
-        ##try:
-            ##if not os.path.exists(self.Listen_Speicherort_Netzwerk_geladen_ordner):
-                ##os.mkdir(self.Listen_Speicherort_Netzwerk_geladen_ordner)
-                ##print(f"Die Ordner {self.Listen_Speicherort_Netzwerk_geladen_ordner} wurden erstellt.")
-        ##except Exception as Ex_sp_n_E1:
-          ##  print(f"Beim erstellen der Ordner unter Pfad {self.Listen_Speicherort_Netzwerk_geladen_ordner} ist ein Fehler aufgetreten: {Ex_sp_n_E1}")
-            ##messagebox.showerror(title="CiM Fehler", message=f"Beim erstellen der Ordner unter Pfad {self.Listen_Speicherort_Netzwerk_geladen_ordner} ist ein Fehler aufgetreten: {Ex_sp_n_E1}")
         if self.Listen_Speicherort_Netzwerk_geladen:
             with open(self.Liste_mit_datum, 'r') as text_datei:
                 daten = text_datei.read()
