@@ -28,7 +28,7 @@ try:
     from tkinterdnd2 import DND_FILES
     from PIL import Image
     from collections import defaultdict
-    from nltk.corpus import wordnet
+    #from nltk.corpus import wordnet
     import re
     import matplotlib.pyplot as plt
     import pyperclip
@@ -487,7 +487,7 @@ class Listendings:
         self.Bearbeiten_Menu.add_command(label="Alle Einträge löschen", command=self.alles_löschen)
         self.Bearbeiten_Menu.add_command(label="JSON Explorer öffnen", command=self.JSON_Explorer_öffnen)
         self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results_vor)
-        self.Suchen_Menu.add_command(label="Sehr genaue Suche nutzen (Suche 3.0)(Beta)", command=self.frage_nach_string_suche3)
+        #self.Suchen_Menu.add_command(label="Sehr genaue Suche nutzen (Suche 3.0)(Beta)", command=self.frage_nach_string_suche3)
         
         try:
             print("(INFO) versuche die alten Aufzeichenungen zu Laden")
@@ -1393,7 +1393,7 @@ class Listendings:
             self.Menü_Knopp.configure(text="Menü", fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
             self.smtp_login_erfolgreich_l.place_forget()
             self.Einstellung_Design_auswahl.place_forget()
-            self.Berichtsheft_knopp.place_forget()
+            ##self.Berichtsheft_knopp.place_forget()
             self.Statistiken_anzeigen_linie_knopp.place_forget()
             self.Statistiken_anzeigen_saeule_knopp.place_forget()
         elif self.Menü_da == False:
@@ -1402,7 +1402,7 @@ class Listendings:
             self.Pause_menu.place(x=300,y=10)
             self.Menü_da = True
             self.Menü_Knopp.configure(text="Menü schließen", fg_color="aquamarine", hover_color="aquamarine3")
-            self.Berichtsheft_knopp.place(x=400,y=100)
+            ##self.Berichtsheft_knopp.place(x=400,y=100)
             self.Einstellung_Design_auswahl.place(x=10,y=200)
             self.Einstellung_Design_L.place(x=10,y=170)
             self.Statistiken_anzeigen_linie_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Liniendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_linie, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
@@ -1876,7 +1876,7 @@ class Listendings:
             print(f"Es sind weniger als 20 Suchergbnisse.{self.Anzahl_der_Ergebnisse}")
             self.aufmachen_results()
             
-    def genaue_suche(self):
+    '''def genaue_suche(self):
         self.suchedrei_Fenster = tk.CTkToplevel()
         self.suchedrei_Fenster.title("Suche")
         self.suchedrei_Fenster.configure(fg_color="White")
@@ -1936,7 +1936,7 @@ class Listendings:
                 self.Textfeld_suchedrei.insert(tk.END, f"   Synonyme: {', '.join(list_synonyms(word))}\n")
                 for occurrence in results:
                     self.Textfeld_suchedrei.insert(tk.END, f"   Datei: {occurrence[0]}\n")
-                    self.Textfeld_suchedrei.insert(tk.END, f"   Zeile {occurrence[1]}: {occurrence[2]}\n")
+                    self.Textfeld_suchedrei.insert(tk.END, f"   Zeile {occurrence[1]}: {occurrence[2]}\n")'''
 
 
     def Kunde_ruft_an(self):
@@ -1949,7 +1949,7 @@ class Listendings:
                     print1 = "-abgefangene Telefonummer: " + self.Anruf_Telefonnummer + "-"
                     self.Ereignislog_insert(nachricht_f_e=print1)
                     self.Uhrzeit_anruf_start = self.Zeit
-                    self.Anruf_Zeit.configure(text=f"🔴 aktiver Anruf seit: {self.Uhrzeit_anruf_start}")
+                    self.Anruf_Zeit.configure(text=f" 🔴 aktiver Anruf seit: {self.Uhrzeit_anruf_start} ")
                     tmp_ld.close()
                     os.remove("tmp.txt")
                     self.Gesperrte_Nummer = False
