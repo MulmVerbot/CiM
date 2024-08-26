@@ -663,7 +663,94 @@ class Listendings:
         print("[-init-] init auf wish bestellt...")
         self.Kontakte_aus_json_laden()
         self.weiterleitung_laden()
-        print("[-init-] Die Wish init is vorbei.")
+        print("[-init-] Die Wish shaise is vorbei.")
+
+    '''def Anrufstatistiken_anzeigen_saeule(self):
+        # Muster, um die Uhrzeit zu extrahieren
+        uhrzeit_muster = re.compile(r'bis (\d{2}:\d{2}:\d{2})')
+
+        # Funktion zum Durchsuchen eines Verzeichnisses und seiner Unterverzeichnisse
+        def durchsuche_ordner(pfad):
+            ergebnisse = {}
+            
+            # Durchlaufe alle Dateien und Unterordner
+            for root, dirs, files in os.walk(pfad):
+                uhrzeiten = []
+                for file in files:
+                    dateipfad = os.path.join(root, file)
+                    # Nur Textdateien durchsuchen
+                    if file.endswith('.txt'):
+                        with open(dateipfad, 'r') as datei:
+                            for zeile in datei:
+                                uhrzeit_match = uhrzeit_muster.search(zeile)
+                                if uhrzeit_match:
+                                    uhrzeit = uhrzeit_match.group(1)
+                                    uhrzeiten.append(uhrzeit)
+                
+                # Speichere die Anzahl der gefundenen Uhrzeiten für diesen Ordner
+                if uhrzeiten:
+                    ordnername = os.path.basename(root)
+                    ergebnisse[ordnername] = len(uhrzeiten)
+            
+            return ergebnisse
+
+        # Hauptverzeichnis, das durchsucht werden soll
+        hauptverzeichnis = self.Listen_Speicherort_standard
+
+        # Durchsuche das Hauptverzeichnis und Unterordner
+        ergebnisse = durchsuche_ordner(hauptverzeichnis)
+
+        # Bereite Daten für das Diagramm vor
+        ordner = list(ergebnisse.keys())
+        anzahl = list(ergebnisse.values())
+
+        # Erstelle ein Diagramm mit matplotlib
+        plt.figure(figsize=(12, 8))
+        plt.bar(ordner, anzahl, color=self.Starface_Farbe)
+        plt.xlabel('Monat')
+        plt.ylabel('Anrufe')
+        plt.title('Anrufstatistiken nach Monaten (Angaben können ungenau sein)')
+        plt.grid(True, axis='both')
+        max_y = max(anzahl)
+        plt.yticks(np.arange(0, max_y + 1, 1.0))
+
+        # Zeige das Diagramm an
+        plt.tight_layout()  # Optimiere das Layout
+        plt.show()
+
+    def Anrufstatistiken_anzeigen_linie(self):
+        uhrzeit_muster = re.compile(r'bis (\d{2}:\d{2}:\d{2})')
+        def durchsuche_ordner(pfad):
+            ergebnisse = {}
+            for root, dirs, files in os.walk(pfad):
+                uhrzeiten = []
+                for file in files:
+                    dateipfad = os.path.join(root, file)
+                    if file.endswith('.txt'):
+                        with open(dateipfad, 'r') as datei:
+                            for zeile in datei:
+                                uhrzeit_match = uhrzeit_muster.search(zeile)
+                                if uhrzeit_match:
+                                    uhrzeit = uhrzeit_match.group(1)
+                                    uhrzeiten.append(uhrzeit)
+                if uhrzeiten:
+                    ordnername = os.path.basename(root)
+                    ergebnisse[ordnername] = len(uhrzeiten)
+            return ergebnisse
+        hauptverzeichnis = self.Listen_Speicherort_standard
+        ergebnisse = durchsuche_ordner(hauptverzeichnis)
+        ordner = list(ergebnisse.keys())
+        anzahl = list(ergebnisse.values())
+        plt.figure(figsize=(12, 8))
+        plt.plot(ordner, anzahl, marker='o', linestyle='-', color='blue')
+        plt.xlabel('Monat')
+        plt.ylabel('Anrufe')
+        plt.title('Anrufstatistiken nach Monaten (Angaben können ungenau sein)')
+        max_y = max(anzahl) if anzahl else 1
+        plt.yticks(np.arange(0, max_y + 1, 1.0))
+        plt.grid(True, axis='y')
+        plt.tight_layout()
+        plt.show()'''
 
     def weiterleitungen_speichern(self):
         print("[-INFO-] weiterleitungen_speichern(def)")
@@ -1802,6 +1889,69 @@ class Listendings:
         elif self.Anzahl_der_Ergebnisse <= 20:
             print(f"Es sind weniger als 20 Suchergbnisse.{self.Anzahl_der_Ergebnisse}")
             self.aufmachen_results()
+            
+    '''def genaue_suche(self):
+        self.suchedrei_Fenster = tk.CTkToplevel()
+        self.suchedrei_Fenster.title("Suche")
+        self.suchedrei_Fenster.configure(fg_color="White")
+        self.Textfeld_suchedrei = tk.CTkTextbox(self.suchedrei_Fenster, width=100, height=30, wrap="word")
+        self.Textfeld_suchedrei.pack()
+
+        def list_synonyms(word):
+            synonyms = set()
+            for synset in wordnet.synsets(word):
+                for lemma in synset.lemmas():
+                    synonyms.add(lemma.name())
+            return list(synonyms)
+
+        def is_text_file(file_name):
+            text_extensions = {'.txt', '.rtf', '.md', '.html', '.xml', '.csv'}
+            _, ext = os.path.splitext(file_name)
+            return ext.lower() in text_extensions
+
+        def search_files_for_word(path, word):
+            results = []
+            synonyms = list_synonyms(word) + [word]  # Include the word itself as a synonym
+
+            for root, _, files in os.walk(path):
+                print("suche1")
+                for file in files:
+                    print("suche2")
+                    if is_text_file(file):
+                        file_path = os.path.join(root, file)
+                        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                            for line_num, line in enumerate(f, 1):
+                                pattern = r'\b({})\b'.format('|'.join(map(re.escape, synonyms)))
+                                matches = re.findall(pattern, line, flags=re.IGNORECASE)
+                                if matches:
+                                    results.append((file_path, line_num, line.strip()))
+            
+            return results
+
+        path = self.pfad_der_suche
+        word = self.Suchwort
+        print("dann mal los")
+        
+        if not os.path.isdir(path):
+            print("Der angegebene Pfad existiert nicht oder ist kein Verzeichnis.")
+            self.pfad_der_suche = None
+            self.Suchwort = None
+        else:
+            results = search_files_for_word(path, word)
+            
+            if not results:
+                print("Keine Ergebnisse gefunden.")
+                self.pfad_der_suche = None
+                self.Suchwort = None
+                messagebox.showinfo(title="Info", message="Darunter wurde nichts gefunden.")
+            else:
+                self.Textfeld_suchedrei.delete(1.0, tk.END)
+                self.Textfeld_suchedrei.insert(tk.END, f"Wort: {word}\n")
+                self.Textfeld_suchedrei.insert(tk.END, f"   Synonyme: {', '.join(list_synonyms(word))}\n")
+                for occurrence in results:
+                    self.Textfeld_suchedrei.insert(tk.END, f"   Datei: {occurrence[0]}\n")
+                    self.Textfeld_suchedrei.insert(tk.END, f"   Zeile {occurrence[1]}: {occurrence[2]}\n")'''
+
 
     def Kunde_ruft_an(self):
         print("Thread gestartet: Kunde_ruft_an (def)")
