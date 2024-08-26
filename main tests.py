@@ -2433,7 +2433,7 @@ class Listendings:
                 messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Der Gespeicherte Netzwerkpfad konnte nicht aufgerufen werden.")
         except Exception as e:
             ex = "Irgendwas ist passiert: ", e
-            messagebox.showerror(title="Listendings Speicherort", message=ex)
+            #messagebox.showerror(title="Listendings Speicherort", message=ex)
         print("ende des Programms, fange nun an zu speichern...")
         try:
             auto_speichern = "1"
@@ -2484,10 +2484,10 @@ class Listendings:
                         self.tag_string = str(time.strftime("%d %m %Y"))
                     print("Daten wurden in die CSV-Datei gespeichert.")
                     print(f"Dateien wurden unter {self.csv_datei_pfad} gespeichert.")
-                    messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich im Netzlaufwerkpfad gespeichert.")
+                    #messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich im Netzlaufwerkpfad gespeichert.")
                 else:
                     print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
-                    messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern im Netzlaufwerkpfad schiefgelaufen. (vielleicht keine Datensätze?)")
+                    #messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern im Netzlaufwerkpfad schiefgelaufen. (vielleicht keine Datensätze?)")
             else:
                 print("die var zum auto_speichern lag bei was anderem als 1")
         print("======================================")
