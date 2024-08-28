@@ -27,10 +27,10 @@ try:
     from email import encoders
     from tkinterdnd2 import DND_FILES
     from PIL import Image
-    #from collections import defaultdict
-    #from nltk.corpus import wordnet
+    from collections import defaultdict
+    from nltk.corpus import wordnet
     import re
-    #import matplotlib.pyplot as plt
+    import matplotlib.pyplot as plt
     import pyperclip
     import numpy as np
 except Exception as E:
@@ -665,7 +665,7 @@ class Listendings:
         self.weiterleitung_laden()
         print("[-init-] Die Wish shaise is vorbei.")
 
-    '''def Anrufstatistiken_anzeigen_saeule(self):
+    def Anrufstatistiken_anzeigen_saeule(self):
         # Muster, um die Uhrzeit zu extrahieren
         uhrzeit_muster = re.compile(r'bis (\d{2}:\d{2}:\d{2})')
 
@@ -750,7 +750,7 @@ class Listendings:
         plt.yticks(np.arange(0, max_y + 1, 1.0))
         plt.grid(True, axis='y')
         plt.tight_layout()
-        plt.show()'''
+        plt.show()
 
     def weiterleitungen_speichern(self):
         print("[-INFO-] weiterleitungen_speichern(def)")
