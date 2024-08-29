@@ -197,6 +197,15 @@ class Listendings:
         self.Asset_ordner_schnelln_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Schnellnotiz.png')
         self.Asset_ordner_durch_zu_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Durchsuchen_zu.png')
         self.Asset_totdo_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'totdo.png')
+#            _ .-') _             .-') _                   
+#           ( (  OO) )           ( OO ) )                  
+#           \     .'_  .---.,--./ ,--,'   ,--.   .-----.  
+#           ,`'--..._)/_   ||   \ |  |\  /  .'  / ,-.   \ 
+#           |  |  \  ' |   ||    \|  | ).  / -. '-'  |  | 
+#           |  |   ' | |   ||  .     |/ | .-.  '   .'  /  
+#           |  |   / : |   ||  |\    |  ' \  |  |.'  /__  
+#           |  '--'  / |   ||  | \   |  \  `'  /|       | 
+#           `-------'  `---'`--'  `--'   `----' `-------'  <-2024->
         
         try: ## das hier sind die Bilder
             self.Bearbeiten_Bild = tk.CTkImage(Image.open(self.Asset_ordner_beb_pfad))
