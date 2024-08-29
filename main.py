@@ -142,7 +142,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.0.5 (2)"
+        self.Version = "Beta 1.0.5 (3)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -693,59 +693,57 @@ class Listendings:
     
     def weiterleitung_laden(self):
         print("[-INFO-] Weiterleitungenladen(def)")
-        def auswahl_gedingst(choice):
-            print("WAI !")
-            if choice == f"An {self.einz} weitergeleitet.":
-                self.Weiterleitung_an = f"An {self.einz} weitergeleitet."
-            elif choice == f"An {self.zwee} weitergeleitet.":
-                self.Weiterleitung_an = f"An {self.zwee} weitergeleitet."
-            elif choice == f"An {self.dree} weitergeleitet.":
-                self.Weiterleitung_an = f"An {self.dree} weitergeleitet."
-            elif choice == f"An {self.vir} weitergeleitet.":
-                self.Weiterleitung_an = f"An {self.vir} weitergeleitet"
-            elif choice == "Keine Weiterleitung":
-                self.Weiterleitung_an = ""
-                
-
-        def auswahl_gedingst_sprechen(choice):
-            print("WAI !")
-            if choice == f"Mit {self.einz} sprechen":
-                self.wollte_sprechen = f"Mit {self.einz} sprechen"
-            elif choice == f"Mit {self.zwee} sprechen":
-                self.wollte_sprechen = f"Mit {self.zwee} sprechen."
-            elif choice == f"Mit {self.dree} sprechen":
-                self.wollte_sprechen = f"Mit {self.dree} sprechen."
-            elif choice == f"Mit {self.vir} sprechen":
-                self.wollte_sprechen = f"Mit {self.vir} sprechen"
-                self.wollte_sprechen = "Mit Irgendwen sprechen"
-            elif choice == "Keine Weiterleitung":
-                self.wollte_sprechen = "-"
         try:
             with open(self.Weiterleitungs_ordner_datei, "r" ) as gel_weiterleitung:
                 self.Weiterleitungen = gel_weiterleitung.read()
                 print(f"[-INFO-] Hier sind die Weiterleitungen vor der Konvertierung: {self.Weiterleitungen}")
                 self.Weiterleitungen = self.Weiterleitungen.split(",")
-                print("EXTRAHIERT!!")
-                print(self.Weiterleitungen)
                 self.einz, self.zwee, self.dree, self.vir = self.Weiterleitungen
                 print(f"[-INFO-] Hier sind sie nun formatiert: {self.einz, self.zwee, self.dree, self.vir}")
                 print("[-INFO-] Weiterleitungen wurden erfolgreich geladen.")
         except Exception as Exwtl:
             print(f"[-ERR-] Beim laden der Weiterleitungen ist ein Fehler aufgetreten. Fehlermeldung: {Exwtl}")
             return
+        def auswahl_gedingst(choice):
+            print("WAI !")
+            if choice == f"An {self.einz} weitergeleitet":
+                self.Weiterleitung_an = f"An {self.einz} weitergeleitet"
+            elif choice == f"An {self.zwee} weitergeleitet":
+                self.Weiterleitung_an = f"An {self.zwee} weitergeleitet"
+            elif choice == f"An {self.dree} weitergeleitet":
+                self.Weiterleitung_an = f"An {self.dree} weitergeleitet"
+            elif choice == f"An {self.vir} weitergeleitet":
+                self.Weiterleitung_an = f"An {self.vir} weitergeleitet"
+            elif choice == "Keine Weiterleitung":
+                self.Weiterleitung_an = "-"
+                
+        def auswahl_gedingst_sprechen(choice):
+            if choice == f"Mit {self.einz} sprechen":
+                self.wollte_sprechen = f"Mit {self.einz} sprechen"
+            elif choice == f"Mit {self.zwee} sprechen":
+                self.wollte_sprechen = f"Mit {self.zwee} sprechen"
+            elif choice == f"Mit {self.dree} sprechen":
+                self.wollte_sprechen = f"Mit {self.dree} sprechen"
+            elif choice == f"Mit {self.vir} sprechen":
+                self.wollte_sprechen = f"Mit {self.vir} sprechen"
+            elif choice == f"Mit Irgendwen sprechen":
+                self.wollte_sprechen = "Mit Irgendwen sprechen"
+            elif choice == "Keine Weiterleitung":
+                self.wollte_sprechen = "-"
+       
         try:
             self.optionmenu1.place_forget()
             self.optionmenu.place_forget()
         except:
             pass
         try:
-            self.optionmenu1 = tk.CTkOptionMenu(root, values=[f"Mit {self.einz} sprechen", f"Mit {self.zwee} sprechen.", f"Mit {self.dree} sprechen.", f"Mit {self.vir} sprechen", "Irgendwen sprechen", "Keine Anfrage"], command=auswahl_gedingst_sprechen, fg_color="White", text_color="Black", dropdown_hover_color="pink")
+            self.optionmenu1 = tk.CTkOptionMenu(root, values=[f"Mit {self.einz} sprechen", f"Mit {self.zwee} sprechen", f"Mit {self.dree} sprechen", f"Mit {self.vir} sprechen", "Irgendwen sprechen"], command=auswahl_gedingst_sprechen, fg_color="White", text_color="Black", dropdown_hover_color="pink")
             self.optionmenu1.set("Mit Wem sprechen?")
             self.optionmenu1.place(x=1260,y=190)
-            self.optionmenu = tk.CTkOptionMenu(root, values=[f"An {self.einz} weitergeleitet.", f"An {self.zwee} weitergeleitet.", f"An {self.dree} weitergeleitet.", f"An {self.vir} weitergeleitet", "Keine Weiterleitung"], command=auswahl_gedingst, fg_color="White", text_color="Black", dropdown_hover_color="pink")
+            self.optionmenu = tk.CTkOptionMenu(root, values=[f"An {self.einz} weitergeleitet", f"An {self.zwee} weitergeleitet", f"An {self.dree} weitergeleitet", f"An {self.vir} weitergeleitet", "Keine Weiterleitung"], command=auswahl_gedingst, fg_color="White", text_color="Black", dropdown_hover_color="pink")
             self.optionmenu.set("Keine Weiterleitung")
             self.optionmenu.place(x=1260,y=220)
-            print(f"[WEITERLEITUNG LADEN] Die Weiterleitungen wurden wieder ")
+            print(f"[WEITERLEITUNG LADEN] Die Weiterleitungen wurden geladen und wieder platziert.")
         except Exception as ellkk:
             print(f"[-ERR-] Konnte die Weiterleitungen nicht platzieren: {ellkk}")
 
@@ -762,7 +760,7 @@ class Listendings:
             y = root.winfo_y() + root.winfo_height()//2 - self.changelog_Fenster.winfo_height()//2
             self.changelog_Fenster.geometry(f"{width}x{height}+{x}+{y}")
         except:
-            print("[-ERR-] Konnte das changelogfenster nicht zentrieren.")
+            print("[ CHANGELOG - ERR ] Konnte das changelogfenster nicht zentrieren.")
             self.changelog_Fenster.geometry(f"{width}x{height}+{x}+{y}")
         self.changelog_Fenster.resizable(False,False)
         self.Textfeld_changelog.pack()
@@ -776,7 +774,7 @@ class Listendings:
                 changelog_text = None
                 chlg = None
         except FileNotFoundError:
-            self.Textfeld_changelog.insert(tk.END,"- Changelog ist existiert nicht oder konnte nicht gefunden werden -")
+            self.Textfeld_changelog.insert(tk.END,"- Changelog existiert nicht oder konnte nicht gefunden werden -")
             self.Textfeld_changelog.configure(state="disabled")
             changelog_text = None
             chlg = None
@@ -804,7 +802,7 @@ class Listendings:
         self.schnellnotizen_Fenster = tk.CTkToplevel(root)
         self.schnellnotizen_Fenster.title("Schnellnotiz (wird NICHT gespeichert)")
         self.schnellnotizen_Fenster.configure(fg_color="White")
-        self.Textfeld_Schnellnotizen = tk.CTkTextbox(self.schnellnotizen_Fenster, width=420, height=420, text_color="Black", fg_color="azure", wrap="word", border_color="Black", border_width=2)
+        self.Textfeld_Schnellnotizen = tk.CTkTextbox(self.schnellnotizen_Fenster, width=420, height=420, text_color="Black", fg_color="azure", wrap="word")
         height = 420
         width = 420
         try:
@@ -812,13 +810,13 @@ class Listendings:
             y = root.winfo_y() + root.winfo_height()//2 - self.schnellnotizen_Fenster.winfo_height()//2
             self.schnellnotizen_Fenster.geometry(f"{width}x{height}+{x}+{y}")
         except:
-            print("Konnte das Schnellnotizfenster nicht zentrieren.")
+            print("[-ERR-] Konnte das Schnellnotizfenster nicht zentrieren.")
             self.schnellnotizen_Fenster.geometry(f"{width}x{height}+{x}+{y}")
-        self.schnellnotizen_Fenster.resizable(False,False)
-        self.Textfeld_Schnellnotizen.pack()
+        self.schnellnotizen_Fenster.resizable(True,True)
+        self.Textfeld_Schnellnotizen.pack(expand=True, fill="both")
     
     def JSON_Explorer_öffnen(self):
-        print("[-INFO-] öffne nun den JSON Explorer...")
+        print("[-INFO-] JSON_Explorer_öffnen(def)")
         try:
             exec(open('json_explorer.py').read())
         except Exception as JSON_E:
@@ -1590,13 +1588,12 @@ class Listendings:
 
 
     def Suche1(self):
-        print("Suchen(def)")
+        print("[ SUCHE 2.0 - INFO ] Suchen(def)")
         self.Suche_suche = ""
         self.gesucht_zahl = 0
         self.gesucht_zahl_mit_fehlern = 0
         self.Ergebnise_zahl = 0
         try:
-            
             self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500, fg_color=self.Hintergrund_farbe_Text_Widget, text_color=self.Textfarbe, border_color=self.Border_Farbe, border_width=2)
         except:
             pass
@@ -1617,7 +1614,7 @@ class Listendings:
         except:
             pass
         
-        print("fenster fürs suchen geladen...")
+        print("[ SUCHE 2.0 - INFO ] Fenster fürs suchen geladen...")
         self.Zahl_anzeige = tk.CTkLabel(self.suchfenster_ergebnisse, text=self.durchsucht_text)
         self.Zahl_anzeige.pack()
         self.Zahl_anzeige_der_fehler = tk.CTkLabel(self.suchfenster_ergebnisse, text=self.durchsucht_text_mit_fehlern)
@@ -1632,35 +1629,31 @@ class Listendings:
         
         if self.Ort_wo_gesucht_wird == "":
             self.Ort_wo_gesucht_wird = filedialog.askdirectory()
-        print("pfad wurde ausgewählt")
+        print("[ SUCHE 2.0 - INFO ] Pfad wurde ausgewählt")
         such_dialog = tk.CTkInputDialog(title="CiM Suche", text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht. (Groß-und Kleinschreibung wird ignoriert)")
         try:
             x = root.winfo_x() + root.winfo_width()//2 - such_dialog.winfo_width()//2
             y = root.winfo_y() + root.winfo_height()//2 - such_dialog.winfo_height()//2
             such_dialog.geometry(f"x+{x}+{y}")
         except:
-            print("Fehler beim zentrieren des Such-Dialogs. selbst wenn ich hier die Fehlermeldung hinschreiben würde, würdest Du sie nicht verstehen denn ich habe auch keine Ahnung.")
+            print("[ SUCHE 2.0 - ERR ] Fehler beim zentrieren des Such-Dialogs. selbst wenn ich hier die Fehlermeldung hinschreiben würde, würdest Du sie nicht verstehen denn ich habe auch keine Ahnung.")
 
         self.Suche_suche = such_dialog.get_input()
         such_dialog.destroy()
         if self.Suche_suche != "":
             try:
-                #if self.etwas_suchen1 == False:
-                 #   self.etwas_suchen1 = True
                 self.thread_suche = threading.Thread(target=self.Suche_algo)
                 self.thread_suche.start()
-                    #self.Suche_algo()
-                print("Thread für die Suche gestartet.")
+                print("[ SUCHE 2.0 - INFO ] Thread für die Suche gestartet.")
             except:
-                #self.etwas_suchen1 = True
-                print("Thread für die Suche konnte nicht gestartet werden.")
+                print("[ SUCHE 2.0 - INFO ] Thread für die Suche konnte nicht gestartet werden.")
                 try:
                     self.etwas_suchen1 = True
                     self.Suche_algo()
                 except Exception as esisx:
-                    print("fehler161: ",esisx)
+                    print("[ SUCHE 2.0 - ERR ] fehler161: ",esisx)
         else:
-            messagebox.showinfo(message="Suche Abgebrochen.")
+            messagebox.showinfo(message="Suche abgebrochen.")
             self.suchfenster_ergebnisse.destroy()
 
     def Eintrag_aufmachen(self, event):
@@ -1673,7 +1666,10 @@ class Listendings:
             subprocess.call(["open", zu_aufmachen_Eintrag]) # Für MacOS
 
     def bye_suchfenster(self):
-        print("Suchfenster wurde geschlossen.")
+        print("[ SUCHE 2.0 - INFO ] Suchfenster wurde geschlossen.")
+        self.results = None
+        self.Anzahl_der_Ergebnisse = None
+        self.rearesults = None ## Diese Var ist theoretisch das eigentliche self.Anzahl_der_Ergebnisse aber ich bin zu faul das jetzt zu ändern.
         self.Ergebnisse_Listbox.unbind("<Double-1>")
         self.suchfenster_ergebnisse.destroy()
 
@@ -1687,7 +1683,6 @@ class Listendings:
 
     def Suche_algo(self):
         self.Ergebnise_zahl = 0
-
         if self.Suche_suche:
             def read_text_file(file_path):
                 try:
@@ -1697,7 +1692,6 @@ class Listendings:
                     self.gesucht_zahl_mit_fehlern += 1
                     self.durchsucht_text_mit_fehlern = f"Fehler: {self.gesucht_zahl_mit_fehlern}"
                     self.Zahl_anzeige_der_fehler.configure(text=self.durchsucht_text_mit_fehlern)
-                    #print(f"Fehler: {e}")
                     return ""
 
             folder_path = self.Ort_wo_gesucht_wird
@@ -1726,11 +1720,12 @@ class Listendings:
                 self.etwas_suchen1 = False
                 self.Suche_suche = ""
                 self.Ort_wo_gesucht_wird = ""
+                results = None
                 try:
                     self.thread_suche.join()
-                    print("Thread wurde erfolgreich beendet. (exception vor der Suche)")
+                    print("[ SUCHE 2.0 - INFO ] Thread wurde erfolgreich beendet. (exception vor der Suche)")
                 except Exception as E_t:
-                    print(f"Konnte den Thread self.thread_suche nicht beenden, (vor der Suche) Fehlermeldung: {E_t}")
+                    print(f"[ SUCHE 2.0 - ERR ] Konnte den Thread self.thread_suche nicht beenden, (vor der Suche) Fehlermeldung: {E_t}")
 
             if results:
                 ganzes_ergebnis = "Ich habe in folgenden Dateien " + str(self.Ergebnise_zahl) + " Ergebnisse gefunden:"
@@ -1746,38 +1741,43 @@ class Listendings:
                 self.etwas_suchen = False
                 self.Suche_suche = ""
                 self.Ort_wo_gesucht_wird = ""
+                self.Erg = results
+                results = None
                 try:
                     self.thread_suche.join()
-                    print("Thread wurde erfolgreich beendet. (nach dem die Results festehen)")
+                    print("[ SUCHE 2.0 - INFO ] Thread wurde erfolgreich beendet. (nach dem die Results festehen)")
                 except Exception as E_t:
-                    print(f"Konnte den Thread self.thread_suche nicht beenden, (im results) Fehlermeldung: {E_t}")
+                    print(f"[ SUCHE 2.0 - ERR ] Konnte den Thread self.thread_suche nicht beenden, (im results) Fehlermeldung: {E_t}")
             else:
                 self.Ergebnisse_Listbox.unbind("<Double-1>")
                 dmsg = f"Dazu konnte ich leider nichts finden. Ich hab in {self.gesucht_zahl} Dateien gesucht."
                 self.etwas_suchen1 = False
                 self.Suche_suche = ""
                 self.Ort_wo_gesucht_wird = ""
+                results = None
                 try:
                     self.thread_suche.join()
-                    print("Thread wurde erfolgreich beendet. (im else der results)")
+                    print("[ SUCHE 2.0 - INFO ] Thread wurde erfolgreich beendet. (im else der results)")
                 except Exception as E_t:
-                    print(f"Konnte den Thread self.thread_suche nicht beenden, (im else der results) Fehlermeldung: {E_t}")
+                    print(f"[ SUCHE 2.0 - ERR ] Konnte den Thread self.thread_suche nicht beenden, (im else der results) Fehlermeldung: {E_t}")
                 messagebox.showinfo(title="CiM Suche", message=dmsg)
                 self.suchfenster_ergebnisse.destroy()
                 
         else:
-            print("gab nüscht")
+            ### wenn nichts gefunden wurde.
+            print("[ SUCHE 2.0 - INFO ] gab nüscht")
             self.Ergebnisse_Listbox.unbind("<Double-1>")
             dmsg = f"Dazu konnte ich leider nichts finden. Ich hab in {self.gesucht_zahl} Dateien gesucht."
             self.Suche_suche = ""
             self.etwas_suchen1 = False
+            results = None
+            self.results = None
             try:
                 self.thread_suche.join()
-                print("Thread wurde erfolgreich beendet. (else des gab nüscht)")
+                print("[ SUCHE 2.0 - INFO ] Thread wurde erfolgreich beendet. (else des gab nüscht)")
             except Exception as E_t:
-                print(f"Konnte den Thread self.thread_suche nicht beenden, Fehlermeldung: {E_t}")
+                print(f"[ SUCHE 2.0 - ERR ] Konnte den Thread self.thread_suche nicht beenden, Fehlermeldung: {E_t}")
             messagebox.showinfo(title="CiM Suche", message=dmsg)
-            self.suchfenster_ergebnisse.destroy()
 
     def aufmachen_results(self):
         try:
@@ -1790,17 +1790,20 @@ class Listendings:
             messagebox.showerror(title="Fehler CiM", message=exci_leer)
 
     def aufmachen_results_vor(self):
-        print("suche_alles aufamachen davor warnmeldung dings")
+        print("[ SUCHE 2.0 - INFO ] suche_alles aufamachen davor warnmeldung dings")
+        if self.Anzahl_der_Ergebnisse == None:
+            messagebox.showinfo(title=self.Programm_Name, message="Diese Funktion ist aus performance technischen Gründen nicht mehr verfügbar sobald das Suchfenster geschlossen wurde.")
+            return
         if self.Anzahl_der_Ergebnisse >= 20:
-            print(f"Es sind >= 20 Suchergebnisse... {self.Anzahl_der_Ergebnisse}")
+            print(f"[ SUCHE 2.0 - INFO ] Es sind >= 20 Suchergebnisse... {self.Anzahl_der_Ergebnisse}")
             antw = messagebox.askyesno(title="CiM Suche", message=f"Sind Sie sicher dass sie wirklich alle {self.Anzahl_der_Ergebnisse} Ergbnisse öffnen möchten? (Unter Windows könnte Ihr System einfrieren)")
             if antw:
                 if antw == True:
                     self.aufmachen_results()
                 elif antw == False:
-                    print("[-INFO-] Nutzer wollte doch nicht alles aufmachen")
+                    print("[ SUCHE 2.0 - INFO ] Nutzer wollte doch nicht alles aufmachen")
         elif self.Anzahl_der_Ergebnisse <= 20:
-            print(f"Es sind weniger als 20 Suchergbnisse.{self.Anzahl_der_Ergebnisse}")
+            print(f"[ SUCHE 2.0 - INFO ] Es sind weniger als 20 Suchergbnisse.{self.Anzahl_der_Ergebnisse}")
             self.aufmachen_results()
 
     def Kunde_ruft_an(self):
@@ -1810,7 +1813,7 @@ class Listendings:
                 with open("tmp.txt", "r") as tmp_ld:
                     gel_tmp = tmp_ld.read()
                     self.Anruf_Telefonnummer = gel_tmp
-                    print1 = "-abgefangene Telefonummer: " + self.Anruf_Telefonnummer + "-"
+                    print1 = "[i] abgefangene Telefonummer: " + self.Anruf_Telefonnummer + "-"
                     self.Ereignislog_insert(nachricht_f_e=print1)
                     self.Uhrzeit_anruf_start = self.Zeit
                     self.Anruf_Zeit.configure(text=f" 🔴 aktiver Anruf seit: {self.Uhrzeit_anruf_start} ")
