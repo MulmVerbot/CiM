@@ -159,7 +159,8 @@ class TodoApp:
         self.menudings.add_command(label="Info", command=self.info)
         self.Bearbeiten_Menu.add_command(label="Listenmamen ändern", command=self.Listenname_change)
         self.Einstellungen.add_command(label="Liste aktualisieren", command=self.refresh_tasks)
-        self.Einstellungen.add_command(label="Change", command=self.task_update)
+        self.Einstellungen.add_command(label="Aufgabe aktualisieren", command=self.task_update)
+        self.Einstellungen.add_command(label="GUI Neustarten", command=self.neustarten)
         self.todo_frame_links = tk.CTkFrame(self.root, width=200, height=1000, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
         self.todo_frame_links.place(x=0, y=0)
         self.todo_frame_rechts = tk.CTkFrame(self.root, width=400, height=1000, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
@@ -477,6 +478,12 @@ class TodoApp:
     def clear_tasks_frame(self):
         for widget in self.todo_frame_einz.winfo_children():
             widget.destroy()
+    
+    def neustarten(self):
+        self.clear_tasks_frame()
+        self.ID_laden()
+        self.Listennamen_laden()
+        self.todo_aufmachen()
 
     def bye(self):
         print("(ENDE) Das Programm wurde Beendet, auf wiedersehen! :3 ")
