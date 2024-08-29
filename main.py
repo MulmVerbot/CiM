@@ -1710,7 +1710,7 @@ class Listendings:
                 for root, dirs, files in os.walk(folder_path):
                     for file_name in files:
                         try:
-                            if file_name.endswith('.txt'):
+                            if file_name.endswith('.txt') or file_name.endswith('.md') or file_name.endswith('.html') or file_name.endswith('.xml') or file_name.endswith('.csv') or file_name.endswith('.js'):
                                 file_path = os.path.join(root, file_name)
                                 file_content = read_text_file(file_path).lower()# Konvertiere den Dateiinhalt in Kleinbuchstaben
                                 self.gesucht_zahl += 1
