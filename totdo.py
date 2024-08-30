@@ -83,13 +83,13 @@ class TodoApp:
         self.ID_laden()
         self.Listennamen_laden()
         self.todo_aufmachen()
+        self.fake_laden()
 
     def ID_laden(self):
         try:
             with open(self.tasks_pfad + "/id.txt", "r") as ID_g:
                 self.ID = int(ID_g.read().strip()) # das strp entfernt eventuelle whitespaces
                 print(f"Der gespeicherte Stand der IDs liegt nun bei {self.ID}")
-                ID_g.close()
         except FileNotFoundError:
             print("Die Datei id.txt wurde nicht gefunden.")
             self.ID = 7572469420
@@ -104,7 +104,6 @@ class TodoApp:
         try:
             with open(self.tasks_pfad + "/id.txt", "w+") as ID_s:
                 ID_s.write(str(self.ID))
-                #ID_s.close()
                 print(f"Der Stand der IDs liegt bei {self.ID}")
         except Exception as eid:
             print(f"IDs konnten nicht geladen werden. fange nun wieder bei 0 an. Fehlercode: {eid}")
@@ -209,7 +208,7 @@ class TodoApp:
             time.sleep(1)
         print("Thread Beendet: Uhr(def)")
 
-    def Listenname_change(self):
+    def Listenname_change(self): # Den Namen der Liste ändern
         print("Listenname_change (def)")
         self.top_ln_f = tk.CTkToplevel()
         self.top_ln_f.configure(resizeable=False)
@@ -284,27 +283,36 @@ class TodoApp:
                 pass
                 
         
-    def task_update(self):
+    def task_update(self, event): # Das bearbeite speichern
         print("task_updatae(def)")
-        
+        ID_der_gewählten_Aufgabe = None
+        ID_der_gewählten_Aufgabe = None
+
+        task = self.task_übergabe
+        ID_der_gewählten_Aufgabe = task['id']
+        tasks = self.load_tasks_from_file()
+        tasks = [t for t in tasks if t['id'] != task['id']]
+        with open(self.TASK_FILE, 'w') as file:
+            json.dump(tasks, file, indent=4)
+        task_name = None
         task_name = self.Aufgaben_Titel_t.get("0.0", "end")
+        if not task_name or task_name == "":
+            task_name = "Aufgabe"
         task_description = self.Aufgaben_Beschreibung_t.get("0.0", "end")
         task_notizen = self.Notizen_feld.get("0.0", "end")
         self.Zeit = self.task['Uhrzeit']
         print(f"Die Uhrzeit sollte bei {self.task['Uhrzeit']} stehen.")
-        if task_name:
-            if not task_description:
-                task_description = "-"
-            if not task_notizen:
-                task_notizen = "-"
-            self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': self.ID}
-            self.save_task(self.task)
-            self.create_task_button(self.task)
-            self.button.invoke()
-        else:
-            messagebox.showinfo(title=self.Programm_Name, message="Bitte geben Sie zuerst einen Aufgabentitel ein.")
+
+        if not task_description:
+            task_description = "-"
+        if not task_notizen:
+            task_notizen = "-"
+        self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': ID_der_gewählten_Aufgabe}
+        self.save_task(self.task)
+        self.create_task_button(self.task)
+        self.button.invoke()
+        self.Aufgaben_erstellen_akt(event)
         
-                
 
     def create_task_button(self, task):
         self.button = tk.CTkButton(self.todo_frame_einz, text=f"Nr. {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290)
@@ -320,6 +328,7 @@ class TodoApp:
         print("despawn durch entry")
         self.todo_r_dispawn()
         self.todo_r_dispawn()
+        self.Aufgaben_erstellen_akt(event)
 
     def todo_r_dispawn(self):
         try: ### Bitte frag nicht wie es zu diesem shais hier gekommen ist...
@@ -362,11 +371,27 @@ class TodoApp:
             self.Aufgaben_Notizen_l.place_forget()
         except Exception as e:
             print(f"Fehler beim Verstecken von Aufgaben_Beschreibung_l: {e}")
+        try:
+            self.Datum_fertsch_e.place_forget()
+        except Exception as e:
+            print(f"Fehler beim Verstecken von Aufgaben_Beschreibung_l: {e}")        
 
+    def Aufgaben_erstelle_deak(self, event):
+        print("Aufgaben_erstelle_deak(def)")
+        self.root.unbind('<Return>')
+
+    def Aufgaben_erstellen_akt(self, event):   # Das hier wird immer ausgeführt wenn ich aufs Fenster clicke um die Enter Taste zu reaktivieren und zukünftig die Aufgabe gleich mit zu speichern
+        print("Aufgaben_erstellen_akt(def)")
+        self.root.bind('<Return>', self.create_task_button_vor)
+        #self.task_update(event)
+        self.Aufgaben_Titel_e.unbind("<FocusIn>")
+        self.Notizen_feld.unbind("<FocusIn>")
+        self.Aufgaben_Titel_t.unbind("<FocusIn>")
 
     def show_task(self, task): # Das hier wird jedesmal ausgeführt wenn jemand eine Aufgabe anclickt
         print("Aufgabe anzeigen")
         self.task = task
+        self.task_übergabe = task  ## Das hier ist auch wieder mega dumm gelöst weil die var drüber bereits existert, ich bin nur gerade zu faul zu gucken ob die zu fürhezeitig wieder freigegeben wird. Sorry zukunfst Max!
         self.todo_r_dispawn()
         self.Aufgabe_entfernen = tk.CTkButton(self.todo_frame_rechts, text="Aufgabe entfernen", command=self.aufgabe_loeschen_frage, fg_color=self.f_bg, border_color=self.Border_Farbe, border_width=1, text_color="White", hover_color=self.f_r_1)
         self.Notizen_feld = tk.CTkTextbox(self.todo_frame_rechts, width=320, height=440, text_color="White", fg_color=self.f_r_1, wrap="word", border_width=0)
@@ -386,27 +411,28 @@ class TodoApp:
         self.Aufgaben_Notizen_l = tk.CTkLabel(self.todo_frame_rechts, text="Notizen:")
         self.Aufgaben_Notizen_l.place(x=20,y=270)
         self.Aufgaben_Beschreibung_t.insert(tk.END, f"{task['description']}")
+        self.Aufgaben_Beschreibung_t.bind("<FocusIn>", self.Aufgaben_erstelle_deak)
+        self.Notizen_feld.bind("<FocusIn>", self.Aufgaben_erstelle_deak)
 
         self.Uhrzeit_text_l = tk.CTkLabel(self.todo_frame_rechts, text=f"Aufgabe von: {task['Uhrzeit']}Uhr", text_color="White")
         self.Uhrzeit_text_l.place(x=20,y=60)
 
 
     def aufgabe_loeschen_frage(self):
-        antw = messagebox.askyesno(title=self.Programm_Name, message=f"INFO: Aufgaben werden anhand des Namens gelöscht!")
+        antw = messagebox.askyesno(title=self.Programm_Name, message=f"INFO: gelöschte Aufgaben können nicht wiederhergestellt werden.")
         if antw:
             if antw == True:
                 self.l_ja()
             elif antw == False:
                 self.l_nein()
         
-    def Mod_suche(self):
+    def Mod_suche(self): # Das hier ist die Funktion die jede sekunde nachschaut ob es vom CiM eine neue Aufgabe gibt.
         print("Mod suche läuft")
         print(self.cim_txt_pfad)
         while self.Mod_Suche_aktiv == True:
             try:
                 with open(self.cim_txt_pfad, "r") as cim_g:
                     self.cim = cim_g.read()
-                    cim_g.close()
                     try:
                         os.remove(self.cim_txt_pfad)
                         print("cim.txt wieder gelöscht.")
