@@ -809,11 +809,12 @@ class Listendings:
     def schnellnotizen_öffnen(self):
         print("[-INFO-] schnellnotizen_öffnen(def)")
         self.schnellnotizen_Fenster = tk.CTkToplevel(root)
-        self.schnellnotizen_Fenster.title("Schnellnotiz (wird NICHT gespeichert)")
+        self.schnellnotizen_Fenster.title("Schnellnotiz")
         self.schnellnotizen_Fenster.configure(fg_color="White")
         self.Textfeld_Schnellnotizen = tk.CTkTextbox(self.schnellnotizen_Fenster, width=420, height=420, text_color="Black", fg_color="azure", wrap="word")
         height = 420
         width = 420
+
         try:
             x = root.winfo_x() + root.winfo_width()//2 - self.schnellnotizen_Fenster.winfo_width()//2
             y = root.winfo_y() + root.winfo_height()//2 - self.schnellnotizen_Fenster.winfo_height()//2
@@ -823,6 +824,8 @@ class Listendings:
             self.schnellnotizen_Fenster.geometry(f"{width}x{height}+{x}+{y}")
         self.schnellnotizen_Fenster.resizable(True,True)
         self.Textfeld_Schnellnotizen.pack(expand=True, fill="both")
+        #self.schnellnotizen_Fenster.bind('<Control-v>', text_einfuegen)  # Windows/Linux
+       # self.schnellnotizen_Fenster.bind('<Command-v>', text_einfuegen) # Normal
     
     def JSON_Explorer_öffnen(self):
         print("[-INFO-] JSON_Explorer_öffnen(def)")
@@ -1681,6 +1684,8 @@ class Listendings:
         self.rearesults = None ## Diese Var ist theoretisch das eigentliche self.Anzahl_der_Ergebnisse aber ich bin zu faul das jetzt zu ändern.
         self.Ergebnisse_Listbox.unbind("<Double-1>")
         self.suchfenster_ergebnisse.destroy()
+        self.thread_suche.join()
+
 
     def Suche_KDabl(self):
         self.Ort_wo_gesucht_wird = "/Volumes/Kundenablage/"
@@ -1950,9 +1955,7 @@ class Listendings:
                 T_Nummer = "-"
             if self.Weiterleitung_an == "":
                 self.Weiterleitung_an = "Keine Weiterleitung"
-                #messagebox.showinfo(title="", message=self.Weiterleitung_an)
             if self.wollte_sprechen == "":
-                #messagebox.showinfo(title="", message=self.wollte_sprechen)
                 self.wollte_sprechen = "Nein"
 
             if os.path.exists(self.Liste_mit_datum):
@@ -2031,7 +2034,6 @@ class Listendings:
 
     def alles_löschen(self):
         print("alles_löschen(def)")
-        
         abfrage_wegen_löschen_db = messagebox.askquestion(title='Information', message="möchten Sie wirklich die gesamte Kontaktliste unwiderruflich löschen?")
         if abfrage_wegen_löschen_db == "yes":  
             print("löschen der db vom Nutzer bestätigt")
