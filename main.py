@@ -292,6 +292,8 @@ class Listendings:
         self.pfad_der_suche = None
         self.Suchwort = None
         self.kopie_der_mail_erhalten = True
+        self.Windows = False # denkt dran dafür noch eine richtige erkenung zu schreiben!!!
+        self.Einf_aktiv = True
         
         self.zeit_string = time.strftime("%H:%M:%S")
         self.tag_string = str(time.strftime("%d %m %Y"))
@@ -472,6 +474,12 @@ class Listendings:
         self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
         self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
         self.Anruf_Zeit = tk.CTkLabel(master, text_color="Black", text=f"Kein akiver Anruf             ", bg_color=self.Entry_Farbe)
+
+        self.kunde_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
+        self.t_nummer.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
+        self.problem_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
+        self.info_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
+        self.Anruf_Zeit.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
     #### ####
         
         self.senden_button = tk.CTkButton(master, text="Senden", command="")
@@ -584,8 +592,10 @@ class Listendings:
         self.Ticket_erstellen_Knopp.place(x=1260,y=450)
         self.Eintrag_raus_kopieren_knopp = tk.CTkButton(root, text="Letztes kopieren", command=self.Eintrag_raus_kopieren, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Kopieren_Bild)
         self.Eintrag_raus_kopieren_knopp.place(x=1260,y=390)
-        self.Notizen_knopp = tk.CTkButton(root, text="Schnellnotiz", command=self.schnellnotizen_öffnen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.Schnellnotiz_Bild)
+        self.Notizen_knopp = tk.CTkButton(root, text="Schnellnotiz", fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.Schnellnotiz_Bild)
         self.Notizen_knopp.place(x=1260,y=360)
+        self.Notizen_knopp.bind('<Button-1>', self.schnellnotizen_öffnen)
+
         self.Berichtsheft_knopp = tk.CTkButton(self.Pause_menu, text="Berichtsheft öffnen", command=self.Berichtsheft_aufmachen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
         self.Einstellungen_Frame = tk.CTkFrame(root, width=600, height=380, border_color="Pink", border_width=3, fg_color="transparent")
         self.tabview = tk.CTkTabview(self.Einstellungen_Frame, width=600, height=380, fg_color=self.Entry_Farbe, segmented_button_fg_color=self.Hintergrund_farbe_Text_Widget, segmented_button_selected_hover_color=self.dunkle_ui_farbe, segmented_button_unselected_hover_color=self.dunkle_ui_farbe, segmented_button_selected_color=self.helle_ui_farbe, text_color="Black", segmented_button_unselected_color=self.Ja_UI_Farbe)
@@ -673,6 +683,27 @@ class Listendings:
         self.Kontakte_aus_json_laden()
         self.weiterleitung_laden()
         print("[-init-] Die Wish init is vorbei.")
+
+    def einf_f_schnellnotizen_switch(self, event):
+        print("einf_f_schnellnotizen_switch(def)")
+        if self.Einf_aktiv == False:
+            if self.Windows == True:  #  Das gegenteil von dem was da oben steht
+                self.master.bind('<Control-v>', self.schnellnotizen_öffnen(event))  # Windows/Linux
+                self.Einf_aktiv = True
+                print("Das bind steht nun wieder")
+            else:
+                self.master.bind('<Command-v>', self.schnellnotizen_öffnen(event)) # Normal
+                self.Einf_aktiv = True
+                print("Das bind steht nun wieder")
+        else:   ## Das .bind wieder deaktivieren (es wird kein schnellnotizen Fenster mehr geöffnet)
+            if self.Windows == True:
+                print("Das Bind wurde deaktiviert")
+                self.master.unbind('<Control-v>')
+                self.Einf_aktiv = False
+            else:
+                print("Das Bind wurde deaktiviert")
+                self.master.unbind('<Command-v>')
+                self.Einf_aktiv = False
 
     def weiterleitungen_speichern(self):
         print("[-INFO-] weiterleitungen_speichern(def)")
@@ -806,7 +837,7 @@ class Listendings:
             return
         return
 
-    def schnellnotizen_öffnen(self):
+    def schnellnotizen_öffnen(self, event):
         print("[-INFO-] schnellnotizen_öffnen(def)")
         self.schnellnotizen_Fenster = tk.CTkToplevel(root)
         self.schnellnotizen_Fenster.title("Schnellnotiz")
@@ -824,8 +855,7 @@ class Listendings:
             self.schnellnotizen_Fenster.geometry(f"{width}x{height}+{x}+{y}")
         self.schnellnotizen_Fenster.resizable(True,True)
         self.Textfeld_Schnellnotizen.pack(expand=True, fill="both")
-        #self.schnellnotizen_Fenster.bind('<Control-v>', text_einfuegen)  # Windows/Linux
-       # self.schnellnotizen_Fenster.bind('<Command-v>', text_einfuegen) # Normal
+        
     
     def JSON_Explorer_öffnen(self):
         print("[-INFO-] JSON_Explorer_öffnen(def)")
