@@ -46,7 +46,7 @@ class TodoApp:
     #wichtige
         self.f_bg = "gray11"
         self.f_l = "gray13"
-        self.f_r = "#272727"
+        self.f_r = "#272727"   # Die Farbcode aus dem Todo sind aber schon weird oder? hab mich einfach mal an den ihrem Design orientiert
         self.f_e = "#2A2A2A"
         self.f_border = "#232323"
         self.f_r_1 = "#323232"
@@ -258,6 +258,7 @@ class TodoApp:
                 task_description = "-"
             if task_notizen == "":
                 task_notizen = "-"
+            print(f"Hier haste die scheiße ma im Log: {task_notizen} und jetzt die kack beschreibung: {task_description}")
             self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': self.ID}
             self.ID += 1
             self.ID_speichern()
@@ -281,10 +282,10 @@ class TodoApp:
                 print(f"Das hier hab ich darin gefunden: \n\n {daten_tasks_datei}\n\n")
         except Exception as E:
             daten_tasks_datei = ""
-        for Bums in daten_tasks_datei.get("id", []):
-            print(f"ich durchsuche die Blacklist... mit {daten_tasks_datei.get("id")}")
-            if str(daten_tasks_datei.get("id")) == str("self.DAS WONACH HIER GESUCHT WIRD"):
-                pass
+        #for Bums in daten_tasks_datei.get("id", []):
+         #   print(f"ich durchsuche die Blacklist... mit {daten_tasks_datei.get("id")}")
+            #if str(daten_tasks_datei.get("id")) == str("self.DAS WONACH HIER GESUCHT WIRD"): # ist das gerade ein scherz? woher kommt der shais denn bitte??
+             #   pass
                 
         
     def task_update(self, event): # Das bearbeite speichern
@@ -331,7 +332,7 @@ class TodoApp:
     def entry_rein(self, event):
         print("despawn durch entry")
         self.todo_r_dispawn()
-        self.todo_r_dispawn()
+        self.todo_r_dispawn() # das ganze hier wird zweimal gemacht damit FALLS ich mal vergessen hab was zu entfernen / es da irgendwie nen bug gibt, ich sicher gehen kann dass alles verschwindet. entfern die Zeile mal und schau was passiert! :P
         self.Aufgaben_erstellen_akt(event)
 
     def todo_r_dispawn(self):
@@ -451,7 +452,7 @@ class TodoApp:
                         print(f'Anrufer: {anrufer_info}')
                     else:
                         print('Anrufer nicht gefunden')
-                        anrufer_info = "Aufgabe aus dem Mulm"
+                        anrufer_info = "Aufgabe aus dem M.U.L.M"
 
                     task_name = anrufer_info
                     task_description = self.cim
