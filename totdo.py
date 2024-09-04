@@ -243,16 +243,20 @@ class TodoApp:
         self.Todo_offen = False
 
     def create_task_button_vor(self, event):
+        task_name = None
         task_description = None
         task_name = self.Aufgaben_Titel_e.get()
+        if task_name == None:
+            task_name = self.Aufgaben_Titel_t.get()
         task_description = self.Aufgaben_Beschreibung_t.get("0.0", "end")
         task_notizen = self.Notizen_feld.get("0.0", "end")
         self.Zeit = time.strftime("%H:%M:%S")
         self.Datum_fertsch = self.Datum_fertsch_e.get()
+
         if task_name:
-            if not task_description:
+            if task_description == "":
                 task_description = "-"
-            if not task_notizen:
+            if task_notizen == "":
                 task_notizen = "-"
             self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': self.ID}
             self.ID += 1

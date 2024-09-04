@@ -475,11 +475,11 @@ class Listendings:
         self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
         self.Anruf_Zeit = tk.CTkLabel(master, text_color="Black", text=f"Kein akiver Anruf             ", bg_color=self.Entry_Farbe)
 
-        self.kunde_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
-        self.t_nummer.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
-        self.problem_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
-        self.info_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
-        self.Anruf_Zeit.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
+    #    self.kunde_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
+    #    self.t_nummer.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
+    #    self.problem_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
+    #    self.info_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
+    #    self.Anruf_Zeit.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
     #### ####
         
         self.senden_button = tk.CTkButton(master, text="Senden", command="")
@@ -684,7 +684,7 @@ class Listendings:
         self.weiterleitung_laden()
         print("[-init-] Die Wish init is vorbei.")
 
-    def einf_f_schnellnotizen_switch(self, event):
+    def einf_f_schnellnotizen_switch(self, event): # Das Dings hier ist relativ obsolete, weil die event binder in der init deaktiviert sind. (ca Zeile: 480, Commit vom 4.9.24)
         print("einf_f_schnellnotizen_switch(def)")
         if self.Einf_aktiv == False:
             if self.Windows == True:  #  Das gegenteil von dem was da oben steht
@@ -837,6 +837,7 @@ class Listendings:
             return
         return
 
+    #def schnellnotizen_öffnen(self, event):  wie oben geschildert, musste die event var mit raus weil ich den mist deaktiviert hab
     def schnellnotizen_öffnen(self, event):
         print("[-INFO-] schnellnotizen_öffnen(def)")
         self.schnellnotizen_Fenster = tk.CTkToplevel(root)
