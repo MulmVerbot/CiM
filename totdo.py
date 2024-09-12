@@ -139,7 +139,7 @@ class TodoApp:
         y1 = 100
         i = 1
         while i <= 10:
-            l = tk.CTkLabel(self.todo_frame_links, text=f"{i}. Liste (zukünftig anclickbar)", text_color="Black")
+            l = tk.CTkLabel(self.todo_frame_links, text=f"{i}. Liste (zukünftig anclickbar)", text_color="White")
             l.place(x=10,y=y1)
             y1 += 40
             i += 1
@@ -186,7 +186,6 @@ class TodoApp:
         self.Datum_fertsch_e.place(x=250,y=840)
 
         self.show_task(task)
-        #self.fake_laden()
         self.load_tasks()
 
     def info(self):
@@ -245,18 +244,18 @@ class TodoApp:
     def create_task_button_vor(self, event):
         task_name = None
         task_description = None
-        task_name = self.Aufgaben_Titel_e.get()
+        task_name = self.Aufgaben_Titel_e.get().strip()
         if task_name == None:
             task_name = self.Aufgaben_Titel_t.get()
-        task_description = self.Aufgaben_Beschreibung_t.get("0.0", "end")
-        task_notizen = self.Notizen_feld.get("0.0", "end")
+        task_description = self.Aufgaben_Beschreibung_t.get("0.0", "end").strip()
+        task_notizen = self.Notizen_feld.get("0.0", "end").strip()
         self.Zeit = time.strftime("%H:%M:%S")
         self.Datum_fertsch = self.Datum_fertsch_e.get()
 
         if task_name:
-            if task_description == "":
+            if task_description == "" or None:
                 task_description = "-"
-            if task_notizen == "":
+            if task_notizen == "" or None:
                 task_notizen = "-"
             print(f"Hier haste die scheiße ma im Log: {task_notizen} und jetzt die kack beschreibung: {task_description}")
             self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': self.ID}
@@ -308,9 +307,9 @@ class TodoApp:
         self.Zeit = self.task['Uhrzeit']
         print(f"Die Uhrzeit sollte bei {self.task['Uhrzeit']} stehen.")
 
-        if not task_description:
+        if task_description == "" or None:
             task_description = "-"
-        if not task_notizen:
+        if task_notizen == "" or None:
             task_notizen = "-"
         self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': ID_der_gewählten_Aufgabe}
         self.save_task(self.task)
