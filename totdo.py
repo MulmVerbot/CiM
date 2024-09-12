@@ -13,7 +13,7 @@ import re
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Alpha 1.2.2 (2)"
+        self.Version = "Alpha 1.2.2 (3)"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
