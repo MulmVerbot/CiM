@@ -1145,7 +1145,7 @@ class Listendings:
         if self.einzelner_Eintrag:
             for eintrag in reversed(self.einzelner_Eintrag):
                 if eintrag.startswith("Uhrzeit:") and "Telefonnummer:" in eintrag:
-                    self.cim = eintrag
+                    self.cim = eintrag      # WARUM WERDEN DIE VARS HIER WIEDER DOPPELT BELEGT?????
                     self.letzter_eintrag_text = eintrag
                     break
             else:
