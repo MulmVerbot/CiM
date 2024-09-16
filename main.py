@@ -2362,7 +2362,7 @@ class Listendings:
             label_widget.pack(side=Atk.LEFT)
             checkboxes.append(checkbox)
 
-        speichern_knopp = tk.CTkButton(Checklisten_Fenster, text="Als PDF Speichern", command=checkliste_als_pdf_speichern(pdf_dateiname))
+        speichern_knopp = tk.CTkButton(Checklisten_Fenster, text="Als PDF Speichern", command=lambda: checkliste_als_pdf_speichern(pdf_dateiname))
         speichern_knopp.pack()
 
 
