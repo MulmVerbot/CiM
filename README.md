@@ -21,6 +21,7 @@ Hier kommt noch bissl Zeugs dazu.
 - Das IHK Berichtsheft kann geöffnet werden
 - Es gibt ein eigenes Todo Programm, "Totdo - jetzt kannst Du Dir sogar aufschreiben wie Du Dich totarbeitest". Es können aus vergangenen Anrufen mittels One-Click Aufgaben erstellt werden.
 - Es kann eine Statistik zur Anrufhäufgigkeit als Diagram dargestellt werden.
+- Demo zum neuen Checklisten System (Im Tab unter INFO -> Checklisten)
 
 
 ## Zukünftige Features:
@@ -30,3 +31,4 @@ Hier kommt noch bissl Zeugs dazu.
 - Ki gestützte Formulierung von texten um die Weiterleitung der Stichpunkte als Email zu erleichtern und zu verschnellern
 - Der Such Algo wird noch verbessert und soll die möglichkeit bieten, mit Akronymen zu suchen (erste Alpha bereits vorhanden).
 - besseres graisches Design und UX/UI
+- Voll ausgebaute Checklisten Funktion mit eigenem Editor sowie Import/Export System
