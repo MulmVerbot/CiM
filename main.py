@@ -1,7 +1,5 @@
 try:
     import sys
-    import customtkinter as tk
-    ###import tkinter as tk
     from tkinter import ttk
     import tkinter as Atk
     from tkinter import messagebox
@@ -11,6 +9,7 @@ try:
     import webbrowser
     import time
     import os
+    import customtkinter as tk
     import csv
     import ctypes
     import json
@@ -33,10 +32,54 @@ try:
     #import matplotlib.pyplot as plt
     import pyperclip
     import numpy as np
+    from reportlab.lib.pagesizes import letter
+    from reportlab.pdfgen import canvas
+    import shutil
+    import fitz  # Das ist dieses PyMuPDF für die Checklisten, bitte frag mich nicht wie man auf so einen Namen kommt (ich weiß, meine Namen sind auch nicht besser *Hust* M.U.L.M *Hust* )
 except Exception as E:
     print(f"(FATAL) Fehler beim laden der Bibliotheken, Fehlermeldung: {E}")
     try:
         messagebox.showerror("Kritischer Fehler",f"(FATAL) Fehler beim laden der Bibliotheken, Fehlermeldung: {E}")
+        antw = messagebox.askyesno(title="CiM Paket Manager", message="Soll ich mal schauen ob ich die fehlenden Pakete installieren kann?")
+        if antw:
+            if antw == True:
+                print("ich versuche nun die fehlenden Pakete zu installieren...")
+                try:
+                    command= "pip install -r requirements.txt"
+                    if sys.platform == "win32":
+                        # Windows
+                        subprocess.run(['cmd.exe', '/c', command], check=True)
+                    elif sys.platform == "darwin":
+                        # macOS
+                        subprocess.run(['open', '-a', 'Terminal', '-n', '--args', command], check=True)
+                    else:
+                        print("Unbekanntes Betriebssystem. Dieses Programm unterstützt nur Windows und macOS.")
+                        sys.exit()
+                    
+                    print("Befehl erfolgreich ausgeführt.")
+                
+                except subprocess.CalledProcessError as e:
+                    print(f"Fehler bei der Ausführung des Befehls: {e}")
+                print("und weils so toll war das ganze nochmal in Python3.12 um ganz sicher zu gehen!")
+                try:
+                    command= "pip3.12 install -r requirements.txt"
+                    if sys.platform == "win32":
+                        # Windows
+                        subprocess.run(['cmd.exe', '/c', command], check=True)
+                    elif sys.platform == "darwin":
+                        # macOS
+                        subprocess.run(['open', '-a', 'Terminal', '-n', '--args', command], check=True)
+                    else:
+                        print("Unbekanntes Betriebssystem. Dieses Programm unterstützt nur Windows und macOS.")
+                        sys.exit()
+                    
+                    print("Befehl erfolgreich ausgeführt.")
+                
+                except subprocess.CalledProcessError as e:
+                    print(f"Fehler bei der Ausführung des Befehls: {e}")
+            elif antw == False:
+                print("na denn mach doch dei shais Aleene!")
+                sys.exit()
     except:
         sys.exit()
     sys.exit()
@@ -142,7 +185,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.0.5 (3)"
+        self.Version = "Beta 1.0.6"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -197,6 +240,11 @@ class Listendings:
         self.Asset_ordner_schnelln_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Schnellnotiz.png')
         self.Asset_ordner_durch_zu_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Durchsuchen_zu.png')
         self.Asset_totdo_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'totdo.png')
+        self.Checklisten_Ordner = os.path.join(self.Db_Ordner_pfad, 'Checklisten')
+        self.Checklisten_Speicherort_Datei = os.path.join(self.Checklisten_Ordner, 'Checkliste.pdf')
+        self.Checklisten_Option_1 = "Test Checkliste 1"
+        self.Checklisten_Option_2 = "Test Checkliste 2"
+        self.Checklisten_Option_3 = "Test Checkliste 3"
 #            _ .-') _             .-') _                   
 #           ( (  OO) )           ( OO ) )                  
 #           \     .'_  .---.,--./ ,--,'   ,--.   .-----.  
@@ -205,7 +253,7 @@ class Listendings:
 #           |  |   ' | |   ||  .     |/ | .-.  '   .'  /  
 #           |  |   / : |   ||  |\    |  ' \  |  |.'  /__  
 #           |  '--'  / |   ||  | \   |  \  `'  /|       | 
-#           `-------'  `---'`--'  `--'   `----' `-------'  <-2024->
+#           `-------'  `---'`--'  `--'   `----' `-------'  <-2023 - 2024->
         
         try: ## das hier sind die Bilder
             self.Bearbeiten_Bild = tk.CTkImage(Image.open(self.Asset_ordner_beb_pfad))
@@ -518,6 +566,7 @@ class Listendings:
         self.Bearbeiten_Menu.add_command(label="Alle Einträge löschen", command=self.alles_löschen)
         self.Bearbeiten_Menu.add_command(label="JSON Explorer öffnen", command=self.JSON_Explorer_öffnen)
         self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results_vor)
+        self.menudings.add_command(label="Checklisten...", command=self.Checkboxen_dingsen)
         #self.Suchen_Menu.add_command(label="Sehr genaue Suche nutzen (Suche 3.0)(Beta)", command=self.frage_nach_string_suche3)
         
         try:
@@ -2259,6 +2308,66 @@ class Listendings:
             ei = "Das ändern des ListenDings Pfades hat nicht geklappt, ich hab aber auch keine Ahnung wieso, versuch mal den Text hier zu entziffern: " , e
             messagebox.showerror(title="Fehler", message=ei)
 
+    def Checkboxen_dingsen(self):  # Das zukünftige Checklisten Feature
+        pdf_dateiname = self.Checklisten_Speicherort_Datei
+        def checkliste_als_pdf_speichern(pdf_dateiname):
+            print("checkliste_als_pdf_speichern(def)")
+            Kunde = "Test" # hier dann später der Name des Kunden aus welchem man die Checkliste Importiert hat oder für welchen man diese erstellt hat // Todo: editor für checklisten bauen 
+            pdf_dateiname = "Checklisten_Export.pdf"
+            c = canvas.Canvas(pdf_dateiname, pagesize=letter)
+            width, height = letter
+            
+            y_position = height - 50
+            for label, checkbox in zip(labels, checkboxes):
+                checkbox_status = "✔" if  checkbox.get() else "X"
+                c.drawString(100, y_position, f"{label}: {checkbox_status}")
+                y_position -= 20
+            c.save()
+            print("PDF gespeichert.")
+            webbrowser.open(pdf_dateiname)
+            ''' pdf_metadaten_bearbeiten(pdf_dateiname, Kunde) # Das bearbeiten der Metadaten geht noch nicht..
+
+        def pdf_metadaten_bearbeiten(pdf_dateiname, Kunde):
+            print("beabeite nun die Metadaten der PDF")
+            doc = fitz.open(pdf_dateiname)
+            # Metadaten ändern
+            doc.metadata = {
+                "title": "Checkbox Status",
+                "author": "M.U.L.M",
+                "subject": Kunde,
+                "keywords": "PDF, Checkliste, CiM"
+            }
+            # Originaldatei durch temporäre Datei ersetzen
+            doc.save("Checkliste_aus_dem_CiM.pdf", incremental=True)
+            doc.close()'''
+            
+            
+
+        print("Checklisten_aufmachen_fenster(def)")
+        Checklisten_Fenster = tk.CTkToplevel()
+        width = 720
+        height = 540
+        Checklisten_Fenster.geometry(f"{width}x{height}")
+
+        labels = [self.Checklisten_Option_1 , self.Checklisten_Option_2, self.Checklisten_Option_3]
+        checkboxes = []
+
+        for label in labels:
+            frame = tk.CTkFrame(Checklisten_Fenster)
+            frame.pack(pady=5)
+
+            label_widget = tk.CTkLabel(frame, text=label)
+            checkbox = tk.CTkCheckBox(frame, text="")
+            checkbox.pack(side=Atk.LEFT)
+            label_widget.pack(side=Atk.LEFT)
+            checkboxes.append(checkbox)
+
+        speichern_knopp = tk.CTkButton(Checklisten_Fenster, text="Als PDF Speichern", command=checkliste_als_pdf_speichern(pdf_dateiname))
+        speichern_knopp.pack()
+
+
+        
+        
    
     
     def Netzlaufwerk_speichern(self):

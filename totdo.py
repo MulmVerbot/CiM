@@ -287,7 +287,7 @@ class TodoApp:
              #   pass
                 
         
-    def task_update(self, event): # Das bearbeite speichern
+    def task_update(self): # Das bearbeite speichern
         print("task_updatae(def)")
         ID_der_gewählten_Aufgabe = None
         ID_der_gewählten_Aufgabe = None
