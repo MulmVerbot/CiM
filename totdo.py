@@ -21,6 +21,7 @@ class TodoApp:
         self.Todo_offen = False
         self.Programm_läuft = True
         self.Mod_Suche_aktiv = True
+        self.Autospeichern = True
         self.Benutzerordner = os.path.expanduser('~')
         self.tasks_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Db')
         self.tasks_pfad_datei = os.path.join(self.tasks_pfad, 'tasks.json')
@@ -63,6 +64,9 @@ class TodoApp:
         self.thread_CiM = threading.Timer(2, self.Mod_suche)
         self.thread_CiM.daemon = True
         self.thread_CiM.start()
+        #self.thread_autospeichern = threading.Timer(1, self.auto_speichern)
+        #self.thread_autospeichern.daemon = True
+        #self.thread_autospeichern.start()
 
         try:
             if not os.path.exists(self.tasks_pfad):
@@ -84,6 +88,7 @@ class TodoApp:
         self.Listennamen_laden()
         self.todo_aufmachen()
         self.fake_laden()
+        self.todo_r_dispawn()
 
     def ID_laden(self):
         try:
@@ -166,8 +171,8 @@ class TodoApp:
         self.todo_frame_rechts.place(x=1520, y=0)
         self.todo_frame_einz = tk.CTkScrollableFrame(self.root, width=1300, height=800, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
         self.todo_frame_einz.place(x=200, y=100)
-        self.Aufgabe_hinzufuegen_Knopp = tk.CTkButton(self.todo_frame_rechts, text="Aufgabe erstellen", fg_color=self.f_bg, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1)
-        self.Aufgabe_hinzufuegen_Knopp.bind('<Button-1>', self.create_task_button_vor)
+        self.Aufgabe_hinzufuegen_Knopp = tk.CTkButton(self.todo_frame_rechts, text="Änderrungen speichern", fg_color=self.f_bg, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1)
+        self.Aufgabe_hinzufuegen_Knopp.bind('<Button-1>', self.task_update_knopp)
         self.root.bind('<Return>', self.create_task_button_vor)
         self.Aufgabe_hinzufuegen_Knopp.place(x=200,y=930)
         self.Zhe_Clock = tk.CTkLabel(self.todo_frame_links, text=self.Zeit, text_color="White")
@@ -191,6 +196,9 @@ class TodoApp:
     def info(self):
         print("Programmiert von Maximilian Becker")
         messagebox.showinfo(title=self.Programm_Name, message=f"{self.Programm_Name}\nProgrammiert von: Maximilian Becker\n Version: {self.Version}\nTeil des Listendings Sets\n2024")
+
+    def task_update_knopp(self, event):
+        self.task_update()
 
     def Uhr(self):
         print("Thread gestartet: Uhr(def)")
@@ -290,7 +298,7 @@ class TodoApp:
     def task_update(self): # Das bearbeite speichern
         print("task_updatae(def)")
         ID_der_gewählten_Aufgabe = None
-        ID_der_gewählten_Aufgabe = None
+        task_name = None
 
         task = self.task_übergabe
         ID_der_gewählten_Aufgabe = task['id']
@@ -298,12 +306,12 @@ class TodoApp:
         tasks = [t for t in tasks if t['id'] != task['id']]
         with open(self.TASK_FILE, 'w') as file:
             json.dump(tasks, file, indent=4)
-        task_name = None
-        task_name = self.Aufgaben_Titel_t.get("0.0", "end")
+        
+        task_name = self.Aufgaben_Titel_t.get("0.0", "end").strip()
         if not task_name or task_name == "":
             task_name = "Aufgabe"
-        task_description = self.Aufgaben_Beschreibung_t.get("0.0", "end")
-        task_notizen = self.Notizen_feld.get("0.0", "end")
+        task_description = self.Aufgaben_Beschreibung_t.get("0.0", "end").strip()
+        task_notizen = self.Notizen_feld.get("0.0", "end").strip()
         self.Zeit = self.task['Uhrzeit']
         print(f"Die Uhrzeit sollte bei {self.task['Uhrzeit']} stehen.")
 
@@ -314,8 +322,8 @@ class TodoApp:
         self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': ID_der_gewählten_Aufgabe}
         self.save_task(self.task)
         self.create_task_button(self.task)
+        self.refresh_tasks()
         self.button.invoke()
-        self.Aufgaben_erstellen_akt(event)
         
 
     def create_task_button(self, task):
@@ -386,8 +394,8 @@ class TodoApp:
 
     def Aufgaben_erstellen_akt(self, event):   # Das hier wird immer ausgeführt wenn ich aufs Fenster clicke um die Enter Taste zu reaktivieren und zukünftig die Aufgabe gleich mit zu speichern
         print("Aufgaben_erstellen_akt(def)")
+        #self.task_update()
         self.root.bind('<Return>', self.create_task_button_vor)
-        #self.task_update(event)
         self.Aufgaben_Titel_e.unbind("<FocusIn>")
         self.Notizen_feld.unbind("<FocusIn>")
         self.Aufgaben_Titel_t.unbind("<FocusIn>")
@@ -420,6 +428,13 @@ class TodoApp:
 
         self.Uhrzeit_text_l = tk.CTkLabel(self.todo_frame_rechts, text=f"Aufgabe von: {task['Uhrzeit']}Uhr", text_color="White")
         self.Uhrzeit_text_l.place(x=20,y=60)
+    
+    def auto_speichern(self):
+        print("Thread fürs autospeichern läuft.")
+        while self.Autospeichern == True:
+            time.sleep(1)
+            self.task_update()
+        print("Thread fürs autospeichern beendet.")
 
 
     def aufgabe_loeschen_frage(self):
