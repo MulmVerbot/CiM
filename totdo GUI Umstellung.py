@@ -124,7 +124,7 @@ class TodoApp:
             with open(self.Listenname_speicherort, "r") as ln:
                 self.Listenname = ln.read()
             self.Listenname_l = tk.CTkLabel(self.root, text=self.Listenname, font=self.Schriftart, text_color="DarkSlateGray1")
-            self.Listenname_l.place(x=220,y=50)
+            #self.Listenname_l.place(x=220,y=50)
         except:
             print("konnte den Listennamen nicht lesen.")
             self.Listenname = "Dings"
@@ -144,7 +144,7 @@ class TodoApp:
         print("lade nun die ganzen Konzept Sachen")
         y1 = 100
         i = 1
-        while i <= 10:
+        while i <= 20:
             l = tk.CTkLabel(self.todo_frame_links, text=f"{i}. Liste (zukünftig anclickbar)", text_color="White")
             l.place(x=10,y=y1)
             y1 += 40
@@ -166,21 +166,35 @@ class TodoApp:
         self.Einstellungen.add_command(label="Liste aktualisieren", command=self.refresh_tasks)
         self.Einstellungen.add_command(label="Aufgabe aktualisieren", command=self.task_update)
         self.Einstellungen.add_command(label="GUI Neustarten", command=self.neustarten)
-        self.todo_frame_links = tk.CTkFrame(self.root, width=200, height=1000, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
-        self.todo_frame_links.place(x=0, y=0)
-        self.todo_frame_rechts = tk.CTkFrame(self.root, width=400, height=1000, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
-        self.todo_frame_rechts.place(x=1520, y=0)
-        self.todo_frame_einz = tk.CTkScrollableFrame(self.root, width=1300, height=800, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
-        self.todo_frame_einz.place(x=200, y=100)
-        self.Aufgabe_hinzufuegen_Knopp = tk.CTkButton(self.todo_frame_rechts, text="Änderrungen speichern", fg_color=self.f_bg, border_color=self.gruen_hell, border_width=1, text_color="White", hover_color=self.f_r_1)
+
+        self.todo_frame_links = tk.CTkFrame(self.root, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
+        self.todo_frame_rechts = tk.CTkFrame(self.root, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
+        self.todo_frame_einz = tk.CTkScrollableFrame(self.root, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
+        self.todo_frame_links.grid(row=1, column=1, padx=(0,0), pady=0, sticky="nsw")  # Links von oben nach unten
+        self.todo_frame_einz.grid(row=1, column=2, padx=(0,0), pady=0, sticky="nsew")  # Mittlerer Frame ohne Abstand zu den Seiten
+        self.todo_frame_rechts.grid(row=1, column=3, padx=(0,0), pady=0, sticky="nswe")  # Rechts ohne Lücke, füllt bis zum Rand
+
+        # Entry unterm mittleren Frame
+        self.Aufgaben_Titel_e = tk.CTkEntry(self.root, text_color="White", fg_color=self.f_e, border_color=self.f_border, border_width=1, corner_radius=5)
+        self.Aufgaben_Titel_e.grid(row=2, column=2, padx=(0,0), pady=(10,15), sticky="ew")  # Entry unter dem mittleren Frame
+
+        # Konfiguriere das Grid, damit es sich bei Größenänderungen anpasst
+        self.root.grid_columnconfigure(1, weight=0)  # Linker Frame bleibt fest
+        self.root.grid_columnconfigure(2, weight=3)  # Mittlerer Frame (self.todo_frame_einz) bekommt den meisten Platz
+        self.root.grid_columnconfigure(3, weight=1)  # Rechter Frame passt sich an und füllt bis zum Fensterrand
+        self.root.grid_rowconfigure(1, weight=10)    # Erste Zeile (Frames) passt sich der Fenstergröße an
+        self.root.grid_rowconfigure(2, weight=0)     # Zweite Zeile (Entry) bleibt fest
+
+        self.Aufgabe_hinzufuegen_Knopp = tk.CTkButton(self.root, text="Änderungen speichern", fg_color=self.f_bg, border_color=self.gruen_hell, border_width=1, text_color="White", hover_color=self.f_r_1)
+        self.Aufgabe_entfernen = tk.CTkButton(self.root, text="Aufgabe entfernen", command=self.aufgabe_loeschen_frage, fg_color=self.f_bg, border_color=self.Border_Farbe, border_width=1, text_color="White", hover_color=self.f_r_1)
+        self.Aufgabe_hinzufuegen_Knopp.grid(row=2, column=3, padx=(10,10), pady=(10,15), sticky="w")
+        #self.Aufgabe_entfernen.grid(row=2, column=3, padx=(10,10), pady=(10,15), sticky="w") # das bleibt ersma weg weil das feature eh ersetzt wird.
+        
         self.Aufgabe_hinzufuegen_Knopp.bind('<Button-1>', self.task_update_knopp)
         self.root.bind('<Return>', self.create_task_button_vor)
-        self.Aufgabe_hinzufuegen_Knopp.place(x=200,y=930)
         self.Zhe_Clock = tk.CTkLabel(self.todo_frame_links, text=self.Zeit, text_color="White")
         self.Zhe_Clock.place(x=10,y=10)
-        task = {'name': " ", 'description': "", 'Uhrzeit': "Fake ", 'notizen': "", 'id': self.ID}
-        self.Aufgaben_Titel_e = tk.CTkEntry(self.root, width=1300, height=30, text_color="White", fg_color=self.f_e, border_color=self.f_border, border_width=1, corner_radius=5)
-        self.Aufgaben_Titel_e.place(x=210,y=940)
+        
         self.Aufgaben_Titel_e.bind("<FocusIn>", self.entry_rein)
         self.root.bind("<Double-1>", self.entry_rein)
         try:
@@ -190,8 +204,8 @@ class TodoApp:
 
         self.Datum_fertsch_e = tk.CTkEntry(self.todo_frame_rechts, text_color="White") # hier hinter noch die ganze funktionalität mit einbauen
         self.Datum_fertsch_e.place(x=250,y=840)
-
-        self.show_task(task)
+        #task = {'name': " ", 'description': "", 'Uhrzeit': "Fake ", 'notizen': "", 'id': self.ID}
+        #self.show_task(task)
         self.load_tasks()
 
     def info(self):
@@ -404,30 +418,29 @@ class TodoApp:
     def show_task(self, task): # Das hier wird jedesmal ausgeführt wenn jemand eine Aufgabe anclickt
         print("Aufgabe anzeigen")
         self.task = task
-        self.task_übergabe = task  ## Das hier ist auch wieder mega dumm gelöst weil die var drüber bereits existert, ich bin nur gerade zu faul zu gucken ob die zu fürhezeitig wieder freigegeben wird. Sorry zukunfst Max!
+        self.task_übergabe = task 
+        ## Das hier oben ist auch wieder mega dumm gelöst weil die var drüber bereits existert, 
+        ## ich bin nur gerade zu faul zu gucken ob die zu fürhezeitig wieder freigegeben wird. Sorry zukunfst Max!
         self.todo_r_dispawn()
-        self.Aufgabe_entfernen = tk.CTkButton(self.todo_frame_rechts, text="Aufgabe entfernen", command=self.aufgabe_loeschen_frage, fg_color=self.f_bg, border_color=self.Border_Farbe, border_width=1, text_color="White", hover_color=self.f_r_1)
+        
         self.Notizen_feld = tk.CTkTextbox(self.todo_frame_rechts, width=320, height=440, text_color="White", fg_color=self.f_r_1, wrap="word", border_width=0)
-        self.Aufgabe_entfernen.place(x=20,y=930)
+        self.ID_label = tk.CTkLabel(self.todo_frame_rechts, text=f"Aufgaben-ID:  {task['id']}", text_color="White", font=self.Schriftart_n)
+        self.Aufgaben_Titel_t = tk.CTkTextbox(self.todo_frame_rechts, width=330, height=40, text_color="White", fg_color=self.f_r_1, wrap="word", border_width=0, activate_scrollbars=False)
+        self.Aufgaben_Beschreibung_t = tk.CTkTextbox(self.todo_frame_rechts, width=330, height=120, text_color="White", fg_color=self.f_r_1, wrap="word", border_width=0)
+        self.Aufgaben_Beschreibung_l = tk.CTkLabel(self.todo_frame_rechts, text="Beschreibung:", text_color="White")
+        self.Aufgaben_Notizen_l = tk.CTkLabel(self.todo_frame_rechts, text="Notizen:")
+        self.Uhrzeit_text_l = tk.CTkLabel(self.todo_frame_rechts, text=f"Aufgabe von: {task['Uhrzeit']}Uhr", text_color="White")
         self.Notizen_feld.place(x=20,y=300)
         self.Notizen_feld.insert(tk.END, f"{task['notizen']}")
-        self.ID_label = tk.CTkLabel(self.todo_frame_rechts, text=f"Aufgaben-ID:  {task['id']}", text_color="White", font=self.Schriftart_n)
         self.ID_label.place(x=230,y=60)
-
-        self.Aufgaben_Titel_t = tk.CTkTextbox(self.todo_frame_rechts, width=330, height=40, text_color="White", fg_color=self.f_r_1, wrap="word", border_width=0, activate_scrollbars=False) # , font=self.Schriftart_n
         self.Aufgaben_Titel_t.place(x=20,y=20) 
         self.Aufgaben_Titel_t.insert(tk.END, f"{task['name']}")
-        self.Aufgaben_Beschreibung_t = tk.CTkTextbox(self.todo_frame_rechts, width=330, height=120, text_color="White", fg_color=self.f_r_1, wrap="word", border_width=0)
         self.Aufgaben_Beschreibung_t.place(x=20,y=110)
-        self.Aufgaben_Beschreibung_l = tk.CTkLabel(self.todo_frame_rechts, text="Beschreibung:", text_color="White")
         self.Aufgaben_Beschreibung_l.place(x=20,y=82)
-        self.Aufgaben_Notizen_l = tk.CTkLabel(self.todo_frame_rechts, text="Notizen:")
         self.Aufgaben_Notizen_l.place(x=20,y=270)
         self.Aufgaben_Beschreibung_t.insert(tk.END, f"{task['description']}")
         self.Aufgaben_Beschreibung_t.bind("<FocusIn>", self.Aufgaben_erstelle_deak)
         self.Notizen_feld.bind("<FocusIn>", self.Aufgaben_erstelle_deak)
-
-        self.Uhrzeit_text_l = tk.CTkLabel(self.todo_frame_rechts, text=f"Aufgabe von: {task['Uhrzeit']}Uhr", text_color="White")
         self.Uhrzeit_text_l.place(x=20,y=60)
     
     def auto_speichern(self):
@@ -491,7 +504,7 @@ class TodoApp:
                 pass
             time.sleep(1)
     
-    def Checklisten_editor_start(self): ## Das mach ich weiter wenn die GUI endlich responsive wien trockener alki is
+    def Checklisten_editor_start(self):
         print("Checklisten_editor_start(def)")
         Checklisten_Editor_Fenster = tk.CTkToplevel()
 
@@ -545,8 +558,8 @@ class TodoApp:
 
 if __name__ == "__main__":
     root = tk.CTk()
-    width = 1920
-    height = 1000
+    width = 1000
+    height = 600
     def mittig_fenster(root, width, height):
         fenster_breite = root.winfo_screenwidth()
         fenster_hoehe = root.winfo_screenheight()
