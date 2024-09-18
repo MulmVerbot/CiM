@@ -13,7 +13,7 @@ import re
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Alpha 1.2.4"
+        self.Version = "Alpha 1.2.4 (1)"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -196,10 +196,10 @@ class TodoApp:
         self.Zhe_Clock = tk.CTkLabel(self.todo_frame_links, text=self.Zeit, text_color="White")
         self.Zhe_Clock.place(x=10,y=10)
         
-        self.Aufgaben_Titel_e.bind("<FocusIn>", self.entry_rein)
-        self.root.bind("<Double-1>", self.entry_rein)
+        #self.Aufgaben_Titel_e.bind("<FocusIn>", self.entry_rein)
+        #self.root.bind("<Double-1>", self.entry_rein)
         try:
-            self.Aufgaben_Beschreibung_t.delete("0.0", "end")
+            self.Aufgaben_Beschreibung_t.delete("0.0", "end")  # keine Ahnung was das hier macht, aber ich lass das einfach mal hier so stehen.
         except:
             pass
 
@@ -269,11 +269,23 @@ class TodoApp:
         task_name = self.Aufgaben_Titel_e.get().strip()
         if task_name == None:
             task_name = self.Aufgaben_Titel_t.get()
-        task_description = self.Aufgaben_Beschreibung_t.get("0.0", "end").strip()
-        task_notizen = self.Notizen_feld.get("0.0", "end").strip()
+        try:
+            task_description = self.Aufgaben_Beschreibung_t.get("0.0", "end").strip()
+        except:
+            print("desc war leeer")
+            task_description = ""
+        try:
+            task_notizen = self.Notizen_feld.get("0.0", "end").strip()
+        except:
+            print("Notizen war leer")
+            task_notizen = ""
         self.Zeit = time.strftime("%H:%M:%S")
-        self.Datum_fertsch = self.Datum_fertsch_e.get()
-
+        try:
+            self.Datum_fertsch = self.Datum_fertsch_e.get()
+        except:
+            print("Die Zeit existiert nicht.")
+            self.Datum_fertsch = "Die Zeit existiert nicht."
+    
         if task_name:
             if task_description == "" or None:
                 task_description = "-"
@@ -283,10 +295,13 @@ class TodoApp:
             self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': self.ID}
             self.ID += 1
             self.ID_speichern()
-            self.Notizen_feld.delete("0.0", tk.END)
-            self.Aufgaben_Titel_e.delete(0, tk.END)
-            self.Aufgaben_Beschreibung_t.delete("0.0", tk.END)
-            self.Aufgaben_Titel_t.delete("0.0", tk.END)
+            self.Aufgaben_Titel_e.delete(0, tk.END) # das hier wird immmer klappen weil... naja. ohne Aufgabentitel auch keine Aufgabe!
+            try:
+                self.Notizen_feld.delete("0.0", tk.END)
+                self.Aufgaben_Beschreibung_t.delete("0.0", tk.END)
+                self.Aufgaben_Titel_t.delete("0.0", tk.END)
+            except: # Das failed eigentlich nur wenn man seit dem das Programm offen ist nie eine Aufgabe offen hatte == Die Felder wurden nie gespawned, das heißt: wenn eins failed, würden es auch die anderen.
+                pass
             self.save_task(self.task)
             self.create_task_button(self.task)
             self.button.invoke()
