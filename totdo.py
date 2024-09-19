@@ -13,7 +13,7 @@ import re
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Alpha 1.2.4 (1)"
+        self.Version = "Alpha 1.2.4 (2)"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -196,8 +196,8 @@ class TodoApp:
         self.Zhe_Clock = tk.CTkLabel(self.todo_frame_links, text=self.Zeit, text_color="White")
         self.Zhe_Clock.place(x=10,y=10)
         
-        #self.Aufgaben_Titel_e.bind("<FocusIn>", self.entry_rein)
-        #self.root.bind("<Double-1>", self.entry_rein)
+        self.Aufgaben_Titel_e.bind("<FocusIn>", self.entry_rein)
+        self.root.bind("<Double-1>", self.entry_rein)
         try:
             self.Aufgaben_Beschreibung_t.delete("0.0", "end")  # keine Ahnung was das hier macht, aber ich lass das einfach mal hier so stehen.
         except:
@@ -374,7 +374,7 @@ class TodoApp:
         print("despawn durch entry")
         self.todo_r_dispawn()
         self.todo_r_dispawn() # das ganze hier wird zweimal gemacht damit FALLS ich mal vergessen hab was zu entfernen / es da irgendwie nen bug gibt, ich sicher gehen kann dass alles verschwindet. entfern die Zeile mal und schau was passiert! :P
-        self.Aufgaben_erstellen_akt(event)
+        #self.Aufgaben_erstellen_akt(event)
 
     def todo_r_dispawn(self):
         try: ### Bitte frag nicht wie es zu diesem shais hier gekommen ist...
@@ -460,8 +460,8 @@ class TodoApp:
         self.Aufgaben_Notizen_l.grid(row=5, column=0, padx=10, pady=(5, 5), sticky="w")   # "Notizen"-Label
         self.Notizen_feld.grid(row=6, column=0, padx=10, pady=(5, 10), sticky="ew")       # Notizenfeld am Ende
         self.Aufgaben_Beschreibung_t.insert(tk.END, f"{task['description']}")
-        self.Aufgaben_Beschreibung_t.bind("<FocusIn>", self.Aufgaben_erstelle_deak)
-        self.Notizen_feld.bind("<FocusIn>", self.Aufgaben_erstelle_deak)
+        #self.Aufgaben_Beschreibung_t.bind("<FocusIn>", self.Aufgaben_erstelle_deak)
+        #self.Notizen_feld.bind("<FocusIn>", self.Aufgaben_erstelle_deak)
         
     
     def auto_speichern(self):
