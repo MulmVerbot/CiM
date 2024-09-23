@@ -566,7 +566,8 @@ class Listendings:
         self.Bearbeiten_Menu.add_command(label="Alle Einträge löschen", command=self.alles_löschen)
         self.Bearbeiten_Menu.add_command(label="JSON Explorer öffnen", command=self.JSON_Explorer_öffnen)
         self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results_vor)
-        self.menudings.add_command(label="Checklisten...", command=self.Checkboxen_dingsen)
+        self.menudings.add_command(label="Checklisten (Demo)...", command=self.Checkboxen_dingsen)
+        self.menudings.add_command(label="Email Baukasten (Demo)...", command=self.email_baukasten)
         #self.Suchen_Menu.add_command(label="Sehr genaue Suche nutzen (Suche 3.0)(Beta)", command=self.frage_nach_string_suche3)
         
         try:
@@ -733,7 +734,12 @@ class Listendings:
         self.weiterleitung_laden()
         print("[-init-] Die Wish init is vorbei.")
 
-    def einf_f_schnellnotizen_switch(self, event): # Das Dings hier ist relativ obsolete, weil die event binder in der init deaktiviert sind. (ca Zeile: 480, Commit vom 4.9.24)
+    def email_baukasten(self):
+        print("email_baukasten(def)")
+
+        self.Email_Text_Widget = tk.CTkTextbox(width=200,height=100)
+
+    def einf_f_schnellnotizen_switch(self, event): # Das Dings hier ist relativ obsolete, weil die event binder in der init deaktiviert sind. (ca Zeile: 526, Commit vom 4.9.24)
         print("einf_f_schnellnotizen_switch(def)")
         if self.Einf_aktiv == False:
             if self.Windows == True:  #  Das gegenteil von dem was da oben steht
