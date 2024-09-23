@@ -169,9 +169,12 @@ class Listendings:
                     self.terminal = sys.stdout
                     self.log = open(log_pfad, "w+")
                 except:
-                    print("heute keine Logs")
+                    pass
         def write(self, message):
-            self.terminal.write(message)
+            try:
+                self.terminal.write(message)
+            except:
+                pass
             try:
                 self.log.write(message)
             except:
@@ -1405,8 +1408,6 @@ class Listendings:
                     
     def Menu_anzeige_wechseln(self): ############# Hier kommt der ganze Text für das Menü rein.
         print("Menu_anzeige_wechseln(def)")
-
-       
         if self.Menü_da == True:
             print("menü == true(Menü war offen)")
             # Menu wird jetzt nicht mehr da sein.
@@ -1455,7 +1456,6 @@ class Listendings:
         best_bl_add = tk.CTkButton(self.Blacklist_bearbeiten, text="Kontakt speichern",command=self.zeugs_blacklist)
         self.t_nummer_bl = tk.CTkEntry(self.Blacklist_bearbeiten, placeholder_text="Telefonnummer")
         self.kunde_entry_bl = tk.CTkEntry(self.Blacklist_bearbeiten, placeholder_text="Name der Person")
-
         best_bl_add.pack()
         self.t_nummer_bl.pack()
         self.kunde_entry_bl.pack()
