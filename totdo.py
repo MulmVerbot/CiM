@@ -13,7 +13,7 @@ import re
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Alpha 1.2.4 (3)"
+        self.Version = "Beta 1.0"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -374,7 +374,7 @@ class TodoApp:
         print("despawn durch entry")
         self.todo_r_dispawn()
         self.todo_r_dispawn() # das ganze hier wird zweimal gemacht damit FALLS ich mal vergessen hab was zu entfernen / es da irgendwie nen bug gibt, ich sicher gehen kann dass alles verschwindet. entfern die Zeile mal und schau was passiert! :P
-        #self.Aufgaben_erstellen_akt(event)
+        self.Aufgaben_erstellen_akt(event)
 
     def todo_r_dispawn(self):
         try: ### Bitte frag nicht wie es zu diesem shais hier gekommen ist...
@@ -428,9 +428,8 @@ class TodoApp:
 
     def Aufgaben_erstellen_akt(self, event):   # Das hier wird immer ausgeführt wenn ich aufs Fenster clicke um die Enter Taste zu reaktivieren und zukünftig die Aufgabe gleich mit zu speichern
         print("Aufgaben_erstellen_akt(def)")
-        #self.task_update()
         self.root.bind('<Return>', self.create_task_button_vor)
-        self.Aufgaben_Titel_e.unbind("<FocusIn>")
+        self.Aufgaben_Titel_t.unbind("<FocusIn>")
         self.Notizen_feld.unbind("<FocusIn>")
         self.Aufgaben_Titel_t.unbind("<FocusIn>")
 
@@ -460,8 +459,8 @@ class TodoApp:
         self.Aufgaben_Notizen_l.grid(row=5, column=0, padx=10, pady=(5, 5), sticky="w")   # "Notizen"-Label
         self.Notizen_feld.grid(row=6, column=0, padx=10, pady=(5, 10), sticky="ew")       # Notizenfeld am Ende
         self.Aufgaben_Beschreibung_t.insert(tk.END, f"{task['description']}")
-        #self.Aufgaben_Beschreibung_t.bind("<FocusIn>", self.Aufgaben_erstelle_deak)
-        #self.Notizen_feld.bind("<FocusIn>", self.Aufgaben_erstelle_deak)
+        self.Aufgaben_Beschreibung_t.bind("<FocusIn>", self.Aufgaben_erstelle_deak)
+        self.Notizen_feld.bind("<FocusIn>", self.Aufgaben_erstelle_deak)
         
     
     def auto_speichern(self):
