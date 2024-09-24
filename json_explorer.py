@@ -8,7 +8,15 @@ class JSONTreeView:
         self.root = root
         self.Version = "1.0.1"
         self.root.title("JSON Datei betracher " + self.Version)
-        
+#            _ .-') _             .-') _                   
+#           ( (  OO) )           ( OO ) )                  
+#           \     .'_  .---.,--./ ,--,'   ,--.   .-----.  
+#           ,`'--..._)/_   ||   \ |  |\  /  .'  / ,-.   \ 
+#           |  |  \  ' |   ||    \|  | ).  / -. '-'  |  | 
+#           |  |   ' | |   ||  .     |/ | .-.  '   .'  /  
+#           |  |   / : |   ||  |\    |  ' \  |  |.'  /__  
+#           |  '--'  / |   ||  | \   |  \  `'  /|       | 
+#           `-------'  `---'`--'  `--'   `----' `-------'  <-2024 - 2024->
         self.tree = ttk.Treeview(root)
         self.tree.pack(expand=True, fill='both')
         scrollbar = Atk.Scrollbar(self.tree, orient=Atk.VERTICAL)
