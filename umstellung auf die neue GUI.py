@@ -746,17 +746,23 @@ class Listendings:
             messagebox.showinfo(title="Fehler", message="Ein Unbekannter Fehler ist aufgetreten beim Versuch während des Programmstarts die bisherigen aufzeichnungen zu laden, es könnte sein dass das Programm trotzdem fehlerfrei funktioniert.")
             #self.ausgabe_text.configure(state='disabled')'''
         # Methode zum Laden der Liste
-        def lade_liste():
+        def lade_liste(): 
+            ## Todo: Das muss noch gespeichert werden
+            ## Todo: die ausgabe der bearbeiten_knopp muss dann auch immer bei jedem drücken die ganzen sachen nehmen und speichern
+            ## Todo: ich muss checken wann einer in son ding hier reingeht damit ich die enter Taste aktivieren/deaktivieren kann
+            ## Todo: den ganzen mist noch ordentlich platzieren
+            ## Todo: das hier dann mal noch auf .grid umsneaken
+            ## Todo: mal noch schauen wies dann mit der Performance aussieht und ne große Liste von nem Tag laden, an dem viel loswar, gerade auch beim Programmstart.
             
             def parse_und_einfuegen(text):
                 # In verschiedene Abschnitte aufteilen (pro Eintrag)
-                eintraege = text.split("\n\n")  # Annahme: Einträge sind durch doppelte Zeilenumbrüche getrennt
+                eintraege = text.split("\n\n")
 
                 for eintrag in eintraege:
                     if not eintrag.strip():  # Falls leerer Eintrag, überspringen
                         continue
 
-                    # Die Zeilen des Eintrags in Variablen aufteilen
+                    # Die Zeilen des Eintrags in Vars aufteilen
                     try:
                         zeilen = eintrag.split("\n")
                         uhrzeit = zeilen[0].replace("Uhrzeit: ", "")
@@ -777,8 +783,8 @@ class Listendings:
                         textbox_telefonnummer = tk.CTkEntry(Becher_im_Becher, height=5, width=150)
                         textbox_weiterleitung = tk.CTkEntry(Becher_im_Becher, height=5, width=150)
                         textbox_jemandbestimmtes = tk.CTkEntry(Becher_im_Becher)
-
-                        textbox_uhrzeit.pack(padx=10,pady=1)
+                    
+                        textbox_uhrzeit.pack(padx=10,pady=1) 
                         textbox_anrufer.pack(padx=10,pady=1)
                         textbox_problem.pack(padx=10,pady=1)
                         textbox_info.pack(padx=10,pady=1)
@@ -786,7 +792,7 @@ class Listendings:
                         textbox_weiterleitung.pack(padx=10,pady=1)
                         textbox_jemandbestimmtes.pack(padx=10,pady=1)
 
-                        # Werte in die jeweiligen Textboxen einfügen
+                    
                         textbox_uhrzeit.insert(tk.END, uhrzeit)
                         textbox_anrufer.insert(tk.END, anrufer)
                         textbox_problem.insert(tk.END, problem)
