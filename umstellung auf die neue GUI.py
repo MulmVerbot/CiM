@@ -817,7 +817,6 @@ class Listendings:
                 
             except FileNotFoundError:
                 print("(INFO) Die Datei Liste.txt existiert nicht")
-                messagebox.showinfo(title="Fehler", message="Die Datei konnte nicht gefunden werden.")
             except Exception as e:
                 print(f"(ERROR) Ein Fehler ist aufgetreten: {e}")
                 messagebox.showinfo(title="Fehler", message="Ein unbekannter Fehler ist aufgetreten. Das Programm funktioniert möglicherweise trotzdem fehlerfrei.")
