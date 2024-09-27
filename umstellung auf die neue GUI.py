@@ -539,13 +539,12 @@ class Listendings:
         #self.ausgabe_text = tk.CTkTextbox(master, width=1255, height=420, wrap="word", fg_color=self.Hintergrund_farbe_Text_Widget, text_color=self.Textfarbe, border_color=self.Border_Farbe, border_width=2)
         #self.ausgabe_text.configure(state='disabled')
 
-        self.Ausgabe_frame = tk.CTkScrollableFrame(master, width=1230, height=405, fg_color=self.Hintergrund_farbe_Text_Widget, border_color=self.Border_Farbe, border_width=2)
+        
         self.kunde_entry.place(x=5,y=5)
         self.problem_entry.place(x=5,y=35)
         self.info_entry.place(x=5,y=65)
         self.t_nummer.place(x=605,y=5)
         #self.ausgabe_text.place(x=0,y=100)
-        self.Ausgabe_frame.place(x=0,y=100)
         self.Anruf_Zeit.place(x=860,y=5)
         
         self.menu = Menu(root)
@@ -574,6 +573,7 @@ class Listendings:
         self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results_vor)
         self.menudings.add_command(label="Checklisten (Demo)...", command=self.Checkboxen_dingsen)
         self.menudings.add_command(label="Email Baukasten (Demo)...", command=self.email_baukasten)
+        self.menudings.add_command(label="Liste neuladen (dev)", command=self.Liste_laden_GUI)
         #self.Suchen_Menu.add_command(label="Sehr genaue Suche nutzen (Suche 3.0)(Beta)", command=self.frage_nach_string_suche3)
 
     ############################ GUI init ######################
@@ -723,9 +723,19 @@ class Listendings:
         print("[-init-] init auf wish bestellt...")
         self.Kontakte_aus_json_laden()
         self.weiterleitung_laden()
+        self.Liste_laden_GUI()
         self.aufzeichnungen_laden()
         print("[-init-] Die Wish init is vorbei.")
 
+    def Liste_laden_GUI(self):
+        print("Liste_laden_GUI(def)")
+        try:
+            self.Ausgabe_frame.place_forget()
+        except:
+            print("Despawn des Becher war nicht erfolgreich.(Das ist aber nicht schlimm)")
+        self.Ausgabe_frame = tk.CTkScrollableFrame(root, width=1230, height=405, fg_color=self.Hintergrund_farbe_Text_Widget, border_color=self.Border_Farbe, border_width=2)
+        self.Ausgabe_frame.place(x=0,y=100)
+        self.aufzeichnungen_laden() # warum lad ich eigentlich bei jedem eintrag die liste neu statt einfach nur den eintrag hinzuzufügen!???? bin ich dumm oderso?
 
 
 
@@ -773,25 +783,24 @@ class Listendings:
                         jemand_bestimmtes = zeilen[5].replace("Jemand bestimmtes sprechen: ", "")
                         weiterleitung = zeilen[6].replace("Weiterleitung: ", "")
 
-                        Becher_im_Becher = tk.CTkFrame(self.Ausgabe_frame, height=500,width=500)
-                        Becher_im_Becher.pack(padx=0,pady=10)
+                        Becher_im_Becher = tk.CTkFrame(self.Ausgabe_frame, height=1750,width=1800)
+                        Becher_im_Becher.pack(anchor="w", padx=0, pady=10)
 
-                        textbox_uhrzeit = tk.CTkEntry(Becher_im_Becher, height=5, width=150)
-                        textbox_anrufer = tk.CTkEntry(Becher_im_Becher, height=5, width=150)
+                        textbox_uhrzeit = tk.CTkEntry(Becher_im_Becher, width=250)
+                        textbox_anrufer = tk.CTkEntry(Becher_im_Becher)
                         textbox_problem = tk.CTkTextbox(Becher_im_Becher, height=100, width=350)
                         textbox_info = tk.CTkTextbox(Becher_im_Becher, height=100, width=350)
-                        textbox_telefonnummer = tk.CTkEntry(Becher_im_Becher, height=5, width=150)
-                        textbox_weiterleitung = tk.CTkEntry(Becher_im_Becher, height=5, width=150)
+                        textbox_telefonnummer = tk.CTkEntry(Becher_im_Becher)
+                        textbox_weiterleitung = tk.CTkEntry(Becher_im_Becher)
                         textbox_jemandbestimmtes = tk.CTkEntry(Becher_im_Becher)
                     
-                        textbox_uhrzeit.pack(padx=10,pady=1) 
-                        textbox_anrufer.pack(padx=10,pady=1)
-                        textbox_problem.pack(padx=10,pady=1)
-                        textbox_info.pack(padx=10,pady=1)
-                        textbox_telefonnummer.pack(padx=10,pady=1)
-                        textbox_weiterleitung.pack(padx=10,pady=1)
-                        textbox_jemandbestimmtes.pack(padx=10,pady=1)
-
+                        textbox_uhrzeit.grid(row=1, column=1, sticky="w", padx=10, pady=1)
+                        textbox_anrufer.grid(row=2, column=1, sticky="ew", padx=10, pady=1)
+                        textbox_problem.grid(row=3, column=1, sticky="ew", padx=10, pady=1)
+                        textbox_info.grid(row=4, column=1, sticky="ew", padx=10, pady=1)
+                        textbox_telefonnummer.grid(row=5, column=1, sticky="ew", padx=10, pady=1)
+                        textbox_weiterleitung.grid(row=6, column=1, sticky="ew", padx=10, pady=1)
+                        textbox_jemandbestimmtes.grid(row=7, column=1, sticky="ew", padx=10, pady=1)
                     
                         textbox_uhrzeit.insert(tk.END, uhrzeit)
                         textbox_anrufer.insert(tk.END, anrufer)
@@ -800,7 +809,6 @@ class Listendings:
                         textbox_telefonnummer.insert(tk.END, telefonnummer)
                         textbox_weiterleitung.insert(tk.END, weiterleitung)
                         textbox_jemandbestimmtes.insert(tk.END, jemand_bestimmtes)
-
                         
                     except IndexError:
                         print("Eintrag ist nicht vollständig und wurde übersprungen:", eintrag)
@@ -820,7 +828,6 @@ class Listendings:
             except Exception as e:
                 print(f"(ERROR) Ein Fehler ist aufgetreten: {e}")
                 messagebox.showinfo(title="Fehler", message="Ein unbekannter Fehler ist aufgetreten. Das Programm funktioniert möglicherweise trotzdem fehlerfrei.")
-        
         
         lade_liste()
 
@@ -2112,7 +2119,6 @@ class Listendings:
         problem = self.problem_entry.get()
         info = self.info_entry.get()
         T_Nummer = self.t_nummer.get()
-        self.ausgabe_text.configure(state='normal')
         self.zeit_string = time.strftime("%H:%M:%S")
         if self.Uhrzeit_anruf_start == None:
             self.Uhrzeit_anruf_start = "-"
@@ -2140,40 +2146,49 @@ class Listendings:
             if os.path.exists(self.Liste_mit_datum):
                 with open(self.Liste_mit_datum, "a") as f:
                     f.write(f"Uhrzeit: {self.Uhrzeit_text}\nAnrufer: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
-                with open(self.Liste_mit_datum, "r") as f:
-                    feedback_text = f.read()
-                    self.ausgabe_text.delete("1.0", tk.END)
-                    self.ausgabe_text.insert(tk.END, feedback_text)
-                self.ausgabe_text.configure(state='disabled')
-                self.ausgabe_text.see(tk.END)
-                self.Weiterleitung_an = ""
-                self.Uhrzeit_anruf_ende = None
-                self.optionmenu.set("Keine Weiterleitung")
-                self.optionmenu1.set("Mit Wem sprechen?")
-                self.kunde_entry.focus()
-                self.zeugs()
-                # jetzt wurde das ding fertig in eine neue Datei versendet
             else:
-                print("(INFO) Liste zum beschreiben existiert bereits.")
+                #print("(INFO) Liste zum beschreiben existiert bereits.")
                 with open(self.Liste_mit_datum, "w+") as f:
                     f.write(f"Uhrzeit: {self.Uhrzeit_text}\nAnrufer: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
-                with open(self.Liste_mit_datum, "r") as f:
-                    feedback_text = f.read()
-                    self.ausgabe_text.delete("1.0", tk.END)
-                    self.ausgabe_text.insert(tk.END, feedback_text)
-                    self.ausgabe_text.configure(state='disabled')
-                    self.Weiterleitung_an = ""
-                    self.wollte_sprechen = ""
-                    self.Uhrzeit_anruf_ende = None
-                    self.optionmenu.set("Keine Weiterleitung")
-                    self.optionmenu1.set("Mit Wem sprechen?")
-                    self.kunde_entry.focus()
-                    self.zeugs()
+               
+            Becher_im_Becher = tk.CTkFrame(self.Ausgabe_frame, height=1750,width=1800)
+            Becher_im_Becher.pack(anchor="w", padx=0, pady=10)
+# das hier kann man theoretisch noch viel besser machen in dem man das einfach in eine funktion knallt und das laden in der innit entfernt und dann einfach nur an eine funktion mit dem hier übergibt und in nem loop hält aber dafür bin ich gerade zu faul also lassen wir das hier einfach mal so.
+            textbox_uhrzeit = tk.CTkEntry(Becher_im_Becher, width=250)
+            textbox_anrufer = tk.CTkEntry(Becher_im_Becher)
+            textbox_problem = tk.CTkTextbox(Becher_im_Becher, height=100, width=350)
+            textbox_info = tk.CTkTextbox(Becher_im_Becher, height=100, width=350)
+            textbox_telefonnummer = tk.CTkEntry(Becher_im_Becher)
+            textbox_weiterleitung = tk.CTkEntry(Becher_im_Becher)
+            textbox_jemandbestimmtes = tk.CTkEntry(Becher_im_Becher)
+        
+            textbox_uhrzeit.grid(row=1, column=1, sticky="w", padx=10, pady=1)
+            textbox_anrufer.grid(row=2, column=1, sticky="ew", padx=10, pady=1)
+            textbox_problem.grid(row=3, column=1, sticky="ew", padx=10, pady=1)
+            textbox_info.grid(row=4, column=1, sticky="ew", padx=10, pady=1)
+            textbox_telefonnummer.grid(row=5, column=1, sticky="ew", padx=10, pady=1)
+            textbox_weiterleitung.grid(row=6, column=1, sticky="ew", padx=10, pady=1)
+            textbox_jemandbestimmtes.grid(row=7, column=1, sticky="ew", padx=10, pady=1)
+        
+            textbox_uhrzeit.insert(tk.END, f"{self.Uhrzeit_text}")
+            textbox_anrufer.insert(tk.END, f"{kunde}")
+            textbox_problem.insert(tk.END, f"{problem}")
+            textbox_info.insert(tk.END, info)
+            textbox_telefonnummer.insert(tk.END, f"{T_Nummer}")
+            textbox_weiterleitung.insert(tk.END, f"{self.wollte_sprechen}")
+            textbox_jemandbestimmtes.insert(tk.END, f"{self.Weiterleitung_an}")
+            
+            self.Weiterleitung_an = ""
+            self.wollte_sprechen = ""
+            self.Uhrzeit_anruf_ende = None
+            self.optionmenu.set("Keine Weiterleitung")
+            self.optionmenu1.set("Mit Wem sprechen?")
+            self.kunde_entry.focus()
+            self.zeugs()
                     # jetzt wurde das ding fertig in eine bestehende Datei versendet
         else:
             print("(ERR) Da hat wer Enter gedrückt obwohl noch nicht geschrieben war.")
             messagebox.showinfo(title="Fehler", message="Bitte geben Sie zuerst in wenigsten eine Spalte etwas ein.")
-            self.ausgabe_text.configure(state='disabled')
             self.Weiterleitung_an = ""
             self.wollte_sprechen = ""
             self.optionmenu.set("Keine Weiterleitung")
@@ -2191,18 +2206,17 @@ class Listendings:
         self.Uhrzeit_anruf_start = None
         self.optionmenu.set("Keine Weiterleitung")
     
-    def beb_c(self):
+    def beb_c(self): # obsolete? //is btw kaputt
         self.text_tk_text = self.ausgabe_text.get("1.0", "end-1c") # mir fällt jetzt erst im Nachhinein (3-4 Monate später) auf das da "end-1c" steht, wtf ist das und warum ist das da?
         if self.beb == "0":
             print("beb is jetzt = 1")
-            self.ausgabe_text.configure(state='normal')
             self.t_nummer.configure(state="normal")
             self.beb_knopp.configure(text="Fertig", fg_color="aquamarine", hover_color="aquamarine3")
             self.beb = "1"
             root.unbind('<Return>')
         else:
             print("beb = 0")
-            self.ausgabe_text.configure(state='disabled')
+            #self.ausgabe_text.configure(state='disabled')
             self.t_nummer.configure(state="disabled")
             root.bind('<Return>', self.senden)
             self.beb_knopp.configure(text="Bearbeiten", fg_color="white", hover_color="DarkSlateGray1")
@@ -2227,7 +2241,7 @@ class Listendings:
                     print("Liste existiert")
                     os.remove(self.DB)
                     print("datei gelöscht")
-                    self.ausgabe_text.delete("1.0", tk.END)
+                    #self.ausgabe_text.delete("1.0", tk.END) // entfernt weil die funktion sowieso nie eine benutzt hat und ich kein bock hab das an die GUI 2.0 anzupassen
                     print("textfeld gelöscht")
                 else:
                     messagebox.showerror(title="Fehler", message="Es gab keine alten Einträge zum löschen.")
