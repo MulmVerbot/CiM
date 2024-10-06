@@ -28,14 +28,14 @@ try:
     from PIL import Image
     #from collections import defaultdict
     #from nltk.corpus import wordnet
-    import re
+    #import re
     #import matplotlib.pyplot as plt
     import pyperclip
     import numpy as np
     from reportlab.lib.pagesizes import letter
     from reportlab.pdfgen import canvas
-    import shutil
-    import fitz  # Das ist dieses PyMuPDF für die Checklisten, bitte frag mich nicht wie man auf so einen Namen kommt (ich weiß, meine Namen sind auch nicht besser *Hust* M.U.L.M *Hust* )
+    #import shutil
+    #import fitz  # Das ist dieses PyMuPDF für die Checklisten, bitte frag mich nicht wie man auf so einen Namen kommt (ich weiß, meine Namen sind auch nicht besser *Hust* M.U.L.M *Hust* )
 except Exception as E:
     print(f"(FATAL) Fehler beim laden der Bibliotheken, Fehlermeldung: {E}")
     try:
@@ -367,23 +367,7 @@ class Listendings:
                 err1 = "[-ERR-] Es ist ein Fehler beim setzen des Icons aufgetreten. Fehlerlode: ", err
                 messagebox.showinfo(message=err1)
                 print("icon gibt heute nicht.")
-        try:
-            print(f"[-INFO-] Ich lade nun die Theme Einstellungen...")
-            with open(self.Einstellung_Theme, "r") as E_theme_gel:
-                self.Einstellungen_Theme_Inhalt = E_theme_gel.read()
-                if self.Einstellungen_Theme_Inhalt == "dunkel":
-                    tk.set_default_color_theme("Designs/dunkel.json")
-                elif self.Einstellungen_Theme_Inhalt == "hell":
-                    tk.set_default_color_theme("Designs/hell.json")
-                elif self.Design_Einstellung == "System":
-                    print("[-ERR-] Es wird versucht die System Design Einstellung zu laden.")
-                    tk.set_appearance_mode("System")
-                else:
-                    print("[-ERR-] Es gab einen Fehler bei der geladenen Designeinstellung, es wird nun der Systemstandard geladen...")
-                    tk.set_appearance_mode("System")
-                    print("[-INFO-] Die System Design Einstellung wurde geladen.")
-        except Exception as exko:
-            print(f"[-ERR-] Es ist ein Fehler beim Laden der Theme Einstellungen aufgetreten. Fehlercode: {exko}")
+        
         try:
             if not os.path.exists(self.Db_Ordner_pfad):
                 print("[-INFO-] Der Db Ordner scheint nicht zu existieren. Erstelle ihn nun.")
@@ -469,55 +453,7 @@ class Listendings:
                 messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Die Speicherorte konnten nicht geladen werden")
         except:
             print("[ INIT - EINSTELLUNGEN - ERR ]Die Einstellung scheint nicht zu existieren")
-
-        try:
-            with open(self.Listen_Speicherort_Netzwerk_Einstellungsdatei , "r") as Liste_Speicherort_Netzwerk_data:
-                self.Listen_Speicherort_Netzwerk = json.load(Liste_Speicherort_Netzwerk_data)
-                self.Listen_Speicherort_Netzwerk_geladen = (self.Listen_Speicherort_Netzwerk["ListenDings_Speicherort_Netzwerk"])
-                self.Listen_Speicherort_Netzwerk_geladen_ordner = os.path.join(self.Listen_Speicherort_Netzwerk_geladen, self.Jahr, self.Monat)
-        except PermissionError:
-                messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Der Gespeicherte Netzwerkpfad konnte nicht aufgerufen werden.")
-        except Exception as e:
-            print(f"[-FATAL-] Irgendwas ist passiert: {e}")
-
-    ######### JETZT KOMMT HIER DIE SHAISE FÜR DAS EMAIL TICKET ZEUGS ###########
-        print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die Mail Einstellungen")
-        try:
-            print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail Sender Einstellungen")
-            with open(self.Einstellung_Email_Sender_Adresse, "r") as Email_S_Datei:
-                self.sender_email = Email_S_Datei.read()
-                print(f"[-EINSTLLUNGEN LADEN-] Sender Email geladen: {self.sender_email}")
-        except Exception as EmailEx3_l:
-            print(f"Fehler beim laden der Maileinstellungen: {EmailEx3_l}")
-            self.sender_email = "Fehler"
-        try:
-            print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail Empfänger Einstellungen")
-            with open(self.Einstellung_Email_Empfänge_Adresse, "r") as Email_E_Datei:
-                self.empfänger_email = Email_E_Datei.read()
-                print(f"[-EINSTLLUNGEN LADEN-] Empfänger Adresse geladen: {self.empfänger_email}")
-        except Exception as EmailEx3_l:
-            print(f"Fehler beim laden der Maileinstellungen: {EmailEx3_l}")
-            self.empfänger_email = "Fehler"
-        try:
-            print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail SMTP Einstellungen")
-            with open(self.Einstellung_smtp_server, "r") as SMTP_Server_Datei:
-                self.smtp_server = SMTP_Server_Datei.read()
-                print("[-EINSTLLUNGEN LADEN-] SMTP Server Adresse geladen.")
-        except Exception as EmailEx3_l:
-            print(f"Fehler beim laden der Maileinstellungen: {EmailEx3_l}")
-            self.smtp_server = "Fehler"
-        try:
-            print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail Passwörters")
-            with open(self.Einstellung_smtp_Passwort, "r") as SMTP_Server_Passwort_Datei:
-                self.pw_email = SMTP_Server_Passwort_Datei.read()
-                print("[-EINSTLLUNGEN LADEN-] Absender Kennwort geladen.")
-        except Exception as EmailEx3_l:
-            print(f"Fehler beim laden der Passwort Maileinstellungen: {EmailEx3_l}")
-            self.pw_email = ""
-    ########### SHAISE ENDE ###########
-
         
-    ###################################
 
     #### Die Stars der Stunde ####
         self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Name des Anrufers", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
@@ -694,8 +630,41 @@ class Listendings:
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
 
+    def Netzlaufwerk_Einstellung_laden(self):
+        try:
+            print("[-INFO-] Lade nun das eingestellte Netzlaufwerk")
+            with open(self.Listen_Speicherort_Netzwerk_Einstellungsdatei , "r") as Liste_Speicherort_Netzwerk_data:
+                self.Listen_Speicherort_Netzwerk = json.load(Liste_Speicherort_Netzwerk_data)
+                self.Listen_Speicherort_Netzwerk_geladen = (self.Listen_Speicherort_Netzwerk["ListenDings_Speicherort_Netzwerk"])
+                self.Listen_Speicherort_Netzwerk_geladen_ordner = os.path.join(self.Listen_Speicherort_Netzwerk_geladen, self.Jahr, self.Monat)
+        except PermissionError:
+                messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Der Gespeicherte Netzwerkpfad konnte nicht aufgerufen werden.")
+        except Exception as e:
+            print(f"[-FATAL-] Irgendwas ist bei den Netzwerkeinstellungen passiert: {e}")
+
+    def Theme_Einstellungen_laden(self):
+        try:
+            print(f"[-INFO-] Ich lade nun die Theme Einstellungen...")
+            with open(self.Einstellung_Theme, "r") as E_theme_gel:
+                self.Einstellungen_Theme_Inhalt = E_theme_gel.read()
+                if self.Einstellungen_Theme_Inhalt == "dunkel":
+                    tk.set_default_color_theme("Designs/dunkel.json")
+                elif self.Einstellungen_Theme_Inhalt == "hell":
+                    tk.set_default_color_theme("Designs/hell.json")
+                elif self.Design_Einstellung == "System":
+                    print("[-ERR-] Es wird versucht die System Design Einstellung zu laden.")
+                    tk.set_appearance_mode("System")
+                else:
+                    print("[-ERR-] Es gab einen Fehler bei der geladenen Designeinstellung, es wird nun der Systemstandard geladen...")
+                    tk.set_appearance_mode("System")
+                    print("[-INFO-] Die System Design Einstellung wurde geladen.")
+        except Exception as exko:
+            print(f"[-ERR-] Es ist ein Fehler beim Laden der Theme Einstellungen aufgetreten. Fehlercode: {exko}")
+
     def Einstellungen_laden(self): # hier sollen zukünftig alle Einstellungen geladen werden
         print("[-Einstellungen_laden - INFO -] Lade nun alle Einstellungen")
+        self.Netzlaufwerk_Einstellung_laden()
+        self.Theme_Einstellungen_laden()
         print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die Mail Einstellungen")
         try:
             print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail Sender Einstellungen")
@@ -735,6 +704,7 @@ class Listendings:
         print("[-init-] init auf wish bestellt...")
         self.Kontakte_aus_json_laden()
         self.weiterleitung_laden()
+        self.Einstellungen_laden()
         print("[-init-] Die Wish init is vorbei.")
 
     def email_baukasten(self):
@@ -841,7 +811,7 @@ class Listendings:
             self.optionmenu = tk.CTkOptionMenu(root, values=[f"An {self.einz} weitergeleitet", f"An {self.zwee} weitergeleitet", f"An {self.dree} weitergeleitet", f"An {self.vir} weitergeleitet", "Keine Weiterleitung"], command=auswahl_gedingst, fg_color="White", text_color="Black", dropdown_hover_color="pink")
             self.optionmenu.set("Keine Weiterleitung")
             self.optionmenu.place(x=1260,y=220)
-            print(f"[WEITERLEITUNG LADEN] Die Weiterleitungen wurden geladen und wieder platziert.")
+            print(f"[-WEITERLEITUNG LADEN-] Die Weiterleitungen wurden geladen und wieder platziert.")
         except Exception as ellkk:
             print(f"[-ERR-] Konnte die Weiterleitungen nicht platzieren: {ellkk}")
 
@@ -1280,10 +1250,15 @@ class Listendings:
         try:
             script_path = "totdo.py"
             subprocess.Popen([sys.executable, script_path],creationflags=subprocess.CREATE_NO_WINDOW) # Windoof
-        except Exception as e:
+
+        except AttributeError as e:
+            print(f"Fehler beim Starten des Skripts: {e}")
+        except ModuleNotFoundError:
             # Unix (macOS, Linux)
             subprocess.Popen([sys.executable, script_path],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-            print(f"Fehler beim Starten des Skripts: {e}")
+            print("Totdo wurde unter Unix geöffnet.")
+        except Exception as ejkhlsdf:
+            print(f"[-FATAL-] Beim öffnen vom Totdo ist ein Fehler aufgetreten. Fehlercode: {ejkhlsdf}")
 
     
     def SMTP_Anmeldung_Manuell(self):
