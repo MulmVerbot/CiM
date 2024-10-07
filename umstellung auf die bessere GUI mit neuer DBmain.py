@@ -474,14 +474,32 @@ class Listendings:
         root.bind('<Return>', self.senden)
         ##self.ausgabe_text = tk.CTkTextbox(master, width=1255, height=420, wrap="word", fg_color=self.Hintergrund_farbe_Text_Widget, text_color=self.Textfarbe, border_color=self.Border_Farbe, border_width=2)
         ##self.ausgabe_text.configure(state='disabled')
-        self.Eintrags_Liste = Atk.Listbox(root, width=60, height=200)
+        self.Eintrags_Liste = Atk.Listbox(root, width=60, height=26)
         self.Eintrags_Liste.place(x=0,y=100)
+        scrollbar1 = Atk.Scrollbar(root, orient=Atk.VERTICAL)
+        scrollbar1.place(x=360,y=100, height=420)
+        self.Eintrags_Liste.config(yscrollcommand=scrollbar1.set)
+        scrollbar1.config(command=self.Eintrags_Liste.yview)
+        self.Liste_laden_aus_JSON() ########################################################################### DAS HIER NICHT VERGESSEN RAUSZUNEHMEN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#####################
         self.kunde_entry.place(x=5,y=5)
         self.problem_entry.place(x=5,y=35)
         self.info_entry.place(x=5,y=65)
         self.t_nummer.place(x=605,y=5)
         ##self.ausgabe_text.place(x=0,y=100)
         self.Anruf_Zeit.place(x=860,y=5)
+
+        self.Zeit_aus_JSON = Atk.Label(root, text=self.Zeit) # die var dann noch ändern //todo wird dann aus der Liste geladen
+        self.Zeit_aus_JSON.place(x=840,y=100)
+        self.Anrufer_Bezeichnung_l = Atk.Label(root, text="Das hier wird zum Kundennamen GmbH", fg="Black") # die var dann noch ändern //todo wird dann aus der Liste geladen
+        self.Anrufer_Bezeichnung_l.place(x=420,y=100)
+        self.ID_M_l = Atk.Label(root, text=f"ID: 1420")
+        self.ID_M_l.place(x=980, y=100)                     ############## den ganzen mist dann bitte auch so machen dass ich das mit strg + s schnell speichern kann, danke //todo
+
+        self.Problem_text_neu = tk.CTkTextbox(root, width=620, height=200) # die var dann noch ändern //todo wird dann aus der Liste geladen
+        self.Problem_text_neu.place(x=420,y=120)
+        self.Info_text_neu = tk.CTkTextbox(root, width=620, height=200) # die var dann noch ändern //todo wird dann aus der Liste geladen
+        self.Info_text_neu.place(x=420,y=320)
+
         
         self.menu = Menu(root)
         root.configure(menu=self.menu)
@@ -631,6 +649,12 @@ class Listendings:
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
+
+    def Liste_laden_aus_JSON(self): ### Nicht vergessen, wir machen das so dass wir sowohl die klartext txt's als auch die JSONs anlegen >> txt um die Suche zu vereinfachen
+        print("Lade nun die Liste aus der JSON...")
+        self.Anrufer_aus_JSON = "Hier steht einfach was!"
+        for i in range(240):
+            self.Eintrags_Liste.insert(Atk.END, f"||  ID: {i} | {self.Anrufer_aus_JSON} | {self.Zeit}||")
 
     def Netzlaufwerk_Einstellung_laden(self):
         try:
