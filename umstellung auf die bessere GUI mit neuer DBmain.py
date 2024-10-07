@@ -28,19 +28,19 @@ try:
     from PIL import Image
     #from collections import defaultdict
     #from nltk.corpus import wordnet
-    import re
+    #import re
     #import matplotlib.pyplot as plt
     import pyperclip
     import numpy as np
     from reportlab.lib.pagesizes import letter
     from reportlab.pdfgen import canvas
-    import shutil
-    import fitz  # Das ist dieses PyMuPDF für die Checklisten, bitte frag mich nicht wie man auf so einen Namen kommt (ich weiß, meine Namen sind auch nicht besser *Hust* M.U.L.M *Hust* )
+    #import shutil
+    #import fitz  # Das ist dieses PyMuPDF für die Checklisten, bitte frag mich nicht wie man auf so einen Namen kommt (ich weiß, meine Namen sind auch nicht besser *Hust* M.U.L.M *Hust* )
 except Exception as E:
     print(f"(FATAL) Fehler beim laden der Bibliotheken, Fehlermeldung: {E}")
     try:
         messagebox.showerror("Kritischer Fehler",f"(FATAL) Fehler beim laden der Bibliotheken, Fehlermeldung: {E}")
-        antw = messagebox.askyesno(title="CiM Paket Manager", message="Soll ich mal schauen ob ich die fehlenden Pakete installieren kann? Das wird ein paar Minuten dauern und Du wirst wahrscheinlich nicht mitbekommen dass es noch die Pakete Installiert, am besten einfach nen Kaffee holen und das Programm gleich mal neustarten.")
+        antw = messagebox.askyesno(title="CiM Paket Manager", message="Soll ich mal schauen ob ich die fehlenden Pakete installieren kann?")
         if antw:
             if antw == True:
                 print("ich versuche nun die fehlenden Pakete zu installieren...")
@@ -186,9 +186,9 @@ class Listendings:
 # Freude ist bloß ein Mangel an Informationen
     def __init__(self, master):
         self.master = master
-        self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich
+        self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1"
+        self.Version = "Beta 1.0.6 (0)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -367,23 +367,7 @@ class Listendings:
                 err1 = "[-ERR-] Es ist ein Fehler beim setzen des Icons aufgetreten. Fehlerlode: ", err
                 messagebox.showinfo(message=err1)
                 print("icon gibt heute nicht.")
-        try:
-            print(f"[-INFO-] Ich lade nun die Theme Einstellungen...")
-            with open(self.Einstellung_Theme, "r") as E_theme_gel:
-                self.Einstellungen_Theme_Inhalt = E_theme_gel.read()
-                if self.Einstellungen_Theme_Inhalt == "dunkel":
-                    tk.set_default_color_theme("Designs/dunkel.json")
-                elif self.Einstellungen_Theme_Inhalt == "hell":
-                    tk.set_default_color_theme("Designs/hell.json")
-                elif self.Design_Einstellung == "System":
-                    print("[-ERR-] Es wird versucht die System Design Einstellung zu laden.")
-                    tk.set_appearance_mode("System")
-                else:
-                    print("[-ERR-] Es gab einen Fehler bei der geladenen Designeinstellung, es wird nun der Systemstandard geladen...")
-                    tk.set_appearance_mode("System")
-                    print("[-INFO-] Die System Design Einstellung wurde geladen.")
-        except Exception as exko:
-            print(f"[-ERR-] Es ist ein Fehler beim Laden der Theme Einstellungen aufgetreten. Fehlercode: {exko}")
+        
         try:
             if not os.path.exists(self.Db_Ordner_pfad):
                 print("[-INFO-] Der Db Ordner scheint nicht zu existieren. Erstelle ihn nun.")
@@ -469,55 +453,7 @@ class Listendings:
                 messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Die Speicherorte konnten nicht geladen werden")
         except:
             print("[ INIT - EINSTELLUNGEN - ERR ]Die Einstellung scheint nicht zu existieren")
-
-        try:
-            with open(self.Listen_Speicherort_Netzwerk_Einstellungsdatei , "r") as Liste_Speicherort_Netzwerk_data:
-                self.Listen_Speicherort_Netzwerk = json.load(Liste_Speicherort_Netzwerk_data)
-                self.Listen_Speicherort_Netzwerk_geladen = (self.Listen_Speicherort_Netzwerk["ListenDings_Speicherort_Netzwerk"])
-                self.Listen_Speicherort_Netzwerk_geladen_ordner = os.path.join(self.Listen_Speicherort_Netzwerk_geladen, self.Jahr, self.Monat)
-        except PermissionError:
-                messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Der Gespeicherte Netzwerkpfad konnte nicht aufgerufen werden.")
-        except Exception as e:
-            print(f"[-FATAL-] Irgendwas ist passiert: {e}")
-
-    ######### JETZT KOMMT HIER DIE SHAISE FÜR DAS EMAIL TICKET ZEUGS ###########
-        print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die Mail Einstellungen")
-        try:
-            print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail Sender Einstellungen")
-            with open(self.Einstellung_Email_Sender_Adresse, "r") as Email_S_Datei:
-                self.sender_email = Email_S_Datei.read()
-                print(f"[-EINSTLLUNGEN LADEN-] Sender Email geladen: {self.sender_email}")
-        except Exception as EmailEx3_l:
-            print(f"Fehler beim laden der Maileinstellungen: {EmailEx3_l}")
-            self.sender_email = "Fehler"
-        try:
-            print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail Empfänger Einstellungen")
-            with open(self.Einstellung_Email_Empfänge_Adresse, "r") as Email_E_Datei:
-                self.empfänger_email = Email_E_Datei.read()
-                print(f"[-EINSTLLUNGEN LADEN-] Empfänger Adresse geladen: {self.empfänger_email}")
-        except Exception as EmailEx3_l:
-            print(f"Fehler beim laden der Maileinstellungen: {EmailEx3_l}")
-            self.empfänger_email = "Fehler"
-        try:
-            print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail SMTP Einstellungen")
-            with open(self.Einstellung_smtp_server, "r") as SMTP_Server_Datei:
-                self.smtp_server = SMTP_Server_Datei.read()
-                print("[-EINSTLLUNGEN LADEN-] SMTP Server Adresse geladen.")
-        except Exception as EmailEx3_l:
-            print(f"Fehler beim laden der Maileinstellungen: {EmailEx3_l}")
-            self.smtp_server = "Fehler"
-        try:
-            print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail Passwörters")
-            with open(self.Einstellung_smtp_Passwort, "r") as SMTP_Server_Passwort_Datei:
-                self.pw_email = SMTP_Server_Passwort_Datei.read()
-                print("[-EINSTLLUNGEN LADEN-] Absender Kennwort geladen.")
-        except Exception as EmailEx3_l:
-            print(f"Fehler beim laden der Passwort Maileinstellungen: {EmailEx3_l}")
-            self.pw_email = ""
-    ########### SHAISE ENDE ###########
-
         
-    ###################################
 
     #### Die Stars der Stunde ####
         self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Name des Anrufers", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
@@ -536,15 +472,15 @@ class Listendings:
         self.senden_button = tk.CTkButton(master, text="Senden", command="")
         self.senden_button.bind('<Button-1>', self.senden)
         root.bind('<Return>', self.senden)
-        #self.ausgabe_text = tk.CTkTextbox(master, width=1255, height=420, wrap="word", fg_color=self.Hintergrund_farbe_Text_Widget, text_color=self.Textfarbe, border_color=self.Border_Farbe, border_width=2)
-        #self.ausgabe_text.configure(state='disabled')
-
-        
+        ##self.ausgabe_text = tk.CTkTextbox(master, width=1255, height=420, wrap="word", fg_color=self.Hintergrund_farbe_Text_Widget, text_color=self.Textfarbe, border_color=self.Border_Farbe, border_width=2)
+        ##self.ausgabe_text.configure(state='disabled')
+        self.Eintrags_Liste = Atk.Listbox(root, width=60, height=200)
+        self.Eintrags_Liste.place(x=0,y=100)
         self.kunde_entry.place(x=5,y=5)
         self.problem_entry.place(x=5,y=35)
         self.info_entry.place(x=5,y=65)
         self.t_nummer.place(x=605,y=5)
-        #self.ausgabe_text.place(x=0,y=100)
+        ##self.ausgabe_text.place(x=0,y=100)
         self.Anruf_Zeit.place(x=860,y=5)
         
         self.menu = Menu(root)
@@ -573,8 +509,22 @@ class Listendings:
         self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results_vor)
         self.menudings.add_command(label="Checklisten (Demo)...", command=self.Checkboxen_dingsen)
         self.menudings.add_command(label="Email Baukasten (Demo)...", command=self.email_baukasten)
-        self.menudings.add_command(label="Liste neuladen (dev)", command=self.Liste_laden_GUI)
         #self.Suchen_Menu.add_command(label="Sehr genaue Suche nutzen (Suche 3.0)(Beta)", command=self.frage_nach_string_suche3)
+        
+        try:
+            print("(INFO) versuche die alten Aufzeichenungen zu Laden")
+            #self.ausgabe_text.configure(state='normal')
+            with open(self.Liste_mit_datum, "r") as f:
+                feedback_text = f.read()
+                #self.ausgabe_text.delete("1.0", tk.END)
+                #self.ausgabe_text.insert(tk.END, feedback_text)
+                #self.ausgabe_text.configure(state='disabled')
+        except FileNotFoundError:
+            print("(INFO) Die Datei Liste.txt gibts net")
+            #self.ausgabe_text.configure(state='disabled')
+        except:
+            messagebox.showinfo(title="Fehler", message="Ein Unbekannter Fehler ist aufgetreten beim Versuch während des Programmstarts die bisherigen aufzeichnungen zu laden, es könnte sein dass das Programm trotzdem fehlerfrei funktioniert.")
+            #self.ausgabe_text.configure(state='disabled')
 
     ############################ GUI init ######################
     ############################ GUI init ######################
@@ -619,8 +569,8 @@ class Listendings:
         self.Einstellung_Design_auswahl = tk.CTkOptionMenu(self.Pause_menu, values=["hell", "dunkel", "System"], command=auswahl_design_gedingst)
         self.Einstellung_Design_L = tk.CTkLabel(self.Pause_menu, text="Design Einstellung:")
         
-        self.kalender_menü = tk.CTkFrame(master, width=1250, height=520, fg_color="White", border_color="Black", border_width=2)
-        self.Liste_mit_zeugs = tk.CTkScrollableFrame(self.kalender_menü, width=500, height=420, bg_color="Green")
+        #self.kalender_menü = tk.CTkFrame(master, width=1250, height=520, fg_color="White", border_color="Black", border_width=2)
+        #self.Liste_mit_zeugs = tk.CTkScrollableFrame(self.kalender_menü, width=500, height=420, bg_color="Green")
         
         ################################ MENU FRAMES ENDE ################################
         ################################ MENU FRAMES ENDE ################################
@@ -682,8 +632,41 @@ class Listendings:
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
 
+    def Netzlaufwerk_Einstellung_laden(self):
+        try:
+            print("[-INFO-] Lade nun das eingestellte Netzlaufwerk")
+            with open(self.Listen_Speicherort_Netzwerk_Einstellungsdatei , "r") as Liste_Speicherort_Netzwerk_data:
+                self.Listen_Speicherort_Netzwerk = json.load(Liste_Speicherort_Netzwerk_data)
+                self.Listen_Speicherort_Netzwerk_geladen = (self.Listen_Speicherort_Netzwerk["ListenDings_Speicherort_Netzwerk"])
+                self.Listen_Speicherort_Netzwerk_geladen_ordner = os.path.join(self.Listen_Speicherort_Netzwerk_geladen, self.Jahr, self.Monat)
+        except PermissionError:
+                messagebox.showerror(title="Listendings Speicherort", message="Es Fehlt für diesen Ordner die nötige Berechtigung, Der Gespeicherte Netzwerkpfad konnte nicht aufgerufen werden.")
+        except Exception as e:
+            print(f"[-FATAL-] Irgendwas ist bei den Netzwerkeinstellungen passiert: {e}")
+
+    def Theme_Einstellungen_laden(self):
+        try:
+            print(f"[-INFO-] Ich lade nun die Theme Einstellungen...")
+            with open(self.Einstellung_Theme, "r") as E_theme_gel:
+                self.Einstellungen_Theme_Inhalt = E_theme_gel.read()
+                if self.Einstellungen_Theme_Inhalt == "dunkel":
+                    tk.set_default_color_theme("Designs/dunkel.json")
+                elif self.Einstellungen_Theme_Inhalt == "hell":
+                    tk.set_default_color_theme("Designs/hell.json")
+                elif self.Design_Einstellung == "System":
+                    print("[-ERR-] Es wird versucht die System Design Einstellung zu laden.")
+                    tk.set_appearance_mode("System")
+                else:
+                    print("[-ERR-] Es gab einen Fehler bei der geladenen Designeinstellung, es wird nun der Systemstandard geladen...")
+                    tk.set_appearance_mode("System")
+                    print("[-INFO-] Die System Design Einstellung wurde geladen.")
+        except Exception as exko:
+            print(f"[-ERR-] Es ist ein Fehler beim Laden der Theme Einstellungen aufgetreten. Fehlercode: {exko}")
+
     def Einstellungen_laden(self): # hier sollen zukünftig alle Einstellungen geladen werden
         print("[-Einstellungen_laden - INFO -] Lade nun alle Einstellungen")
+        self.Netzlaufwerk_Einstellung_laden()
+        self.Theme_Einstellungen_laden()
         print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die Mail Einstellungen")
         try:
             print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail Sender Einstellungen")
@@ -723,120 +706,8 @@ class Listendings:
         print("[-init-] init auf wish bestellt...")
         self.Kontakte_aus_json_laden()
         self.weiterleitung_laden()
-        self.Liste_laden_GUI()
-        self.aufzeichnungen_laden()
+        self.Einstellungen_laden()
         print("[-init-] Die Wish init is vorbei.")
-
-    def Liste_laden_GUI(self):
-        print("Liste_laden_GUI(def)")
-        try:
-            self.Ausgabe_frame.place_forget()
-        except:
-            print("Despawn des Becher war nicht erfolgreich.(Das ist aber nicht schlimm)")
-        self.Ausgabe_frame = tk.CTkScrollableFrame(root, width=1230, height=405, fg_color=self.Hintergrund_farbe_Text_Widget, border_color=self.Border_Farbe, border_width=2)
-        self.Ausgabe_frame.place(x=0,y=100)
-        self.aufzeichnungen_laden() # warum lad ich eigentlich bei jedem eintrag die liste neu statt einfach nur den eintrag hinzuzufügen!???? bin ich dumm oderso?
-
-
-
-
-    def aufzeichnungen_laden(self): # wahrscheinlich die wichtigste Funktion hier
-        print("aufzeichnungen_laden")
-        '''try:
-            print("(INFO) versuche die alten Aufzeichenungen zu Laden")
-            self.ausgabe_text.configure(state='normal')
-            with open(self.Liste_mit_datum, "r") as f:
-                feedback_text = f.read()
-                self.ausgabe_text.delete("1.0", tk.END)
-                self.ausgabe_text.insert(tk.END, feedback_text)
-                self.ausgabe_text.configure(state='disabled')
-        except FileNotFoundError:
-            print("(INFO) Die Datei Liste.txt gibts net")
-        except:
-            messagebox.showinfo(title="Fehler", message="Ein Unbekannter Fehler ist aufgetreten beim Versuch während des Programmstarts die bisherigen aufzeichnungen zu laden, es könnte sein dass das Programm trotzdem fehlerfrei funktioniert.")
-            #self.ausgabe_text.configure(state='disabled')'''
-        # Methode zum Laden der Liste
-        def lade_liste(): 
-            ## Todo: Das muss noch gespeichert werden
-            ## Todo: die ausgabe der bearbeiten_knopp muss dann auch immer bei jedem drücken die ganzen sachen nehmen und speichern
-            ## Todo: ich muss checken wann einer in son ding hier reingeht damit ich die enter Taste aktivieren/deaktivieren kann
-            ## Todo: den ganzen mist noch ordentlich platzieren
-            ## Todo: das hier dann mal noch auf .grid umsneaken
-            ## Todo: mal noch schauen wies dann mit der Performance aussieht und ne große Liste von nem Tag laden, an dem viel loswar, gerade auch beim Programmstart. // Perfomance is scheiße du sack!
-            
-            def parse_und_einfuegen(text):
-                # In verschiedene Abschnitte aufteilen (pro Eintrag)
-                eintraege = text.split("\n\n")
-
-                for eintrag in eintraege:
-                    if not eintrag.strip():  # Falls leerer Eintrag, überspringen
-                        continue
-
-                    # Die Zeilen des Eintrags in Vars aufteilen
-                    try:
-                        zeilen = eintrag.split("\n")
-                        uhrzeit = zeilen[0].replace("Uhrzeit: ", "")
-                        anrufer = zeilen[1].replace("Anrufer: ", "")
-                        problem = zeilen[2].replace("Problem: ", "")
-                        info = zeilen[3].replace("Info: ", "")
-                        telefonnummer = zeilen[4].replace("Telefonnummer: ", "")
-                        jemand_bestimmtes = zeilen[5].replace("Jemand bestimmtes sprechen: ", "")
-                        weiterleitung = zeilen[6].replace("Weiterleitung: ", "")
-
-                        Becher_im_Becher = tk.CTkFrame(self.Ausgabe_frame, height=1750,width=1800)
-                        Becher_im_Becher.pack(anchor="w", padx=0, pady=10)
-
-                        textbox_uhrzeit = tk.CTkEntry(Becher_im_Becher, width=250)
-                        textbox_anrufer = tk.CTkEntry(Becher_im_Becher)
-                        textbox_problem = tk.CTkTextbox(Becher_im_Becher, height=100, width=350)
-                        textbox_info = tk.CTkTextbox(Becher_im_Becher, height=100, width=350)
-                        textbox_telefonnummer = tk.CTkEntry(Becher_im_Becher)
-                        textbox_weiterleitung = tk.CTkEntry(Becher_im_Becher)
-                        textbox_jemandbestimmtes = tk.CTkEntry(Becher_im_Becher)
-                    
-                        textbox_uhrzeit.grid(row=1, column=1, sticky="w", padx=10, pady=1)
-                        textbox_anrufer.grid(row=2, column=1, sticky="ew", padx=10, pady=1)
-                        textbox_problem.grid(row=3, column=1, sticky="ew", padx=10, pady=1)
-                        textbox_info.grid(row=4, column=1, sticky="ew", padx=10, pady=1)
-                        textbox_telefonnummer.grid(row=5, column=1, sticky="ew", padx=10, pady=1)
-                        textbox_weiterleitung.grid(row=6, column=1, sticky="ew", padx=10, pady=1)
-                        textbox_jemandbestimmtes.grid(row=7, column=1, sticky="ew", padx=10, pady=1)
-                    
-                        textbox_uhrzeit.insert(tk.END, uhrzeit)
-                        textbox_anrufer.insert(tk.END, anrufer)
-                        textbox_problem.insert(tk.END, problem)
-                        textbox_info.insert(tk.END, info)
-                        textbox_telefonnummer.insert(tk.END, telefonnummer)
-                        textbox_weiterleitung.insert(tk.END, weiterleitung)
-                        textbox_jemandbestimmtes.insert(tk.END, jemand_bestimmtes)
-                        
-                    except IndexError:
-                        print("Eintrag ist nicht vollständig und wurde übersprungen:", eintrag)
-                        continue
-                    
-            try:
-                print("(INFO) versuche die alten Aufzeichnungen zu laden")
-                
-                with open(self.Liste_mit_datum, "r") as f:
-                    feedback_text = f.read()
-                
-                # Den Inhalt parsen und in die entsprechenden Textboxen einfügen
-                parse_und_einfuegen(feedback_text)
-                
-            except FileNotFoundError:
-                print("(INFO) Die Datei Liste.txt existiert nicht")
-            except Exception as e:
-                print(f"(ERROR) Ein Fehler ist aufgetreten: {e}")
-                messagebox.showinfo(title="Fehler", message="Ein unbekannter Fehler ist aufgetreten. Das Programm funktioniert möglicherweise trotzdem fehlerfrei.")
-        
-        lade_liste()
-
-
-
-
-
-
-
 
     def email_baukasten(self):
         print("email_baukasten(def)")
@@ -942,7 +813,7 @@ class Listendings:
             self.optionmenu = tk.CTkOptionMenu(root, values=[f"An {self.einz} weitergeleitet", f"An {self.zwee} weitergeleitet", f"An {self.dree} weitergeleitet", f"An {self.vir} weitergeleitet", "Keine Weiterleitung"], command=auswahl_gedingst, fg_color="White", text_color="Black", dropdown_hover_color="pink")
             self.optionmenu.set("Keine Weiterleitung")
             self.optionmenu.place(x=1260,y=220)
-            print(f"[WEITERLEITUNG LADEN] Die Weiterleitungen wurden geladen und wieder platziert.")
+            print(f"[-WEITERLEITUNG LADEN-] Die Weiterleitungen wurden geladen und wieder platziert.")
         except Exception as ellkk:
             print(f"[-ERR-] Konnte die Weiterleitungen nicht platzieren: {ellkk}")
 
@@ -1156,7 +1027,7 @@ class Listendings:
 
     def Eintrag_raus_kopieren(self): # kopiert den letzten in der Liste stehenden Eintrag in die Zwischenablage.
         print("[-INFO-] Eintrag_raus_kopieren(def)")
-        self.geladener_Text = self.ausgabe_text.get("0.0", "end")
+        #self.geladener_Text = self.ausgabe_text.get("0.0", "end")
         self.einzelner_Eintrag = self.geladener_Text.split("\n\n")
         if self.einzelner_Eintrag:
             print(f"Aufgeteilter Text: {self.einzelner_Eintrag}")
@@ -1299,7 +1170,7 @@ class Listendings:
 
     def letzten_text_erhalten(self):
         print("letzten_importieren(def)")
-        self.geladener_Text = self.ausgabe_text.get("0.0", "end")
+        #self.geladener_Text = self.ausgabe_text.get("0.0", "end")
         self.einzelner_Eintrag = self.geladener_Text.split("\n\n")
         if self.einzelner_Eintrag:
             for eintrag in reversed(self.einzelner_Eintrag):
@@ -1381,10 +1252,15 @@ class Listendings:
         try:
             script_path = "totdo.py"
             subprocess.Popen([sys.executable, script_path],creationflags=subprocess.CREATE_NO_WINDOW) # Windoof
-        except Exception as e:
+
+        except AttributeError as e:
+            print(f"Fehler beim Starten des Skripts: {e}")
+        except ModuleNotFoundError:
             # Unix (macOS, Linux)
             subprocess.Popen([sys.executable, script_path],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-            print(f"Fehler beim Starten des Skripts: {e}")
+            print("Totdo wurde unter Unix geöffnet.")
+        except Exception as ejkhlsdf:
+            print(f"[-FATAL-] Beim öffnen vom Totdo ist ein Fehler aufgetreten. Fehlercode: {ejkhlsdf}")
 
     
     def SMTP_Anmeldung_Manuell(self):
@@ -2119,6 +1995,7 @@ class Listendings:
         problem = self.problem_entry.get()
         info = self.info_entry.get()
         T_Nummer = self.t_nummer.get()
+        #self.ausgabe_text.configure(state='normal')
         self.zeit_string = time.strftime("%H:%M:%S")
         if self.Uhrzeit_anruf_start == None:
             self.Uhrzeit_anruf_start = "-"
@@ -2146,49 +2023,40 @@ class Listendings:
             if os.path.exists(self.Liste_mit_datum):
                 with open(self.Liste_mit_datum, "a") as f:
                     f.write(f"Uhrzeit: {self.Uhrzeit_text}\nAnrufer: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
+                with open(self.Liste_mit_datum, "r") as f:
+                    feedback_text = f.read()
+                    #self.ausgabe_text.delete("1.0", tk.END)
+                    #self.ausgabe_text.insert(tk.END, feedback_text)
+                #self.ausgabe_text.configure(state='disabled')
+                #self.ausgabe_text.see(tk.END)
+                self.Weiterleitung_an = ""
+                self.Uhrzeit_anruf_ende = None
+                self.optionmenu.set("Keine Weiterleitung")
+                self.optionmenu1.set("Mit Wem sprechen?")
+                self.kunde_entry.focus()
+                self.zeugs()
+                # jetzt wurde das ding fertig in eine neue Datei versendet
             else:
-                #print("(INFO) Liste zum beschreiben existiert bereits.")
+                print("(INFO) Liste zum beschreiben existiert bereits.")
                 with open(self.Liste_mit_datum, "w+") as f:
                     f.write(f"Uhrzeit: {self.Uhrzeit_text}\nAnrufer: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
-               
-            Becher_im_Becher = tk.CTkFrame(self.Ausgabe_frame, height=1750,width=1800)
-            Becher_im_Becher.pack(anchor="w", padx=0, pady=10)
-# das hier kann man theoretisch noch viel besser machen in dem man das einfach in eine funktion knallt und das laden in der innit entfernt und dann einfach nur an eine funktion mit dem hier übergibt und in nem loop hält aber dafür bin ich gerade zu faul also lassen wir das hier einfach mal so.
-            textbox_uhrzeit = tk.CTkEntry(Becher_im_Becher, width=250)
-            textbox_anrufer = tk.CTkEntry(Becher_im_Becher)
-            textbox_problem = tk.CTkTextbox(Becher_im_Becher, height=100, width=350)
-            textbox_info = tk.CTkTextbox(Becher_im_Becher, height=100, width=350)
-            textbox_telefonnummer = tk.CTkEntry(Becher_im_Becher)
-            textbox_weiterleitung = tk.CTkEntry(Becher_im_Becher)
-            textbox_jemandbestimmtes = tk.CTkEntry(Becher_im_Becher)
-        
-            textbox_uhrzeit.grid(row=1, column=1, sticky="w", padx=10, pady=1)
-            textbox_anrufer.grid(row=2, column=1, sticky="ew", padx=10, pady=1)
-            textbox_problem.grid(row=3, column=1, sticky="ew", padx=10, pady=1)
-            textbox_info.grid(row=4, column=1, sticky="ew", padx=10, pady=1)
-            textbox_telefonnummer.grid(row=5, column=1, sticky="ew", padx=10, pady=1)
-            textbox_weiterleitung.grid(row=6, column=1, sticky="ew", padx=10, pady=1)
-            textbox_jemandbestimmtes.grid(row=7, column=1, sticky="ew", padx=10, pady=1)
-        
-            textbox_uhrzeit.insert(tk.END, f"{self.Uhrzeit_text}")
-            textbox_anrufer.insert(tk.END, f"{kunde}")
-            textbox_problem.insert(tk.END, f"{problem}")
-            textbox_info.insert(tk.END, info)
-            textbox_telefonnummer.insert(tk.END, f"{T_Nummer}")
-            textbox_weiterleitung.insert(tk.END, f"{self.wollte_sprechen}")
-            textbox_jemandbestimmtes.insert(tk.END, f"{self.Weiterleitung_an}")
-            
-            self.Weiterleitung_an = ""
-            self.wollte_sprechen = ""
-            self.Uhrzeit_anruf_ende = None
-            self.optionmenu.set("Keine Weiterleitung")
-            self.optionmenu1.set("Mit Wem sprechen?")
-            self.kunde_entry.focus()
-            self.zeugs()
+                with open(self.Liste_mit_datum, "r") as f:
+                    feedback_text = f.read()
+                    #self.ausgabe_text.delete("1.0", tk.END)
+                    #self.ausgabe_text.insert(tk.END, feedback_text)
+                    #self.ausgabe_text.configure(state='disabled')
+                    self.Weiterleitung_an = ""
+                    self.wollte_sprechen = ""
+                    self.Uhrzeit_anruf_ende = None
+                    self.optionmenu.set("Keine Weiterleitung")
+                    self.optionmenu1.set("Mit Wem sprechen?")
+                    self.kunde_entry.focus()
+                    self.zeugs()
                     # jetzt wurde das ding fertig in eine bestehende Datei versendet
         else:
             print("(ERR) Da hat wer Enter gedrückt obwohl noch nicht geschrieben war.")
             messagebox.showinfo(title="Fehler", message="Bitte geben Sie zuerst in wenigsten eine Spalte etwas ein.")
+            #self.ausgabe_text.configure(state='disabled')
             self.Weiterleitung_an = ""
             self.wollte_sprechen = ""
             self.optionmenu.set("Keine Weiterleitung")
@@ -2206,10 +2074,11 @@ class Listendings:
         self.Uhrzeit_anruf_start = None
         self.optionmenu.set("Keine Weiterleitung")
     
-    def beb_c(self): # obsolete? //is btw kaputt
-        self.text_tk_text = self.ausgabe_text.get("1.0", "end-1c") # mir fällt jetzt erst im Nachhinein (3-4 Monate später) auf das da "end-1c" steht, wtf ist das und warum ist das da?
+    def beb_c(self):
+        #self.text_tk_text = #self.ausgabe_text.get("1.0", "end-1c") # mir fällt jetzt erst im Nachhinein (3-4 Monate später) auf das da "end-1c" steht, wtf ist das und warum ist das da?
         if self.beb == "0":
             print("beb is jetzt = 1")
+            #self.ausgabe_text.configure(state='normal')
             self.t_nummer.configure(state="normal")
             self.beb_knopp.configure(text="Fertig", fg_color="aquamarine", hover_color="aquamarine3")
             self.beb = "1"
@@ -2232,16 +2101,16 @@ class Listendings:
             print("löschen der db vom Nutzer bestätigt")
             self.tag_und_zeit_string = time.strftime("%m/%d/%Y, %H:%M:%S")
             print(self.tag_und_zeit_string)
-            self.ausgabe_text.configure(state='normal')
-            self.ausgabe_text.delete("1.0", tk.END)  # Hier wird der Inhalt des Textfelds gelöscht
-            self.ausgabe_text.configure(state='disabled')
+            #self.ausgabe_text.configure(state='normal')
+            #self.ausgabe_text.delete("1.0", tk.END)  # Hier wird der Inhalt des Textfelds gelöscht
+            #self.ausgabe_text.configure(state='disabled')
             try:
                 print("try1")
                 if os.path.exists(self.DB):
                     print("Liste existiert")
                     os.remove(self.DB)
                     print("datei gelöscht")
-                    #self.ausgabe_text.delete("1.0", tk.END) // entfernt weil die funktion sowieso nie eine benutzt hat und ich kein bock hab das an die GUI 2.0 anzupassen
+                    #self.ausgabe_text.delete("1.0", tk.END)
                     print("textfeld gelöscht")
                 else:
                     messagebox.showerror(title="Fehler", message="Es gab keine alten Einträge zum löschen.")
@@ -2260,7 +2129,7 @@ class Listendings:
             self.problem_entry.grid_forget()
             self.info_entry.grid_forget()
             self.senden_button.grid_forget()
-            self.ausgabe_text.grid_forget()
+            #self.ausgabe_text.grid_forget()
         except:
             pass
         self.p_text = tk.CTkLabel(root, text="Jetzt ist gerade Pause und mit vollem Mund spricht man nicht!")
