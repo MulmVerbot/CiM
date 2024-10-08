@@ -188,7 +188,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.0.6 (0)"
+        self.Version = "Beta 1.0.6 (1)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -1249,9 +1249,11 @@ class Listendings:
         try:
             script_path = "totdo.py"
             subprocess.Popen([sys.executable, script_path],creationflags=subprocess.CREATE_NO_WINDOW) # Windoof
-
         except AttributeError as e:
             print(f"Fehler beim Starten des Skripts: {e}")
+            # Unix (macOS, Linux)
+            subprocess.Popen([sys.executable, script_path],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            print("Totdo wurde unter Unix geöffnet.")
         except ModuleNotFoundError:
             # Unix (macOS, Linux)
             subprocess.Popen([sys.executable, script_path],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
@@ -2452,7 +2454,7 @@ class Listendings:
 
                 if datensaetze:
                     self.tag_string = str(time.strftime("%d %m %Y"))
-                    with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
+                    with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w+', newline='') as datei:
                         schreiber = csv.writer(datei)
                         schreiber.writerow(["Uhrzeit", "Anrufer", "Problem", "Info", "Telefonnummer", "Wollte Sprechen", "Weiterleitung"])
                         schreiber.writerows(datensaetze)
