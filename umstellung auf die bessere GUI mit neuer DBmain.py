@@ -290,19 +290,29 @@ class Listendings:
         
     #### Farben ####
         #self.Hintergrund_farbe = "SlateGrey"
-        self.Hintergrund_farbe = "AntiqueWhite2"
+        self.Hintergrund_farbe = "gray11" #"AntiqueWhite2"
         self.Hintergrund_farbe_Text_Widget = "AntiqueWhite2" #"AntiqueWhite" #"AntiqueWhite2"
         self.Textfarbe = "Black"
-        self.Border_Farbe = "AntiqueWhite4"
-        self.Entry_Farbe = "AntiqueWhite3"
-        self.Ereignislog_farbe = self.Hintergrund_farbe_Text_Widget
+        self.Border_Farbe = "#232323" #"AntiqueWhite4"
+        self.Entry_Farbe = "#2A2A2A" #"AntiqueWhite3"
+        self.Ereignislog_farbe = "#323232" #self.Hintergrund_farbe_Text_Widget
         self.aktiviert_farbe = "aquamarine2"
         self.deaktiviert_farbe = "White"
         self.dunkle_ui_farbe = "burlywood2"
         self.helle_ui_farbe = "burlywood1"
-        self.Ja_UI_Farbe = "burlywood"
+        self.Ja_UI_Farbe = "LawnGreen" #"burlywood"
         self.das_hübsche_grau = "LightSlateGray"
         self.helle_farbe_für_knopfe = "LightSkyBlue"
+
+        self.f_bg = "gray11" # Farbe des Fensterhintergrundes
+        self.f_l = "gray13"
+        self.f_r = "#272727"   # Die Farbcode aus dem Todo sind aber schon weird oder? hab mich einfach mal an den ihrem Design orientiert
+        self.f_e = "#2A2A2A" # Farbe der Knöpfe
+        self.f_border = "#232323" # Farbe der Border
+        self.f_r_1 = "#323232" # Farbe der Textfelder
+        self.gruen_hell = "LawnGreen" # Grün
+        self.rot = "firebrick" # Rot
+        self.Txt_farbe = "White"
     #### Farben Ende ####
 
         root.configure(fg_color=self.Hintergrund_farbe)
@@ -456,11 +466,11 @@ class Listendings:
         
 
     #### Die Stars der Stunde ####
-        self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Name des Anrufers", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
-        self.t_nummer = tk.CTkEntry(master, width=250, placeholder_text="Telefonnummer", state="disabled", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
-        self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
-        self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
-        self.Anruf_Zeit = tk.CTkLabel(master, text_color="Black", text=f"Kein akiver Anruf             ", bg_color=self.Entry_Farbe)
+        self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Name des Anrufers", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite")
+        self.t_nummer = tk.CTkEntry(master, width=250, placeholder_text="Telefonnummer", state="disabled", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite")
+        self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite")
+        self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite")
+        self.Anruf_Zeit = tk.CTkLabel(master, text_color=self.Txt_farbe, text=f"Kein akiver Anruf             ", bg_color=self.Entry_Farbe)
 
     #    self.kunde_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
     #    self.t_nummer.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
@@ -548,15 +558,15 @@ class Listendings:
     ############################ GUI init ######################
     ############################ GUI init ######################
         self.menu_frame = tk.CTkFrame(master, width=200, height=400)
-        self.beb_knopp = tk.CTkButton(master, text="Bearbeiten", command=self.beb_c, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.Bearbeiten_Bild)
+        self.beb_knopp = tk.CTkButton(master, text="Bearbeiten", command=self.beb_c, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="DarkSlateGray1", image=self.Bearbeiten_Bild)
         self.beb_knopp.place(x=1260, y=100)
         self.Such_menu_haupt_frame = tk.CTkFrame(root, width=180, height=110, fg_color=self.Hintergrund_farbe, border_color=self.Border_Farbe, border_width=3, corner_radius=5)
-        self.irgendwo_suchen = tk.CTkButton(master, text="durchsuchen...", command=self.such_menü_hauptmenu, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Durchsuchen_Bild_zu)
+        self.irgendwo_suchen = tk.CTkButton(master, text="durchsuchen...", command=self.such_menü_hauptmenu, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink", image=self.Durchsuchen_Bild_zu)
         self.irgendwo_suchen.place(x=1260, y=130)
-        self.Menü_Knopp = tk.CTkButton(master, text="Menü", command=self.Menu_anzeige_wechseln, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Menü_Bild)
+        self.Menü_Knopp = tk.CTkButton(master, text="Menü", command=self.Menu_anzeige_wechseln, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink", image=self.Menü_Bild)
         self.Menü_Knopp.place(x=1260, y=160)
         self.Pause_menu = tk.CTkFrame(master, width=769, height=420, fg_color="LightSlateGray", border_color="White", border_width=1, corner_radius=1)
-        self.Ereignislog = tk.CTkTextbox(root, width=220, height=80, wrap="word", text_color="Black", fg_color=self.Ereignislog_farbe, border_color=self.Border_Farbe, border_width=2)
+        self.Ereignislog = tk.CTkTextbox(root, width=220, height=80, wrap="word", text_color=self.Txt_farbe, fg_color=self.Ereignislog_farbe, border_color=self.Border_Farbe, border_width=2)
         self.Ereignislog.place(x=1210,y=10)
         self.Ereignislog_insert(nachricht_f_e="[-Ereignislog-]")
         #self.Ereignislog_insert(nachricht_f_e="[-Ereignislog-]\n")
@@ -568,7 +578,7 @@ class Listendings:
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
 
-        #self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche_alte_Einträge, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        #self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche_alte_Einträge, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink")
         
         self.Zhe_Clock = tk.CTkLabel(self.Pause_menu, text=self.Zeit)
         self.Zhe_Clock.place(x=10,y=10)
@@ -587,7 +597,7 @@ class Listendings:
         self.Einstellung_Design_auswahl = tk.CTkOptionMenu(self.Pause_menu, values=["hell", "dunkel", "System"], command=auswahl_design_gedingst)
         self.Einstellung_Design_L = tk.CTkLabel(self.Pause_menu, text="Design Einstellung:")
         
-        #self.kalender_menü = tk.CTkFrame(master, width=1250, height=520, fg_color="White", border_color="Black", border_width=2)
+        #self.kalender_menü = tk.CTkFrame(master, width=1250, height=520, fg_color=self.f_e, border_color="Black", border_width=2)
         #self.Liste_mit_zeugs = tk.CTkScrollableFrame(self.kalender_menü, width=500, height=420, bg_color="Green")
         
         ################################ MENU FRAMES ENDE ################################
@@ -595,36 +605,36 @@ class Listendings:
         ################################ MENU FRAMES ENDE ################################
         ################################ MENU FRAMES ENDE ################################
         
-        self.Einstellungsseite_Knopp = tk.CTkButton(root, text="Einstellungen", command=self.Einstellungen_öffnen, fg_color="white", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.Dings_Bild)
+        self.Einstellungsseite_Knopp = tk.CTkButton(root, text="Einstellungen", command=self.Einstellungen_öffnen, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="DarkSlateGray1", image=self.Dings_Bild)
         self.Einstellungsseite_Knopp.place(x=1260,y=420)
-        self.Ticket_erstellen_Knopp = tk.CTkButton(root, text="Ticket erstellen", command=self.Ticket_erstellen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Ticket_Bild)
+        self.Ticket_erstellen_Knopp = tk.CTkButton(root, text="Ticket erstellen", command=self.Ticket_erstellen, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink", image=self.Ticket_Bild)
         self.Ticket_erstellen_Knopp.place(x=1260,y=450)
-        self.Eintrag_raus_kopieren_knopp = tk.CTkButton(root, text="Letztes kopieren", command=self.Eintrag_raus_kopieren, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Kopieren_Bild)
+        self.Eintrag_raus_kopieren_knopp = tk.CTkButton(root, text="Letztes kopieren", command=self.Eintrag_raus_kopieren, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink", image=self.Kopieren_Bild)
         self.Eintrag_raus_kopieren_knopp.place(x=1260,y=390)
-        self.Notizen_knopp = tk.CTkButton(root, text="Schnellnotiz", fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.Schnellnotiz_Bild)
+        self.Notizen_knopp = tk.CTkButton(root, text="Schnellnotiz", fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="DarkSlateGray1", image=self.Schnellnotiz_Bild)
         self.Notizen_knopp.place(x=1260,y=360)
         self.Notizen_knopp.bind('<Button-1>', self.schnellnotizen_öffnen)
 
-        self.Berichtsheft_knopp = tk.CTkButton(self.Pause_menu, text="Berichtsheft öffnen", command=self.Berichtsheft_aufmachen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.Berichtsheft_knopp = tk.CTkButton(self.Pause_menu, text="Berichtsheft öffnen", command=self.Berichtsheft_aufmachen, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink")
         self.Einstellungen_Frame = tk.CTkFrame(root, width=600, height=380, border_color="Pink", border_width=3, fg_color="transparent")
-        self.tabview = tk.CTkTabview(self.Einstellungen_Frame, width=600, height=380, fg_color=self.Entry_Farbe, segmented_button_fg_color=self.Hintergrund_farbe_Text_Widget, segmented_button_selected_hover_color=self.dunkle_ui_farbe, segmented_button_unselected_hover_color=self.dunkle_ui_farbe, segmented_button_selected_color=self.helle_ui_farbe, text_color="Black", segmented_button_unselected_color=self.Ja_UI_Farbe)
+        self.tabview = tk.CTkTabview(self.Einstellungen_Frame, width=600, height=380, fg_color=self.Entry_Farbe, segmented_button_fg_color=self.Hintergrund_farbe_Text_Widget, segmented_button_selected_hover_color=self.dunkle_ui_farbe, segmented_button_unselected_hover_color=self.dunkle_ui_farbe, segmented_button_selected_color=self.helle_ui_farbe, text_color=self.Txt_farbe, segmented_button_unselected_color=self.Ja_UI_Farbe)
         self.tabview.add("Starface Modul")
         self.tabview.add("Adressbuch")
         self.tabview.add("Speichern")
         self.tabview.add("SMTP")
         self.tabview.add("Speicherorte")
         self.tabview.add("Weiterleitungen")
-        self.gel_Email_Empfänger_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Ziel Email Adresse", text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
-        self.gel_Email_Sender_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Absende Email Adresse", text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
-        self.gel_Email_Absender_Passwort_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Absende Mail Kennwort", text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
-        self.gel_SMTP_Server_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="SMTP Server", text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
+        self.gel_Email_Empfänger_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Ziel Email Adresse", text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
+        self.gel_Email_Sender_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Absende Email Adresse", text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
+        self.gel_Email_Absender_Passwort_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Absende Mail Kennwort", text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
+        self.gel_SMTP_Server_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="SMTP Server", text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
         self.gel_Email_Empfänger_E = tk.CTkEntry(self.tabview.tab("SMTP"), placeholder_text="Empfänger Adresse", width=300)
         self.gel_Email_Sender_E = tk.CTkEntry(self.tabview.tab("SMTP"), placeholder_text="Sender Email Adresse", width=300)
         self.gel_Email_Absender_Passwort_E = tk.CTkEntry(self.tabview.tab("SMTP"), placeholder_text="Passwort der Email Adresse", width=300, show="#")
         self.gel_SMTP_Server_E = tk.CTkEntry(self.tabview.tab("SMTP"), placeholder_text="IPv4 oder Hostnamen für SMTP Eintragen", width=300)
-        self.Mail_Einstellungen_speichern = tk.CTkButton(self.tabview.tab("SMTP"), text="Email Einstellungen speichern", command=self.Email_Einstellungen_speichern, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1")
+        self.Mail_Einstellungen_speichern = tk.CTkButton(self.tabview.tab("SMTP"), text="Email Einstellungen speichern", command=self.Email_Einstellungen_speichern, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="DarkSlateGray1")
         self.smtp_login_erfolgreich_l = tk.CTkLabel(self.tabview.tab("SMTP"), text="Anmeldestatus")
-        self.SMTP_Server_erneut_anmelden = tk.CTkButton(self.tabview.tab("SMTP"), text="erneut mit SMTP Server verbinden", command=self.SMTP_Anmeldung_Manuell, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.SMTP_Server_erneut_anmelden = tk.CTkButton(self.tabview.tab("SMTP"), text="erneut mit SMTP Server verbinden", command=self.SMTP_Anmeldung_Manuell, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink")
         
         self.weiterleitungen_l = tk.CTkLabel(self.tabview.tab("Weiterleitungen"), text="Namen für die Weiterleitungen einstellen")
         self.weiterleitungen_einz_e = tk.CTkEntry(self.tabview.tab("Weiterleitungen"), placeholder_text="erstes", width=300)
@@ -635,9 +645,9 @@ class Listendings:
         #self.Speicherort_lokal_ändern_knopp = tk.CTkButton(self.tabview.tab("Speichern"), text="ändern", command=self.ListenDings_speicherort_ändern, fg=self.helle_farbe_für_knopfe, border=self.Border_Farbe)
         #self.Speicherort_lokal_ändern_l = tk.CTkLabel(self.tabview("Speichern"), text="den lokalen Speicherort ändern")
     #### todo gui ####
-        self.Todo_aufmachen_main_knopp = tk.CTkButton(root, text="Totdo öffnen", command=self.todo_aufmachen, fg_color="white", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.totdo_Bild)
+        self.Todo_aufmachen_main_knopp = tk.CTkButton(root, text="Totdo öffnen", command=self.todo_aufmachen, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="DarkSlateGray1", image=self.totdo_Bild)
         self.Todo_aufmachen_main_knopp.place(x=1260,y=480)
-        self.ans_totdo_senden_knopp = tk.CTkButton(root, text="An TotDo senden", command=self.Eintrag_ans_totdo, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Menü_Bild)
+        self.ans_totdo_senden_knopp = tk.CTkButton(root, text="An TotDo senden", command=self.Eintrag_ans_totdo, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink", image=self.Menü_Bild)
         self.ans_totdo_senden_knopp.place(x=1260,y=330)
         
         #self.todo_hinzufügen_knopp = tk.CTkButton(self.todo_frame, text="Aufgabe hinzufügen", command=self.todo_hinzufügen)
@@ -831,10 +841,10 @@ class Listendings:
         except:
             pass
         try:
-            self.optionmenu1 = tk.CTkOptionMenu(root, values=[f"Mit {self.einz} sprechen", f"Mit {self.zwee} sprechen", f"Mit {self.dree} sprechen", f"Mit {self.vir} sprechen", "Irgendwen sprechen"], command=auswahl_gedingst_sprechen, fg_color="White", text_color="Black", dropdown_hover_color="pink")
+            self.optionmenu1 = tk.CTkOptionMenu(root, values=[f"Mit {self.einz} sprechen", f"Mit {self.zwee} sprechen", f"Mit {self.dree} sprechen", f"Mit {self.vir} sprechen", "Irgendwen sprechen"], command=auswahl_gedingst_sprechen, fg_color=self.f_e, text_color=self.Txt_farbe, dropdown_hover_color="pink")
             self.optionmenu1.set("Mit Wem sprechen?")
             self.optionmenu1.place(x=1260,y=190)
-            self.optionmenu = tk.CTkOptionMenu(root, values=[f"An {self.einz} weitergeleitet", f"An {self.zwee} weitergeleitet", f"An {self.dree} weitergeleitet", f"An {self.vir} weitergeleitet", "Keine Weiterleitung"], command=auswahl_gedingst, fg_color="White", text_color="Black", dropdown_hover_color="pink")
+            self.optionmenu = tk.CTkOptionMenu(root, values=[f"An {self.einz} weitergeleitet", f"An {self.zwee} weitergeleitet", f"An {self.dree} weitergeleitet", f"An {self.vir} weitergeleitet", "Keine Weiterleitung"], command=auswahl_gedingst, fg_color=self.f_e, text_color=self.Txt_farbe, dropdown_hover_color="pink")
             self.optionmenu.set("Keine Weiterleitung")
             self.optionmenu.place(x=1260,y=220)
             print(f"[-WEITERLEITUNG LADEN-] Die Weiterleitungen wurden geladen und wieder platziert.")
@@ -845,8 +855,8 @@ class Listendings:
         print("[-INFO-] changelog_aufmachen(def)")
         self.changelog_Fenster = tk.CTkToplevel(root)
         self.changelog_Fenster.title("Changelogs")
-        self.changelog_Fenster.configure(fg_color="White")
-        self.Textfeld_changelog = tk.CTkTextbox(self.changelog_Fenster, width=820, height=420, text_color="Black", fg_color="azure", wrap="word", border_width=0)
+        self.changelog_Fenster.configure(fg_color=self.f_e)
+        self.Textfeld_changelog = tk.CTkTextbox(self.changelog_Fenster, width=820, height=420, text_color=self.Txt_farbe, fg_color="azure", wrap="word", border_width=0)
         height = 420
         width = 820
         try:
@@ -896,8 +906,8 @@ class Listendings:
         print("[-INFO-] schnellnotizen_öffnen(def)")
         self.schnellnotizen_Fenster = tk.CTkToplevel(root)
         self.schnellnotizen_Fenster.title("Schnellnotiz")
-        self.schnellnotizen_Fenster.configure(fg_color="White")
-        self.Textfeld_Schnellnotizen = tk.CTkTextbox(self.schnellnotizen_Fenster, width=420, height=420, text_color="Black", fg_color="azure", wrap="word")
+        self.schnellnotizen_Fenster.configure(fg_color=self.f_e)
+        self.Textfeld_Schnellnotizen = tk.CTkTextbox(self.schnellnotizen_Fenster, width=420, height=420, text_color=self.Txt_farbe, fg_color="azure", wrap="word")
         height = 420
         width = 420
 
@@ -929,17 +939,17 @@ class Listendings:
         self.Starface_Modul_Einstellung_Knopp = tk.CTkButton(self.tabview.tab("Starface Modul"), text="Starface Modul umschalten", command=self.Starface_Modul_umschalten, hover_color="pink")
         self.Starface_Modul_Einstellung_Knopp.pack()
         if self.Starface_Modul == "1":
-            self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist aktiviert.", fg_color="aquamarine", text_color="Black")
+            self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist aktiviert.", fg_color="aquamarine", text_color=self.Txt_farbe)
         else:
             self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist deaktiviert.", fg_color="chocolate1", text_color="White")
         if self.Auto_speichern_Einstellungsdatei_var == "1":
-            self.Auto_speichern_ändern_knopp.configure(text="Autospeichern aktiviert.",fg_color="aquamarine", text_color="Black")
+            self.Auto_speichern_ändern_knopp.configure(text="Autospeichern aktiviert.",fg_color="aquamarine", text_color=self.Txt_farbe)
         else:
             self.Auto_speichern_ändern_knopp.configure(text="Autospeichern deaktiviert.", fg_color="chocolate1", text_color="White")  # den shais hier kann man so safe beser machen aber egal, vllt irgendwann mal
         self.Listen_Speicherort_geladen_anders_Entry = tk.CTkEntry(self.tabview.tab("Speicherorte"), width=300)
         self.Listen_Speicherort_Netzwerk_geladen_anders_Entry = tk.CTkEntry(self.tabview.tab("Speicherorte"), width=300)
-        self.Netzlaufwerk_pfad_geladen_Label = tk.CTkLabel(self.tabview.tab("Speicherorte"), text=self.Listen_Speicherort_Netzwerk_geladen_anders, text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
-        self.Pfad_geladen_Label = tk.CTkLabel(self.tabview.tab("Speicherorte"), text=self.Listen_Speicherort_geladen_anders, text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
+        self.Netzlaufwerk_pfad_geladen_Label = tk.CTkLabel(self.tabview.tab("Speicherorte"), text=self.Listen_Speicherort_Netzwerk_geladen_anders, text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
+        self.Pfad_geladen_Label = tk.CTkLabel(self.tabview.tab("Speicherorte"), text=self.Listen_Speicherort_geladen_anders, text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
 
         self.Normaler_Speicherort_change = tk.CTkButton(self.tabview.tab("Speicherorte"), text="ändern", command=self.ListenDings_speicherort_ändern, width=100)
         self.Netzwerk_Speicherort_change = tk.CTkButton(self.tabview.tab("Speicherorte"), text="ändern", command=self.ListenDings_speicherort_Netzwerk_ändern, width=100)
@@ -976,7 +986,7 @@ class Listendings:
             self.abhgehakt_hinzufügen_box.place_forget()
         except:
             pass
-        self.abhgehakt_hinzufügen_box = tk.CTkCheckBox(self.tabview.tab("Speichern"), text_color="Black",text="Namen und Telefonnummer in KtDb speichern?", command=rückruf_speichern, variable=self.mitspeichern, onvalue="on", offvalue="off")
+        self.abhgehakt_hinzufügen_box = tk.CTkCheckBox(self.tabview.tab("Speichern"), text_color=self.Txt_farbe,text="Namen und Telefonnummer in KtDb speichern?", command=rückruf_speichern, variable=self.mitspeichern, onvalue="on", offvalue="off")
         self.abhgehakt_hinzufügen_box.place(x=20,y=20)
         self.Auto_speichern_ändern_knopp.place(x=20,y=60)
 
@@ -1232,12 +1242,12 @@ class Listendings:
             self.Ticket_Fenster.geometry(f"{width}x{height}+{x}+{y}")
         except:
             pass
-        self.Betreff_Ticket_e = tk.CTkEntry(self.Ticket_Fenster, width=300, placeholder_text="Betreffzeile", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
+        self.Betreff_Ticket_e = tk.CTkEntry(self.Ticket_Fenster, width=300, placeholder_text="Betreffzeile", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite")
         self.Nachricht_Ticket_e = tk.CTkTextbox(self.Ticket_Fenster, width=300, height=420, wrap="word", fg_color=self.Hintergrund_farbe_Text_Widget, text_color=self.Textfarbe, border_color=self.Border_Farbe, border_width=2)
-        self.Ticket_abschicken_mail = tk.CTkButton(self.Ticket_Fenster, text="Ticket erstellen und versenden", command=self.Ticket_erstellen_mail, fg_color="aquamarine", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1")
-        self.alternative_empfänger_adresse_e = tk.CTkEntry(self.Ticket_Fenster, placeholder_text="Alternative Empfänger", width=300, fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
-        self.Ticket_erstellen_anhang_suchen_knopp = tk.CTkButton(self.Ticket_Fenster, text="Anhang hinzufügen", command=self.anhang_suchen_ticket, fg_color="white", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1")
-        self.Mail_Anhang_status_l = tk.CTkLabel(self.Ticket_Fenster, text=f"Anhang: ", text_color="Black", bg_color=self.Hintergrund_farbe, corner_radius=3)
+        self.Ticket_abschicken_mail = tk.CTkButton(self.Ticket_Fenster, text="Ticket erstellen und versenden", command=self.Ticket_erstellen_mail, fg_color="aquamarine", border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="DarkSlateGray1")
+        self.alternative_empfänger_adresse_e = tk.CTkEntry(self.Ticket_Fenster, placeholder_text="Alternative Empfänger", width=300, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite")
+        self.Ticket_erstellen_anhang_suchen_knopp = tk.CTkButton(self.Ticket_Fenster, text="Anhang hinzufügen", command=self.anhang_suchen_ticket, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="DarkSlateGray1")
+        self.Mail_Anhang_status_l = tk.CTkLabel(self.Ticket_Fenster, text=f"Anhang: ", text_color=self.Txt_farbe, bg_color=self.Hintergrund_farbe, corner_radius=3)
         self.letztes_einfügen_knopp = tk.CTkButton(self.Ticket_Fenster, text="Letzten Anruf Importieren", command=self.letzten_importieren)
         self.letztes_einfügen_knopp.place(x=500,y=230)
 
@@ -1365,7 +1375,7 @@ class Listendings:
                             try:
                                 with open(self.Starface_Einstellungsdatei, "w+") as SternGesicht_data_neu:
                                     SternGesicht_data_neu.write("1")
-                                self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist aktiviert", fg_color="aquamarine", text_color="Black")
+                                self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist aktiviert", fg_color="aquamarine", text_color=self.Txt_farbe)
                                 messagebox.showinfo(title="CiM Einstellungen", message="Das Starface Modul wird nun nach dem Neustart des Programms aktiviert, bitte schauen Sie, für die korrekte Einrichtung in die Dokumentation.")
                             except Exception as Ex_schr_stern:
                                 print(Ex_schr_stern)
@@ -1379,7 +1389,7 @@ class Listendings:
                 try:
                     with open(self.Starface_Einstellungsdatei, "w+") as SternGesicht_data_neu:
                         SternGesicht_data_neu.write("1")
-                        self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist aktiviert", fg_color="aquamarine", text_color="Black")
+                        self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist aktiviert", fg_color="aquamarine", text_color=self.Txt_farbe)
                     messagebox.showinfo(title="CiM Einstellungen", message="Das Starface Modul wird nun nach dem Neustart des Programms aktiviert.")
                 except Exception as Ex_schr_stern:
                     print(Ex_schr_stern)
@@ -1402,7 +1412,7 @@ class Listendings:
             try:
                 with open(self.Auto_speichern_Einstellungsdatei, "w+") as schr_asp:
                     schr_asp.write("1")
-                    self.Auto_speichern_ändern_knopp.configure(text="Autospeichern aktiviert", fg_color="aquamarine", text_color="Black")
+                    self.Auto_speichern_ändern_knopp.configure(text="Autospeichern aktiviert", fg_color="aquamarine", text_color=self.Txt_farbe)
                     self.Auto_speichern_Einstellungsdatei_var = "1"
             except Exception as o1:
                 print("Es ist ein fehler aufgetreten: ",o1)
@@ -1414,7 +1424,7 @@ class Listendings:
             # Menu wird jetzt nicht mehr da sein.
             self.Pause_menu.place_forget()
             self.Menü_da = False
-            self.Menü_Knopp.configure(text="Menü", fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+            self.Menü_Knopp.configure(text="Menü", fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink")
             self.smtp_login_erfolgreich_l.place_forget()
             self.Einstellung_Design_auswahl.place_forget()
             ##self.Berichtsheft_knopp.place_forget()
@@ -1429,8 +1439,8 @@ class Listendings:
             ##self.Berichtsheft_knopp.place(x=400,y=100)
             self.Einstellung_Design_auswahl.place(x=10,y=200)
             self.Einstellung_Design_L.place(x=10,y=170)
-            self.Statistiken_anzeigen_linie_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Liniendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_linie, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
-            self.Statistiken_anzeigen_saeule_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Säulendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_saeule, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+            self.Statistiken_anzeigen_linie_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Liniendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_linie, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink")
+            self.Statistiken_anzeigen_saeule_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Säulendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_saeule, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink")
             self.Statistiken_anzeigen_linie_knopp.place(x=10,y=100)
             self.Statistiken_anzeigen_saeule_knopp.place(x=10,y=140)
             try:
@@ -1467,17 +1477,17 @@ class Listendings:
         self.KDabl_durchsuchen_Knopp.place_forget()
         self.durchsuchen_egal.place_forget()
         self.In_alten_Einträgen_suchen.place_forget()
-        self.irgendwo_suchen.configure(text="durchsuchen...", command=self.such_menü_hauptmenu, hover_color="pink", fg_color="White", image=self.Durchsuchen_Bild_zu)
+        self.irgendwo_suchen.configure(text="durchsuchen...", command=self.such_menü_hauptmenu, hover_color="pink", fg_color=self.f_e, image=self.Durchsuchen_Bild_zu)
 
     def such_menü_hauptmenu(self):
         print("def such_menü_hauptmenu(self)")
         self.irgendwo_suchen.configure(text="schließen", command=self.such_menü_hauptmenu_schließen, hover_color="CadetBlue1", fg_color=self.aktiviert_farbe, image=self.Durchsuchen_Bild)
         self.Such_menu_haupt_frame.place(x=1060,y=100)
-        self.KDabl_durchsuchen_Knopp = tk.CTkButton(self.Such_menu_haupt_frame, text="In Kndn-DB suchen", command=self.Suche_KDabl, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Kunde_suchen_Bild)
+        self.KDabl_durchsuchen_Knopp = tk.CTkButton(self.Such_menu_haupt_frame, text="In Kndn-DB suchen", command=self.Suche_KDabl, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink", image=self.Kunde_suchen_Bild)
         self.KDabl_durchsuchen_Knopp.place(x=10,y=40)
-        self.durchsuchen_egal = tk.CTkButton(self.Such_menu_haupt_frame, text="irgendwo suchen...", command=self.Suche1, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Durchsuchen_Bild)
+        self.durchsuchen_egal = tk.CTkButton(self.Such_menu_haupt_frame, text="irgendwo suchen...", command=self.Suche1, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink", image=self.Durchsuchen_Bild)
         self.durchsuchen_egal.place(x=10, y=10)
-        self.In_alten_Einträgen_suchen = tk.CTkButton(self.Such_menu_haupt_frame, text="In DB suchen", command=self.Suche_alte_Einträge, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Dings_Liste_Bild)
+        self.In_alten_Einträgen_suchen = tk.CTkButton(self.Such_menu_haupt_frame, text="In DB suchen", command=self.Suche_alte_Einträge, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink", image=self.Dings_Liste_Bild)
         self.In_alten_Einträgen_suchen.place(x=10,y=70)
 
     def zeugs_blacklist(self):
@@ -2112,7 +2122,7 @@ class Listendings:
             #self.ausgabe_text.configure(state='disabled')
             self.t_nummer.configure(state="disabled")
             root.bind('<Return>', self.senden)
-            self.beb_knopp.configure(text="Bearbeiten", fg_color="white", hover_color="DarkSlateGray1")
+            self.beb_knopp.configure(text="Bearbeiten", fg_color=self.f_e, hover_color="DarkSlateGray1")
             self.beb = "0"
             with open(self.Liste_mit_datum, "w+") as f:
                 f.write(self.text_tk_text)
