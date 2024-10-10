@@ -549,7 +549,7 @@ class TodoApp:
         tasks = self.load_tasks_from_file()
         for task in tasks:
             self.create_task_button(task)
-                            # DAS IST BRILLIANTER CODE OMEINGOTT!
+                            
     def load_tasks_from_file(self):
         if os.path.exists(self.TASK_FILE):
             with open(self.TASK_FILE, 'r') as file:
