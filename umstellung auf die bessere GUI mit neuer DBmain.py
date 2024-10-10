@@ -687,8 +687,9 @@ class Listendings:
     def Liste_laden_aus_JSON(self): # lädt die Enträge und packt sie in die LB, klappt nur wenn die LB schon geladen wurde!! (obvius ich weiß, aber ich sachs mal trotzdem)
         ##self.clear_tasks_frame() //todo hier soll dann die LB gecleart werden
         Eintrag_v = self.Eintrag_aus_JSON_DB_laden()
+        print(f"Hier ist das geladene: \n{Eintrag_v}")
         for Dings in Eintrag_v:                     
-            self.Eintrags_Liste.insert(Atk.END, f"||  ID: {Eintrag_v['Eintrag_id']} | {Eintrag_v['name']} | {Eintrag_v['Uhrzeit']}||")          ### Hier kackts noch mächtig ab, der Rest geht aber
+            self.Eintrags_Liste.insert(Atk.END, f"  ID: {Dings['Eintrag_id']} | {Dings['name']} | {Dings['Uhrzeit']}  ")          ### Hier kackts noch mächtig ab, der Rest geht aber
             
 
     def Netzlaufwerk_Einstellung_laden(self):
