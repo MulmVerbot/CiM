@@ -248,6 +248,7 @@ class Listendings:
         self.Checklisten_Option_1 = "Test Checkliste 1"
         self.Checklisten_Option_2 = "Test Checkliste 2"
         self.Checklisten_Option_3 = "Test Checkliste 3"
+        self.Eintrags_DB = os.path.join(self.Db_Ordner_pfad, "Eintrags_DB.json")
 #            _ .-') _             .-') _                   
 #           ( (  OO) )           ( OO ) )                  
 #           \     .'_  .---.,--./ ,--,'   ,--.   .-----.  
@@ -294,7 +295,7 @@ class Listendings:
         self.Hintergrund_farbe_Text_Widget = "AntiqueWhite2" #"AntiqueWhite" #"AntiqueWhite2"
         self.Textfarbe = "Black"
         self.Border_Farbe = "#232323" #"AntiqueWhite4"
-        self.Entry_Farbe = "#2A2A2A" #"AntiqueWhite3"
+        self.Entry_Farbe = "#323232" #"#2A2A2A" #"AntiqueWhite3"
         self.Ereignislog_farbe = "#323232" #self.Hintergrund_farbe_Text_Widget
         self.aktiviert_farbe = "aquamarine2"
         self.deaktiviert_farbe = "White"
@@ -465,50 +466,9 @@ class Listendings:
             print("[ INIT - EINSTELLUNGEN - ERR ]Die Einstellung scheint nicht zu existieren")
         
 
-    #### Die Stars der Stunde ####
-        self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Name des Anrufers", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite")
-        self.t_nummer = tk.CTkEntry(master, width=250, placeholder_text="Telefonnummer", state="disabled", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite")
-        self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite")
-        self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite")
-        self.Anruf_Zeit = tk.CTkLabel(master, text_color=self.Txt_farbe, text=f"Kein akiver Anruf             ", bg_color=self.Entry_Farbe)
-
-    #    self.kunde_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
-    #    self.t_nummer.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
-    #    self.problem_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
-    #    self.info_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
-    #    self.Anruf_Zeit.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
-    #### ####
-        
-        self.senden_button = tk.CTkButton(master, text="Senden", command="")
-        self.senden_button.bind('<Button-1>', self.senden)
-        root.bind('<Return>', self.senden)
-        ##self.ausgabe_text = tk.CTkTextbox(master, width=1255, height=420, wrap="word", fg_color=self.Hintergrund_farbe_Text_Widget, text_color=self.Textfarbe, border_color=self.Border_Farbe, border_width=2)
-        ##self.ausgabe_text.configure(state='disabled')
-        self.Eintrags_Liste = Atk.Listbox(root, width=60, height=26)
-        self.Eintrags_Liste.place(x=0,y=100)
-        scrollbar1 = Atk.Scrollbar(root, orient=Atk.VERTICAL)
-        scrollbar1.place(x=360,y=100, height=420)
-        self.Eintrags_Liste.config(yscrollcommand=scrollbar1.set)
-        scrollbar1.config(command=self.Eintrags_Liste.yview)
-        self.Liste_laden_aus_JSON() ########################################################################### DAS HIER NICHT VERGESSEN RAUSZUNEHMEN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#####################
-        self.kunde_entry.place(x=5,y=5)
-        self.problem_entry.place(x=5,y=35)
-        self.info_entry.place(x=5,y=65)
-        self.t_nummer.place(x=605,y=5)
-        ##self.ausgabe_text.place(x=0,y=100)
-        self.Anruf_Zeit.place(x=860,y=5)
-
-        self.Zeit_aus_JSON = Atk.Label(root, text=self.Zeit) # die var dann noch ändern //todo wird dann aus der Liste geladen
-        self.Zeit_aus_JSON.place(x=840,y=100)
-        self.Anrufer_Bezeichnung_l = Atk.Label(root, text="Das hier wird zum Kundennamen GmbH", fg="Black") # die var dann noch ändern //todo wird dann aus der Liste geladen
-        self.Anrufer_Bezeichnung_l.place(x=420,y=100)
-        self.ID_M_l = Atk.Label(root, text=f"ID: 1420")
-        self.ID_M_l.place(x=980, y=100)                     ############## den ganzen mist dann bitte auch so machen dass ich das mit strg + s schnell speichern kann, danke //todo
-
-        self.Problem_text_neu = tk.CTkTextbox(root, width=620, height=200) # die var dann noch ändern //todo wird dann aus der Liste geladen
-        self.Problem_text_neu.place(x=420,y=120)
-        self.Info_text_neu = tk.CTkTextbox(root, width=620, height=200) # die var dann noch ändern //todo wird dann aus der Liste geladen
-        self.Info_text_neu.place(x=420,y=320)
+    ############################ GUI init ######################
+    ############################ GUI init ######################
+    ############################ GUI init ######################
 
         
         self.menu = Menu(root)
@@ -537,26 +497,61 @@ class Listendings:
         self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results_vor)
         self.menudings.add_command(label="Checklisten (Demo)...", command=self.Checkboxen_dingsen)
         self.menudings.add_command(label="Email Baukasten (Demo)...", command=self.email_baukasten)
+        self.menudings.add_command(label="JSON befüllen", command=self.Eintrag_in_JSON_schmeissen)
+        self.menudings.add_command(label="JSON laden", command=self.Liste_laden_aus_JSON)
         #self.Suchen_Menu.add_command(label="Sehr genaue Suche nutzen (Suche 3.0)(Beta)", command=self.frage_nach_string_suche3)
         
-        try:
-            print("(INFO) versuche die alten Aufzeichenungen zu Laden")
-            #self.ausgabe_text.configure(state='normal')
-            with open(self.Liste_mit_datum, "r") as f:
-                feedback_text = f.read()
-                #self.ausgabe_text.delete("1.0", tk.END)
-                #self.ausgabe_text.insert(tk.END, feedback_text)
-                #self.ausgabe_text.configure(state='disabled')
-        except FileNotFoundError:
-            print("(INFO) Die Datei Liste.txt gibts net")
-            #self.ausgabe_text.configure(state='disabled')
-        except:
-            messagebox.showinfo(title="Fehler", message="Ein Unbekannter Fehler ist aufgetreten beim Versuch während des Programmstarts die bisherigen aufzeichnungen zu laden, es könnte sein dass das Programm trotzdem fehlerfrei funktioniert.")
-            #self.ausgabe_text.configure(state='disabled')
+        
 
-    ############################ GUI init ######################
-    ############################ GUI init ######################
-    ############################ GUI init ######################
+    
+    #### Die Stars der Stunde ####
+        self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Name des Anrufers", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite")
+        self.t_nummer = tk.CTkEntry(master, width=250, placeholder_text="Telefonnummer", state="disabled", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite")
+        self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite")
+        self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite")
+        self.Anruf_Zeit = tk.CTkLabel(master, text_color=self.Txt_farbe, text=f"Kein akiver Anruf             ", bg_color=self.Entry_Farbe)
+
+    #    self.kunde_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
+    #    self.t_nummer.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
+    #    self.problem_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
+    #    self.info_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
+    #    self.Anruf_Zeit.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
+    #### ####
+        
+        self.senden_button = tk.CTkButton(master, text="Senden", command="")
+        self.senden_button.bind('<Button-1>', self.senden)
+        root.bind('<Return>', self.senden)
+        ##self.ausgabe_text = tk.CTkTextbox(master, width=1255, height=420, wrap="word", fg_color=self.Hintergrund_farbe_Text_Widget, text_color=self.Textfarbe, border_color=self.Border_Farbe, border_width=2)
+        ##self.ausgabe_text.configure(state='disabled')
+        self.Listen_Liste_frame = tk.CTkFrame(root, height=320,width=50)
+        self.Listen_Liste_frame.place(x=0,y=100)
+        self.Eintrags_Liste = Atk.Listbox(self.Listen_Liste_frame, width=40, height=24, bg=self.Ereignislog_farbe, fg=self.Txt_farbe)
+        scrollbar1 = Atk.Scrollbar(self.Listen_Liste_frame, orient=Atk.VERTICAL)
+        self.Eintrags_Liste.config(yscrollcommand=scrollbar1.set)
+        scrollbar1.config(command=self.Eintrags_Liste.yview)
+
+        self.Eintrags_Liste.pack(side=Atk.LEFT, fill=Atk.X)
+        scrollbar1.pack(side=Atk.RIGHT, fill=Atk.Y)
+        self.Liste_laden_aus_JSON() ########################################################################### DAS HIER NICHT VERGESSEN RAUSZUNEHMEN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#####################
+        self.kunde_entry.place(x=5,y=5)
+        self.problem_entry.place(x=5,y=35)
+        self.info_entry.place(x=5,y=65)
+        self.t_nummer.place(x=605,y=5)
+        ##self.ausgabe_text.place(x=0,y=100)
+        self.Anruf_Zeit.place(x=860,y=5)
+
+        self.Zeit_aus_JSON = Atk.Label(root, text=self.Zeit) # die var dann noch ändern //todo wird dann aus der Liste geladen
+        self.Zeit_aus_JSON.place(x=840,y=100)
+        self.Anrufer_Bezeichnung_l = Atk.Label(root, text="Das hier wird zum Kundennamen GmbH", fg=self.Txt_farbe, border=2) # die var dann noch ändern //todo wird dann aus der Liste geladen
+        self.Anrufer_Bezeichnung_l.place(x=420,y=100)
+        self.ID_M_l = Atk.Label(root, text=f"ID: 1420", width=10)
+        self.ID_M_l.place(x=980, y=100)                     ############## den ganzen mist dann bitte auch so machen dass ich das mit strg + s schnell speichern kann, danke //todo
+
+        self.Problem_text_neu = tk.CTkTextbox(root, width=620, height=200, bg_color=self.Entry_Farbe, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe) # die var dann noch ändern //todo wird dann aus der Liste geladen
+        self.Problem_text_neu.place(x=420,y=120)
+        self.Info_text_neu = tk.CTkTextbox(root, width=620, height=200, bg_color=self.Entry_Farbe, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe) # die var dann noch ändern //todo wird dann aus der Liste geladen
+        self.Info_text_neu.place(x=420,y=320)
+
         self.menu_frame = tk.CTkFrame(master, width=200, height=400)
         self.beb_knopp = tk.CTkButton(master, text="Bearbeiten", command=self.beb_c, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="DarkSlateGray1", image=self.Bearbeiten_Bild)
         self.beb_knopp.place(x=1260, y=100)
@@ -660,11 +655,41 @@ class Listendings:
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
 
-    def Liste_laden_aus_JSON(self): ### Nicht vergessen, wir machen das so dass wir sowohl die klartext txt's als auch die JSONs anlegen >> txt um die Suche zu vereinfachen
-        print("Lade nun die Liste aus der JSON...")
-        self.Anrufer_aus_JSON = "Hier steht einfach was!"
-        for i in range(240):
-            self.Eintrags_Liste.insert(Atk.END, f"||  ID: {i} | {self.Anrufer_aus_JSON} | {self.Zeit}||")
+    def Eintrag_in_JSON_schmeissen(self):
+        print("[-dev-] Eintrag in JSON schmeissen(def)")
+         # {}
+        
+        name_aus_eintrag = "test_name"
+        beschreibung_aus_eintrag = "test_beschreibung"
+        notizen_aus_eintrag = "hier stehen coole Notizen"
+        self.Eintrag_ID = 1 # wird dann später aus einer funktion geladen //todo
+        Eintrag = { "name": name_aus_eintrag, "description": beschreibung_aus_eintrag, "Uhrzeit": self.Zeit, "notizen": notizen_aus_eintrag, "Eintrag_id": self.Eintrag_ID}
+        Eintrag_v = self.Eintrag_aus_JSON_DB_laden()
+        Eintrag_v.append(Eintrag)
+        #try:
+        with open(self.Eintrags_DB, "w+") as Eintrags_db_gel:
+            json.dump(Eintrag_v, Eintrags_db_gel, indent=4)
+        #except Exception as ex_json_sp:
+        #    print(f"Beim speichern des Eintrags ist ein Fehler aufgetreten: {ex_json_sp}")
+         #   messagebox.showerror(title=self.Programm_Name, message=f"Beim speichern des Eintrags ist ein Fehler aufgetreten: {ex_json_sp}")
+
+    def Eintrag_aus_JSON_DB_laden(self): # lädt die Einträge aus der DB
+        print("lade nun die Eintrags DB")
+        if os.path.exists(self.Eintrags_DB):
+            with open(self.Eintrags_DB, 'r') as JDB_gel:
+                if JDB_gel == "": ## wenn Datei existiert aber leer ist
+                    return []
+                else:
+                    return json.load(JDB_gel)
+        return []
+    
+    
+    def Liste_laden_aus_JSON(self): # lädt die Enträge und packt sie in die LB, klappt nur wenn die LB schon geladen wurde!! (obvius ich weiß, aber ich sachs mal trotzdem)
+        ##self.clear_tasks_frame() //todo hier soll dann die LB gecleart werden
+        Eintrag_v = self.Eintrag_aus_JSON_DB_laden()
+        for Dings in Eintrag_v:                     
+            self.Eintrags_Liste.insert(Atk.END, f"||  ID: {Eintrag_v['Eintrag_id']} | {Eintrag_v['name']} | {Eintrag_v['Uhrzeit']}||")          ### Hier kackts noch mächtig ab, der Rest geht aber
+            
 
     def Netzlaufwerk_Einstellung_laden(self):
         try:
