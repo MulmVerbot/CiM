@@ -657,13 +657,17 @@ class Listendings:
 
     def Eintrag_in_JSON_schmeissen(self):
         print("[-dev-] Eintrag in JSON schmeissen(def)")
+        #self.Anruf_Zeit
          # {}
         
-        name_aus_eintrag = "test_name"
-        beschreibung_aus_eintrag = "test_beschreibung"
-        notizen_aus_eintrag = "hier stehen coole Notizen"
+        name_aus_eintrag =  self.kunde_entry.get()
+        beschreibung_aus_eintrag =  self.problem_entry.get()
+        notizen_aus_eintrag = self.info_entry.get()
+        tk_nummer = self.t_nummer.get()
+        fertsch = "X" # // am besten dann einfach auf diese funktion von senden(def) verweisen, dann werden die fünf vars direkt übertragen
+
         self.Eintrag_ID = 1 # wird dann später aus einer funktion geladen //todo
-        Eintrag = { "name": name_aus_eintrag, "description": beschreibung_aus_eintrag, "Uhrzeit": self.Zeit, "notizen": notizen_aus_eintrag, "Eintrag_id": self.Eintrag_ID}
+        Eintrag = { "name": name_aus_eintrag, "description": beschreibung_aus_eintrag, "Uhrzeit": self.Zeit, "notizen": notizen_aus_eintrag, "Eintrag_id": self.Eintrag_ID, "Telefonummer": tk_nummer}
         Eintrag_v = self.Eintrag_aus_JSON_DB_laden()
         Eintrag_v.append(Eintrag)
         #try:
