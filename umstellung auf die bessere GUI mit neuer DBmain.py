@@ -209,7 +209,13 @@ class Listendings:
         self.Uhrzeit_anruf_ende = None
         self.zeile_zahl = 0
         self.Anzahl_der_Ergebnisse = 0
+        self.nur_tag_string = str(time.strftime("%d"))
         self.tag_string = str(time.strftime("%d %m %Y"))
+        self.Monat = time.strftime("%m")
+        self.zeit_string = time.strftime("%H:%M:%S")
+        self.tag_string = str(time.strftime("%d %m %Y"))
+        self.Tag_und_Liste = self.tag_string + " Dateien.txt"
+        self.Jahr = str(time.strftime("%Y"))
         self.Benutzerordner = os.path.expanduser('~')
         self.Asset_ordner = os.path.join(self.Benutzerordner, 'CiM', 'Assets')
         self.Listen_Speicherort_standard = os.path.join(self.Benutzerordner, 'CiM', 'Listen')
@@ -248,7 +254,13 @@ class Listendings:
         self.Checklisten_Option_1 = "Test Checkliste 1"
         self.Checklisten_Option_2 = "Test Checkliste 2"
         self.Checklisten_Option_3 = "Test Checkliste 3"
-        self.Eintrags_DB = os.path.join(self.Db_Ordner_pfad, "Eintrags_DB.json")
+        self.Liste_mit_datum = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat, self.nur_tag_string, self.Tag_und_Liste) # Das ist der Ort wo dann immer alles gespeichert wird
+        self.Monat_ordner_pfad = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat) # Das ist der Ort welcher zum Programmstart erstellt wird falls er nicht bereits existieren sollte
+        self.Tag_und_EintragsDB = f"{self.tag_string} Eintrags_DB.json"
+        self.Eintrags_DB = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat, self.Tag_und_EintragsDB)
+        self.Eintrags_DB_ordnerpfad = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat, self.nur_tag_string)
+        self.ID_speicherort_L_pfad = self.Db_Ordner_pfad
+        self.ID_speicherort_L = os.path.join(self.Eintrags_DB_ordnerpfad, "M_ID.txt")
 #            _ .-') _             .-') _                   
 #           ( (  OO) )           ( OO ) )                  
 #           \     .'_  .---.,--./ ,--,'   ,--.   .-----.  
@@ -356,14 +368,6 @@ class Listendings:
         self.kopie_der_mail_erhalten = True
         self.Windows = False # denkt dran dafür noch eine richtige erkenung zu schreiben!!!
         self.Einf_aktiv = True
-        
-        self.zeit_string = time.strftime("%H:%M:%S")
-        self.tag_string = str(time.strftime("%d %m %Y"))
-        self.Tag_und_Liste = self.tag_string + " Dateien.txt"
-        self.Jahr = str(time.strftime("%Y"))
-        self.Liste_mit_datum = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat, self.Tag_und_Liste) # Das ist der Ort wo dann immer alles gespeichert wird
-        self.Monat_ordner_pfad = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat) # Das ist der Ort welcher zum Programmstart erstellt wird falls er nicht bereits existieren sollte
-
     ################ Jetzt werden hier so Dinge geladen wie Einstellungen, oder es wird hier geguckt, ob alle benötigten Ordner Existieren ############
         
 
@@ -497,8 +501,8 @@ class Listendings:
         self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results_vor)
         self.menudings.add_command(label="Checklisten (Demo)...", command=self.Checkboxen_dingsen)
         self.menudings.add_command(label="Email Baukasten (Demo)...", command=self.email_baukasten)
-        self.menudings.add_command(label="JSON befüllen", command=self.Eintrag_in_JSON_schmeissen)
-        self.menudings.add_command(label="JSON laden", command=self.Liste_laden_aus_JSON)
+        self.menudings.add_command(label="JSON befüllen (Demo)", command=self.Eintrag_in_JSON_schmeissen)
+        self.menudings.add_command(label="JSON laden (Demo)", command=self.Liste_laden_aus_JSON)
         #self.Suchen_Menu.add_command(label="Sehr genaue Suche nutzen (Suche 3.0)(Beta)", command=self.frage_nach_string_suche3)
         
         
@@ -540,11 +544,11 @@ class Listendings:
         ##self.ausgabe_text.place(x=0,y=100)
         self.Anruf_Zeit.place(x=860,y=5)
 
-        self.Zeit_aus_JSON = Atk.Label(root, text=self.Zeit) # die var dann noch ändern //todo wird dann aus der Liste geladen
-        self.Zeit_aus_JSON.place(x=840,y=100)
-        self.Anrufer_Bezeichnung_l = Atk.Label(root, text="Das hier wird zum Kundennamen GmbH", fg=self.Txt_farbe, border=2) # die var dann noch ändern //todo wird dann aus der Liste geladen
+        self.Zeit_aus_JSON = Atk.Label(root, text=self.Zeit, bg=self.f_e)
+        self.Zeit_aus_JSON.place(x=800,y=100)
+        self.Anrufer_Bezeichnung_l = Atk.Label(root, text="Das hier wird zum Kundennamen GmbH", fg=self.Txt_farbe, bg=self.f_e, border=2)
         self.Anrufer_Bezeichnung_l.place(x=420,y=100)
-        self.ID_M_l = Atk.Label(root, text=f"ID: 1420", width=10)
+        self.ID_M_l = Atk.Label(root, text=f"ID: 24", fg=self.Txt_farbe, bg=self.f_e, width=10)
         self.ID_M_l.place(x=980, y=100)                     ############## den ganzen mist dann bitte auch so machen dass ich das mit strg + s schnell speichern kann, danke //todo
 
         self.Problem_text_neu = tk.CTkTextbox(root, width=620, height=200, bg_color=self.Entry_Farbe, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe) # die var dann noch ändern //todo wird dann aus der Liste geladen
@@ -654,28 +658,28 @@ class Listendings:
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
+                # Man tut was man kann aber kann man was man tut?
 
     def Eintrag_in_JSON_schmeissen(self):
         print("[-dev-] Eintrag in JSON schmeissen(def)")
-        #self.Anruf_Zeit
-         # {}
-        
         name_aus_eintrag =  self.kunde_entry.get()
         beschreibung_aus_eintrag =  self.problem_entry.get()
         notizen_aus_eintrag = self.info_entry.get()
         tk_nummer = self.t_nummer.get()
-        fertsch = "X" # // am besten dann einfach auf diese funktion von senden(def) verweisen, dann werden die fünf vars direkt übertragen
-
+        fertsch = "X" # //todo: ein System bauen bei dem man Einträge markieren kann, vielleicht wie so als 'fertig' oderso.
+        ID_L = self.ID_v
+        wen_sprechen = self.wollte_sprechen
+        an_wen_gegeben = self.Weiterleitung_an
         self.Eintrag_ID = 1 # wird dann später aus einer funktion geladen //todo
-        Eintrag = { "name": name_aus_eintrag, "description": beschreibung_aus_eintrag, "Uhrzeit": self.Zeit, "notizen": notizen_aus_eintrag, "Eintrag_id": self.Eintrag_ID, "Telefonummer": tk_nummer}
+        Eintrag = { "name": name_aus_eintrag, "description": beschreibung_aus_eintrag, "Uhrzeit": self.Zeit, "notizen": notizen_aus_eintrag, "Eintrag_id": self.Eintrag_ID, "Telefonummer": tk_nummer, "ID_L": ID_L, "fertsch": fertsch, "wen_sprechen": wen_sprechen, "an_wen_gegeben": an_wen_gegeben}
         Eintrag_v = self.Eintrag_aus_JSON_DB_laden()
         Eintrag_v.append(Eintrag)
-        #try:
-        with open(self.Eintrags_DB, "w+") as Eintrags_db_gel:
-            json.dump(Eintrag_v, Eintrags_db_gel, indent=4)
-        #except Exception as ex_json_sp:
-        #    print(f"Beim speichern des Eintrags ist ein Fehler aufgetreten: {ex_json_sp}")
-         #   messagebox.showerror(title=self.Programm_Name, message=f"Beim speichern des Eintrags ist ein Fehler aufgetreten: {ex_json_sp}")
+        try:
+            with open(self.Eintrags_DB, "w+") as Eintrags_db_gel:
+                json.dump(Eintrag_v, Eintrags_db_gel, indent=4)
+        except Exception as ex_json_sp:
+            print(f"Beim speichern des Eintrags ist ein Fehler aufgetreten: {ex_json_sp}")
+            messagebox.showerror(title=self.Programm_Name, message=f"Beim speichern des Eintrags ist ein Fehler aufgetreten: {ex_json_sp}")
 
     def Eintrag_aus_JSON_DB_laden(self): # lädt die Einträge aus der DB
         print("lade nun die Eintrags DB")
@@ -687,9 +691,13 @@ class Listendings:
                     return json.load(JDB_gel)
         return []
     
+
+    def clear_L_LB(self):
+        print("leere nun die LB")
+        self.Eintrags_Liste.delete(0,Atk.END)
     
     def Liste_laden_aus_JSON(self): # lädt die Enträge und packt sie in die LB, klappt nur wenn die LB schon geladen wurde!! (obvius ich weiß, aber ich sachs mal trotzdem)
-        ##self.clear_tasks_frame() //todo hier soll dann die LB gecleart werden
+        self.clear_L_LB()
         Eintrag_v = self.Eintrag_aus_JSON_DB_laden()
         print(f"Hier ist das geladene: \n{Eintrag_v}")
         for Dings in Eintrag_v:                     
@@ -765,9 +773,21 @@ class Listendings:
             print(f"Fehler beim laden der Passwort Maileinstellungen: {EmailEx3_l}")
             self.pw_email = ""
         
+    def ordner_erstellen(self):
+        print("[ INFO - INIT - PFADE ] Erstelle nun die Ordner für die Listen DB")
+        if os.path.exists(self.Eintrags_DB_ordnerpfad):
+            print(f"[ INFO - INIT - PFADE ] Pfade für die JSON Listen existieren bereits. Pfad: {self.Eintrags_DB_ordnerpfad}")
+        else:
+            print("[ INFO - INIT - PFADE ] Die Pfade existieren noch nicht, erstelle sie nun.")
+            try:
+                os.makedirs(self.Eintrags_DB_ordnerpfad)
+                print(f"[ INFO - INIT - PFADE ] Pfade für die JSONs erfolgreich erstellt. Pfad: {self.Eintrags_DB_ordnerpfad}")
+            except Exception as exJKSOJ:
+                print(f"[ ERR - INIT - PFADE ] Fehler beim erstellen der JSON Pfade: {exJKSOJ}")
 
     def init_auf_wish(self):
         print("[-init-] init auf wish bestellt...")
+        self.ordner_erstellen()
         self.Kontakte_aus_json_laden()
         self.weiterleitung_laden()
         self.Einstellungen_laden()
@@ -2053,8 +2073,11 @@ class Listendings:
         except Exception as excAdm:
             messagebox.showinfo(message=excAdm)
 
+        
+
     def senden(self, event):
         print("(DEV) senden(def)")
+        self.ID_v = None
         kunde = self.kunde_entry.get()
         problem = self.problem_entry.get()
         info = self.info_entry.get()
@@ -2083,7 +2106,47 @@ class Listendings:
                 self.Weiterleitung_an = "Keine Weiterleitung"
             if self.wollte_sprechen == "":
                 self.wollte_sprechen = "Nein"
+            
+            print("zähle nun die IDs")
+            if os.path.exists(self.ID_speicherort_L_pfad):
+                try:
+                    with open(self.ID_speicherort_L, "r") as ID_gel:
+                        self.ID_v = ID_gel.read()
+                        self.ID_n = int(self.ID_v) + 1
+                    print(f"schreibe jetzt {self.ID_n} in {self.ID_speicherort_L}")
+                    with open(self.ID_speicherort_L, "w+") as ID_n_gel:
+                        ID_n_gel.write(str(self.ID_n))
+                        print("ID aktualisiert.")
+                        self.ID_n = None
+                except Exception as ehjk:
+                    print(f"Es gab einen Fehler beim laden der IDs, es wird nun wieder bei Null angefangen. Fehlermeldung: {ehjk}")
+                    try:
+                        with open(self.ID_speicherort_L, "w+") as ID_gel:
+                            ID_gel.write("1")
+                            self.ID_v = "1"
+                    except Exception as ehjk:
+                        print(f"okay, also das mit den IDs klappt heute garnicht. Fehlermeldung: {ehjk}")
+                        self.ID_v = "1"
+            else:
+                try:
+                    with open(self.ID_speicherort_L, "w+") as ID_gel:
+                        ID_gel.write("1")
+                        self.ID_v = "1"
+                except:
+                    print("Es gab einen Fehler beim laden der IDs, es wird nun wieder bei Null angefangen.")
+                    self.ID_v = "1"
 
+            self.Anrufer_Bezeichnung_l.configure(text=f"Anrufer: {kunde}")
+            self.Zeit_aus_JSON.configure(text=f"Uhrzeit: {self.Uhrzeit_text}")
+            self.ID_M_l.configure(text=f"ID: {self.ID_v}")
+
+########## JTEZT WERDEN DIE TEXTBOXEN BEARBEITET
+            self.Problem_text_neu.delete("0.0",Atk.END)
+            self.Info_text_neu.delete("0.0",Atk.END)
+            self.Problem_text_neu.insert("0.0", f"Uhrzeit: {self.Uhrzeit_text}\nAnrufer: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}")
+            self.Info_text_neu.insert("0.0", f"ID: {self.ID_v}\n")
+########## JTEZT WERDEN DIE TEXTBOXEN BEARBEITET-FERTSCHSHCSCHSCHSCHSHCH
+            self.Eintrag_in_JSON_schmeissen()
             if os.path.exists(self.Liste_mit_datum):
                 with open(self.Liste_mit_datum, "a") as f:
                     f.write(f"Uhrzeit: {self.Uhrzeit_text}\nAnrufer: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
@@ -2091,8 +2154,6 @@ class Listendings:
                     feedback_text = f.read()
                     #self.ausgabe_text.delete("1.0", tk.END)
                     #self.ausgabe_text.insert(tk.END, feedback_text)
-                #self.ausgabe_text.configure(state='disabled')
-                #self.ausgabe_text.see(tk.END)
                 self.Weiterleitung_an = ""
                 self.Uhrzeit_anruf_ende = None
                 self.optionmenu.set("Keine Weiterleitung")
@@ -2103,20 +2164,15 @@ class Listendings:
             else:
                 print("(INFO) Liste zum beschreiben existiert bereits.")
                 with open(self.Liste_mit_datum, "w+") as f:
-                    f.write(f"Uhrzeit: {self.Uhrzeit_text}\nAnrufer: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
-                with open(self.Liste_mit_datum, "r") as f:
-                    feedback_text = f.read()
-                    #self.ausgabe_text.delete("1.0", tk.END)
-                    #self.ausgabe_text.insert(tk.END, feedback_text)
-                    #self.ausgabe_text.configure(state='disabled')
-                    self.Weiterleitung_an = ""
-                    self.wollte_sprechen = ""
-                    self.Uhrzeit_anruf_ende = None
-                    self.optionmenu.set("Keine Weiterleitung")
-                    self.optionmenu1.set("Mit Wem sprechen?")
-                    self.kunde_entry.focus()
-                    self.zeugs()
-                    # jetzt wurde das ding fertig in eine bestehende Datei versendet
+                    f.write(f"Uhrzeit: {self.Uhrzeit_text}\nAnrufer: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")                
+                self.Weiterleitung_an = ""
+                self.wollte_sprechen = ""
+                self.Uhrzeit_anruf_ende = None
+                self.optionmenu.set("Keine Weiterleitung")
+                self.optionmenu1.set("Mit Wem sprechen?")
+                self.kunde_entry.focus()
+                self.zeugs()
+                # jetzt wurde das ding fertig in eine bestehende Datei versendet
         else:
             print("(ERR) Da hat wer Enter gedrückt obwohl noch nicht geschrieben war.")
             messagebox.showinfo(title="Fehler", message="Bitte geben Sie zuerst in wenigsten eine Spalte etwas ein.")
