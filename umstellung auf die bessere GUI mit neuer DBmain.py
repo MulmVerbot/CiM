@@ -257,7 +257,7 @@ class Listendings:
         self.Liste_mit_datum = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat, self.nur_tag_string, self.Tag_und_Liste) # Das ist der Ort wo dann immer alles gespeichert wird
         self.Monat_ordner_pfad = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat) # Das ist der Ort welcher zum Programmstart erstellt wird falls er nicht bereits existieren sollte
         self.Tag_und_EintragsDB = f"{self.tag_string} Eintrags_DB.json"
-        self.Eintrags_DB = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat, self.Tag_und_EintragsDB)
+        self.Eintrags_DB = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat, self.nur_tag_string, self.Tag_und_EintragsDB)
         self.Eintrags_DB_ordnerpfad = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat, self.nur_tag_string)
         self.ID_speicherort_L_pfad = self.Db_Ordner_pfad
         self.ID_speicherort_L = os.path.join(self.Eintrags_DB_ordnerpfad, "M_ID.txt")
