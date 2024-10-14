@@ -326,7 +326,9 @@ class Listendings:
         self.gruen_hell = "LawnGreen" # Grün
         self.rot = "firebrick" # Rot
         self.Txt_farbe = "White"
-    #### Farben Ende ####
+        self.f_Plt = "FloralWhite"
+        self.f_e_deak = "#212121"
+    #### Farben Ende #### fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e
 
         root.configure(fg_color=self.Hintergrund_farbe)
         root.resizable(False, False)
@@ -368,6 +370,7 @@ class Listendings:
         self.kopie_der_mail_erhalten = True
         self.Windows = False # denkt dran dafür noch eine richtige erkenung zu schreiben!!!
         self.Einf_aktiv = True
+        self.ausgewaehlter_Eintrag = None
     ################ Jetzt werden hier so Dinge geladen wie Einstellungen, oder es wird hier geguckt, ob alle benötigten Ordner Existieren ############
         
 
@@ -501,18 +504,17 @@ class Listendings:
         self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results_vor)
         self.menudings.add_command(label="Checklisten (Demo)...", command=self.Checkboxen_dingsen)
         self.menudings.add_command(label="Email Baukasten (Demo)...", command=self.email_baukasten)
-        self.menudings.add_command(label="JSON befüllen (Demo)", command=self.Eintrag_in_JSON_schmeissen)
-        self.menudings.add_command(label="JSON laden (Demo)", command=self.Liste_laden_aus_JSON)
+        self.menudings.add_command(label="neues beb ein", command=self.Eintrag_bearbeiten)
         #self.Suchen_Menu.add_command(label="Sehr genaue Suche nutzen (Suche 3.0)(Beta)", command=self.frage_nach_string_suche3)
         
         
 
     
     #### Die Stars der Stunde ####
-        self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Name des Anrufers", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite")
-        self.t_nummer = tk.CTkEntry(master, width=250, placeholder_text="Telefonnummer", state="disabled", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite")
-        self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite")
-        self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite")
+        self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Name des Anrufers", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite", border_color=self.f_e)
+        self.t_nummer = tk.CTkEntry(master, width=250, placeholder_text="Telefonnummer", state="disabled", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite", border_color=self.f_e)
+        self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite", border_color=self.f_e)
+        self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite", border_color=self.f_e)
         self.Anruf_Zeit = tk.CTkLabel(master, text_color=self.Txt_farbe, text=f"Kein akiver Anruf             ", bg_color=self.Entry_Farbe)
 
     #    self.kunde_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
@@ -529,7 +531,8 @@ class Listendings:
         ##self.ausgabe_text.configure(state='disabled')
         self.Listen_Liste_frame = tk.CTkFrame(root, height=320,width=50)
         self.Listen_Liste_frame.place(x=0,y=100)
-        self.Eintrags_Liste = Atk.Listbox(self.Listen_Liste_frame, width=40, height=24, bg=self.Ereignislog_farbe, fg=self.Txt_farbe)
+        self.Eintrags_Liste = Atk.Listbox(self.Listen_Liste_frame, width=65, height=24, bg=self.Ereignislog_farbe, fg=self.Txt_farbe)
+        self.Eintrags_Liste.bind("<<ListboxSelect>>", self.LB_ausgewaehlt)
         scrollbar1 = Atk.Scrollbar(self.Listen_Liste_frame, orient=Atk.VERTICAL)
         self.Eintrags_Liste.config(yscrollcommand=scrollbar1.set)
         scrollbar1.config(command=self.Eintrags_Liste.yview)
@@ -545,16 +548,22 @@ class Listendings:
         self.Anruf_Zeit.place(x=860,y=5)
 
         self.Zeit_aus_JSON = Atk.Label(root, text=self.Zeit, bg=self.f_e)
-        self.Zeit_aus_JSON.place(x=800,y=100)
+        ##self.Zeit_aus_JSON.place(x=800,y=100)
         self.Anrufer_Bezeichnung_l = Atk.Label(root, text="Das hier wird zum Kundennamen GmbH", fg=self.Txt_farbe, bg=self.f_e, border=2)
         self.Anrufer_Bezeichnung_l.place(x=420,y=100)
-        self.ID_M_l = Atk.Label(root, text=f"ID: 24", fg=self.Txt_farbe, bg=self.f_e, width=10)
-        self.ID_M_l.place(x=980, y=100)                     ############## den ganzen mist dann bitte auch so machen dass ich das mit strg + s schnell speichern kann, danke //todo
+        self.ID_M_l = Atk.Label(root, text="", fg=self.Txt_farbe, bg=self.f_e, width=10)
+        self.ID_M_l.place(x=950, y=100)                     ############## den ganzen mist dann bitte auch so machen dass ich das mit strg + s schnell speichern kann, danke //todo
 
-        self.Problem_text_neu = tk.CTkTextbox(root, width=620, height=200, bg_color=self.Entry_Farbe, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe) # die var dann noch ändern //todo wird dann aus der Liste geladen
+        self.Problem_text_neu = tk.CTkTextbox(root, width=820, height=200, bg_color=self.Entry_Farbe, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, wrap="word") # die var dann noch ändern //todo wird dann aus der Liste geladen
         self.Problem_text_neu.place(x=420,y=120)
-        self.Info_text_neu = tk.CTkTextbox(root, width=620, height=200, bg_color=self.Entry_Farbe, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe) # die var dann noch ändern //todo wird dann aus der Liste geladen
-        self.Info_text_neu.place(x=420,y=320)
+        #self.Info_text_neu = tk.CTkTextbox(root, width=120, height=200, bg_color=self.Entry_Farbe, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe) # die var dann noch ändern //todo wird dann aus der Liste geladen
+        #self.Info_text_neu.place(x=420,y=320)
+        self.Eintrag_Uhrzeit_e = tk.CTkEntry(master, width=200, fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Uhrzeit:")
+        self.Eintrag_Uhrzeit_e.place(x=420,y=330)
+        self.Eintrag_Telefonnummer_e = tk.CTkEntry(master, width=200, fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Telefonnummer")
+        self.Eintrag_Telefonnummer_e.place(x=620,y=330)
+        self.Eintrag_Uhrzeit_e.configure(state="disabled")
+        self.Eintrag_Telefonnummer_e.configure(state="disabled")
 
         self.menu_frame = tk.CTkFrame(master, width=200, height=400)
         self.beb_knopp = tk.CTkButton(master, text="Bearbeiten", command=self.beb_c, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="DarkSlateGray1", image=self.Bearbeiten_Bild)
@@ -582,7 +591,7 @@ class Listendings:
         self.Zhe_Clock = tk.CTkLabel(self.Pause_menu, text=self.Zeit)
         self.Zhe_Clock.place(x=10,y=10)
 
-        def auswahl_design_gedingst(choice):
+        def auswahl_design_gedingst(choice): # ich werd das einfach niemals einbauen hahahahha
             if choice == "hell":
                 self.Design_Einstellung = "hell"
             elif choice == "dunkel":
@@ -659,6 +668,47 @@ class Listendings:
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
                 # Man tut was man kann aber kann man was man tut?
+    
+    def lade_eintrag_aus_json_nach_id(self, eintrag_id):
+        Eintrag_v = self.Eintrag_aus_JSON_DB_laden()
+        for Dings in Eintrag_v:
+            if Dings['ID_L'] == eintrag_id:
+                self.ausgewaehlter_Eintrag = Dings
+                return Dings
+        return None
+    
+
+    def LB_ausgewaehlt(self, event):
+        print("LB_ausgewaehlt(def)")
+        auswahl = self.Eintrags_Liste.curselection()
+        print(f"Das hier wurde ausgewählt: {auswahl}")
+        if auswahl:
+            index = auswahl[0]
+            auswahl = self.Eintrags_Liste.get(index)
+            try:
+                eintrag_id = int(auswahl.split("|")[0].strip().split(":")[1].strip())
+            except Exception as E_ID_f:
+                print(f"Es gab einen Fehler beim raussuchen der ID: {E_ID_f}")
+            eintrag = self.lade_eintrag_aus_json_nach_id(eintrag_id)
+            self.Eintrag_geladen_jetzt = eintrag # das is auch wieder kacke gelöst aber naja #DieFaulheitsiegt
+            if eintrag:
+                self.Anrufer_Bezeichnung_l.configure(text=f"Anrufer: {eintrag["name"]}")
+                self.Zeit_aus_JSON.configure(text=f"Uhrzeit: {eintrag["Uhrzeit"]}")
+                self.ID_M_l.configure(text=f"ID: {eintrag["ID_L"]}")
+                self.Problem_text_neu.delete("0.0", Atk.END)
+                self.Problem_text_neu.insert("0.0", f"Uhrzeit: {eintrag["Uhrzeit"]}\nTelefonnummer: {eintrag["Telefonnummer"]}\nBeschreibung: {eintrag["description"]}\nNotizen: {eintrag["notizen"]}\n\nMit Wem sprechen: {eintrag["wen_sprechen"]}\nAn wen Weitergeleitet: {eintrag["an_wen_gegeben"]}")
+            else:
+                messagebox.showwarning(title=self.Programm_Name, message=f"Kein Eintrag mit ID {eintrag_id} gefunden.")
+                print(eintrag)
+
+    def Eintrag_bearbeiten(self):
+        print("Eintrag_bearbeiten(def)")
+        self.Eintrag_Uhrzeit_e.configure(state="normal")
+        self.Eintrag_Telefonnummer_e.configure(state="normal")
+        self.Eintrag_Telefonnummer_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
+        self.Eintrag_Uhrzeit_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
+        self.Eintrag_Uhrzeit_e.insert(0, f"{self.Eintrag_geladen_jetzt["Uhrzeit"]}")
+        self.Eintrag_Telefonnummer_e.insert(0, f"{self.Eintrag_geladen_jetzt["Telefonnummer"]}")
 
     def Eintrag_in_JSON_schmeissen(self):
         print("[-dev-] Eintrag in JSON schmeissen(def)")
@@ -667,11 +717,10 @@ class Listendings:
         notizen_aus_eintrag = self.info_entry.get()
         tk_nummer = self.t_nummer.get()
         fertsch = "X" # //todo: ein System bauen bei dem man Einträge markieren kann, vielleicht wie so als 'fertig' oderso.
-        ID_L = self.ID_v
         wen_sprechen = self.wollte_sprechen
         an_wen_gegeben = self.Weiterleitung_an
-        self.Eintrag_ID = 1 # wird dann später aus einer funktion geladen //todo
-        Eintrag = { "name": name_aus_eintrag, "description": beschreibung_aus_eintrag, "Uhrzeit": self.Zeit, "notizen": notizen_aus_eintrag, "Eintrag_id": self.Eintrag_ID, "Telefonummer": tk_nummer, "ID_L": ID_L, "fertsch": fertsch, "wen_sprechen": wen_sprechen, "an_wen_gegeben": an_wen_gegeben}
+        Eintrag = { "name": name_aus_eintrag, "description": beschreibung_aus_eintrag, "Uhrzeit": self.Zeit, "notizen": notizen_aus_eintrag, "Telefonnummer": tk_nummer, "ID_L": self.ID_v, "fertsch": fertsch, "wen_sprechen": wen_sprechen, "an_wen_gegeben": an_wen_gegeben}
+        print(f"Ich werden jetzt folgendes in die JSON schreiben: \n\n{Eintrag}\n\n")
         Eintrag_v = self.Eintrag_aus_JSON_DB_laden()
         Eintrag_v.append(Eintrag)
         try:
@@ -680,6 +729,7 @@ class Listendings:
         except Exception as ex_json_sp:
             print(f"Beim speichern des Eintrags ist ein Fehler aufgetreten: {ex_json_sp}")
             messagebox.showerror(title=self.Programm_Name, message=f"Beim speichern des Eintrags ist ein Fehler aufgetreten: {ex_json_sp}")
+        self.Liste_laden_aus_JSON()
 
     def Eintrag_aus_JSON_DB_laden(self): # lädt die Einträge aus der DB
         print("lade nun die Eintrags DB")
@@ -701,7 +751,7 @@ class Listendings:
         Eintrag_v = self.Eintrag_aus_JSON_DB_laden()
         print(f"Hier ist das geladene: \n{Eintrag_v}")
         for Dings in Eintrag_v:                     
-            self.Eintrags_Liste.insert(Atk.END, f"  ID: {Dings['Eintrag_id']} | {Dings['name']} | {Dings['Uhrzeit']}  ")          ### Hier kackts noch mächtig ab, der Rest geht aber
+            self.Eintrags_Liste.insert(Atk.END, f"  ID: {Dings['ID_L']} | {Dings['name']} | {Dings['Uhrzeit']}  ")          ### Hier kackts noch mächtig ab, der Rest geht aber
             
 
     def Netzlaufwerk_Einstellung_laden(self):
@@ -2112,29 +2162,29 @@ class Listendings:
                 try:
                     with open(self.ID_speicherort_L, "r") as ID_gel:
                         self.ID_v = ID_gel.read()
-                        self.ID_n = int(self.ID_v) + 1
-                    print(f"schreibe jetzt {self.ID_n} in {self.ID_speicherort_L}")
+                        self.ID_v = int(self.ID_v) + 1
+                    print(f"schreibe jetzt {self.ID_v} in {self.ID_speicherort_L}")
                     with open(self.ID_speicherort_L, "w+") as ID_n_gel:
-                        ID_n_gel.write(str(self.ID_n))
+                        ID_n_gel.write(str(self.ID_v)) # die var wird dann noch an die json eintrags dings übergeben und deswegen nicht gecleart
                         print("ID aktualisiert.")
-                        self.ID_n = None
                 except Exception as ehjk:
                     print(f"Es gab einen Fehler beim laden der IDs, es wird nun wieder bei Null angefangen. Fehlermeldung: {ehjk}")
                     try:
                         with open(self.ID_speicherort_L, "w+") as ID_gel:
                             ID_gel.write("1")
-                            self.ID_v = "1"
+                            self.ID_v = 1
                     except Exception as ehjk:
                         print(f"okay, also das mit den IDs klappt heute garnicht. Fehlermeldung: {ehjk}")
-                        self.ID_v = "1"
+                        self.ID_v = 1
+
             else:
                 try:
                     with open(self.ID_speicherort_L, "w+") as ID_gel:
                         ID_gel.write("1")
-                        self.ID_v = "1"
+                        self.ID_v = 1
                 except:
                     print("Es gab einen Fehler beim laden der IDs, es wird nun wieder bei Null angefangen.")
-                    self.ID_v = "1"
+                    self.ID_v = 1
 
             self.Anrufer_Bezeichnung_l.configure(text=f"Anrufer: {kunde}")
             self.Zeit_aus_JSON.configure(text=f"Uhrzeit: {self.Uhrzeit_text}")
@@ -2142,9 +2192,9 @@ class Listendings:
 
 ########## JTEZT WERDEN DIE TEXTBOXEN BEARBEITET
             self.Problem_text_neu.delete("0.0",Atk.END)
-            self.Info_text_neu.delete("0.0",Atk.END)
+            #self.Info_text_neu.delete("0.0",Atk.END)
             self.Problem_text_neu.insert("0.0", f"Uhrzeit: {self.Uhrzeit_text}\nAnrufer: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}")
-            self.Info_text_neu.insert("0.0", f"ID: {self.ID_v}\n")
+            #self.Info_text_neu.insert("0.0", f"ID: {self.ID_v}\n")
 ########## JTEZT WERDEN DIE TEXTBOXEN BEARBEITET-FERTSCHSHCSCHSCHSCHSHCH
             self.Eintrag_in_JSON_schmeissen()
             if os.path.exists(self.Liste_mit_datum):
