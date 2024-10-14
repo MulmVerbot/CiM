@@ -562,7 +562,7 @@ class Listendings:
         self.Such_menu_haupt_frame = tk.CTkFrame(root, width=180, height=110, fg_color=self.Hintergrund_farbe, border_color=self.Border_Farbe, border_width=3, corner_radius=5)
         self.irgendwo_suchen = tk.CTkButton(master, text="durchsuchen...", command=self.such_menü_hauptmenu, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink", image=self.Durchsuchen_Bild_zu)
         self.irgendwo_suchen.place(x=1260, y=130)
-        self.Menü_Knopp = tk.CTkButton(master, text="Menü", command=self.Menu_anzeige_wechseln, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink", image=self.Menü_Bild)
+        self.Menü_Knopp = tk.CTkButton(master, text="Statistik", command=self.Menu_anzeige_wechseln, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink", image=self.Menü_Bild)
         self.Menü_Knopp.place(x=1260, y=160)
         self.Pause_menu = tk.CTkFrame(master, width=769, height=420, fg_color="LightSlateGray", border_color="White", border_width=1, corner_radius=1)
         self.Ereignislog = tk.CTkTextbox(root, width=220, height=80, wrap="word", text_color=self.Txt_farbe, fg_color=self.Ereignislog_farbe, border_color=self.Border_Farbe, border_width=2)
@@ -1474,7 +1474,7 @@ class Listendings:
             # Menu wird jetzt nicht mehr da sein.
             self.Pause_menu.place_forget()
             self.Menü_da = False
-            self.Menü_Knopp.configure(text="Menü", fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink")
+            self.Menü_Knopp.configure(text="Statistik", fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink")
             self.smtp_login_erfolgreich_l.place_forget()
             self.Einstellung_Design_auswahl.place_forget()
             ##self.Berichtsheft_knopp.place_forget()
@@ -1485,7 +1485,7 @@ class Listendings:
             print("menü == false (Menü war nicht offen)")
             self.Pause_menu.place(x=300,y=10)
             self.Menü_da = True
-            self.Menü_Knopp.configure(text="Menü schließen", fg_color="aquamarine", hover_color="aquamarine3")
+            self.Menü_Knopp.configure(text="Statistik schließen", fg_color="aquamarine", hover_color="aquamarine3")
             ##self.Berichtsheft_knopp.place(x=400,y=100)
             self.Einstellung_Design_auswahl.place(x=10,y=200)
             self.Einstellung_Design_L.place(x=10,y=170)
