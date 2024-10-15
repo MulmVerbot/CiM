@@ -372,6 +372,7 @@ class Listendings:
         self.Einf_aktiv = True
         self.ausgewaehlter_Eintrag = None
         self.Eintrag_geladen_jetzt = None
+        self.ID_v = None
     ################ Jetzt werden hier so Dinge geladen wie Einstellungen, oder es wird hier geguckt, ob alle benötigten Ordner Existieren ############
         
 
@@ -660,8 +661,9 @@ class Listendings:
         
         #self.todo_hinzufügen_knopp = tk.CTkButton(self.todo_frame, text="Aufgabe hinzufügen", command=self.todo_hinzufügen)
         self.Adressbuch_anzeigen_frame = tk.CTkFrame(self.tabview.tab("Adressbuch"), width=575, height=300, fg_color=self.Hintergrund_farbe, border_color=self.Ja_UI_Farbe, border_width=1, corner_radius=0)
-        self.init_auf_wish()
+        
     #### ende todo gui ####
+        self.init_auf_wish()
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
@@ -1183,7 +1185,7 @@ class Listendings:
     def Eintrag_ans_totdo(self):
         self.Eintrag_raus_kopieren()
         try:
-            with open(self.Benutzerordner + "/CiM/cim.txt", "w") as cim_s:
+            with open(self.Benutzerordner + "/CiM/cim.txt", "w") as cim_s: # Das hier müssen wir dann mal noch neu machen, das ist viel zu fehleranfällig. //
                 cim_s.write(self.cim)
                 cim_s.close()
                 self.Ereignislog_insert(nachricht_f_e="[-INFO-] Auftrag ans Totdo übermittelt.-")
@@ -1529,8 +1531,9 @@ class Listendings:
             self.smtp_login_erfolgreich_l.place_forget()
             self.Einstellung_Design_auswahl.place_forget()
             ##self.Berichtsheft_knopp.place_forget()
-            self.Statistiken_anzeigen_linie_knopp.place_forget()
-            self.Statistiken_anzeigen_saeule_knopp.place_forget()
+            #self.Statistiken_anzeigen_linie_knopp.place_forget()
+            #self.Statistiken_anzeigen_saeule_knopp.place_forget()
+            self.Stat_ID_l.place_forget()
         elif self.Menü_da == False:
             # Menu wird jetzt angezeigt (Ja, wirklich.)
             print("menü == false (Menü war nicht offen)")
@@ -1540,10 +1543,12 @@ class Listendings:
             ##self.Berichtsheft_knopp.place(x=400,y=100)
             self.Einstellung_Design_auswahl.place(x=10,y=200)
             self.Einstellung_Design_L.place(x=10,y=170)
-            self.Statistiken_anzeigen_linie_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Liniendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_linie, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink")
-            self.Statistiken_anzeigen_saeule_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Säulendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_saeule, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink")
-            self.Statistiken_anzeigen_linie_knopp.place(x=10,y=100)
-            self.Statistiken_anzeigen_saeule_knopp.place(x=10,y=140)
+            #self.Statistiken_anzeigen_linie_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Liniendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_linie, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink")
+            #self.Statistiken_anzeigen_saeule_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Säulendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_saeule, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink")
+            #self.Statistiken_anzeigen_linie_knopp.place(x=10,y=100)
+            #self.Statistiken_anzeigen_saeule_knopp.place(x=10,y=140)
+            self.Stat_ID_l = Atk.Label(self.Pause_menu, text=f"Einträge heute: {self.ID_v}")
+            self.Stat_ID_l.place(x=10,y=50)
             try:
                 try:
                     self.gel_Email_Empfänger_E.delete(0, tk.END)
@@ -2255,6 +2260,7 @@ class Listendings:
             self.beb_knopp.configure(text="Fertig", fg_color="aquamarine", hover_color="aquamarine3")
             if self.Eintrag_geladen_jetzt != None:
                 print("ein Eintrag aus der Liste wird nun bearbeitet")
+                self.Eintrag_Uhrzeit_e.configure(state="normal")
                 self.Eintrag_Telefonnummer_e.configure(state="normal")
                 self.Eintrag_Telefonnummer_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
                 self.Eintrag_Uhrzeit_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
@@ -2277,8 +2283,8 @@ class Listendings:
             #    f.write(self.text_tk_text)
             #    print("das beb wurde geschrieben.")
 
-            self.Eintrag_Uhrzeit_e.configure(state="normal")
-            self.Eintrag_Telefonnummer_e.configure(state="normal")
+            self.Eintrag_Uhrzeit_e.configure(state="disabled")
+            self.Eintrag_Telefonnummer_e.configure(state="disabled")
             self.Eintrag_Telefonnummer_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Telefonnummer")
             self.Eintrag_Uhrzeit_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Uhrzeit")
             self.Eintrag_Uhrzeit_e.delete("0", Atk.END)
