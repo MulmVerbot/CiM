@@ -371,6 +371,7 @@ class Listendings:
         self.Windows = False # denkt dran dafür noch eine richtige erkenung zu schreiben!!!
         self.Einf_aktiv = True
         self.ausgewaehlter_Eintrag = None
+        self.Eintrag_geladen_jetzt = None
     ################ Jetzt werden hier so Dinge geladen wie Einstellungen, oder es wird hier geguckt, ob alle benötigten Ordner Existieren ############
         
 
@@ -708,6 +709,7 @@ class Listendings:
         self.Eintrag_Uhrzeit_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
         self.Eintrag_Uhrzeit_e.insert(0, f"{self.Eintrag_geladen_jetzt["Uhrzeit"]}")
         self.Eintrag_Telefonnummer_e.insert(0, f"{self.Eintrag_geladen_jetzt["Telefonnummer"]}")
+
 
     def Eintrag_in_JSON_schmeissen(self):
         print("[-dev-] Eintrag in JSON schmeissen(def)")
@@ -2249,7 +2251,19 @@ class Listendings:
             print("beb is jetzt = 1")
             #self.ausgabe_text.configure(state='normal')
             self.t_nummer.configure(state="normal")
+            self.Eintrag_Uhrzeit_e.configure(state="normal")
             self.beb_knopp.configure(text="Fertig", fg_color="aquamarine", hover_color="aquamarine3")
+            if self.Eintrag_geladen_jetzt != None:
+                print("ein Eintrag aus der Liste wird nun bearbeitet")
+                self.Eintrag_Telefonnummer_e.configure(state="normal")
+                self.Eintrag_Telefonnummer_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
+                self.Eintrag_Uhrzeit_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
+                self.Eintrag_Uhrzeit_e.insert(0, f"{self.Eintrag_geladen_jetzt["Uhrzeit"]}")
+                self.Eintrag_Telefonnummer_e.insert(0, f"{self.Eintrag_geladen_jetzt["Telefonnummer"]}")
+                ## hier kommen dann noch die weiteren Entrys hin, die benötigt werden um die shaise zu bearbeiten. //
+                #// wenn das bearbeiten an ist und in der Liste was anderes gewählt wird muss sich der shais hier aktualisieren
+
+
             self.beb = "1"
             root.unbind('<Return>')
         else:
@@ -2259,9 +2273,16 @@ class Listendings:
             root.bind('<Return>', self.senden)
             self.beb_knopp.configure(text="Bearbeiten", fg_color=self.f_e, hover_color="DarkSlateGray1")
             self.beb = "0"
-            with open(self.Liste_mit_datum, "w+") as f:
-                f.write(self.text_tk_text)
-                print("das beb wurde geschrieben.")
+            #with open(self.Liste_mit_datum, "w+") as f:
+            #    f.write(self.text_tk_text)
+            #    print("das beb wurde geschrieben.")
+
+            self.Eintrag_Uhrzeit_e.configure(state="normal")
+            self.Eintrag_Telefonnummer_e.configure(state="normal")
+            self.Eintrag_Telefonnummer_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Telefonnummer")
+            self.Eintrag_Uhrzeit_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Uhrzeit")
+            self.Eintrag_Uhrzeit_e.delete("0", Atk.END)
+            self.Eintrag_Telefonnummer_e.delete("0", Atk.END)
 
     def alles_löschen(self):
         print("alles_löschen(def)")
