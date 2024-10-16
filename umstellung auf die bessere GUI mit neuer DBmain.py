@@ -563,8 +563,14 @@ class Listendings:
         self.Eintrag_Uhrzeit_e.place(x=420,y=330)
         self.Eintrag_Telefonnummer_e = tk.CTkEntry(master, width=200, fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Telefonnummer")
         self.Eintrag_Telefonnummer_e.place(x=620,y=330)
+        self.Eintrag_Beschreibung_e = tk.CTkEntry(master, width=200, fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Beschreibung")
+        self.Eintrag_Beschreibung_e.place(x=620,y=360)
+        self.Eintrag_Notizen_e = tk.CTkEntry(master, width=200, fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Notizen")
+        self.Eintrag_Notizen_e.place(x=420,y=360)
         self.Eintrag_Uhrzeit_e.configure(state="disabled")
         self.Eintrag_Telefonnummer_e.configure(state="disabled")
+        self.Eintrag_Beschreibung_e.configure(state="disabled")
+        self.Eintrag_Notizen_e.configure(state="disabled")
 
         self.menu_frame = tk.CTkFrame(master, width=200, height=400)
         self.beb_knopp = tk.CTkButton(master, text="Bearbeiten", command=self.beb_c, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="DarkSlateGray1", image=self.Bearbeiten_Bild)
@@ -2262,10 +2268,17 @@ class Listendings:
                 print("ein Eintrag aus der Liste wird nun bearbeitet")
                 self.Eintrag_Uhrzeit_e.configure(state="normal")
                 self.Eintrag_Telefonnummer_e.configure(state="normal")
+                self.Eintrag_Beschreibung_e.configure(state="normal")
+                self.Eintrag_Notizen_e.configure(state="normal")
                 self.Eintrag_Telefonnummer_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
                 self.Eintrag_Uhrzeit_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
+                self.Eintrag_Beschreibung_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
+                self.Eintrag_Notizen_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
                 self.Eintrag_Uhrzeit_e.insert(0, f"{self.Eintrag_geladen_jetzt["Uhrzeit"]}")
                 self.Eintrag_Telefonnummer_e.insert(0, f"{self.Eintrag_geladen_jetzt["Telefonnummer"]}")
+                self.Eintrag_Beschreibung_e.insert(0, f"{self.Eintrag_geladen_jetzt["description"]}")
+                self.Eintrag_Notizen_e.insert(0, f"{self.Eintrag_geladen_jetzt["notizen"]}")
+                
                 ## hier kommen dann noch die weiteren Entrys hin, die benötigt werden um die shaise zu bearbeiten. //
                 #// wenn das bearbeiten an ist und in der Liste was anderes gewählt wird muss sich der shais hier aktualisieren
 
@@ -2285,10 +2298,16 @@ class Listendings:
 
             self.Eintrag_Uhrzeit_e.configure(state="disabled")
             self.Eintrag_Telefonnummer_e.configure(state="disabled")
+            self.Eintrag_Beschreibung_e.configure(state="disabled")
+            self.Eintrag_Notizen_e.configure(state="disabled")
             self.Eintrag_Telefonnummer_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Telefonnummer")
             self.Eintrag_Uhrzeit_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Uhrzeit")
-            self.Eintrag_Uhrzeit_e.delete("0", Atk.END)
-            self.Eintrag_Telefonnummer_e.delete("0", Atk.END)
+            self.Eintrag_Notizen_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Beschreibung")
+            self.Eintrag_Beschreibung_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Notizen")
+            self.Eintrag_Uhrzeit_e.delete("0", tk.END)
+            self.Eintrag_Telefonnummer_e.delete("0", tk.END)
+            self.Eintrag_Beschreibung_e.delete("0", tk.END)
+            self.Eintrag_Notizen_e.delete("0", tk.END)
 
     def alles_löschen(self):
         print("alles_löschen(def)")
