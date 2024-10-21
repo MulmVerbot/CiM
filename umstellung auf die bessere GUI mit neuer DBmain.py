@@ -581,7 +581,7 @@ class Listendings:
         self.Menü_Knopp = tk.CTkButton(master, text="Statistik", command=self.Menu_anzeige_wechseln, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="pink", image=self.Menü_Bild)
         self.Menü_Knopp.place(x=1260, y=160)
         self.Pause_menu = tk.CTkFrame(master, width=769, height=420, fg_color="LightSlateGray", border_color="White", border_width=1, corner_radius=1)
-        self.Ereignislog = tk.CTkTextbox(root, width=220, height=80, wrap="word", text_color=self.Txt_farbe, fg_color=self.Ereignislog_farbe, border_color=self.Border_Farbe, border_width=2)
+        self.Ereignislog = tk.CTkTextbox(root, width=220, height=80, wrap="word", text_color=self.Txt_farbe, fg_color=self.Ereignislog_farbe, border_color=self.Border_Farbe, border_width=2, font=("Courier", 14, "bold"))
         self.Ereignislog.place(x=1210,y=10)
         self.Ereignislog_insert(nachricht_f_e="[-Ereignislog-]")
         #self.Ereignislog_insert(nachricht_f_e="[-Ereignislog-]\n")
@@ -2060,9 +2060,6 @@ class Listendings:
                                 self.Ereignislog_insert(nachricht_f_e="-Telefonnummer in Blacklist gefunden!\n Nummer wurde nicht eingefügt.")
                                 self.Anruf_Telefonnummer = None
                                 self.Gesperrte_Nummer = True
-                            else:
-                                print(f"offensichtlicher weise war {str(Gesperrte_kontakt.get("Telefonnummer_jsn_gesperrt"))} nicht das selbe wie {str(self.Anruf_Telefonnummer)}... oder so ähnlich.")
-                            #else:
                         if self.Gesperrte_Nummer == False:
                             print("else f 1")
                             print("die Nummer stand nicht in der Blacklist")
