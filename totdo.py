@@ -161,6 +161,16 @@ class TodoApp:
             i += 1
         print("Alle Fakes/ Konzepte wurden geladen")
 
+    def Listen_arten_laden(self):
+        print("Lade nun verfügbare Listen")
+        try:
+            with open(self.andere_Listen_speicheort, "r") as aLs_gel:
+                Listen = aLs_gel
+            # for dings in Listen:
+            #   knopp = button dingse und dann links spawnen
+        except Exception as e:
+            print(f"Beim laden der Listen gabs einen Fehler: {e}")
+
     def todo_aufmachen(self):
         self.Todo_offen = True
         self.menu = Menu(root)
