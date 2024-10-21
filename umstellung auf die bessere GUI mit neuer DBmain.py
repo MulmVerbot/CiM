@@ -2371,7 +2371,8 @@ class Listendings:
         self.Eintrag_wollte_sprechen_e.delete("0", tk.END)
         self.Eintrag_an_weitergeleitet_e.delete("0", tk.END)
 
-        self.Eintrag_geladen_jetzt # Der jetzt gewählte LB Eintrag
+       # self.Eintrag_geladen_jetzt # Der jetzt gewählte LB Eintrag
+        eintrag_in_db = self.lade_eintrag_aus_json_nach_id()
 
         
         
