@@ -328,6 +328,7 @@ class Listendings:
         self.Txt_farbe = "White"
         self.f_Plt = "FloralWhite"
         self.f_e_deak = "#212121"
+        self.Txt_farbe_deak = self.f_e_deak
     #### Farben Ende #### fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e
 
         root.configure(fg_color=self.Hintergrund_farbe)
@@ -559,18 +560,43 @@ class Listendings:
         self.Problem_text_neu.place(x=420,y=120)
         #self.Info_text_neu = tk.CTkTextbox(root, width=120, height=200, bg_color=self.Entry_Farbe, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe) # die var dann noch ändern //todo wird dann aus der Liste geladen
         #self.Info_text_neu.place(x=420,y=320)
+    
+    ### Die Entrys und label fürs bearbeiten
         self.Eintrag_Uhrzeit_e = tk.CTkEntry(master, width=200, fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Uhrzeit:")
-        self.Eintrag_Uhrzeit_e.place(x=420,y=330)
         self.Eintrag_Telefonnummer_e = tk.CTkEntry(master, width=200, fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Telefonnummer")
-        self.Eintrag_Telefonnummer_e.place(x=620,y=330)
         self.Eintrag_Beschreibung_e = tk.CTkEntry(master, width=200, fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Beschreibung")
-        self.Eintrag_Beschreibung_e.place(x=620,y=360)
         self.Eintrag_Notizen_e = tk.CTkEntry(master, width=200, fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Notizen")
-        self.Eintrag_Notizen_e.place(x=420,y=360)
+        self.Eintrag_wollte_sprechen_e = tk.CTkEntry(master, width=200, fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Wollte wen sprechen")
+        self.Eintrag_an_weitergeleitet_e = tk.CTkEntry(master, width=200, fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="An wen weitergeleitet")
+
+        self.Eintrag_Uhrzeit_e.place(x=420,y=370)
+        self.Eintrag_Telefonnummer_e.place(x=620,y=370)
+        self.Eintrag_Beschreibung_e.place(x=620,y=430)
+        self.Eintrag_Notizen_e.place(x=420,y=430)
+        self.Eintrag_wollte_sprechen_e.place(x=920,y=370)
+        self.Eintrag_an_weitergeleitet_e.place(x=920,y=430)
+
+        self.E_U_l = tk.CTkLabel(root, text="Uhrzeit:", text_color=self.Txt_farbe_deak)
+        self.E_T_l = tk.CTkLabel(root, text="Telefonnummer:", text_color=self.Txt_farbe_deak)
+        self.E_N_l = tk.CTkLabel(root, text="Notizen:", text_color=self.Txt_farbe_deak)
+        self.E_B_l = tk.CTkLabel(root, text="Beschreibung:", text_color=self.Txt_farbe_deak)
+        self.E_ws_l = tk.CTkLabel(root, text="Weiterleitung an:", text_color=self.Txt_farbe_deak)
+        self.E_aw_l = tk.CTkLabel(root, text="An wen weitergeleitet:", text_color=self.Txt_farbe_deak)
+
+        self.E_U_l.place(x=420,y=340)
+        self.E_T_l.place(x=620,y=340)
+        self.E_N_l.place(x=420,y=400)
+        self.E_B_l.place(x=620,y=400)
+        self.E_ws_l.place(x=920,y=340)
+        self.E_aw_l.place(x=920,y=400)
+
         self.Eintrag_Uhrzeit_e.configure(state="disabled")
         self.Eintrag_Telefonnummer_e.configure(state="disabled")
         self.Eintrag_Beschreibung_e.configure(state="disabled")
         self.Eintrag_Notizen_e.configure(state="disabled")
+        self.Eintrag_wollte_sprechen_e.configure(state="disabled")
+        self.Eintrag_an_weitergeleitet_e.configure(state="disabled")
+    ### Ende der Entrys und label fürs bearbeiten
 
         self.menu_frame = tk.CTkFrame(master, width=200, height=400)
         self.beb_knopp = tk.CTkButton(master, text="Bearbeiten", command=self.beb_c, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color="DarkSlateGray1", image=self.Bearbeiten_Bild)
@@ -2259,7 +2285,6 @@ class Listendings:
             print("beb is jetzt = 1")
             #self.ausgabe_text.configure(state='normal')
             self.t_nummer.configure(state="normal")
-            self.Eintrag_Uhrzeit_e.configure(state="normal")
             self.beb_knopp.configure(text="Fertig", fg_color="aquamarine", hover_color="aquamarine3")
             if self.Eintrag_geladen_jetzt != None:
                 print("ein Eintrag aus der Liste wird nun bearbeitet")
@@ -2267,15 +2292,29 @@ class Listendings:
                 self.Eintrag_Telefonnummer_e.configure(state="normal")
                 self.Eintrag_Beschreibung_e.configure(state="normal")
                 self.Eintrag_Notizen_e.configure(state="normal")
+                self.Eintrag_wollte_sprechen_e.configure(state="normal")
+                self.Eintrag_an_weitergeleitet_e.configure(state="normal")
+
+                self.E_U_l.configure(text_color=self.Txt_farbe)
+                self.E_T_l.configure(text_color=self.Txt_farbe)
+                self.E_N_l.configure(text_color=self.Txt_farbe)
+                self.E_B_l.configure(text_color=self.Txt_farbe)
+                self.E_ws_l.configure(text_color=self.Txt_farbe)
+                self.E_aw_l.configure(text_color=self.Txt_farbe)
+
                 self.Eintrag_Telefonnummer_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
                 self.Eintrag_Uhrzeit_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
                 self.Eintrag_Beschreibung_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
                 self.Eintrag_Notizen_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
+                self.Eintrag_wollte_sprechen_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
+                self.Eintrag_an_weitergeleitet_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
+
                 self.Eintrag_Uhrzeit_e.insert(0, f"{self.Eintrag_geladen_jetzt["Uhrzeit"]}")
                 self.Eintrag_Telefonnummer_e.insert(0, f"{self.Eintrag_geladen_jetzt["Telefonnummer"]}")
                 self.Eintrag_Beschreibung_e.insert(0, f"{self.Eintrag_geladen_jetzt["description"]}")
                 self.Eintrag_Notizen_e.insert(0, f"{self.Eintrag_geladen_jetzt["notizen"]}")
-                
+                self.Eintrag_wollte_sprechen_e.insert(0, f"{self.Eintrag_geladen_jetzt["wen_sprechen"]}")
+                self.Eintrag_an_weitergeleitet_e.insert(0, f"{self.Eintrag_geladen_jetzt["an_wen_gegeben"]}")
                 ## hier kommen dann noch die weiteren Entrys hin, die benötigt werden um die shaise zu bearbeiten. //
                 #// wenn das bearbeiten an ist und in der Liste was anderes gewählt wird muss sich der shais hier aktualisieren
 
@@ -2292,19 +2331,50 @@ class Listendings:
             #with open(self.Liste_mit_datum, "w+") as f:
             #    f.write(self.text_tk_text)
             #    print("das beb wurde geschrieben.")
+            self.E_U_l.configure(text_color=self.Txt_farbe_deak)
+            self.E_T_l.configure(text_color=self.Txt_farbe_deak)
+            self.E_N_l.configure(text_color=self.Txt_farbe_deak)
+            self.E_B_l.configure(text_color=self.Txt_farbe_deak)
+            self.E_ws_l.configure(text_color=self.Txt_farbe_deak)
+            self.E_aw_l.configure(text_color=self.Txt_farbe_deak)
+
+            
+            self.beb_speichern_mit_JSON()
+            
 
             self.Eintrag_Uhrzeit_e.configure(state="disabled")
             self.Eintrag_Telefonnummer_e.configure(state="disabled")
             self.Eintrag_Beschreibung_e.configure(state="disabled")
             self.Eintrag_Notizen_e.configure(state="disabled")
+            self.Eintrag_wollte_sprechen_e.configure(state="disabled")
+            self.Eintrag_an_weitergeleitet_e.configure(state="disabled")
             self.Eintrag_Telefonnummer_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Telefonnummer")
             self.Eintrag_Uhrzeit_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Uhrzeit")
             self.Eintrag_Notizen_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Beschreibung")
             self.Eintrag_Beschreibung_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Notizen")
-            self.Eintrag_Uhrzeit_e.delete("0", tk.END)
-            self.Eintrag_Telefonnummer_e.delete("0", tk.END)
-            self.Eintrag_Beschreibung_e.delete("0", tk.END)
-            self.Eintrag_Notizen_e.delete("0", tk.END)
+            self.Eintrag_wollte_sprechen_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Wollte wen sprechen:")
+            self.Eintrag_an_weitergeleitet_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Weitergeleitet an:")
+        
+    def beb_speichern_mit_JSON(self):
+        print("beb_speichern_mit_JSON(def)")
+        self.neue_uhrzeit_aus_Eintrag = self.Eintrag_Uhrzeit_e.get()
+        self.neue_Telefonummer_aus_Eintrag = self.Eintrag_Telefonnummer_e.get()
+        self.neue_Notizen_aus_Eintrag = self.Eintrag_Beschreibung_e.get()
+        self.neue_Beschreibung_aus_Eintrag = self.Eintrag_Notizen_e.get()
+        self.neue_Wollte_sprechen_aus_Eintrag = self.Eintrag_wollte_sprechen_e.get()
+        self.neue_Weiterleitung_an_aus_Eintrag = self.Eintrag_an_weitergeleitet_e.get()
+
+        self.Eintrag_Uhrzeit_e.delete("0", tk.END)
+        self.Eintrag_Telefonnummer_e.delete("0", tk.END)
+        self.Eintrag_Beschreibung_e.delete("0", tk.END)
+        self.Eintrag_Notizen_e.delete("0", tk.END)
+        self.Eintrag_wollte_sprechen_e.delete("0", tk.END)
+        self.Eintrag_an_weitergeleitet_e.delete("0", tk.END)
+
+        self.Eintrag_geladen_jetzt # Der jetzt gewählte LB Eintrag
+
+        
+        
 
     def alles_löschen(self):
         print("alles_löschen(def)")
@@ -2558,11 +2628,6 @@ class Listendings:
 
         speichern_knopp = tk.CTkButton(Checklisten_Fenster, text="Als PDF Speichern", command=lambda: checkliste_als_pdf_speichern(pdf_dateiname))
         speichern_knopp.pack()
-
-
-        
-        
-   
     
     def Netzlaufwerk_speichern(self):
         print("Netzlaufwerk_speichern(def)")
