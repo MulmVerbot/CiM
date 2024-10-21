@@ -728,7 +728,8 @@ class Listendings:
         fertsch = "X" # //todo: ein System bauen bei dem man Einträge markieren kann, vielleicht wie so als 'fertig' oderso.
         wen_sprechen = self.wollte_sprechen
         an_wen_gegeben = self.Weiterleitung_an
-        Eintrag = { "name": name_aus_eintrag, "description": beschreibung_aus_eintrag, "Uhrzeit": self.Zeit, "notizen": notizen_aus_eintrag, "Telefonnummer": tk_nummer, "ID_L": self.ID_v, "fertsch": fertsch, "wen_sprechen": wen_sprechen, "an_wen_gegeben": an_wen_gegeben}
+        Zeit_aus_Eintrag = self.Uhrzeit_text
+        Eintrag = { "name": name_aus_eintrag, "description": beschreibung_aus_eintrag, "Uhrzeit": Zeit_aus_Eintrag, "notizen": notizen_aus_eintrag, "Telefonnummer": tk_nummer, "ID_L": self.ID_v, "fertsch": fertsch, "wen_sprechen": wen_sprechen, "an_wen_gegeben": an_wen_gegeben}
         print(f"Ich werden jetzt folgendes in die JSON schreiben: \n\n{Eintrag}\n\n")
         Eintrag_v = self.Eintrag_aus_JSON_DB_laden()
         Eintrag_v.append(Eintrag)
