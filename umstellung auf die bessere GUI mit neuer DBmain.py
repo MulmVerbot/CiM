@@ -2188,7 +2188,6 @@ class Listendings:
                     except Exception as ehjk:
                         print(f"okay, also das mit den IDs klappt heute garnicht. Fehlermeldung: {ehjk}")
                         self.ID_v = 1
-
             else:
                 try:
                     with open(self.ID_speicherort_L, "w+") as ID_gel:
@@ -2636,54 +2635,58 @@ class Listendings:
                 auto_speichern = dings_aSp
         except:
             auto_speichern = "0"
+        try:
 
-        if auto_speichern == "1":
-            self.csv_datei_pfad = Listen_Speicherort_Netzwerk_geladen
-            if self.csv_datei_pfad:
-                try:
-                    with open(self.Liste_mit_datum, 'r') as text_datei:
-                        daten = text_datei.read()
-                except FileNotFoundError:
-                    sys.exit()
-                zeilen = daten.strip().split('\n')
-                datensaetze = []
-                uhrzeit, kunde, problem, info, Telefonnummer, wollte_sprechen, Weiterleitung = "", "", "", "", "", "", ""
-                for zeile in zeilen:
-                    if zeile.startswith("Uhrzeit:"):
-                        uhrzeit = zeile.replace("Uhrzeit:", "").strip()
-                    elif zeile.startswith("Anrufer:"):
-                        kunde = zeile.replace("Anrufer:", "").strip()
-                    elif zeile.startswith("Problem:"):
-                        problem = zeile.replace("Problem:", "").strip()
-                    elif zeile.startswith("Info:"):
-                        info = zeile.replace("Info:", "").strip()
-                    elif zeile.startswith("Telefonnummer:"):
-                        Telefonnummer = zeile.replace("Telefonnummer:", "").strip()
-                    elif zeile.startswith("Jemand bestimmtes sprechen:"):
-                        wollte_sprechen = zeile.replace("Jemand bestimmtes sprechen:", "").strip()
-                    elif zeile.startswith("Weiterleitung:"):
-                        Weiterleitung = zeile.replace("Weiterleitung:", "").strip()
-                        
-                    if kunde and problem and info and uhrzeit and Telefonnummer and wollte_sprechen and Weiterleitung:
-                        datensaetze.append([ uhrzeit, kunde, problem, info, Telefonnummer,  wollte_sprechen, Weiterleitung])
-                        uhrzeit, kunde, problem, info, Telefonnummer,  wollte_sprechen, Weiterleitung = "", "", "", "", "", "", ""
+            if auto_speichern == "1":
+                self.csv_datei_pfad = Listen_Speicherort_Netzwerk_geladen
+                if self.csv_datei_pfad:
+                    try:
+                        with open(self.Liste_mit_datum, 'r') as text_datei:
+                            daten = text_datei.read()
+                    except FileNotFoundError:
+                        sys.exit()
+                    zeilen = daten.strip().split('\n')
+                    datensaetze = []
+                    uhrzeit, kunde, problem, info, Telefonnummer, wollte_sprechen, Weiterleitung = "", "", "", "", "", "", ""
+                    for zeile in zeilen:
+                        if zeile.startswith("Uhrzeit:"):
+                            uhrzeit = zeile.replace("Uhrzeit:", "").strip()
+                        elif zeile.startswith("Anrufer:"):
+                            kunde = zeile.replace("Anrufer:", "").strip()
+                        elif zeile.startswith("Problem:"):
+                            problem = zeile.replace("Problem:", "").strip()
+                        elif zeile.startswith("Info:"):
+                            info = zeile.replace("Info:", "").strip()
+                        elif zeile.startswith("Telefonnummer:"):
+                            Telefonnummer = zeile.replace("Telefonnummer:", "").strip()
+                        elif zeile.startswith("Jemand bestimmtes sprechen:"):
+                            wollte_sprechen = zeile.replace("Jemand bestimmtes sprechen:", "").strip()
+                        elif zeile.startswith("Weiterleitung:"):
+                            Weiterleitung = zeile.replace("Weiterleitung:", "").strip()
+                            
+                        if kunde and problem and info and uhrzeit and Telefonnummer and wollte_sprechen and Weiterleitung:
+                            datensaetze.append([ uhrzeit, kunde, problem, info, Telefonnummer,  wollte_sprechen, Weiterleitung])
+                            uhrzeit, kunde, problem, info, Telefonnummer,  wollte_sprechen, Weiterleitung = "", "", "", "", "", "", ""
 
-                if datensaetze:
-                    self.tag_string = str(time.strftime("%d %m %Y"))
-                    with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
-                        schreiber = csv.writer(datei)
-                        schreiber.writerow(["Uhrzeit", "Anrufer", "Problem", "Info", "Telefonnummer", "Wollte Sprechen", "Weiterleitung"])
-                        schreiber.writerows(datensaetze)
-                        self.zeit_string = time.strftime("%H:%M:%S")
+                    if datensaetze:
                         self.tag_string = str(time.strftime("%d %m %Y"))
-                    print("Daten wurden in die CSV-Datei gespeichert.")
-                    print(f"Dateien wurden unter {self.csv_datei_pfad} gespeichert.")
-                    messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich im Netzlaufwerkpfad gespeichert.")
+                        with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
+                            schreiber = csv.writer(datei)
+                            schreiber.writerow(["Uhrzeit", "Anrufer", "Problem", "Info", "Telefonnummer", "Wollte Sprechen", "Weiterleitung"])
+                            schreiber.writerows(datensaetze)
+                            self.zeit_string = time.strftime("%H:%M:%S")
+                            self.tag_string = str(time.strftime("%d %m %Y"))
+                        print("Daten wurden in die CSV-Datei gespeichert.")
+                        print(f"Dateien wurden unter {self.csv_datei_pfad} gespeichert.")
+                        messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich im Netzlaufwerkpfad gespeichert.")
+                    else:
+                        print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
+                        messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern im Netzlaufwerkpfad schiefgelaufen. (vielleicht keine Datensätze?)")
                 else:
-                    print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
-                    messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern im Netzlaufwerkpfad schiefgelaufen. (vielleicht keine Datensätze?)")
-            else:
-                print("die var zum auto_speichern lag bei was anderem als 1")
+                    print("die var zum auto_speichern lag bei was anderem als 1")
+        except Exception as Ex_sp142:
+            print(Ex_sp142)
+            messagebox.showerror(title=self.Programm_Name_lang, message=f"Beim speichern auf dem Netzlaufwerk ist folgender Fehler aufgetreten: {Ex_sp142}\n\nDie Daten wurden höchstwahrscheinlich nicht gespeichert. ")
         print("======================================")
         sys.exit()
 
