@@ -2362,11 +2362,12 @@ class Listendings:
         print("beb_speichern_mit_JSON(def)")
         self.neue_uhrzeit_aus_Eintrag = self.Eintrag_Uhrzeit_e.get()
         self.neue_Telefonummer_aus_Eintrag = self.Eintrag_Telefonnummer_e.get()
-        self.neue_Notizen_aus_Eintrag = self.Eintrag_Beschreibung_e.get()
-        self.neue_Beschreibung_aus_Eintrag = self.Eintrag_Notizen_e.get()
+        self.neue_Notizen_aus_Eintrag = self.Eintrag_Notizen_e.get()
+        self.neue_Beschreibung_aus_Eintrag = self.Eintrag_Beschreibung_e.get()
         self.neue_Wollte_sprechen_aus_Eintrag = self.Eintrag_wollte_sprechen_e.get()
         self.neue_Weiterleitung_an_aus_Eintrag = self.Eintrag_an_weitergeleitet_e.get()
-
+#/todo wenn man beim bearbeiten den Eintrag in der LB ändert, muss der rest hier auch gleich mit gewechselt werden!
+#/todo man kann den Anrufer Namen noch nicht wechseln
         self.Eintrag_Uhrzeit_e.delete("0", tk.END)
         self.Eintrag_Telefonnummer_e.delete("0", tk.END)
         self.Eintrag_Beschreibung_e.delete("0", tk.END)
@@ -2375,10 +2376,41 @@ class Listendings:
         self.Eintrag_an_weitergeleitet_e.delete("0", tk.END)
 
        # self.Eintrag_geladen_jetzt # Der jetzt gewählte LB Eintrag
-        eintrag_in_db = self.lade_eintrag_aus_json_nach_id()
+        print(f"Bearbeite nun den Eintrag mit folgender ID: {self.Eintrag_geladen_jetzt["ID_L"]}")
+        self.neuer_eintrag = { 
+            "name": f"{self.Eintrag_geladen_jetzt["name"]}",
+            "description": f"{self.neue_Beschreibung_aus_Eintrag}",
+            "Uhrzeit": f"{self.neue_uhrzeit_aus_Eintrag}",
+            "notizen": f"{self.neue_Notizen_aus_Eintrag}",
+            "Telefonnummer": f"{self.neue_Telefonummer_aus_Eintrag}",
+            "ID_L": self.Eintrag_geladen_jetzt["ID_L"],  # ID des zu ersetzenden Eintrags
+            "fertsch": "X",
+            "wen_sprechen": f"{self.neue_Wollte_sprechen_aus_Eintrag}",
+            "an_wen_gegeben": f"{self.neue_Weiterleitung_an_aus_Eintrag}"}
 
-        
-        
+        self.lade_und_ersetze_Eintrag_in_JDB(self.Eintrags_DB, self.neuer_eintrag, self.Eintrag_geladen_jetzt["ID_L"])
+
+
+    def lade_und_ersetze_Eintrag_in_JDB(self, jdb_pfad, neue_daten, id_l):
+        with open(jdb_pfad, 'r', encoding='utf-8') as f:
+            daten = json.load(f)
+
+        # Eintrag suchen und ersetzen
+        ersetzt = False
+        for index, eintrag in enumerate(daten):
+            if eintrag['ID_L'] == id_l:
+                daten[index] = neue_daten  # Den Eintrag ersetzen
+                ersetzt = True
+                break
+
+        if ersetzt:
+            # Datei mit den neuen Daten speichern
+            with open(jdb_pfad, 'w', encoding='utf-8') as f:
+                json.dump(daten, f, ensure_ascii=False, indent=4)
+            print(f"Eintrag mit ID_L {id_l} erfolgreich ersetzt.")
+        else:
+            print(f"Kein Eintrag mit ID_L {id_l} gefunden.")
+
 
     def alles_löschen(self):
         print("alles_löschen(def)")
