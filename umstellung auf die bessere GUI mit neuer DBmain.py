@@ -236,6 +236,7 @@ class Listendings:
         self.Blacklist_pfad = os.path.join(self.Db_Ordner_pfad, "Db_Blacklist.json")
         self.Weiterleitungs_ordner_datei = os.path.join(self.Einstellungen_ordner, "Weiterleitung.txt")
         self.TASKS_FILE = 'tasks.json'
+    ## assets
         self.Asset_ordner_beb_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Bearbeiten.png')
         self.Asset_ordner_dur_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Durchsuchen.png') 
         self.Asset_ordner_spr_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Speichern.png')
@@ -249,6 +250,8 @@ class Listendings:
         self.Asset_ordner_schnelln_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Schnellnotiz.png')
         self.Asset_ordner_durch_zu_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Durchsuchen_zu.png')
         self.Asset_totdo_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'totdo.png')
+        self.Asset_entfernen_pfad = os.path.join(self.Asset_ordner, "Bilder", 'entfernen.png')
+    ## assets ENDE
         self.Checklisten_Ordner = os.path.join(self.Db_Ordner_pfad, 'Checklisten')
         self.Checklisten_Speicherort_Datei = os.path.join(self.Checklisten_Ordner, 'Checkliste.pdf')
         self.Checklisten_Option_1 = "Test Checkliste 1"
@@ -285,6 +288,7 @@ class Listendings:
             self.Schnellnotiz_Bild = tk.CTkImage(Image.open(self.Asset_ordner_schnelln_pfad))
             self.Durchsuchen_Bild_zu = tk.CTkImage(Image.open(self.Asset_ordner_durch_zu_pfad))
             self.totdo_Bild = tk.CTkImage(Image.open(self.Asset_totdo_pfad))
+            self.entfernen_Bild = tk.CTkImage(Image.open(self.Asset_entfernen_pfad))
         except Exception as alk:
             messagebox.showinfo(self.Programm_Name, f"Beim laden der Bild Assets ist ein Fehler aufgetreten: {alk}")
         
@@ -518,7 +522,7 @@ class Listendings:
         self.t_nummer = tk.CTkEntry(master, width=250, placeholder_text="Telefonnummer", state="disabled", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite", border_color=self.f_e)
         self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite", border_color=self.f_e)
         self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite", border_color=self.f_e)
-        self.Anruf_Zeit = tk.CTkLabel(master, text_color=self.Txt_farbe, text=f"Kein akiver Anruf             ", bg_color=self.Entry_Farbe)
+        self.Anruf_Zeit = tk.CTkLabel(master, text_color=self.Txt_farbe, text=f"  Kein akiver Anruf             ", bg_color=self.Entry_Farbe)
 
     #    self.kunde_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
     #    self.t_nummer.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
@@ -530,9 +534,7 @@ class Listendings:
         self.senden_button = tk.CTkButton(master, text="Senden", command="")
         self.senden_button.bind('<Button-1>', self.senden)
         root.bind('<Return>', self.senden)
-        ##self.ausgabe_text = tk.CTkTextbox(master, width=1255, height=420, wrap="word", fg_color=self.Hintergrund_farbe_Text_Widget, text_color=self.Textfarbe, border_color=self.Border_Farbe, border_width=2)
-        ##self.ausgabe_text.configure(state='disabled')
-        self.Listen_Liste_frame = tk.CTkFrame(root, fg_color="Red")
+        self.Listen_Liste_frame = tk.CTkFrame(root, fg_color=self.f_e_deak)
         self.Listen_Liste_frame.place(x=0,y=100)
         self.Eintrags_Liste = Atk.Listbox(self.Listen_Liste_frame, bg=self.Ereignislog_farbe, fg=self.Txt_farbe, height=12, width=40)
         self.Eintrags_Liste.bind("<<ListboxSelect>>", self.LB_ausgewaehlt)
@@ -546,7 +548,6 @@ class Listendings:
         self.problem_entry.place(x=5,y=35)
         self.info_entry.place(x=5,y=65)
         self.t_nummer.place(x=605,y=5)
-        ##self.ausgabe_text.place(x=0,y=100)
         self.Anruf_Zeit.place(x=860,y=5)
 
         self.Zeit_aus_JSON = Atk.Label(root, text=self.Zeit, bg=self.f_e)
@@ -731,18 +732,46 @@ class Listendings:
                 self.ID_M_l.configure(text=f"ID: {eintrag["ID_L"]}")
                 self.Problem_text_neu.delete("0.0", Atk.END)
                 self.Problem_text_neu.insert("0.0", f"Uhrzeit: {eintrag["Uhrzeit"]}\nTelefonnummer: {eintrag["Telefonnummer"]}\nBeschreibung: {eintrag["description"]}\nNotizen: {eintrag["notizen"]}\n\nMit Wem sprechen: {eintrag["wen_sprechen"]}\nAn wen Weitergeleitet: {eintrag["an_wen_gegeben"]}")
+                try:
+                    self.Eintrag_verstecken_Knopp.place_forget()
+                except:
+                    pass
+                def v_F():
+                    print("Frage nun ob der Eintrag wirklich versteckt werden soll..")
+                    antw = messagebox.askyesno(title=self.Programm_Name_lang, message=f"Möchten Sie den Eintrag mit der ID {self.Eintrag_geladen_jetzt["ID_L"]} wirklich ausblenden? Das kann nicht rückgängig gemacht werden.")
+                    if antw == True:
+                        self.Eintrag_aus_LB_verstecken()
+                    else:
+                        print("Eintrag verstecken vom Nutzer abgebrochen.")
+                self.Eintrag_verstecken_Knopp = tk.CTkButton(root, text="Eintrag verstecken", command=v_F, fg_color=self.f_e, border_color="Black", border_width=1, text_color=self.Txt_farbe, hover_color=self.rot, image=self.entfernen_Bild)
+                self.Eintrag_verstecken_Knopp.place(x=1260,y=250)
             else:
                 messagebox.showwarning(title=self.Programm_Name, message=f"Kein Eintrag mit ID {eintrag_id} gefunden.")
-                print(eintrag)
+                print(f"Kein Eintrag mit ID {eintrag_id} gefunden.")
+        
+    
 
-    def Eintrag_bearbeiten(self):
-        print("Eintrag_bearbeiten(def)")
-        self.Eintrag_Uhrzeit_e.configure(state="normal")
-        self.Eintrag_Telefonnummer_e.configure(state="normal")
-        self.Eintrag_Telefonnummer_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
-        self.Eintrag_Uhrzeit_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
-        self.Eintrag_Uhrzeit_e.insert(0, f"{self.Eintrag_geladen_jetzt["Uhrzeit"]}")
-        self.Eintrag_Telefonnummer_e.insert(0, f"{self.Eintrag_geladen_jetzt["Telefonnummer"]}")
+    def Eintrag_aus_LB_verstecken(self):
+        print("Eintrag_aus_LB_verstecken(def)")
+        self.neue_anzeigen_Eintragen = False
+
+        self.neuer_eintrag = { 
+            "name": self.Eintrag_geladen_jetzt["name"],
+            "description": self.Eintrag_geladen_jetzt["description"],
+            "Uhrzeit": self.Eintrag_geladen_jetzt["Uhrzeit"],
+            "notizen": self.Eintrag_geladen_jetzt["notizen"],
+            "Telefonnummer": self.Eintrag_geladen_jetzt["Telefonnummer"],
+            "ID_L": self.Eintrag_geladen_jetzt["ID_L"],  # ID des zu ersetzenden Eintrags
+            "fertsch": "X",
+            "wen_sprechen": self.Eintrag_geladen_jetzt["wen_sprechen"],
+            "an_wen_gegeben": self.Eintrag_geladen_jetzt["an_wen_gegeben"],
+            "anzeigen": self.neue_anzeigen_Eintragen
+            }
+        
+        self.beb_speichern_mit_JSON(self.Eintrags_DB, self.neuer_eintrag, self.Eintrag_geladen_jetzt["ID_L"])
+        self.clear_L_LB()
+        self.Liste_laden_aus_JSON()
+        self.Eintrags_Liste.see(Atk.END)
 
 
     def Eintrag_in_JSON_schmeissen(self):
@@ -2343,11 +2372,36 @@ class Listendings:
             self.E_B_l.configure(text_color=self.Txt_farbe_deak)
             self.E_ws_l.configure(text_color=self.Txt_farbe_deak)
             self.E_aw_l.configure(text_color=self.Txt_farbe_deak)
-
+            self.neue_uhrzeit_aus_Eintrag = self.Eintrag_Uhrzeit_e.get()
+            self.neue_Telefonummer_aus_Eintrag = self.Eintrag_Telefonnummer_e.get()
+            self.neue_Notizen_aus_Eintrag = self.Eintrag_Notizen_e.get()
+            self.neue_Beschreibung_aus_Eintrag = self.Eintrag_Beschreibung_e.get()
+            self.neue_Wollte_sprechen_aus_Eintrag = self.Eintrag_wollte_sprechen_e.get()
+            self.neue_Weiterleitung_an_aus_Eintrag = self.Eintrag_an_weitergeleitet_e.get()
+            self.neue_anzeigen_Eintragen = True # wenn der Eintrag nicht mehr sichtbar wäre, könnte man ihn auch nicht bearbeiten
             
-            self.beb_speichern_mit_JSON()
+    #/todo wenn man beim bearbeiten den Eintrag in der LB ändert, muss der rest hier auch gleich mit gewechselt werden!
+    #/todo man kann den Anrufer Namen noch nicht wechseln
+            self.Eintrag_Uhrzeit_e.delete("0", tk.END)
+            self.Eintrag_Telefonnummer_e.delete("0", tk.END)
+            self.Eintrag_Beschreibung_e.delete("0", tk.END)
+            self.Eintrag_Notizen_e.delete("0", tk.END)
+            self.Eintrag_wollte_sprechen_e.delete("0", tk.END)
+            self.Eintrag_an_weitergeleitet_e.delete("0", tk.END)
+            self.neuer_eintrag = { 
+                "name": f"{self.Eintrag_geladen_jetzt["name"]}",
+                "description": f"{self.neue_Beschreibung_aus_Eintrag}",
+                "Uhrzeit": f"{self.neue_uhrzeit_aus_Eintrag}",
+                "notizen": f"{self.neue_Notizen_aus_Eintrag}",
+                "Telefonnummer": f"{self.neue_Telefonummer_aus_Eintrag}",
+                "ID_L": self.Eintrag_geladen_jetzt["ID_L"],  # ID des zu ersetzenden Eintrags
+                "fertsch": "X",
+                "wen_sprechen": f"{self.neue_Wollte_sprechen_aus_Eintrag}",
+                "an_wen_gegeben": f"{self.neue_Weiterleitung_an_aus_Eintrag}",
+                "anzeigen": self.neue_anzeigen_Eintragen
+                }
             
-
+            self.beb_speichern_mit_JSON(self.Eintrags_DB, self.neuer_eintrag, self.Eintrag_geladen_jetzt["ID_L"]) # Das hier speichert dann alles im neuen Eintrag, alles was hier drunter steht ist dann also nur, um den Normalzustand wiederherzustellen.
             
             self.Eintrag_Telefonnummer_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Telefonnummer")
             self.Eintrag_Uhrzeit_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Uhrzeit")
@@ -2361,46 +2415,12 @@ class Listendings:
             self.Eintrag_Notizen_e.configure(state="disabled")
             self.Eintrag_wollte_sprechen_e.configure(state="disabled")
             self.Eintrag_an_weitergeleitet_e.configure(state="disabled")
-        
-    def beb_speichern_mit_JSON(self):
+
+    def beb_speichern_mit_JSON(self, jdb_pfad, neue_daten, id_l):
         print("beb_speichern_mit_JSON(def)")
-        self.neue_uhrzeit_aus_Eintrag = self.Eintrag_Uhrzeit_e.get()
-        self.neue_Telefonummer_aus_Eintrag = self.Eintrag_Telefonnummer_e.get()
-        self.neue_Notizen_aus_Eintrag = self.Eintrag_Notizen_e.get()
-        self.neue_Beschreibung_aus_Eintrag = self.Eintrag_Beschreibung_e.get()
-        self.neue_Wollte_sprechen_aus_Eintrag = self.Eintrag_wollte_sprechen_e.get()
-        self.neue_Weiterleitung_an_aus_Eintrag = self.Eintrag_an_weitergeleitet_e.get()
-        self.neue_anzeigen_Eintragen = True
-#/todo wenn man beim bearbeiten den Eintrag in der LB ändert, muss der rest hier auch gleich mit gewechselt werden!
-#/todo man kann den Anrufer Namen noch nicht wechseln
-        self.Eintrag_Uhrzeit_e.delete("0", tk.END)
-        self.Eintrag_Telefonnummer_e.delete("0", tk.END)
-        self.Eintrag_Beschreibung_e.delete("0", tk.END)
-        self.Eintrag_Notizen_e.delete("0", tk.END)
-        self.Eintrag_wollte_sprechen_e.delete("0", tk.END)
-        self.Eintrag_an_weitergeleitet_e.delete("0", tk.END)
-
-       # self.Eintrag_geladen_jetzt # Der jetzt gewählte LB Eintrag
         print(f"Bearbeite nun den Eintrag mit folgender ID: {self.Eintrag_geladen_jetzt["ID_L"]}")
-        self.neuer_eintrag = { 
-            "name": f"{self.Eintrag_geladen_jetzt["name"]}",
-            "description": f"{self.neue_Beschreibung_aus_Eintrag}",
-            "Uhrzeit": f"{self.neue_uhrzeit_aus_Eintrag}",
-            "notizen": f"{self.neue_Notizen_aus_Eintrag}",
-            "Telefonnummer": f"{self.neue_Telefonummer_aus_Eintrag}",
-            "ID_L": self.Eintrag_geladen_jetzt["ID_L"],  # ID des zu ersetzenden Eintrags
-            "fertsch": "X",
-            "wen_sprechen": f"{self.neue_Wollte_sprechen_aus_Eintrag}",
-            "an_wen_gegeben": f"{self.neue_Weiterleitung_an_aus_Eintrag}",
-            "anzeigen": self.neue_anzeigen_Eintragen}
-
-        self.lade_und_ersetze_Eintrag_in_JDB(self.Eintrags_DB, self.neuer_eintrag, self.Eintrag_geladen_jetzt["ID_L"])
-
-
-    def lade_und_ersetze_Eintrag_in_JDB(self, jdb_pfad, neue_daten, id_l):
         with open(jdb_pfad, 'r', encoding='utf-8') as f:
             daten = json.load(f)
-
         # Eintrag suchen und ersetzen
         ersetzt = False
         for index, eintrag in enumerate(daten):
@@ -2408,7 +2428,6 @@ class Listendings:
                 daten[index] = neue_daten  # Den Eintrag ersetzen
                 ersetzt = True
                 break
-
         if ersetzt:
             # Datei mit den neuen Daten speichern
             with open(jdb_pfad, 'w', encoding='utf-8') as f:
@@ -2416,7 +2435,6 @@ class Listendings:
             print(f"Eintrag mit ID_L {id_l} erfolgreich ersetzt.")
         else:
             print(f"Kein Eintrag mit ID_L {id_l} gefunden.")
-
 
     def alles_löschen(self):
         print("alles_löschen(def)")
