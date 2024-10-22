@@ -28,7 +28,7 @@ try:
     from PIL import Image
     #from collections import defaultdict
     #from nltk.corpus import wordnet
-    #import re
+    import re
     #import matplotlib.pyplot as plt
     import pyperclip
     import numpy as np
@@ -507,7 +507,7 @@ class Listendings:
         self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results_vor)
         self.menudings.add_command(label="Checklisten (Demo)...", command=self.Checkboxen_dingsen)
         self.menudings.add_command(label="Email Baukasten (Demo)...", command=self.email_baukasten)
-        self.menudings.add_command(label="neues beb ein", command=self.Eintrag_bearbeiten)
+        self.menudings.add_command(label="Datenbank Migration zu v. Beta 1.1", command=self.DB_Migration)
         #self.Suchen_Menu.add_command(label="Sehr genaue Suche nutzen (Suche 3.0)(Beta)", command=self.frage_nach_string_suche3)
         
         
@@ -1341,6 +1341,8 @@ class Listendings:
     def letzten_text_erhalten(self):
         print("letzten_importieren(def)")
         #self.geladener_Text = self.ausgabe_text.get("0.0", "end")
+        with open(self.Liste_mit_datum, "r") as gel_t:
+            self.geladener_Text = gel_t.read()
         self.einzelner_Eintrag = self.geladener_Text.split("\n\n")
         if self.einzelner_Eintrag:
             for eintrag in reversed(self.einzelner_Eintrag):
@@ -2342,18 +2344,19 @@ class Listendings:
             self.beb_speichern_mit_JSON()
             
 
-            self.Eintrag_Uhrzeit_e.configure(state="disabled")
-            self.Eintrag_Telefonnummer_e.configure(state="disabled")
-            self.Eintrag_Beschreibung_e.configure(state="disabled")
-            self.Eintrag_Notizen_e.configure(state="disabled")
-            self.Eintrag_wollte_sprechen_e.configure(state="disabled")
-            self.Eintrag_an_weitergeleitet_e.configure(state="disabled")
+            
             self.Eintrag_Telefonnummer_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Telefonnummer")
             self.Eintrag_Uhrzeit_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Uhrzeit")
             self.Eintrag_Notizen_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Beschreibung")
             self.Eintrag_Beschreibung_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Notizen")
             self.Eintrag_wollte_sprechen_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Wollte wen sprechen:")
             self.Eintrag_an_weitergeleitet_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.Border_Farbe, placeholder_text="Weitergeleitet an:")
+            self.Eintrag_Uhrzeit_e.configure(state="disabled")
+            self.Eintrag_Telefonnummer_e.configure(state="disabled")
+            self.Eintrag_Beschreibung_e.configure(state="disabled")
+            self.Eintrag_Notizen_e.configure(state="disabled")
+            self.Eintrag_wollte_sprechen_e.configure(state="disabled")
+            self.Eintrag_an_weitergeleitet_e.configure(state="disabled")
         
     def beb_speichern_mit_JSON(self):
         print("beb_speichern_mit_JSON(def)")
@@ -2671,6 +2674,62 @@ class Listendings:
             else:
                 print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
                 messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
+
+    def DB_Migration(self):
+        messagebox.showinfo(title=self.Programm_Name_lang, message="Viel Glück.")
+        def parse_entry(entry, id_counter):
+            # Regex für die einzelnen Felder im Eintrag
+            uhrzeit_re = re.search(r"Uhrzeit: (.*?) bis (.*?)\n", entry)
+            name_re = re.search(r"Anrufer: (.*?)\n", entry)
+            problem_re = re.search(r"Problem: (.*?)\n", entry)
+            info_re = re.search(r"Info: (.*?)\n", entry)
+            telefonnummer_re = re.search(r"Telefonnummer: (.*?)\n", entry)
+            wen_sprechen_re = re.search(r"Jemand bestimmtes sprechen: (.*?)\n", entry)
+            weiterleitung_re = re.search(r"Weiterleitung: (.*?)\n", entry)
+
+            uhrzeit_von_bis = f"{uhrzeit_re.group(1)} bis {uhrzeit_re.group(2)}" if uhrzeit_re else "-"
+            name = name_re.group(1) if name_re else "Unbekannt"
+            problem = problem_re.group(1) if problem_re else "Unbekannt"
+            info = info_re.group(1) if info_re else "keine infos"
+            telefonnummer = telefonnummer_re.group(1) if telefonnummer_re else "keine Nummer"
+            wen_sprechen = wen_sprechen_re.group(1) if wen_sprechen_re else "Nein"
+            weiterleitung = weiterleitung_re.group(1) if weiterleitung_re else "Keine Weiterleitung"
+
+        
+            json_entry = {
+                "name": name,
+                "description": problem, 
+                "Uhrzeit": uhrzeit_von_bis,  
+                "notizen": info,  
+                "Telefonnummer": telefonnummer,
+                "ID_L": id_counter,  
+                "fertsch": "X",  
+                "wen_sprechen": wen_sprechen,
+                "an_wen_gegeben": weiterleitung
+            }
+
+            return json_entry
+
+        def process_file_to_json(file_path):
+            json_data = [] 
+            id_counter = 1
+
+            with open(file_path, 'r') as file:
+                content = file.read()
+
+            entries = content.split("\n\n")
+            for entry in entries:
+                if entry.strip():
+                    json_entry = parse_entry(entry, id_counter)
+                    json_data.append(json_entry)
+                    id_counter += 1
+
+            with open(self.Eintrags_DB, 'w') as json_file:
+                json.dump(json_data, json_file, indent=4)
+
+            print("Datei erfolgreich verarbeitet und als JSON gespeichert.")
+            messagebox.showinfo(title=self.Programm_Name_lang, message="Migration des heutigen Tages erfolgreich abgeschlossen.")
+        process_file_to_json(self.Liste_mit_datum)
 
 
     def bye(self):
