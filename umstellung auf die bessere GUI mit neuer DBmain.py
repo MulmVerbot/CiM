@@ -755,7 +755,8 @@ class Listendings:
         wen_sprechen = self.wollte_sprechen
         an_wen_gegeben = self.Weiterleitung_an
         Zeit_aus_Eintrag = self.Uhrzeit_text
-        Eintrag = { "name": name_aus_eintrag, "description": beschreibung_aus_eintrag, "Uhrzeit": Zeit_aus_Eintrag, "notizen": notizen_aus_eintrag, "Telefonnummer": tk_nummer, "ID_L": self.ID_v, "fertsch": fertsch, "wen_sprechen": wen_sprechen, "an_wen_gegeben": an_wen_gegeben}
+        anzeigen_Eintrag = True
+        Eintrag = { "name": name_aus_eintrag, "description": beschreibung_aus_eintrag, "Uhrzeit": Zeit_aus_Eintrag, "notizen": notizen_aus_eintrag, "Telefonnummer": tk_nummer, "ID_L": self.ID_v, "fertsch": fertsch, "wen_sprechen": wen_sprechen, "an_wen_gegeben": an_wen_gegeben, "anzeigen": anzeigen_Eintrag}
         print(f"Ich werden jetzt folgendes in die JSON schreiben: \n\n{Eintrag}\n\n")
         Eintrag_v = self.Eintrag_aus_JSON_DB_laden()
         Eintrag_v.append(Eintrag)
@@ -785,9 +786,12 @@ class Listendings:
     def Liste_laden_aus_JSON(self): # lädt die Enträge und packt sie in die LB, klappt nur wenn die LB schon geladen wurde!! (obvius ich weiß, aber ich sachs mal trotzdem)
         self.clear_L_LB()
         Eintrag_v = self.Eintrag_aus_JSON_DB_laden()
-        print(f"Hier ist das geladene: \n{Eintrag_v}")
-        for Dings in Eintrag_v:                     
-            self.Eintrags_Liste.insert(Atk.END, f"  ID: {Dings['ID_L']} | {Dings['name']} | {Dings['Uhrzeit']}  ")          ### Hier kackts noch mächtig ab, der Rest geht aber
+        print(f"Hier ist das geladene: \n{Eintrag_v}") #self.Eintrag_geladen_jetzt["anzeigen"]
+        for Dings in Eintrag_v:
+            if Dings["anzeigen"] == True:                     
+                self.Eintrags_Liste.insert(Atk.END, f"  ID: {Dings['ID_L']} | {Dings['name']} | {Dings['Uhrzeit']}  ")          ### Hier kackts noch mächtig ab, der Rest geht aber
+            else:
+                print(f"Eintrag mit id {Dings["ID_L"]} wird versteckt da Dings['anzeigen'] == {Dings["anzeigen"]} ist.")
             
 
     def Netzlaufwerk_Einstellung_laden(self):
@@ -2366,6 +2370,7 @@ class Listendings:
         self.neue_Beschreibung_aus_Eintrag = self.Eintrag_Beschreibung_e.get()
         self.neue_Wollte_sprechen_aus_Eintrag = self.Eintrag_wollte_sprechen_e.get()
         self.neue_Weiterleitung_an_aus_Eintrag = self.Eintrag_an_weitergeleitet_e.get()
+        self.neue_anzeigen_Eintragen = True
 #/todo wenn man beim bearbeiten den Eintrag in der LB ändert, muss der rest hier auch gleich mit gewechselt werden!
 #/todo man kann den Anrufer Namen noch nicht wechseln
         self.Eintrag_Uhrzeit_e.delete("0", tk.END)
@@ -2386,7 +2391,8 @@ class Listendings:
             "ID_L": self.Eintrag_geladen_jetzt["ID_L"],  # ID des zu ersetzenden Eintrags
             "fertsch": "X",
             "wen_sprechen": f"{self.neue_Wollte_sprechen_aus_Eintrag}",
-            "an_wen_gegeben": f"{self.neue_Weiterleitung_an_aus_Eintrag}"}
+            "an_wen_gegeben": f"{self.neue_Weiterleitung_an_aus_Eintrag}",
+            "anzeigen": self.neue_anzeigen_Eintragen}
 
         self.lade_und_ersetze_Eintrag_in_JDB(self.Eintrags_DB, self.neuer_eintrag, self.Eintrag_geladen_jetzt["ID_L"])
 
@@ -2737,7 +2743,8 @@ class Listendings:
                 "ID_L": id_counter,  
                 "fertsch": "X",  
                 "wen_sprechen": wen_sprechen,
-                "an_wen_gegeben": weiterleitung
+                "an_wen_gegeben": weiterleitung,
+                "anzeigen": True,
             }
 
             return json_entry
