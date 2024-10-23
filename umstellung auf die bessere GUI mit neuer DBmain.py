@@ -333,7 +333,8 @@ class Listendings:
         self.f_Plt = "FloralWhite"
         self.f_e_deak = "#212121"
         self.Txt_farbe_deak = self.f_e_deak
-    #### Farben Ende #### fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e
+        self.f_e_PlH_Text = "LightSteelBlue1"
+    #### Farben Ende ####
 
         root.configure(fg_color=self.Hintergrund_farbe)
         root.resizable(False, False)
@@ -373,7 +374,7 @@ class Listendings:
         self.pfad_der_suche = None
         self.Suchwort = None
         self.kopie_der_mail_erhalten = True
-        self.Windows = False # denkt dran dafür noch eine richtige erkenung zu schreiben!!!
+        self.Windows = False # denkt dran dafür noch eine richtige erkenung zu schreiben!!! // fuck vergessen.
         self.Einf_aktiv = True
         self.ausgewaehlter_Eintrag = None
         self.Eintrag_geladen_jetzt = None
@@ -518,11 +519,12 @@ class Listendings:
 
     
     #### Die Stars der Stunde ####
-        self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Name des Anrufers", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite", border_color=self.f_e)
-        self.t_nummer = tk.CTkEntry(master, width=250, placeholder_text="Telefonnummer", state="disabled", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite", border_color=self.f_e)
-        self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite", border_color=self.f_e)
-        self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite", border_color=self.f_e)
-        self.Anruf_Zeit = tk.CTkLabel(master, text_color=self.Txt_farbe, text=f"  Kein akiver Anruf             ", bg_color=self.Entry_Farbe)
+        self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Name des Anrufers", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_e_PlH_Text, border_color=self.f_e)
+        self.t_nummer = tk.CTkEntry(master, width=250, placeholder_text="Telefonnummer", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_e_PlH_Text, border_color=self.f_e)
+        self.t_nummer.configure(state="disabled")# Das hier muss nachträglich gemacht werden, da sonst der Placeholder Text nicht angezeigt wird.
+        self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_e_PlH_Text, border_color=self.f_e)
+        self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_e_PlH_Text, border_color=self.f_e)
+        self.Anruf_Zeit = tk.CTkLabel(master, text_color=self.Txt_farbe, text=f"  Kein akiver Anruf", bg_color=self.Entry_Farbe, anchor="center")
 
     #    self.kunde_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
     #    self.t_nummer.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
@@ -552,7 +554,7 @@ class Listendings:
 
         self.Zeit_aus_JSON = Atk.Label(root, text=self.Zeit, bg=self.f_e)
         ##self.Zeit_aus_JSON.place(x=800,y=100)
-        self.Anrufer_Bezeichnung_l = Atk.Label(root, text="Das hier wird zum Kundennamen GmbH", fg=self.Txt_farbe, bg=self.f_e, border=2)
+        self.Anrufer_Bezeichnung_l = Atk.Label(root, text="                                  ", fg=self.Txt_farbe, bg=self.f_e, border=2)
         self.Anrufer_Bezeichnung_l.place(x=420,y=100)
         self.ID_M_l = Atk.Label(root, text="", fg=self.Txt_farbe, bg=self.f_e, width=10)
         self.ID_M_l.place(x=950, y=100)                     ############## den ganzen mist dann bitte auch so machen dass ich das mit strg + s schnell speichern kann, danke //todo
@@ -786,7 +788,6 @@ class Listendings:
         Zeit_aus_Eintrag = self.Uhrzeit_text
         anzeigen_Eintrag = True
         Eintrag = { "name": name_aus_eintrag, "description": beschreibung_aus_eintrag, "Uhrzeit": Zeit_aus_Eintrag, "notizen": notizen_aus_eintrag, "Telefonnummer": tk_nummer, "ID_L": self.ID_v, "fertsch": fertsch, "wen_sprechen": wen_sprechen, "an_wen_gegeben": an_wen_gegeben, "anzeigen": anzeigen_Eintrag}
-        print(f"Ich werden jetzt folgendes in die JSON schreiben: \n\n{Eintrag}\n\n")
         Eintrag_v = self.Eintrag_aus_JSON_DB_laden()
         Eintrag_v.append(Eintrag)
         try:
@@ -801,6 +802,15 @@ class Listendings:
         print("lade nun die Eintrags DB")
         if os.path.exists(self.Eintrags_DB):
             with open(self.Eintrags_DB, 'r') as JDB_gel:
+                if JDB_gel == "": ## wenn Datei existiert aber leer ist
+                    return []
+                else:
+                    return json.load(JDB_gel)
+        return []
+    
+    def Adressbuch_laden(self):
+        if os.path.exists(self.Json_pfad):
+            with open(self.Json_pfad, 'r') as JDB_gel:
                 if JDB_gel == "": ## wenn Datei existiert aber leer ist
                     return []
                 else:
@@ -1124,8 +1134,8 @@ class Listendings:
         self.Netzwerk_Speicherort_change = tk.CTkButton(self.tabview.tab("Speicherorte"), text="ändern", command=self.ListenDings_speicherort_Netzwerk_ändern, width=100)
 
         # Adressbuch
-        self.Adressbuch_anzeige_Einstellungen_t = tk.CTkTextbox(self.Adressbuch_anzeigen_frame, width=300, height=200, fg_color=self.Ja_UI_Farbe)
-        self.Adressbuch_anzeige_Einstellungen_t.place(x=10,y=10) 
+        self.Adressbuch_anzeige_Einstellungen_LB = Atk.Listbox(self.Adressbuch_anzeigen_frame, width=300, height=200)
+        self.Adressbuch_anzeige_Einstellungen_LB.place(x=10,y=10) 
     # Adressbuch ende
 
         self.Netzlaufwerk_pfad_geladen_Label.place(x=10,y=80)
@@ -1219,6 +1229,15 @@ class Listendings:
         except:
             print(f"[-EINSTELLUNGEN - ERR -]")
             pass
+
+        try:
+            Adressbuch = self.Adressbuch_laden()
+            for Dings in Adressbuch['Kontakte']:
+                self.Adressbuch_anzeige_Einstellungen_LB.insert(Atk.END, f"Tel.: {Dings["Telefonnummer_jsn"]}    Name: {Dings["Name"]}")
+        except Exception as e:
+            print(e)
+            messagebox.showerror(title=self.Programm_Name_lang, message=f"Beim laden des Adressbuchs ist ein Fehler aufgetreten: {e}")
+
 
     def Einstellungen_schließen(self):
         print("[-INFO-] Einstellungen_schließen(def)")
@@ -1457,9 +1476,11 @@ class Listendings:
         try:
             script_path = "totdo.py"
             subprocess.Popen([sys.executable, script_path],creationflags=subprocess.CREATE_NO_WINDOW) # Windoof
-
         except AttributeError as e:
             print(f"Fehler beim Starten des Skripts: {e}")
+            # Unix (macOS, Linux)
+            subprocess.Popen([sys.executable, script_path],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            print("Totdo wurde unter Unix geöffnet.")
         except ModuleNotFoundError:
             # Unix (macOS, Linux)
             subprocess.Popen([sys.executable, script_path],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
