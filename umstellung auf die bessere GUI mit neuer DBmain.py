@@ -831,6 +831,7 @@ class Listendings:
                 self.Eintrags_Liste.insert(Atk.END, f"  ID: {Dings['ID_L']} | {Dings['name']} | {Dings['Uhrzeit']}  ")          ### Hier kackts noch mächtig ab, der Rest geht aber
             else:
                 print(f"Eintrag mit id {Dings["ID_L"]} wird versteckt da Dings['anzeigen'] == {Dings["anzeigen"]} ist.")
+        self.Eintrags_Liste.see(Atk.END)
             
 
     def Netzlaufwerk_Einstellung_laden(self):
@@ -1134,7 +1135,7 @@ class Listendings:
         self.Netzwerk_Speicherort_change = tk.CTkButton(self.tabview.tab("Speicherorte"), text="ändern", command=self.ListenDings_speicherort_Netzwerk_ändern, width=100)
 
         # Adressbuch
-        self.Adressbuch_anzeige_Einstellungen_LB = Atk.Listbox(self.Adressbuch_anzeigen_frame, width=300, height=200)
+        self.Adressbuch_anzeige_Einstellungen_LB = Atk.Listbox(self.Adressbuch_anzeigen_frame, width=60, height=16)
         self.Adressbuch_anzeige_Einstellungen_LB.place(x=10,y=10) 
     # Adressbuch ende
 
@@ -1232,8 +1233,10 @@ class Listendings:
 
         try:
             Adressbuch = self.Adressbuch_laden()
+            i = 0
             for Dings in Adressbuch['Kontakte']:
-                self.Adressbuch_anzeige_Einstellungen_LB.insert(Atk.END, f"Tel.: {Dings["Telefonnummer_jsn"]}    Name: {Dings["Name"]}")
+                i += 1
+                self.Adressbuch_anzeige_Einstellungen_LB.insert(Atk.END, f"{i}. Tel.: {Dings["Telefonnummer_jsn"]}    Name: {Dings["Name"]}")
         except Exception as e:
             print(e)
             messagebox.showerror(title=self.Programm_Name_lang, message=f"Beim laden des Adressbuchs ist ein Fehler aufgetreten: {e}")
