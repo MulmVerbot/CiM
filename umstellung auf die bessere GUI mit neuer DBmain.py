@@ -1253,29 +1253,19 @@ class Listendings:
     def Eintrag_raus_kopieren(self): # kopiert den letzten in der Liste stehenden Eintrag in die Zwischenablage.
         print("[-INFO-] Eintrag_raus_kopieren(def)")
         #self.geladener_Text = self.ausgabe_text.get("0.0", "end")
-        self.einzelner_Eintrag = self.geladener_Text.split("\n\n")
-        if self.einzelner_Eintrag:
-            print(f"Aufgeteilter Text: {self.einzelner_Eintrag}")
-            # Rückwärts durch die Liste gehen, um den letzten passenden Eintrag zu finden
-            for eintrag in reversed(self.einzelner_Eintrag):
-                if eintrag.startswith("Uhrzeit:") and "Telefonnummer:" in eintrag:
-                    self.cim = eintrag
-                    kopierter_text = "Hier nun der kopierte Text aus dem M.U.L.M: \n" + eintrag
-                    pyperclip.copy(kopierter_text)
-                    print(f"Text in der Zwischenablage: {kopierter_text}")
-                    self.Ereignislog_insert(nachricht_f_e="- letzte Nachricht kopiert. -")
-                    break
-            else:
-                print("Kein passender Eintrag gefunden")
-        else:
-            print("Die Liste ist leer")
+        self.letzten_text_erhalten()
+        kopierter_text = "Hier nun der kopierte Text aus dem M.U.L.M: \n" + self.letzter_eintrag_text
+        pyperclip.copy(kopierter_text)
+        print(f"Text in der Zwischenablage: {kopierter_text}")
+        self.Ereignislog_insert(nachricht_f_e="- letzte Nachricht kopiert. -")
+        
 
     def Eintrag_ans_totdo(self):
         self.Eintrag_raus_kopieren()
         try:
             with open(self.Benutzerordner + "/CiM/cim.txt", "w") as cim_s: # Das hier müssen wir dann mal noch neu machen, das ist viel zu fehleranfällig. //
-                cim_s.write(self.cim)
-                cim_s.close()
+                cim_s.write(self.letzter_eintrag_text)
+                self.letzter_eintrag_text = None
                 self.Ereignislog_insert(nachricht_f_e="[-INFO-] Auftrag ans Totdo übermittelt.-")
         except Exception as exooo:
             print(f"Fehler beim senden ans Totdo. Fehlermeldung: {exooo}")    
@@ -1402,9 +1392,8 @@ class Listendings:
         if self.einzelner_Eintrag:
             for eintrag in reversed(self.einzelner_Eintrag):
                 if eintrag.startswith("Uhrzeit:") and "Telefonnummer:" in eintrag:
-                    self.cim = eintrag      # WARUM WERDEN DIE VARS HIER WIEDER DOPPELT BELEGT?????
                     self.letzter_eintrag_text = eintrag
-                    break
+                    break # das break weil wir einfach die liste umdrehen und mit dem daruch ersten Eintrag zufrieden sind.
             else:
                 print("Kein passender Eintrag gefunden")
         else:
@@ -1412,8 +1401,10 @@ class Listendings:
 
     def letzten_importieren(self):
         self.letzten_text_erhalten()
-        self.Nachricht_Ticket_e.insert("0.0", self.letzter_eintrag_text)
+        self.Nachricht_Ticket_e.insert(tk.END, self.letzter_eintrag_text)
         self.letzter_eintrag_text = None
+
+
 
         
         
