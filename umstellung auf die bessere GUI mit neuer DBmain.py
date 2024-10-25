@@ -1121,11 +1121,11 @@ class Listendings:
         self.Starface_Modul_Einstellung_Knopp = tk.CTkButton(self.tabview.tab("Starface Modul"), text="Starface Modul umschalten", command=self.Starface_Modul_umschalten, hover_color=self.f_hover_normal)
         self.Starface_Modul_Einstellung_Knopp.pack()
         if self.Starface_Modul == "1":
-            self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist aktiviert.", fg_color="aquamarine", text_color=self.Txt_farbe)
+            self.Starface_Modul_Einstellung_Knopp.configure(text="Starface Modul ist aktiviert.", fg_color=self.f_grün, text_color=self.Txt_farbe)
         else:
-            self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist deaktiviert.", fg_color="chocolate1", text_color="White")
+            self.Starface_Modul_Einstellung_Knopp.configure(text="Starface Modul ist deaktiviert.", fg_color="chocolate1", text_color="White")
         if self.Auto_speichern_Einstellungsdatei_var == "1":
-            self.Auto_speichern_ändern_knopp.configure(text="Autospeichern aktiviert.",fg_color="aquamarine", text_color=self.Txt_farbe)
+            self.Auto_speichern_ändern_knopp.configure(text="Autospeichern aktiviert.",fg_color=self.f_grün, text_color=self.Txt_farbe)
         else:
             self.Auto_speichern_ändern_knopp.configure(text="Autospeichern deaktiviert.", fg_color="chocolate1", text_color="White")  # den shais hier kann man so safe beser machen aber egal, vllt irgendwann mal
         self.Listen_Speicherort_geladen_anders_Entry = tk.CTkEntry(self.tabview.tab("Speicherorte"), width=300, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, border_color=self.f_e)
@@ -1553,7 +1553,7 @@ class Listendings:
                             try:
                                 with open(self.Starface_Einstellungsdatei, "w+") as SternGesicht_data_neu:
                                     SternGesicht_data_neu.write("0")
-                                self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist deaktiviert", fg_color="chocolate1", text_color="White")
+                                self.Starface_Modul_Einstellung_Knopp.configure(text="Starface Modul ist deaktiviert", fg_color="chocolate1", text_color="White")
                                 messagebox.showinfo(title="CiM Einstellungen", message="Das Starface Modul wird nun nach dem Neustart des Programms deaktiviert.")
                             except Exception as Ex_schr_stern:
                                 print(Ex_schr_stern)
@@ -1563,7 +1563,7 @@ class Listendings:
                             try:
                                 with open(self.Starface_Einstellungsdatei, "w+") as SternGesicht_data_neu:
                                     SternGesicht_data_neu.write("1")
-                                self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist aktiviert", fg_color="aquamarine", text_color=self.Txt_farbe)
+                                self.Starface_Modul_Einstellung_Knopp.configure(text="Starface Modul ist aktiviert", fg_color="aquamarine", text_color=self.Txt_farbe)
                                 messagebox.showinfo(title="CiM Einstellungen", message="Das Starface Modul wird nun nach dem Neustart des Programms aktiviert, bitte schauen Sie, für die korrekte Einrichtung in die Dokumentation.")
                             except Exception as Ex_schr_stern:
                                 print(Ex_schr_stern)
@@ -1577,7 +1577,7 @@ class Listendings:
                 try:
                     with open(self.Starface_Einstellungsdatei, "w+") as SternGesicht_data_neu:
                         SternGesicht_data_neu.write("1")
-                        self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist aktiviert", fg_color="aquamarine", text_color=self.Txt_farbe)
+                        self.Starface_Modul_Einstellung_Knopp.configure(text="Starface Modul ist aktiviert", fg_color="aquamarine", text_color=self.Txt_farbe)
                     messagebox.showinfo(title="CiM Einstellungen", message="Das Starface Modul wird nun nach dem Neustart des Programms aktiviert.")
                 except Exception as Ex_schr_stern:
                     print(Ex_schr_stern)
