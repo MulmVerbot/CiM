@@ -22,7 +22,7 @@ import re
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Beta 1.0 (1)"
+        self.Version = "Beta 1.0 (2)"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -448,16 +448,25 @@ class TodoApp:
     def Aufgaben_erstellen_akt(self, event):   # Das hier wird immer ausgeführt wenn ich aufs Fenster clicke um die Enter Taste zu reaktivieren und zukünftig die Aufgabe gleich mit zu speichern
         print("Aufgaben_erstellen_akt(def)")
         self.root.bind('<Return>', self.create_task_button_vor)
-        self.Aufgaben_Titel_t.unbind("<FocusIn>")
-        self.Notizen_feld.unbind("<FocusIn>")
-        self.Aufgaben_Titel_t.unbind("<FocusIn>")
+        try:
+            self.Aufgaben_Titel_t.unbind("<FocusIn>")
+        except:
+            print("self.Aufgaben_Titel_t.unbind fehlgeschlagen")
+        try:
+            self.Notizen_feld.unbind("<FocusIn>")
+        except:
+            print("self.Notizen_feld.unbind fehlgeschlagen")
+        try:
+            self.Aufgaben_Titel_t.unbind("<FocusIn>")
+        except:
+            print("self.Aufgaben_Titel_t.unbind fehlgeschlagen")
 
     def show_task(self, task): # Das hier wird jedesmal ausgeführt wenn jemand eine Aufgabe anclickt
         print("Aufgabe anzeigen")
         self.task = task
         self.task_übergabe = task 
         ## Das hier oben ist auch wieder mega dumm gelöst weil die var drüber bereits existert, 
-        ## ich bin nur gerade zu faul zu gucken ob die zu fürhezeitig wieder freigegeben wird. Sorry zukunfst Max!
+        ## ich bin nur gerade zu faul zu gucken ob die zu fürhezeitig wieder freigegeben wird. Sorry zukunfst Max! -- digga wie oft willst Du diese Ausrede noch bringen? 25.10
         self.todo_r_dispawn()
 
         # Definiere die Widgets im rechten Frame
