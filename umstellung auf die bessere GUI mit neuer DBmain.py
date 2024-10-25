@@ -515,7 +515,7 @@ class Listendings:
         self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results_vor)
         self.menudings.add_command(label="Checklisten (Demo)...", command=self.Checkboxen_dingsen)
         self.menudings.add_command(label="Email Baukasten (Demo)...", command=self.email_baukasten)
-        self.menudings.add_command(label="Datenbank Migration zu v. Beta 1.1", command=self.DB_Migration)
+        #self.menudings.add_command(label="Datenbank Migration zu v. Beta 1.1", command=self.DB_Migration)
         #self.Suchen_Menu.add_command(label="Sehr genaue Suche nutzen (Suche 3.0)(Beta)", command=self.frage_nach_string_suche3)
         
         
@@ -527,7 +527,7 @@ class Listendings:
         self.t_nummer.configure(state="disabled")# Das hier muss nachträglich gemacht werden, da sonst der Placeholder Text nicht angezeigt wird.
         self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_e_PlH_Text, border_color=self.f_e)
         self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_e_PlH_Text, border_color=self.f_e)
-        self.Anruf_Zeit = tk.CTkLabel(master, text_color=self.Txt_farbe, text=f"  Kein akiver Anruf", bg_color=self.Entry_Farbe, anchor="center")
+        self.Anruf_Zeit = tk.CTkLabel(master, text_color=self.Txt_farbe, text=f"  Kein akiver Anruf  ", bg_color=self.Entry_Farbe, anchor="center")
 
     #    self.kunde_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
     #    self.t_nummer.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
@@ -561,8 +561,10 @@ class Listendings:
         self.Anrufer_Bezeichnung_l.place(x=420,y=100)
         self.ID_M_l = Atk.Label(root, text="", fg=self.Txt_farbe, bg=self.f_e, width=10)
         self.ID_M_l.place(x=950, y=100)                     ############## den ganzen mist dann bitte auch so machen dass ich das mit strg + s schnell speichern kann, danke //todo
+        self.Eintrag_Telefonnummer_l = Atk.Label(root, text=f"                    ", anchor="center", bg=self.f_e)
+        self.Eintrag_Telefonnummer_l.place(x=1050, y=100)    
 
-        self.Problem_text_neu = tk.CTkTextbox(root, width=820, height=200, bg_color=self.Entry_Farbe, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, wrap="word") # die var dann noch ändern //todo wird dann aus der Liste geladen
+        self.Problem_text_neu = tk.CTkTextbox(root, width=820, height=200, bg_color=self.Entry_Farbe, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, wrap="word", state="disabled") # die var dann noch ändern //todo wird dann aus der Liste geladen
         self.Problem_text_neu.place(x=420,y=120)
         #self.Info_text_neu = tk.CTkTextbox(root, width=120, height=200, bg_color=self.Entry_Farbe, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe) # die var dann noch ändern //todo wird dann aus der Liste geladen
         #self.Info_text_neu.place(x=420,y=320)
@@ -755,8 +757,11 @@ class Listendings:
                 self.Anrufer_Bezeichnung_l.configure(text=f"Anrufer: {eintrag["name"]}")
                 self.Zeit_aus_JSON.configure(text=f"Uhrzeit: {eintrag["Uhrzeit"]}")
                 self.ID_M_l.configure(text=f"ID: {eintrag["ID_L"]}")
-                self.Problem_text_neu.delete("0.0", Atk.END)
-                self.Problem_text_neu.insert("0.0", f"Uhrzeit: {eintrag["Uhrzeit"]}\nTelefonnummer: {eintrag["Telefonnummer"]}\nBeschreibung: {eintrag["description"]}\nNotizen: {eintrag["notizen"]}\n\nMit Wem sprechen: {eintrag["wen_sprechen"]}\nAn wen Weitergeleitet: {eintrag["an_wen_gegeben"]}")
+                self.Problem_text_neu.configure(state="normal")
+                self.Problem_text_neu.delete("0.0", Atk.END) 
+                self.Problem_text_neu.insert("0.0", f"Uhrzeit: {eintrag["Uhrzeit"]}\nProblem: {eintrag["description"]}\nNotizen: {eintrag["notizen"]}\n\n\nMit Wem sprechen: {eintrag["wen_sprechen"]}\nAn wen Weitergeleitet: {eintrag["an_wen_gegeben"]}")
+                self.Problem_text_neu.configure(state="disabled")
+                self.Eintrag_Telefonnummer_l.configure(text=f"  Tel.: {eintrag["Telefonnummer"]}  ")
                 try:
                     self.Eintrag_verstecken_Knopp.place_forget()
                 except:
@@ -798,7 +803,17 @@ class Listendings:
         self.clear_L_LB()
         self.Liste_laden_aus_JSON()
         self.Eintrags_Liste.see(Atk.END)
+        self.ausgewaehltes_aus_dingse_leoschen()
 
+    def ausgewaehltes_aus_dingse_leoschen(self):
+        print("geladenene Dingse werden jetzt versteckt")
+        self.Eintrag_geladen_jetzt = None
+        self.Anrufer_Bezeichnung_l.configure(text="                                  ")
+        self.ID_M_l.configure(text="")
+        self.Eintrag_Telefonnummer_l.configure(text=f"                    ")
+        self.Problem_text_neu.configure(state="normal")
+        self.Problem_text_neu.delete("0.0", Atk.END)
+        self.Problem_text_neu.configure(state="disabled")
 
     def Eintrag_in_JSON_schmeissen(self):
         print("[-dev-] Eintrag in JSON schmeissen(def)")
@@ -811,6 +826,20 @@ class Listendings:
         an_wen_gegeben = self.Weiterleitung_an
         Zeit_aus_Eintrag = self.Uhrzeit_text
         anzeigen_Eintrag = True
+
+        if wen_sprechen == "":
+            wen_sprechen = "-"
+        if an_wen_gegeben == "":
+            an_wen_gegeben = "-"
+        if Zeit_aus_Eintrag == "":
+            Zeit_aus_Eintrag = "-"
+        if tk_nummer == "":
+            tk_nummer = "-"
+        if beschreibung_aus_eintrag == "":
+            beschreibung_aus_eintrag = "-"
+        if notizen_aus_eintrag == "":
+            notizen_aus_eintrag = "-"
+        
         Eintrag = { "name": name_aus_eintrag, "description": beschreibung_aus_eintrag, "Uhrzeit": Zeit_aus_Eintrag, "notizen": notizen_aus_eintrag, "Telefonnummer": tk_nummer, "ID_L": self.ID_v, "fertsch": fertsch, "wen_sprechen": wen_sprechen, "an_wen_gegeben": an_wen_gegeben, "anzeigen": anzeigen_Eintrag}
         Eintrag_v = self.Eintrag_aus_JSON_DB_laden()
         Eintrag_v.append(Eintrag)
@@ -2139,7 +2168,7 @@ class Listendings:
                     print1 = "[i] abgefangene Telefonummer: " + self.Anruf_Telefonnummer + "-"
                     self.Ereignislog_insert(nachricht_f_e=print1)
                     self.Uhrzeit_anruf_start = self.Zeit
-                    self.Anruf_Zeit.configure(text=f" 🔴 aktiver Anruf seit: {self.Uhrzeit_anruf_start} ")
+                    self.Anruf_Zeit.configure(text=f" 🔴 aktiver Anruf seit: {self.Uhrzeit_anruf_start}  ")
                     tmp_ld.close()
                     os.remove("tmp.txt")
                     self.Gesperrte_Nummer = False
@@ -2298,10 +2327,13 @@ class Listendings:
             self.Anrufer_Bezeichnung_l.configure(text=f"Anrufer: {kunde}")
             self.Zeit_aus_JSON.configure(text=f"Uhrzeit: {self.Uhrzeit_text}")
             self.ID_M_l.configure(text=f"ID: {self.ID_v}")
+            self.Eintrag_Telefonnummer_l.configure(text=f"  Tel.: {T_Nummer}  ")
 
 ########## JTEZT WERDEN DIE TEXTBOXEN BEARBEITET
-            self.Problem_text_neu.delete("0.0",Atk.END)
-            self.Problem_text_neu.insert("0.0", f"Uhrzeit: {self.Uhrzeit_text}\nAnrufer: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}")
+            self.Problem_text_neu.configure(state="normal")
+            self.Problem_text_neu.delete("0.0", Atk.END) # f"Uhrzeit: {eintrag["Uhrzeit"]}\nProblem: {eintrag["description"]}\nNotizen: {eintrag["notizen"]}\n\n\nMit Wem sprechen: {eintrag["wen_sprechen"]}\nAn wen Weitergeleitet: {eintrag["an_wen_gegeben"]}"
+            self.Problem_text_neu.insert("0.0", f"Uhrzeit: {self.Uhrzeit_text}\nProblem: {problem}\nNotizen: {info}\n\n\nMit Wem sprechen: {self.wollte_sprechen}\nAn wen Weitergeleitet: {self.Weiterleitung_an}")
+            self.Problem_text_neu.configure(state="disabled")
 ########## JTEZT WERDEN DIE TEXTBOXEN BEARBEITET-FERTSCHSHCSCHSCHSCHSHCH
             self.Eintrag_in_JSON_schmeissen()
             if os.path.exists(self.Liste_mit_datum):
@@ -2352,7 +2384,6 @@ class Listendings:
             if self.Eintrag_geladen_jetzt != None:
                 print("ein Eintrag aus der Liste wird nun bearbeitet")
                 self.LB_auswahl_index = self.Eintrags_Liste.curselection()
-                self.t_nummer.configure(state="normal")
                 self.beb_knopp.configure(text="Fertig", fg_color="aquamarine", hover_color="aquamarine3")
                 self.Eintrag_Uhrzeit_e.configure(state="normal")
                 self.Eintrag_Telefonnummer_e.configure(state="normal")
@@ -2387,7 +2418,6 @@ class Listendings:
                 root.unbind('<Return>')
             else:
                 messagebox.showinfo(title=self.Programm_Name_lang, message="Kein Eintrag zum bearbeiten ausgewählt.")
-                self.t_nummer.configure(state="disabled")
                 root.bind('<Return>', self.senden)
                 self.beb_knopp.configure(text="Bearbeiten", fg_color=self.f_e, hover_color=self.f_hover_normal)
                 self.beb = "0"
@@ -2396,8 +2426,6 @@ class Listendings:
             
         else:
             print("beb = 0")
-            #self.ausgabe_text.configure(state='disabled')
-            self.t_nummer.configure(state="disabled")
             root.bind('<Return>', self.senden)
             self.beb_knopp.configure(text="Bearbeiten", fg_color=self.f_e, hover_color=self.f_hover_normal)
             self.beb = "0"
@@ -2417,6 +2445,19 @@ class Listendings:
             self.neue_Wollte_sprechen_aus_Eintrag = self.Eintrag_wollte_sprechen_e.get()
             self.neue_Weiterleitung_an_aus_Eintrag = self.Eintrag_an_weitergeleitet_e.get()
             self.neue_anzeigen_Eintragen = True # wenn der Eintrag nicht mehr sichtbar wäre, könnte man ihn auch nicht bearbeiten
+
+            if self.neue_uhrzeit_aus_Eintrag == "":
+                self.neue_uhrzeit_aus_Eintrag = "-"
+            if self.neue_Telefonummer_aus_Eintrag == "":
+                self.neue_Telefonummer_aus_Eintrag = "-"
+            if self.neue_Notizen_aus_Eintrag == "":
+                self.neue_Notizen_aus_Eintrag = "-"
+            if self.neue_Beschreibung_aus_Eintrag == "":
+                self.neue_Beschreibung_aus_Eintrag = "-"
+            if self.neue_Wollte_sprechen_aus_Eintrag == "":
+                self.neue_Wollte_sprechen_aus_Eintrag = "-"
+            if self.neue_Weiterleitung_an_aus_Eintrag == "":
+                self.neue_Weiterleitung_an_aus_Eintrag = "-"
             
     #/todo wenn man beim bearbeiten den Eintrag in der LB ändert, muss der rest hier auch gleich mit gewechselt werden!
     #/todo man kann den Anrufer Namen noch nicht wechseln
@@ -2452,11 +2493,12 @@ class Listendings:
             self.Eintrag_Notizen_e.configure(state="disabled")
             self.Eintrag_wollte_sprechen_e.configure(state="disabled")
             self.Eintrag_an_weitergeleitet_e.configure(state="disabled")
-
-            self.Eintrags_Liste.selection_set(self.LB_auswahl_index)
-            self.Eintrags_Liste.event_generate("<<ListboxSelect>>")
-            self.LB_auswahl_index = None
-
+            try:
+                self.Eintrags_Liste.selection_set(self.LB_auswahl_index)
+                self.Eintrags_Liste.event_generate("<<ListboxSelect>>")
+                self.LB_auswahl_index = None
+            except Exception as Exc_LB_Curselect:
+                print(f"Ich konnte den letzten Eintrag nicht wieder in der LB auswählen: {Exc_LB_Curselect}")
 
 
     def beb_speichern_mit_JSON(self, jdb_pfad, neue_daten, id_l):
