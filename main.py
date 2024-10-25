@@ -28,7 +28,7 @@ try:
     from PIL import Image
     #from collections import defaultdict
     #from nltk.corpus import wordnet
-    #import re
+    import re
     #import matplotlib.pyplot as plt
     import pyperclip
     import numpy as np
@@ -186,9 +186,9 @@ class Listendings:
 # Freude ist bloß ein Mangel an Informationen
     def __init__(self, master):
         self.master = master
-        self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich
+        self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.0.6 (1)"
+        self.Version = "Beta 1.1"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -209,7 +209,13 @@ class Listendings:
         self.Uhrzeit_anruf_ende = None
         self.zeile_zahl = 0
         self.Anzahl_der_Ergebnisse = 0
+        self.nur_tag_string = str(time.strftime("%d"))
         self.tag_string = str(time.strftime("%d %m %Y"))
+        self.Monat = time.strftime("%m")
+        self.zeit_string = time.strftime("%H:%M:%S")
+        self.tag_string = str(time.strftime("%d %m %Y"))
+        self.Tag_und_Liste = self.tag_string + " Dateien.txt"
+        self.Jahr = str(time.strftime("%Y"))
         self.Benutzerordner = os.path.expanduser('~')
         self.Asset_ordner = os.path.join(self.Benutzerordner, 'CiM', 'Assets')
         self.Listen_Speicherort_standard = os.path.join(self.Benutzerordner, 'CiM', 'Listen')
@@ -230,6 +236,7 @@ class Listendings:
         self.Blacklist_pfad = os.path.join(self.Db_Ordner_pfad, "Db_Blacklist.json")
         self.Weiterleitungs_ordner_datei = os.path.join(self.Einstellungen_ordner, "Weiterleitung.txt")
         self.TASKS_FILE = 'tasks.json'
+    ## assets
         self.Asset_ordner_beb_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Bearbeiten.png')
         self.Asset_ordner_dur_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Durchsuchen.png') 
         self.Asset_ordner_spr_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Speichern.png')
@@ -243,11 +250,20 @@ class Listendings:
         self.Asset_ordner_schnelln_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Schnellnotiz.png')
         self.Asset_ordner_durch_zu_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Durchsuchen_zu.png')
         self.Asset_totdo_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'totdo.png')
+        self.Asset_entfernen_pfad = os.path.join(self.Asset_ordner, "Bilder", 'entfernen.png')
+    ## assets ENDE
         self.Checklisten_Ordner = os.path.join(self.Db_Ordner_pfad, 'Checklisten')
         self.Checklisten_Speicherort_Datei = os.path.join(self.Checklisten_Ordner, 'Checkliste.pdf')
         self.Checklisten_Option_1 = "Test Checkliste 1"
         self.Checklisten_Option_2 = "Test Checkliste 2"
         self.Checklisten_Option_3 = "Test Checkliste 3"
+        self.Liste_mit_datum = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat, self.nur_tag_string, self.Tag_und_Liste) # Das ist der Ort wo dann immer alles gespeichert wird
+        self.Monat_ordner_pfad = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat) # Das ist der Ort welcher zum Programmstart erstellt wird falls er nicht bereits existieren sollte
+        self.Tag_und_EintragsDB = f"{self.tag_string} Eintrags_DB.json"
+        self.Eintrags_DB = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat, self.nur_tag_string, self.Tag_und_EintragsDB)
+        self.Eintrags_DB_ordnerpfad = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat, self.nur_tag_string)
+        self.ID_speicherort_L_pfad = self.Db_Ordner_pfad
+        self.ID_speicherort_L = os.path.join(self.Eintrags_DB_ordnerpfad, "M_ID.txt")
 #            _ .-') _             .-') _                   
 #           ( (  OO) )           ( OO ) )                  
 #           \     .'_  .---.,--./ ,--,'   ,--.   .-----.  
@@ -272,6 +288,7 @@ class Listendings:
             self.Schnellnotiz_Bild = tk.CTkImage(Image.open(self.Asset_ordner_schnelln_pfad))
             self.Durchsuchen_Bild_zu = tk.CTkImage(Image.open(self.Asset_ordner_durch_zu_pfad))
             self.totdo_Bild = tk.CTkImage(Image.open(self.Asset_totdo_pfad))
+            self.entfernen_Bild = tk.CTkImage(Image.open(self.Asset_entfernen_pfad))
         except Exception as alk:
             messagebox.showinfo(self.Programm_Name, f"Beim laden der Bild Assets ist ein Fehler aufgetreten: {alk}")
         
@@ -290,19 +307,35 @@ class Listendings:
         
     #### Farben ####
         #self.Hintergrund_farbe = "SlateGrey"
-        self.Hintergrund_farbe = "AntiqueWhite2"
+        self.Hintergrund_farbe = "gray11" #"AntiqueWhite2"
         self.Hintergrund_farbe_Text_Widget = "AntiqueWhite2" #"AntiqueWhite" #"AntiqueWhite2"
         self.Textfarbe = "Black"
-        self.Border_Farbe = "AntiqueWhite4"
-        self.Entry_Farbe = "AntiqueWhite3"
-        self.Ereignislog_farbe = self.Hintergrund_farbe_Text_Widget
+        self.Border_Farbe = "#232323" #"AntiqueWhite4"
+        self.Entry_Farbe = "#323232" #"#2A2A2A" #"AntiqueWhite3"
+        self.Ereignislog_farbe = "#323232" #self.Hintergrund_farbe_Text_Widget
         self.aktiviert_farbe = "aquamarine2"
         self.deaktiviert_farbe = "White"
         self.dunkle_ui_farbe = "burlywood2"
         self.helle_ui_farbe = "burlywood1"
-        self.Ja_UI_Farbe = "burlywood"
+        self.Ja_UI_Farbe = "LawnGreen" #"burlywood"
         self.das_hübsche_grau = "LightSlateGray"
         self.helle_farbe_für_knopfe = "LightSkyBlue"
+        self.f_grün = "DarkGreen" # Die grüne Farbe
+
+        self.f_bg = "gray11" # Farbe des Fensterhintergrundes
+        self.f_l = "gray13"
+        self.f_r = "#272727"   # Die Farbcode aus dem Todo sind aber schon weird oder? hab mich einfach mal an den ihrem Design orientiert
+        self.f_e = "#2A2A2A" # Farbe der Knöpfe
+        self.f_border = "#232323" # Farbe der Border
+        self.f_r_1 = "#323232" # Farbe der Textfelder
+        self.gruen_hell = "LawnGreen" # Grün
+        self.rot = "firebrick" # Rot
+        self.Txt_farbe = "White"
+        self.f_Plt = "FloralWhite"
+        self.f_e_deak = "#212121"
+        self.Txt_farbe_deak = self.f_e_deak
+        self.f_e_PlH_Text = "LightSteelBlue1"
+        self.f_hover_normal = "#424242"
     #### Farben Ende ####
 
         root.configure(fg_color=self.Hintergrund_farbe)
@@ -343,16 +376,12 @@ class Listendings:
         self.pfad_der_suche = None
         self.Suchwort = None
         self.kopie_der_mail_erhalten = True
-        self.Windows = False # denkt dran dafür noch eine richtige erkenung zu schreiben!!!
+        self.Windows = False # denkt dran dafür noch eine richtige erkenung zu schreiben!!! // fuck vergessen.
         self.Einf_aktiv = True
-        
-        self.zeit_string = time.strftime("%H:%M:%S")
-        self.tag_string = str(time.strftime("%d %m %Y"))
-        self.Tag_und_Liste = self.tag_string + " Dateien.txt"
-        self.Jahr = str(time.strftime("%Y"))
-        self.Liste_mit_datum = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat, self.Tag_und_Liste) # Das ist der Ort wo dann immer alles gespeichert wird
-        self.Monat_ordner_pfad = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat) # Das ist der Ort welcher zum Programmstart erstellt wird falls er nicht bereits existieren sollte
-
+        self.ausgewaehlter_Eintrag = None
+        self.Eintrag_geladen_jetzt = None
+        self.ID_v = None
+        self.LB_auswahl_index = None
     ################ Jetzt werden hier so Dinge geladen wie Einstellungen, oder es wird hier geguckt, ob alle benötigten Ordner Existieren ############
         
 
@@ -385,7 +414,7 @@ class Listendings:
                 print(f"[-ERR-] Fehler beim erstellen der Ordner. Fehlercode: {EX1_Monat_ordn}")
 
         try:
-            with open(self.Weiterleitungs_ordner_datei, "r") as einst_gel_autsp:
+            with open(self.Auto_speichern_Einstellungsdatei, "r") as einst_gel_autsp:
                 self.Auto_speichern_Einstellungsdatei_var = einst_gel_autsp.read()
                 print("[-EINSTELLUNGEN-] Einstellunsgdatei zum Autospeichern geladen. Dateipfad: ", self.Auto_speichern_Einstellungsdatei)
                 if self.Auto_speichern_Einstellungsdatei_var == "1":
@@ -455,31 +484,10 @@ class Listendings:
             print("[ INIT - EINSTELLUNGEN - ERR ]Die Einstellung scheint nicht zu existieren")
         
 
-    #### Die Stars der Stunde ####
-        self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Name des Anrufers", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
-        self.t_nummer = tk.CTkEntry(master, width=250, placeholder_text="Telefonnummer", state="disabled", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
-        self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
-        self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
-        self.Anruf_Zeit = tk.CTkLabel(master, text_color="Black", text=f"Kein akiver Anruf             ", bg_color=self.Entry_Farbe)
+    ############################ GUI init ######################
+    ############################ GUI init ######################
+    ############################ GUI init ######################
 
-    #    self.kunde_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
-    #    self.t_nummer.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
-    #    self.problem_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
-    #    self.info_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
-    #    self.Anruf_Zeit.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
-    #### ####
-        
-        self.senden_button = tk.CTkButton(master, text="Senden", command="")
-        self.senden_button.bind('<Button-1>', self.senden)
-        root.bind('<Return>', self.senden)
-        self.ausgabe_text = tk.CTkTextbox(master, width=1255, height=420, wrap="word", fg_color=self.Hintergrund_farbe_Text_Widget, text_color=self.Textfarbe, border_color=self.Border_Farbe, border_width=2)
-        self.ausgabe_text.configure(state='disabled')
-        self.kunde_entry.place(x=5,y=5)
-        self.problem_entry.place(x=5,y=35)
-        self.info_entry.place(x=5,y=65)
-        self.t_nummer.place(x=605,y=5)
-        self.ausgabe_text.place(x=0,y=100)
-        self.Anruf_Zeit.place(x=860,y=5)
         
         self.menu = Menu(root)
         root.configure(menu=self.menu)
@@ -507,38 +515,110 @@ class Listendings:
         self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results_vor)
         self.menudings.add_command(label="Checklisten (Demo)...", command=self.Checkboxen_dingsen)
         self.menudings.add_command(label="Email Baukasten (Demo)...", command=self.email_baukasten)
+        #self.menudings.add_command(label="Datenbank Migration zu v. Beta 1.1", command=self.DB_Migration)
         #self.Suchen_Menu.add_command(label="Sehr genaue Suche nutzen (Suche 3.0)(Beta)", command=self.frage_nach_string_suche3)
         
-        try:
-            print("(INFO) versuche die alten Aufzeichenungen zu Laden")
-            self.ausgabe_text.configure(state='normal')
-            with open(self.Liste_mit_datum, "r") as f:
-                feedback_text = f.read()
-                self.ausgabe_text.delete("1.0", tk.END)
-                self.ausgabe_text.insert(tk.END, feedback_text)
-                self.ausgabe_text.configure(state='disabled')
-        except FileNotFoundError:
-            print("(INFO) Die Datei Liste.txt gibts net")
-            self.ausgabe_text.configure(state='disabled')
-        except:
-            messagebox.showinfo(title="Fehler", message="Ein Unbekannter Fehler ist aufgetreten beim Versuch während des Programmstarts die bisherigen aufzeichnungen zu laden, es könnte sein dass das Programm trotzdem fehlerfrei funktioniert.")
-            self.ausgabe_text.configure(state='disabled')
+        
 
-    ############################ GUI init ######################
-    ############################ GUI init ######################
-    ############################ GUI init ######################
+    
+    #### Die Stars der Stunde ####
+        self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Name des Anrufers", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_e_PlH_Text, border_color=self.f_e)
+        self.t_nummer = tk.CTkEntry(master, width=250, placeholder_text="Telefonnummer", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_e_PlH_Text, border_color=self.f_e)
+        self.t_nummer.configure(state="disabled")# Das hier muss nachträglich gemacht werden, da sonst der Placeholder Text nicht angezeigt wird.
+        self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_e_PlH_Text, border_color=self.f_e)
+        self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_e_PlH_Text, border_color=self.f_e)
+        self.Anruf_Zeit = tk.CTkLabel(master, text_color=self.Txt_farbe, text=f"  Kein akiver Anruf  ", bg_color=self.Entry_Farbe, anchor="center")
+
+    #    self.kunde_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
+    #    self.t_nummer.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
+    #    self.problem_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
+    #    self.info_entry.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
+    #    self.Anruf_Zeit.bind('<FocusIn>', self.einf_f_schnellnotizen_switch)
+    #### ####
+        
+        self.senden_button = tk.CTkButton(master, text="Senden", command="")
+        self.senden_button.bind('<Button-1>', self.senden)
+        root.bind('<Return>', self.senden)
+        self.Listen_Liste_frame = tk.CTkFrame(root, fg_color=self.f_e_deak)
+        self.Listen_Liste_frame.place(x=0,y=100)
+        self.Eintrags_Liste = Atk.Listbox(self.Listen_Liste_frame, bg=self.Ereignislog_farbe, fg=self.Txt_farbe, height=12, width=40)
+        self.Eintrags_Liste.bind("<<ListboxSelect>>", self.LB_ausgewaehlt)
+        scrollbar1 = tk.CTkScrollbar(self.Listen_Liste_frame, orientation=Atk.VERTICAL)
+        self.Eintrags_Liste.config(yscrollcommand=scrollbar1.set)
+        self.Eintrags_Liste.pack(side=Atk.LEFT, fill="both")
+        scrollbar1.pack()
+        scrollbar1.configure(command=self.Eintrags_Liste.yview)
+        self.Liste_laden_aus_JSON() ########################################################################### DAS HIER NICHT VERGESSEN RAUSZUNEHMEN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#####################
+        self.kunde_entry.place(x=5,y=5)
+        self.problem_entry.place(x=5,y=35)
+        self.info_entry.place(x=5,y=65)
+        self.t_nummer.place(x=605,y=5)
+        self.Anruf_Zeit.place(x=860,y=5)
+
+        self.Zeit_aus_JSON = Atk.Label(root, text=self.Zeit, bg=self.f_e)
+        ##self.Zeit_aus_JSON.place(x=800,y=100)
+        self.Anrufer_Bezeichnung_l = Atk.Label(root, text="                                  ", fg=self.Txt_farbe, bg=self.f_e, border=2)
+        self.Anrufer_Bezeichnung_l.place(x=420,y=100)
+        self.ID_M_l = Atk.Label(root, text="", fg=self.Txt_farbe, bg=self.f_e, width=10)
+        self.ID_M_l.place(x=950, y=100)                     ############## den ganzen mist dann bitte auch so machen dass ich das mit strg + s schnell speichern kann, danke //todo
+        self.Eintrag_Telefonnummer_l = Atk.Label(root, text=f"                    ", anchor="center", bg=self.f_e)
+        self.Eintrag_Telefonnummer_l.place(x=1050, y=100)    
+
+        self.Problem_text_neu = tk.CTkTextbox(root, width=820, height=200, bg_color=self.Entry_Farbe, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, wrap="word", state="disabled") # die var dann noch ändern //todo wird dann aus der Liste geladen
+        self.Problem_text_neu.place(x=420,y=120)
+        #self.Info_text_neu = tk.CTkTextbox(root, width=120, height=200, bg_color=self.Entry_Farbe, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe) # die var dann noch ändern //todo wird dann aus der Liste geladen
+        #self.Info_text_neu.place(x=420,y=320)
+    
+    ### Die Entrys und label fürs bearbeiten
+        self.Eintrag_Uhrzeit_e = tk.CTkEntry(master, width=200, fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.f_border, placeholder_text="Uhrzeit:")
+        self.Eintrag_Telefonnummer_e = tk.CTkEntry(master, width=200, fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.f_border, placeholder_text="Telefonnummer")
+        self.Eintrag_Beschreibung_e = tk.CTkEntry(master, width=200, fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.f_border, placeholder_text="Beschreibung")
+        self.Eintrag_Notizen_e = tk.CTkEntry(master, width=200, fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.f_border, placeholder_text="Notizen")
+        self.Eintrag_wollte_sprechen_e = tk.CTkEntry(master, width=200, fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.f_border, placeholder_text="Wollte wen sprechen")
+        self.Eintrag_an_weitergeleitet_e = tk.CTkEntry(master, width=200, fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.f_border, placeholder_text="An wen weitergeleitet")
+
+        self.Eintrag_Uhrzeit_e.place(x=420,y=370)
+        self.Eintrag_Telefonnummer_e.place(x=620,y=370)
+        self.Eintrag_Beschreibung_e.place(x=620,y=430)
+        self.Eintrag_Notizen_e.place(x=420,y=430)
+        self.Eintrag_wollte_sprechen_e.place(x=920,y=370)
+        self.Eintrag_an_weitergeleitet_e.place(x=920,y=430)
+
+        self.E_U_l = tk.CTkLabel(root, text="Uhrzeit:", text_color=self.Txt_farbe_deak)
+        self.E_T_l = tk.CTkLabel(root, text="Telefonnummer:", text_color=self.Txt_farbe_deak)
+        self.E_N_l = tk.CTkLabel(root, text="Notizen:", text_color=self.Txt_farbe_deak)
+        self.E_B_l = tk.CTkLabel(root, text="Beschreibung:", text_color=self.Txt_farbe_deak)
+        self.E_ws_l = tk.CTkLabel(root, text="Weiterleitung an:", text_color=self.Txt_farbe_deak)
+        self.E_aw_l = tk.CTkLabel(root, text="An wen weitergeleitet:", text_color=self.Txt_farbe_deak)
+
+        self.E_U_l.place(x=420,y=340)
+        self.E_T_l.place(x=620,y=340)
+        self.E_N_l.place(x=420,y=400)
+        self.E_B_l.place(x=620,y=400)
+        self.E_ws_l.place(x=920,y=340)
+        self.E_aw_l.place(x=920,y=400)
+
+        self.Eintrag_Uhrzeit_e.configure(state="disabled")
+        self.Eintrag_Telefonnummer_e.configure(state="disabled")
+        self.Eintrag_Beschreibung_e.configure(state="disabled")
+        self.Eintrag_Notizen_e.configure(state="disabled")
+        self.Eintrag_wollte_sprechen_e.configure(state="disabled")
+        self.Eintrag_an_weitergeleitet_e.configure(state="disabled")
+    ### Ende der Entrys und label fürs bearbeiten
+
         self.menu_frame = tk.CTkFrame(master, width=200, height=400)
-        self.beb_knopp = tk.CTkButton(master, text="Bearbeiten", command=self.beb_c, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.Bearbeiten_Bild)
+        self.beb_knopp = tk.CTkButton(master, text="Bearbeiten", command=self.beb_c, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Bearbeiten_Bild)
         self.beb_knopp.place(x=1260, y=100)
-        self.Such_menu_haupt_frame = tk.CTkFrame(root, width=180, height=110, fg_color=self.Hintergrund_farbe, border_color=self.Border_Farbe, border_width=3, corner_radius=5)
-        self.irgendwo_suchen = tk.CTkButton(master, text="durchsuchen...", command=self.such_menü_hauptmenu, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Durchsuchen_Bild_zu)
+        self.Such_menu_haupt_frame = tk.CTkFrame(root, width=180, height=110, fg_color=self.Hintergrund_farbe, border_color=self.f_border, border_width=3, corner_radius=5)
+        self.irgendwo_suchen = tk.CTkButton(master, text="durchsuchen...", command=self.such_menü_hauptmenu, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Durchsuchen_Bild_zu)
         self.irgendwo_suchen.place(x=1260, y=130)
-        self.Menü_Knopp = tk.CTkButton(master, text="Menü", command=self.Menu_anzeige_wechseln, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Menü_Bild)
+        self.Menü_Knopp = tk.CTkButton(master, text="Statistik", command=self.Menu_anzeige_wechseln, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Menü_Bild)
         self.Menü_Knopp.place(x=1260, y=160)
         self.Pause_menu = tk.CTkFrame(master, width=769, height=420, fg_color="LightSlateGray", border_color="White", border_width=1, corner_radius=1)
-        self.Ereignislog = tk.CTkTextbox(root, width=220, height=80, wrap="word", text_color="Black", fg_color=self.Ereignislog_farbe, border_color=self.Border_Farbe, border_width=2)
+        self.Ereignislog = tk.CTkTextbox(root, width=220, height=80, wrap="word", text_color=self.Txt_farbe, fg_color=self.Ereignislog_farbe, border_color=self.f_border, border_width=2, font=("Courier", 14, "bold"))
         self.Ereignislog.place(x=1210,y=10)
         self.Ereignislog_insert(nachricht_f_e="[-Ereignislog-]")
+        #self.Ereignislog_insert(nachricht_f_e="[-Ereignislog-]\n")
 
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
@@ -547,12 +627,12 @@ class Listendings:
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
 
-        #self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche_alte_Einträge, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        #self.Suche_knopp = tk.CTkButton(self.Pause_menu, text="Nach alten Eintrag Suchen...", command=self.Suche_alte_Einträge, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
         
         self.Zhe_Clock = tk.CTkLabel(self.Pause_menu, text=self.Zeit)
         self.Zhe_Clock.place(x=10,y=10)
 
-        def auswahl_design_gedingst(choice):
+        def auswahl_design_gedingst(choice): # ich werd das einfach niemals einbauen hahahahha
             if choice == "hell":
                 self.Design_Einstellung = "hell"
             elif choice == "dunkel":
@@ -566,68 +646,246 @@ class Listendings:
         self.Einstellung_Design_auswahl = tk.CTkOptionMenu(self.Pause_menu, values=["hell", "dunkel", "System"], command=auswahl_design_gedingst)
         self.Einstellung_Design_L = tk.CTkLabel(self.Pause_menu, text="Design Einstellung:")
         
-        self.kalender_menü = tk.CTkFrame(master, width=1250, height=520, fg_color="White", border_color="Black", border_width=2)
-        self.Liste_mit_zeugs = tk.CTkScrollableFrame(self.kalender_menü, width=500, height=420, bg_color="Green")
+        #self.kalender_menü = tk.CTkFrame(master, width=1250, height=520, fg_color=self.f_e, border_color=self.f_border, border_width=2)
+        #self.Liste_mit_zeugs = tk.CTkScrollableFrame(self.kalender_menü, width=500, height=420, bg_color="Green")
         
         ################################ MENU FRAMES ENDE ################################
         ################################ MENU FRAMES ENDE ################################
         ################################ MENU FRAMES ENDE ################################
         ################################ MENU FRAMES ENDE ################################
         
-        self.Einstellungsseite_Knopp = tk.CTkButton(root, text="Einstellungen", command=self.Einstellungen_öffnen, fg_color="white", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.Dings_Bild)
+        self.Einstellungsseite_Knopp = tk.CTkButton(root, text="Einstellungen", command=self.Einstellungen_öffnen, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Dings_Bild)
         self.Einstellungsseite_Knopp.place(x=1260,y=420)
-        self.Ticket_erstellen_Knopp = tk.CTkButton(root, text="Ticket erstellen", command=self.Ticket_erstellen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Ticket_Bild)
+        self.Ticket_erstellen_Knopp = tk.CTkButton(root, text="Ticket erstellen", command=self.Ticket_erstellen, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Ticket_Bild)
         self.Ticket_erstellen_Knopp.place(x=1260,y=450)
-        self.Eintrag_raus_kopieren_knopp = tk.CTkButton(root, text="Letztes kopieren", command=self.Eintrag_raus_kopieren, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Kopieren_Bild)
+        self.Eintrag_raus_kopieren_knopp = tk.CTkButton(root, text="Letztes kopieren", command=self.Eintrag_raus_kopieren, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Kopieren_Bild)
         self.Eintrag_raus_kopieren_knopp.place(x=1260,y=390)
-        self.Notizen_knopp = tk.CTkButton(root, text="Schnellnotiz", fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.Schnellnotiz_Bild)
+        self.Notizen_knopp = tk.CTkButton(root, text="Schnellnotiz", fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Schnellnotiz_Bild)
         self.Notizen_knopp.place(x=1260,y=360)
         self.Notizen_knopp.bind('<Button-1>', self.schnellnotizen_öffnen)
 
-        self.Berichtsheft_knopp = tk.CTkButton(self.Pause_menu, text="Berichtsheft öffnen", command=self.Berichtsheft_aufmachen, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.Berichtsheft_knopp = tk.CTkButton(self.Pause_menu, text="Berichtsheft öffnen", command=self.Berichtsheft_aufmachen, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
         self.Einstellungen_Frame = tk.CTkFrame(root, width=600, height=380, border_color="Pink", border_width=3, fg_color="transparent")
-        self.tabview = tk.CTkTabview(self.Einstellungen_Frame, width=600, height=380, fg_color=self.Entry_Farbe, segmented_button_fg_color=self.Hintergrund_farbe_Text_Widget, segmented_button_selected_hover_color=self.dunkle_ui_farbe, segmented_button_unselected_hover_color=self.dunkle_ui_farbe, segmented_button_selected_color=self.helle_ui_farbe, text_color="Black", segmented_button_unselected_color=self.Ja_UI_Farbe)
+        self.tabview = tk.CTkTabview(self.Einstellungen_Frame, width=600, height=380, fg_color=self.f_e, segmented_button_fg_color=self.f_bg, segmented_button_selected_hover_color=self.f_hover_normal, segmented_button_unselected_hover_color=self.f_hover_normal, segmented_button_selected_color=self.f_grün, text_color=self.Txt_farbe, segmented_button_unselected_color=self.f_e)
         self.tabview.add("Starface Modul")
         self.tabview.add("Adressbuch")
         self.tabview.add("Speichern")
         self.tabview.add("SMTP")
         self.tabview.add("Speicherorte")
         self.tabview.add("Weiterleitungen")
-        self.gel_Email_Empfänger_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Ziel Email Adresse", text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
-        self.gel_Email_Sender_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Absende Email Adresse", text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
-        self.gel_Email_Absender_Passwort_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Absende Mail Kennwort", text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
-        self.gel_SMTP_Server_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="SMTP Server", text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
-        self.gel_Email_Empfänger_E = tk.CTkEntry(self.tabview.tab("SMTP"), placeholder_text="Empfänger Adresse", width=300)
-        self.gel_Email_Sender_E = tk.CTkEntry(self.tabview.tab("SMTP"), placeholder_text="Sender Email Adresse", width=300)
-        self.gel_Email_Absender_Passwort_E = tk.CTkEntry(self.tabview.tab("SMTP"), placeholder_text="Passwort der Email Adresse", width=300, show="#")
-        self.gel_SMTP_Server_E = tk.CTkEntry(self.tabview.tab("SMTP"), placeholder_text="IPv4 oder Hostnamen für SMTP Eintragen", width=300)
-        self.Mail_Einstellungen_speichern = tk.CTkButton(self.tabview.tab("SMTP"), text="Email Einstellungen speichern", command=self.Email_Einstellungen_speichern, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1")
+        self.gel_Email_Empfänger_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Ziel Email Adresse", text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
+        self.gel_Email_Sender_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Absende Email Adresse", text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
+        self.gel_Email_Absender_Passwort_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Absende Mail Kennwort", text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
+        self.gel_SMTP_Server_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="SMTP Server", text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
+        self.gel_Email_Empfänger_E = tk.CTkEntry(self.tabview.tab("SMTP"), placeholder_text="Empfänger Adresse", width=300, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, border_color=self.f_e)
+        self.gel_Email_Sender_E = tk.CTkEntry(self.tabview.tab("SMTP"), placeholder_text="Sender Email Adresse", width=300, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, border_color=self.f_e)
+        self.gel_Email_Absender_Passwort_E = tk.CTkEntry(self.tabview.tab("SMTP"), placeholder_text="Passwort der Email Adresse", width=300, show="#", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, border_color=self.f_e)
+        self.gel_SMTP_Server_E = tk.CTkEntry(self.tabview.tab("SMTP"), placeholder_text="IPv4 oder Hostnamen für SMTP Eintragen", width=300, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, border_color=self.f_e)
+        self.Mail_Einstellungen_speichern = tk.CTkButton(self.tabview.tab("SMTP"), text="Email Einstellungen speichern", command=self.Email_Einstellungen_speichern, fg_color=self.f_grün, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
         self.smtp_login_erfolgreich_l = tk.CTkLabel(self.tabview.tab("SMTP"), text="Anmeldestatus")
-        self.SMTP_Server_erneut_anmelden = tk.CTkButton(self.tabview.tab("SMTP"), text="erneut mit SMTP Server verbinden", command=self.SMTP_Anmeldung_Manuell, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+        self.SMTP_Server_erneut_anmelden = tk.CTkButton(self.tabview.tab("SMTP"), text="erneut mit SMTP Server verbinden", command=self.SMTP_Anmeldung_Manuell, fg_color=self.f_bg, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
         
         self.weiterleitungen_l = tk.CTkLabel(self.tabview.tab("Weiterleitungen"), text="Namen für die Weiterleitungen einstellen")
-        self.weiterleitungen_einz_e = tk.CTkEntry(self.tabview.tab("Weiterleitungen"), placeholder_text="erstes", width=300)
-        self.weiterleitungen_zwei_e = tk.CTkEntry(self.tabview.tab("Weiterleitungen"), placeholder_text="zweites", width=300)
-        self.weiterleitungen_drei_e = tk.CTkEntry(self.tabview.tab("Weiterleitungen"), placeholder_text="drittes", width=300)
-        self.weiterleitungen_vier_e = tk.CTkEntry(self.tabview.tab("Weiterleitungen"), placeholder_text="erstexs", width=300)
-        self.Weiterleitungen_speichern_knopp = tk.CTkButton(self.tabview.tab("Weiterleitungen"), text="Speichern", command=self.weiterleitungen_speichern)
-        #self.Speicherort_lokal_ändern_knopp = tk.CTkButton(self.tabview.tab("Speichern"), text="ändern", command=self.ListenDings_speicherort_ändern, fg=self.helle_farbe_für_knopfe, border=self.Border_Farbe)
+        self.weiterleitungen_einz_e = tk.CTkEntry(self.tabview.tab("Weiterleitungen"), placeholder_text="erstes", width=300, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, border_color=self.f_e)
+        self.weiterleitungen_zwei_e = tk.CTkEntry(self.tabview.tab("Weiterleitungen"), placeholder_text="zweites", width=300, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, border_color=self.f_e)
+        self.weiterleitungen_drei_e = tk.CTkEntry(self.tabview.tab("Weiterleitungen"), placeholder_text="drittes", width=300, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, border_color=self.f_e)
+        self.weiterleitungen_vier_e = tk.CTkEntry(self.tabview.tab("Weiterleitungen"), placeholder_text="erstexs", width=300, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, border_color=self.f_e)
+        self.Weiterleitungen_speichern_knopp = tk.CTkButton(self.tabview.tab("Weiterleitungen"), text="Speichern", command=self.weiterleitungen_speichern, fg_color=self.f_grün, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.aktiviert_farbe)
+        #self.Speicherort_lokal_ändern_knopp = tk.CTkButton(self.tabview.tab("Speichern"), text="ändern", command=self.ListenDings_speicherort_ändern, fg=self.helle_farbe_für_knopfe, border=self.f_border)
         #self.Speicherort_lokal_ändern_l = tk.CTkLabel(self.tabview("Speichern"), text="den lokalen Speicherort ändern")
     #### todo gui ####
-        self.Todo_aufmachen_main_knopp = tk.CTkButton(root, text="Totdo öffnen", command=self.todo_aufmachen, fg_color="white", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1", image=self.totdo_Bild)
+        self.Todo_aufmachen_main_knopp = tk.CTkButton(root, text="Totdo öffnen", command=self.todo_aufmachen, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.totdo_Bild)
         self.Todo_aufmachen_main_knopp.place(x=1260,y=480)
-        self.ans_totdo_senden_knopp = tk.CTkButton(root, text="An TotDo senden", command=self.Eintrag_ans_totdo, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Menü_Bild)
+        self.ans_totdo_senden_knopp = tk.CTkButton(root, text="An TotDo senden", command=self.Eintrag_ans_totdo, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Menü_Bild)
         self.ans_totdo_senden_knopp.place(x=1260,y=330)
         
         #self.todo_hinzufügen_knopp = tk.CTkButton(self.todo_frame, text="Aufgabe hinzufügen", command=self.todo_hinzufügen)
         self.Adressbuch_anzeigen_frame = tk.CTkFrame(self.tabview.tab("Adressbuch"), width=575, height=300, fg_color=self.Hintergrund_farbe, border_color=self.Ja_UI_Farbe, border_width=1, corner_radius=0)
-        self.init_auf_wish()
+        
     #### ende todo gui ####
+        self.init_auf_wish()
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
     ####### ======================== init ende ======================== #######
+                # Man tut was man kann aber kann man was man tut?
+    
+    def lade_eintrag_aus_json_nach_id(self, eintrag_id):
+        Eintrag_v = self.Eintrag_aus_JSON_DB_laden()
+        for Dings in Eintrag_v:
+            if Dings['ID_L'] == eintrag_id:
+                self.ausgewaehlter_Eintrag = Dings
+                return Dings
+        return None
+    
+
+    def LB_ausgewaehlt(self, event):
+        print("LB_ausgewaehlt(def)")
+        auswahl = self.Eintrags_Liste.curselection()
+        print(f"Das hier wurde ausgewählt: {auswahl}")
+        if auswahl:
+            print("auswahl existiert.")
+            index = auswahl[0]
+            auswahl = self.Eintrags_Liste.get(index)
+            try:
+                eintrag_id = int(auswahl.split("|")[0].strip().split(":")[1].strip())
+            except Exception as E_ID_f:
+                print(f"Es gab einen Fehler beim raussuchen der ID: {E_ID_f}")
+            eintrag = self.lade_eintrag_aus_json_nach_id(eintrag_id)
+            self.Eintrag_geladen_jetzt = eintrag # das is auch wieder kacke gelöst aber naja #DieFaulheitsiegt
+
+            if self.beb == "1":
+                print("LB event mit self.beb == 1")
+                self.Eintrag_Uhrzeit_e.delete("0", tk.END)
+                self.Eintrag_Telefonnummer_e.delete("0", tk.END)
+                self.Eintrag_Beschreibung_e.delete("0", tk.END)
+                self.Eintrag_Notizen_e.delete("0", tk.END)
+                self.Eintrag_wollte_sprechen_e.delete("0", tk.END)
+                self.Eintrag_an_weitergeleitet_e.delete("0", tk.END)
+
+                self.Eintrag_Uhrzeit_e.insert(0, f"{self.Eintrag_geladen_jetzt["Uhrzeit"]}")
+                self.Eintrag_Telefonnummer_e.insert(0, f"{self.Eintrag_geladen_jetzt["Telefonnummer"]}")
+                self.Eintrag_Beschreibung_e.insert(0, f"{self.Eintrag_geladen_jetzt["description"]}")
+                self.Eintrag_Notizen_e.insert(0, f"{self.Eintrag_geladen_jetzt["notizen"]}")
+                self.Eintrag_wollte_sprechen_e.insert(0, f"{self.Eintrag_geladen_jetzt["wen_sprechen"]}")
+                self.Eintrag_an_weitergeleitet_e.insert(0, f"{self.Eintrag_geladen_jetzt["an_wen_gegeben"]}")
+                self.LB_auswahl_index = self.Eintrags_Liste.curselection()
+            else:
+                print("Bearbeiten war aus, habe die Werte nicht ersetz.")
+            if eintrag:
+                self.Anrufer_Bezeichnung_l.configure(text=f"Anrufer: {eintrag["name"]}")
+                self.Zeit_aus_JSON.configure(text=f"Uhrzeit: {eintrag["Uhrzeit"]}")
+                self.ID_M_l.configure(text=f"ID: {eintrag["ID_L"]}")
+                self.Problem_text_neu.configure(state="normal")
+                self.Problem_text_neu.delete("0.0", Atk.END) 
+                self.Problem_text_neu.insert("0.0", f"Uhrzeit: {eintrag["Uhrzeit"]}\nProblem: {eintrag["description"]}\nNotizen: {eintrag["notizen"]}\n\n\nMit Wem sprechen: {eintrag["wen_sprechen"]}\nAn wen Weitergeleitet: {eintrag["an_wen_gegeben"]}")
+                self.Problem_text_neu.configure(state="disabled")
+                self.Eintrag_Telefonnummer_l.configure(text=f"  Tel.: {eintrag["Telefonnummer"]}  ")
+                try:
+                    self.Eintrag_verstecken_Knopp.place_forget()
+                except:
+                    pass
+                def v_F():
+                    print("Frage nun ob der Eintrag wirklich versteckt werden soll..")
+                    antw = messagebox.askyesno(title=self.Programm_Name_lang, message=f"Möchten Sie den Eintrag mit der ID {self.Eintrag_geladen_jetzt["ID_L"]} wirklich ausblenden? Das kann nicht rückgängig gemacht werden.")
+                    if antw == True:
+                        self.Eintrag_aus_LB_verstecken()
+                    else:
+                        print("Eintrag verstecken vom Nutzer abgebrochen.")
+                self.Eintrag_verstecken_Knopp = tk.CTkButton(root, text="Eintrag verstecken", command=v_F, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.rot, image=self.entfernen_Bild)
+                self.Eintrag_verstecken_Knopp.place(x=1260,y=250)
+            else:
+                messagebox.showwarning(title=self.Programm_Name, message=f"Kein Eintrag mit ID {eintrag_id} gefunden.")
+                print(f"Kein Eintrag mit ID {eintrag_id} gefunden.")
+        else:
+            print("auswahl existiert NICHT.")
+    
+
+    def Eintrag_aus_LB_verstecken(self):
+        print("Eintrag_aus_LB_verstecken(def)")
+        self.neue_anzeigen_Eintragen = False
+
+        self.neuer_eintrag = { 
+            "name": self.Eintrag_geladen_jetzt["name"],
+            "description": self.Eintrag_geladen_jetzt["description"],
+            "Uhrzeit": self.Eintrag_geladen_jetzt["Uhrzeit"],
+            "notizen": self.Eintrag_geladen_jetzt["notizen"],
+            "Telefonnummer": self.Eintrag_geladen_jetzt["Telefonnummer"],
+            "ID_L": self.Eintrag_geladen_jetzt["ID_L"],  # ID des zu ersetzenden Eintrags
+            "fertsch": "X",
+            "wen_sprechen": self.Eintrag_geladen_jetzt["wen_sprechen"],
+            "an_wen_gegeben": self.Eintrag_geladen_jetzt["an_wen_gegeben"],
+            "anzeigen": self.neue_anzeigen_Eintragen
+            }
+        
+        self.beb_speichern_mit_JSON(self.Eintrags_DB, self.neuer_eintrag, self.Eintrag_geladen_jetzt["ID_L"])
+        self.clear_L_LB()
+        self.Liste_laden_aus_JSON()
+        self.Eintrags_Liste.see(Atk.END)
+        self.ausgewaehltes_aus_dingse_leoschen()
+
+    def ausgewaehltes_aus_dingse_leoschen(self):
+        print("geladenene Dingse werden jetzt versteckt")
+        self.Eintrag_geladen_jetzt = None
+        self.Anrufer_Bezeichnung_l.configure(text="                                  ")
+        self.ID_M_l.configure(text="")
+        self.Eintrag_Telefonnummer_l.configure(text=f"                    ")
+        self.Problem_text_neu.configure(state="normal")
+        self.Problem_text_neu.delete("0.0", Atk.END)
+        self.Problem_text_neu.configure(state="disabled")
+
+    def Eintrag_in_JSON_schmeissen(self):
+        print("[-dev-] Eintrag in JSON schmeissen(def)")
+        name_aus_eintrag =  self.kunde_entry.get()
+        beschreibung_aus_eintrag =  self.problem_entry.get()
+        notizen_aus_eintrag = self.info_entry.get()
+        tk_nummer = self.t_nummer.get()
+        fertsch = "X" # //todo: ein System bauen bei dem man Einträge markieren kann, vielleicht wie so als 'fertig' oderso.
+        wen_sprechen = self.wollte_sprechen
+        an_wen_gegeben = self.Weiterleitung_an
+        Zeit_aus_Eintrag = self.Uhrzeit_text
+        anzeigen_Eintrag = True
+
+        if wen_sprechen == "":
+            wen_sprechen = "-"
+        if an_wen_gegeben == "":
+            an_wen_gegeben = "-"
+        if Zeit_aus_Eintrag == "":
+            Zeit_aus_Eintrag = "-"
+        if tk_nummer == "":
+            tk_nummer = "-"
+        if beschreibung_aus_eintrag == "":
+            beschreibung_aus_eintrag = "-"
+        if notizen_aus_eintrag == "":
+            notizen_aus_eintrag = "-"
+        
+        Eintrag = { "name": name_aus_eintrag, "description": beschreibung_aus_eintrag, "Uhrzeit": Zeit_aus_Eintrag, "notizen": notizen_aus_eintrag, "Telefonnummer": tk_nummer, "ID_L": self.ID_v, "fertsch": fertsch, "wen_sprechen": wen_sprechen, "an_wen_gegeben": an_wen_gegeben, "anzeigen": anzeigen_Eintrag}
+        Eintrag_v = self.Eintrag_aus_JSON_DB_laden()
+        Eintrag_v.append(Eintrag)
+        try:
+            with open(self.Eintrags_DB, "w+") as Eintrags_db_gel:
+                json.dump(Eintrag_v, Eintrags_db_gel, indent=4)
+        except Exception as ex_json_sp:
+            print(f"Beim speichern des Eintrags ist ein Fehler aufgetreten: {ex_json_sp}")
+            messagebox.showerror(title=self.Programm_Name, message=f"Beim speichern des Eintrags ist ein Fehler aufgetreten: {ex_json_sp}")
+        self.Liste_laden_aus_JSON()
+
+    def Eintrag_aus_JSON_DB_laden(self): # lädt die Einträge aus der DB
+        print("lade nun die Eintrags DB")
+        if os.path.exists(self.Eintrags_DB):
+            with open(self.Eintrags_DB, 'r') as JDB_gel:
+                if JDB_gel == "": ## wenn Datei existiert aber leer ist
+                    return []
+                else:
+                    return json.load(JDB_gel)
+        return []
+    
+    def Adressbuch_laden(self):
+        if os.path.exists(self.Json_pfad):
+            with open(self.Json_pfad, 'r') as JDB_gel:
+                if JDB_gel == "": ## wenn Datei existiert aber leer ist
+                    return []
+                else:
+                    return json.load(JDB_gel)
+        return []
+    
+
+    def clear_L_LB(self):
+        print("leere nun die LB")
+        self.Eintrags_Liste.delete(0,Atk.END)
+    
+    def Liste_laden_aus_JSON(self): # lädt die Enträge und packt sie in die LB, klappt nur wenn die LB schon geladen wurde!! (obvius ich weiß, aber ich sachs mal trotzdem)
+        self.clear_L_LB()
+        Eintrag_v = self.Eintrag_aus_JSON_DB_laden()
+        print(f"Hier ist das geladene: \n{Eintrag_v}") #self.Eintrag_geladen_jetzt["anzeigen"]
+        for Dings in Eintrag_v:
+            if Dings["anzeigen"] == True:                     
+                self.Eintrags_Liste.insert(Atk.END, f"  ID: {Dings['ID_L']} | {Dings['name']} | {Dings['Uhrzeit']}  ")          ### Hier kackts noch mächtig ab, der Rest geht aber
+            else:
+                print(f"Eintrag mit id {Dings["ID_L"]} wird versteckt da Dings['anzeigen'] == {Dings["anzeigen"]} ist.")
+        self.Eintrags_Liste.see(Atk.END)
+            
 
     def Netzlaufwerk_Einstellung_laden(self):
         try:
@@ -698,9 +956,21 @@ class Listendings:
             print(f"Fehler beim laden der Passwort Maileinstellungen: {EmailEx3_l}")
             self.pw_email = ""
         
+    def ordner_erstellen(self):
+        print("[ INFO - INIT - PFADE ] Erstelle nun die Ordner für die Listen DB")
+        if os.path.exists(self.Eintrags_DB_ordnerpfad):
+            print(f"[ INFO - INIT - PFADE ] Pfade für die JSON Listen existieren bereits. Pfad: {self.Eintrags_DB_ordnerpfad}")
+        else:
+            print("[ INFO - INIT - PFADE ] Die Pfade existieren noch nicht, erstelle sie nun.")
+            try:
+                os.makedirs(self.Eintrags_DB_ordnerpfad)
+                print(f"[ INFO - INIT - PFADE ] Pfade für die JSONs erfolgreich erstellt. Pfad: {self.Eintrags_DB_ordnerpfad}")
+            except Exception as exJKSOJ:
+                print(f"[ ERR - INIT - PFADE ] Fehler beim erstellen der JSON Pfade: {exJKSOJ}")
 
     def init_auf_wish(self):
         print("[-init-] init auf wish bestellt...")
+        self.ordner_erstellen()
         self.Kontakte_aus_json_laden()
         self.weiterleitung_laden()
         self.Einstellungen_laden()
@@ -804,10 +1074,10 @@ class Listendings:
         except:
             pass
         try:
-            self.optionmenu1 = tk.CTkOptionMenu(root, values=[f"Mit {self.einz} sprechen", f"Mit {self.zwee} sprechen", f"Mit {self.dree} sprechen", f"Mit {self.vir} sprechen", "Irgendwen sprechen"], command=auswahl_gedingst_sprechen, fg_color="White", text_color="Black", dropdown_hover_color="pink")
+            self.optionmenu1 = tk.CTkOptionMenu(root, values=[f"Mit {self.einz} sprechen", f"Mit {self.zwee} sprechen", f"Mit {self.dree} sprechen", f"Mit {self.vir} sprechen", "Irgendwen sprechen"], command=auswahl_gedingst_sprechen, fg_color=self.f_e, text_color=self.Txt_farbe, dropdown_hover_color=self.f_hover_normal)
             self.optionmenu1.set("Mit Wem sprechen?")
             self.optionmenu1.place(x=1260,y=190)
-            self.optionmenu = tk.CTkOptionMenu(root, values=[f"An {self.einz} weitergeleitet", f"An {self.zwee} weitergeleitet", f"An {self.dree} weitergeleitet", f"An {self.vir} weitergeleitet", "Keine Weiterleitung"], command=auswahl_gedingst, fg_color="White", text_color="Black", dropdown_hover_color="pink")
+            self.optionmenu = tk.CTkOptionMenu(root, values=[f"An {self.einz} weitergeleitet", f"An {self.zwee} weitergeleitet", f"An {self.dree} weitergeleitet", f"An {self.vir} weitergeleitet", "Keine Weiterleitung"], command=auswahl_gedingst, fg_color=self.f_e, text_color=self.Txt_farbe, dropdown_hover_color=self.f_hover_normal)
             self.optionmenu.set("Keine Weiterleitung")
             self.optionmenu.place(x=1260,y=220)
             print(f"[-WEITERLEITUNG LADEN-] Die Weiterleitungen wurden geladen und wieder platziert.")
@@ -818,8 +1088,8 @@ class Listendings:
         print("[-INFO-] changelog_aufmachen(def)")
         self.changelog_Fenster = tk.CTkToplevel(root)
         self.changelog_Fenster.title("Changelogs")
-        self.changelog_Fenster.configure(fg_color="White")
-        self.Textfeld_changelog = tk.CTkTextbox(self.changelog_Fenster, width=820, height=420, text_color="Black", fg_color="azure", wrap="word", border_width=0)
+        self.changelog_Fenster.configure(fg_color=self.f_e)
+        self.Textfeld_changelog = tk.CTkTextbox(self.changelog_Fenster, width=820, height=420, text_color=self.Txt_farbe, fg_color="azure", wrap="word", border_width=0)
         height = 420
         width = 820
         try:
@@ -865,12 +1135,12 @@ class Listendings:
         return
 
     #def schnellnotizen_öffnen(self, event):  wie oben geschildert, musste die event var mit raus weil ich den mist deaktiviert hab
-    def schnellnotizen_öffnen(self, event):
+    def schnellnotizen_öffnen(self, event): # aber sie ist noch drin????
         print("[-INFO-] schnellnotizen_öffnen(def)")
         self.schnellnotizen_Fenster = tk.CTkToplevel(root)
         self.schnellnotizen_Fenster.title("Schnellnotiz")
-        self.schnellnotizen_Fenster.configure(fg_color="White")
-        self.Textfeld_Schnellnotizen = tk.CTkTextbox(self.schnellnotizen_Fenster, width=420, height=420, text_color="Black", fg_color="azure", wrap="word")
+        self.schnellnotizen_Fenster.configure(fg_color=self.f_e)
+        self.Textfeld_Schnellnotizen = tk.CTkTextbox(self.schnellnotizen_Fenster, width=420, height=420, text_color=self.Txt_farbe, fg_color=self.f_bg, wrap="word")
         height = 420
         width = 420
 
@@ -894,32 +1164,32 @@ class Listendings:
 
     def Einstellungen_öffnen(self):
         print("[-INFO-] Einstellungen_öffnen (def)")
-        self.Einstellungsseite_Knopp.configure(command=self.Einstellungen_schließen, text="Einstellungen schließen", fg_color=self.aktiviert_farbe, hover_color="Pink")
+        self.Einstellungsseite_Knopp.configure(command=self.Einstellungen_schließen, text="Einstellungen schließen", fg_color=self.aktiviert_farbe, hover_color=self.f_hover_normal)
         self.Einstellungen_Frame.place(x=400,y=120)
         self.tabview.place(x=0, y=0)
-        self.Auto_speichern_ändern_knopp = tk.CTkButton(self.tabview.tab("Speichern"), text="Auto Speichern umschalten", command=self.autospeichern_ä_c, hover_color="pink")
+        self.Auto_speichern_ändern_knopp = tk.CTkButton(self.tabview.tab("Speichern"), text="Auto Speichern umschalten", command=self.autospeichern_ä_c, hover_color=self.f_hover_normal)
         
-        self.Starface_Modul_Einstellung_Knopp = tk.CTkButton(self.tabview.tab("Starface Modul"), text="Starface Modul umschalten", command=self.Starface_Modul_umschalten, hover_color="pink")
+        self.Starface_Modul_Einstellung_Knopp = tk.CTkButton(self.tabview.tab("Starface Modul"), text="Starface Modul umschalten", command=self.Starface_Modul_umschalten, hover_color=self.f_hover_normal)
         self.Starface_Modul_Einstellung_Knopp.pack()
         if self.Starface_Modul == "1":
-            self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist aktiviert.", fg_color="aquamarine", text_color="Black")
+            self.Starface_Modul_Einstellung_Knopp.configure(text="Starface Modul ist aktiviert.", fg_color=self.f_grün, text_color=self.Txt_farbe)
         else:
-            self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist deaktiviert.", fg_color="chocolate1", text_color="White")
+            self.Starface_Modul_Einstellung_Knopp.configure(text="Starface Modul ist deaktiviert.", fg_color="chocolate1", text_color="White")
         if self.Auto_speichern_Einstellungsdatei_var == "1":
-            self.Auto_speichern_ändern_knopp.configure(text="Autospeichern aktiviert.",fg_color="aquamarine", text_color="Black")
+            self.Auto_speichern_ändern_knopp.configure(text="Autospeichern aktiviert.",fg_color=self.f_grün, text_color=self.Txt_farbe)
         else:
             self.Auto_speichern_ändern_knopp.configure(text="Autospeichern deaktiviert.", fg_color="chocolate1", text_color="White")  # den shais hier kann man so safe beser machen aber egal, vllt irgendwann mal
-        self.Listen_Speicherort_geladen_anders_Entry = tk.CTkEntry(self.tabview.tab("Speicherorte"), width=300)
-        self.Listen_Speicherort_Netzwerk_geladen_anders_Entry = tk.CTkEntry(self.tabview.tab("Speicherorte"), width=300)
-        self.Netzlaufwerk_pfad_geladen_Label = tk.CTkLabel(self.tabview.tab("Speicherorte"), text=self.Listen_Speicherort_Netzwerk_geladen_anders, text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
-        self.Pfad_geladen_Label = tk.CTkLabel(self.tabview.tab("Speicherorte"), text=self.Listen_Speicherort_geladen_anders, text_color="Black", bg_color=self.Entry_Farbe, corner_radius=3)
+        self.Listen_Speicherort_geladen_anders_Entry = tk.CTkEntry(self.tabview.tab("Speicherorte"), width=300, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, border_color=self.f_e)
+        self.Listen_Speicherort_Netzwerk_geladen_anders_Entry = tk.CTkEntry(self.tabview.tab("Speicherorte"), width=300, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, border_color=self.f_e)
+        self.Netzlaufwerk_pfad_geladen_Label = tk.CTkLabel(self.tabview.tab("Speicherorte"), text=self.Listen_Speicherort_Netzwerk_geladen_anders, text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
+        self.Pfad_geladen_Label = tk.CTkLabel(self.tabview.tab("Speicherorte"), text=self.Listen_Speicherort_geladen_anders, text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
 
-        self.Normaler_Speicherort_change = tk.CTkButton(self.tabview.tab("Speicherorte"), text="ändern", command=self.ListenDings_speicherort_ändern, width=100)
-        self.Netzwerk_Speicherort_change = tk.CTkButton(self.tabview.tab("Speicherorte"), text="ändern", command=self.ListenDings_speicherort_Netzwerk_ändern, width=100)
+        self.Normaler_Speicherort_change = tk.CTkButton(self.tabview.tab("Speicherorte"), text="ändern", command=self.ListenDings_speicherort_ändern, width=100, fg_color=self.f_grün, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.aktiviert_farbe)
+        self.Netzwerk_Speicherort_change = tk.CTkButton(self.tabview.tab("Speicherorte"), text="ändern", command=self.ListenDings_speicherort_Netzwerk_ändern, width=100, fg_color=self.f_grün, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.aktiviert_farbe)
 
         # Adressbuch
-        self.Adressbuch_anzeige_Einstellungen_t = tk.CTkTextbox(self.Adressbuch_anzeigen_frame, width=300, height=200, fg_color=self.Ja_UI_Farbe)
-        self.Adressbuch_anzeige_Einstellungen_t.place(x=10,y=10) 
+        self.Adressbuch_anzeige_Einstellungen_LB = Atk.Listbox(self.Adressbuch_anzeigen_frame, width=60, height=16)
+        self.Adressbuch_anzeige_Einstellungen_LB.place(x=10,y=10) 
     # Adressbuch ende
 
         self.Netzlaufwerk_pfad_geladen_Label.place(x=10,y=80)
@@ -949,7 +1219,7 @@ class Listendings:
             self.abhgehakt_hinzufügen_box.place_forget()
         except:
             pass
-        self.abhgehakt_hinzufügen_box = tk.CTkCheckBox(self.tabview.tab("Speichern"), text_color="Black",text="Namen und Telefonnummer in KtDb speichern?", command=rückruf_speichern, variable=self.mitspeichern, onvalue="on", offvalue="off")
+        self.abhgehakt_hinzufügen_box = tk.CTkCheckBox(self.tabview.tab("Speichern"), text_color=self.Txt_farbe,text="Namen und Telefonnummer in KtDb speichern?", command=rückruf_speichern, variable=self.mitspeichern, onvalue="on", offvalue="off")
         self.abhgehakt_hinzufügen_box.place(x=20,y=20)
         self.Auto_speichern_ändern_knopp.place(x=20,y=60)
 
@@ -1014,9 +1284,20 @@ class Listendings:
             print(f"[-EINSTELLUNGEN - ERR -]")
             pass
 
+        try:
+            Adressbuch = self.Adressbuch_laden()
+            i = 0
+            for Dings in Adressbuch['Kontakte']:
+                i += 1
+                self.Adressbuch_anzeige_Einstellungen_LB.insert(Atk.END, f"{i}. Tel.: {Dings["Telefonnummer_jsn"]}    Name: {Dings["Name"]}")
+        except Exception as e:
+            print(e)
+            messagebox.showerror(title=self.Programm_Name_lang, message=f"Beim laden des Adressbuchs ist ein Fehler aufgetreten: {e}")
+
+
     def Einstellungen_schließen(self):
         print("[-INFO-] Einstellungen_schließen(def)")
-        self.Einstellungsseite_Knopp.configure(command=self.Einstellungen_öffnen, text="Einstellungen", fg_color=self.deaktiviert_farbe, hover_color="Pink")
+        self.Einstellungsseite_Knopp.configure(command=self.Einstellungen_öffnen, text="Einstellungen", fg_color=self.f_e, hover_color=self.f_hover_normal)
         self.Starface_Modul_Einstellung_Knopp.pack_forget()
         self.Einstellungen_Frame.place_forget()
         self.tabview.place_forget()
@@ -1024,30 +1305,20 @@ class Listendings:
 
     def Eintrag_raus_kopieren(self): # kopiert den letzten in der Liste stehenden Eintrag in die Zwischenablage.
         print("[-INFO-] Eintrag_raus_kopieren(def)")
-        self.geladener_Text = self.ausgabe_text.get("0.0", "end")
-        self.einzelner_Eintrag = self.geladener_Text.split("\n\n")
-        if self.einzelner_Eintrag:
-            print(f"Aufgeteilter Text: {self.einzelner_Eintrag}")
-            # Rückwärts durch die Liste gehen, um den letzten passenden Eintrag zu finden
-            for eintrag in reversed(self.einzelner_Eintrag):
-                if eintrag.startswith("Uhrzeit:") and "Telefonnummer:" in eintrag:
-                    self.cim = eintrag
-                    kopierter_text = "Hier nun der kopierte Text aus dem M.U.L.M: \n" + eintrag
-                    pyperclip.copy(kopierter_text)
-                    print(f"Text in der Zwischenablage: {kopierter_text}")
-                    self.Ereignislog_insert(nachricht_f_e="- letzte Nachricht kopiert. -")
-                    break
-            else:
-                print("Kein passender Eintrag gefunden")
-        else:
-            print("Die Liste ist leer")
+        #self.geladener_Text = self.ausgabe_text.get("0.0", "end")
+        self.letzten_text_erhalten()
+        kopierter_text = "Hier nun der kopierte Text aus dem M.U.L.M: \n" + self.letzter_eintrag_text
+        pyperclip.copy(kopierter_text)
+        print(f"Text in der Zwischenablage: {kopierter_text}")
+        self.Ereignislog_insert(nachricht_f_e="- letzte Nachricht kopiert. -")
+        
 
     def Eintrag_ans_totdo(self):
         self.Eintrag_raus_kopieren()
         try:
-            with open(self.Benutzerordner + "/CiM/cim.txt", "w") as cim_s:
-                cim_s.write(self.cim)
-                cim_s.close()
+            with open(self.Benutzerordner + "/CiM/cim.txt", "w") as cim_s: # Das hier müssen wir dann mal noch neu machen, das ist viel zu fehleranfällig. //
+                cim_s.write(self.letzter_eintrag_text)
+                self.letzter_eintrag_text = None
                 self.Ereignislog_insert(nachricht_f_e="[-INFO-] Auftrag ans Totdo übermittelt.-")
         except Exception as exooo:
             print(f"Fehler beim senden ans Totdo. Fehlermeldung: {exooo}")    
@@ -1167,14 +1438,15 @@ class Listendings:
 
     def letzten_text_erhalten(self):
         print("letzten_importieren(def)")
-        self.geladener_Text = self.ausgabe_text.get("0.0", "end")
+        #self.geladener_Text = self.ausgabe_text.get("0.0", "end")
+        with open(self.Liste_mit_datum, "r") as gel_t:
+            self.geladener_Text = gel_t.read()
         self.einzelner_Eintrag = self.geladener_Text.split("\n\n")
         if self.einzelner_Eintrag:
             for eintrag in reversed(self.einzelner_Eintrag):
                 if eintrag.startswith("Uhrzeit:") and "Telefonnummer:" in eintrag:
-                    self.cim = eintrag      # WARUM WERDEN DIE VARS HIER WIEDER DOPPELT BELEGT?????
                     self.letzter_eintrag_text = eintrag
-                    break
+                    break # das break weil wir einfach die liste umdrehen und mit dem daruch ersten Eintrag zufrieden sind.
             else:
                 print("Kein passender Eintrag gefunden")
         else:
@@ -1182,8 +1454,10 @@ class Listendings:
 
     def letzten_importieren(self):
         self.letzten_text_erhalten()
-        self.Nachricht_Ticket_e.insert("0.0", self.letzter_eintrag_text)
+        self.Nachricht_Ticket_e.insert(tk.END, self.letzter_eintrag_text)
         self.letzter_eintrag_text = None
+
+
 
         
         
@@ -1205,14 +1479,14 @@ class Listendings:
             self.Ticket_Fenster.geometry(f"{width}x{height}+{x}+{y}")
         except:
             pass
-        self.Betreff_Ticket_e = tk.CTkEntry(self.Ticket_Fenster, width=300, placeholder_text="Betreffzeile", fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
-        self.Nachricht_Ticket_e = tk.CTkTextbox(self.Ticket_Fenster, width=300, height=420, wrap="word", fg_color=self.Hintergrund_farbe_Text_Widget, text_color=self.Textfarbe, border_color=self.Border_Farbe, border_width=2)
-        self.Ticket_abschicken_mail = tk.CTkButton(self.Ticket_Fenster, text="Ticket erstellen und versenden", command=self.Ticket_erstellen_mail, fg_color="aquamarine", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1")
-        self.alternative_empfänger_adresse_e = tk.CTkEntry(self.Ticket_Fenster, placeholder_text="Alternative Empfänger", width=300, fg_color=self.Entry_Farbe, text_color="Black", placeholder_text_color="FloralWhite")
-        self.Ticket_erstellen_anhang_suchen_knopp = tk.CTkButton(self.Ticket_Fenster, text="Anhang hinzufügen", command=self.anhang_suchen_ticket, fg_color="white", border_color="Black", border_width=1, text_color="Black", hover_color="DarkSlateGray1")
-        self.Mail_Anhang_status_l = tk.CTkLabel(self.Ticket_Fenster, text=f"Anhang: ", text_color="Black", bg_color=self.Hintergrund_farbe, corner_radius=3)
-        self.letztes_einfügen_knopp = tk.CTkButton(self.Ticket_Fenster, text="Letzten Anruf Importieren", command=self.letzten_importieren)
-        self.letztes_einfügen_knopp.place(x=500,y=230)
+        self.Betreff_Ticket_e = tk.CTkEntry(self.Ticket_Fenster, width=300, placeholder_text="Betreffzeile", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite", border_color=self.f_e)
+        self.Nachricht_Ticket_e = tk.CTkTextbox(self.Ticket_Fenster, width=300, height=420, wrap="word", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, border_color=self.f_border, border_width=2)
+        self.Ticket_abschicken_mail = tk.CTkButton(self.Ticket_Fenster, text="Ticket erstellen und versenden", command=self.Ticket_erstellen_mail, fg_color=self.f_grün, border_color=self.f_e, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
+        self.alternative_empfänger_adresse_e = tk.CTkEntry(self.Ticket_Fenster, placeholder_text="Alternative Empfänger", width=300, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite", border_color=self.f_e)
+        self.Ticket_erstellen_anhang_suchen_knopp = tk.CTkButton(self.Ticket_Fenster, text="Anhang hinzufügen", command=self.anhang_suchen_ticket, fg_color=self.f_e, border_color=self.f_e, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
+        self.Mail_Anhang_status_l = tk.CTkLabel(self.Ticket_Fenster, text=f"Anhang: ", text_color=self.Txt_farbe, bg_color=self.Hintergrund_farbe, corner_radius=3)
+        self.letztes_einfügen_knopp = tk.CTkButton(self.Ticket_Fenster, text="Letzten Anruf Importieren", command=self.letzten_importieren, fg_color=self.f_e, border_color=self.f_e, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
+        self.letztes_einfügen_knopp.place(x=330,y=230)
 
         self.alternative_empfänger_adresse_e.place(x=330,y=120)
         self.Ticket_abschicken_mail.place(x=330,y=420)
@@ -1330,7 +1604,7 @@ class Listendings:
                             try:
                                 with open(self.Starface_Einstellungsdatei, "w+") as SternGesicht_data_neu:
                                     SternGesicht_data_neu.write("0")
-                                self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist deaktiviert", fg_color="chocolate1", text_color="White")
+                                self.Starface_Modul_Einstellung_Knopp.configure(text="Starface Modul ist deaktiviert", fg_color="chocolate1", text_color="White")
                                 messagebox.showinfo(title="CiM Einstellungen", message="Das Starface Modul wird nun nach dem Neustart des Programms deaktiviert.")
                             except Exception as Ex_schr_stern:
                                 print(Ex_schr_stern)
@@ -1340,7 +1614,7 @@ class Listendings:
                             try:
                                 with open(self.Starface_Einstellungsdatei, "w+") as SternGesicht_data_neu:
                                     SternGesicht_data_neu.write("1")
-                                self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist aktiviert", fg_color="aquamarine", text_color="Black")
+                                self.Starface_Modul_Einstellung_Knopp.configure(text="Starface Modul ist aktiviert", fg_color="aquamarine", text_color=self.Txt_farbe)
                                 messagebox.showinfo(title="CiM Einstellungen", message="Das Starface Modul wird nun nach dem Neustart des Programms aktiviert, bitte schauen Sie, für die korrekte Einrichtung in die Dokumentation.")
                             except Exception as Ex_schr_stern:
                                 print(Ex_schr_stern)
@@ -1354,7 +1628,7 @@ class Listendings:
                 try:
                     with open(self.Starface_Einstellungsdatei, "w+") as SternGesicht_data_neu:
                         SternGesicht_data_neu.write("1")
-                        self.Starface_Modul_Einstellung_Knopp.configure(text="Staface Modul ist aktiviert", fg_color="aquamarine", text_color="Black")
+                        self.Starface_Modul_Einstellung_Knopp.configure(text="Starface Modul ist aktiviert", fg_color="aquamarine", text_color=self.Txt_farbe)
                     messagebox.showinfo(title="CiM Einstellungen", message="Das Starface Modul wird nun nach dem Neustart des Programms aktiviert.")
                 except Exception as Ex_schr_stern:
                     print(Ex_schr_stern)
@@ -1377,7 +1651,7 @@ class Listendings:
             try:
                 with open(self.Auto_speichern_Einstellungsdatei, "w+") as schr_asp:
                     schr_asp.write("1")
-                    self.Auto_speichern_ändern_knopp.configure(text="Autospeichern aktiviert", fg_color="aquamarine", text_color="Black")
+                    self.Auto_speichern_ändern_knopp.configure(text="Autospeichern aktiviert", fg_color="aquamarine", text_color=self.Txt_farbe)
                     self.Auto_speichern_Einstellungsdatei_var = "1"
             except Exception as o1:
                 print("Es ist ein fehler aufgetreten: ",o1)
@@ -1389,25 +1663,28 @@ class Listendings:
             # Menu wird jetzt nicht mehr da sein.
             self.Pause_menu.place_forget()
             self.Menü_da = False
-            self.Menü_Knopp.configure(text="Menü", fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
+            self.Menü_Knopp.configure(text="Statistik", fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
             self.smtp_login_erfolgreich_l.place_forget()
             self.Einstellung_Design_auswahl.place_forget()
             ##self.Berichtsheft_knopp.place_forget()
-            self.Statistiken_anzeigen_linie_knopp.place_forget()
-            self.Statistiken_anzeigen_saeule_knopp.place_forget()
+            #self.Statistiken_anzeigen_linie_knopp.place_forget()
+            #self.Statistiken_anzeigen_saeule_knopp.place_forget()
+            self.Stat_ID_l.place_forget()
         elif self.Menü_da == False:
             # Menu wird jetzt angezeigt (Ja, wirklich.)
             print("menü == false (Menü war nicht offen)")
             self.Pause_menu.place(x=300,y=10)
             self.Menü_da = True
-            self.Menü_Knopp.configure(text="Menü schließen", fg_color="aquamarine", hover_color="aquamarine3")
+            self.Menü_Knopp.configure(text="Statistik schließen", fg_color="aquamarine", hover_color="aquamarine3")
             ##self.Berichtsheft_knopp.place(x=400,y=100)
             self.Einstellung_Design_auswahl.place(x=10,y=200)
             self.Einstellung_Design_L.place(x=10,y=170)
-            self.Statistiken_anzeigen_linie_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Liniendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_linie, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
-            self.Statistiken_anzeigen_saeule_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Säulendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_saeule, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink")
-            self.Statistiken_anzeigen_linie_knopp.place(x=10,y=100)
-            self.Statistiken_anzeigen_saeule_knopp.place(x=10,y=140)
+            #self.Statistiken_anzeigen_linie_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Liniendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_linie, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
+            #self.Statistiken_anzeigen_saeule_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Säulendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_saeule, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
+            #self.Statistiken_anzeigen_linie_knopp.place(x=10,y=100)
+            #self.Statistiken_anzeigen_saeule_knopp.place(x=10,y=140)
+            self.Stat_ID_l = Atk.Label(self.Pause_menu, text=f"Einträge heute: {self.ID_v}")
+            self.Stat_ID_l.place(x=10,y=50)
             try:
                 try:
                     self.gel_Email_Empfänger_E.delete(0, tk.END)
@@ -1442,17 +1719,17 @@ class Listendings:
         self.KDabl_durchsuchen_Knopp.place_forget()
         self.durchsuchen_egal.place_forget()
         self.In_alten_Einträgen_suchen.place_forget()
-        self.irgendwo_suchen.configure(text="durchsuchen...", command=self.such_menü_hauptmenu, hover_color="pink", fg_color="White", image=self.Durchsuchen_Bild_zu)
+        self.irgendwo_suchen.configure(text="durchsuchen...", command=self.such_menü_hauptmenu, hover_color=self.f_hover_normal, fg_color=self.f_e, image=self.Durchsuchen_Bild_zu)
 
     def such_menü_hauptmenu(self):
         print("def such_menü_hauptmenu(self)")
         self.irgendwo_suchen.configure(text="schließen", command=self.such_menü_hauptmenu_schließen, hover_color="CadetBlue1", fg_color=self.aktiviert_farbe, image=self.Durchsuchen_Bild)
         self.Such_menu_haupt_frame.place(x=1060,y=100)
-        self.KDabl_durchsuchen_Knopp = tk.CTkButton(self.Such_menu_haupt_frame, text="In Kndn-DB suchen", command=self.Suche_KDabl, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Kunde_suchen_Bild)
+        self.KDabl_durchsuchen_Knopp = tk.CTkButton(self.Such_menu_haupt_frame, text="In Kndn-DB suchen", command=self.Suche_KDabl, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Kunde_suchen_Bild)
         self.KDabl_durchsuchen_Knopp.place(x=10,y=40)
-        self.durchsuchen_egal = tk.CTkButton(self.Such_menu_haupt_frame, text="irgendwo suchen...", command=self.Suche1, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Durchsuchen_Bild)
+        self.durchsuchen_egal = tk.CTkButton(self.Such_menu_haupt_frame, text="irgendwo suchen...", command=self.Suche1, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Durchsuchen_Bild)
         self.durchsuchen_egal.place(x=10, y=10)
-        self.In_alten_Einträgen_suchen = tk.CTkButton(self.Such_menu_haupt_frame, text="In DB suchen", command=self.Suche_alte_Einträge, fg_color="White", border_color="Black", border_width=1, text_color="Black", hover_color="pink", image=self.Dings_Liste_Bild)
+        self.In_alten_Einträgen_suchen = tk.CTkButton(self.Such_menu_haupt_frame, text="In DB suchen", command=self.Suche_alte_Einträge, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Dings_Liste_Bild)
         self.In_alten_Einträgen_suchen.place(x=10,y=70)
 
     def zeugs_blacklist(self):
@@ -1667,7 +1944,7 @@ class Listendings:
         self.gesucht_zahl_mit_fehlern = 0
         self.Ergebnise_zahl = 0
         try:
-            self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500, fg_color=self.Hintergrund_farbe_Text_Widget, text_color=self.Textfarbe, border_color=self.Border_Farbe, border_width=2)
+            self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500, fg_color=self.Hintergrund_farbe_Text_Widget, text_color=self.Textfarbe, border_color=self.f_border, border_width=2)
         except:
             pass
         self.durchsucht_text = f"bis jetzt wurden {self.gesucht_zahl} Dateien durchsucht."
@@ -1891,7 +2168,7 @@ class Listendings:
                     print1 = "[i] abgefangene Telefonummer: " + self.Anruf_Telefonnummer + "-"
                     self.Ereignislog_insert(nachricht_f_e=print1)
                     self.Uhrzeit_anruf_start = self.Zeit
-                    self.Anruf_Zeit.configure(text=f" 🔴 aktiver Anruf seit: {self.Uhrzeit_anruf_start} ")
+                    self.Anruf_Zeit.configure(text=f" 🔴 aktiver Anruf seit: {self.Uhrzeit_anruf_start}  ")
                     tmp_ld.close()
                     os.remove("tmp.txt")
                     self.Gesperrte_Nummer = False
@@ -1913,9 +2190,6 @@ class Listendings:
                                 self.Ereignislog_insert(nachricht_f_e="-Telefonnummer in Blacklist gefunden!\n Nummer wurde nicht eingefügt.")
                                 self.Anruf_Telefonnummer = None
                                 self.Gesperrte_Nummer = True
-                            else:
-                                print(f"offensichtlicher weise war {str(Gesperrte_kontakt.get("Telefonnummer_jsn_gesperrt"))} nicht das selbe wie {str(self.Anruf_Telefonnummer)}... oder so ähnlich.")
-                            #else:
                         if self.Gesperrte_Nummer == False:
                             print("else f 1")
                             print("die Nummer stand nicht in der Blacklist")
@@ -1988,13 +2262,16 @@ class Listendings:
         except Exception as excAdm:
             messagebox.showinfo(message=excAdm)
 
+        
+
     def senden(self, event):
         print("(DEV) senden(def)")
+        self.ID_v = None
         kunde = self.kunde_entry.get()
         problem = self.problem_entry.get()
         info = self.info_entry.get()
         T_Nummer = self.t_nummer.get()
-        self.ausgabe_text.configure(state='normal')
+        #self.ausgabe_text.configure(state='normal')
         self.zeit_string = time.strftime("%H:%M:%S")
         if self.Uhrzeit_anruf_start == None:
             self.Uhrzeit_anruf_start = "-"
@@ -2018,16 +2295,50 @@ class Listendings:
                 self.Weiterleitung_an = "Keine Weiterleitung"
             if self.wollte_sprechen == "":
                 self.wollte_sprechen = "Nein"
+            
+            print("zähle nun die IDs")
+            if os.path.exists(self.ID_speicherort_L_pfad):
+                try:
+                    with open(self.ID_speicherort_L, "r") as ID_gel:
+                        self.ID_v = ID_gel.read()
+                        self.ID_v = int(self.ID_v) + 1
+                    print(f"schreibe jetzt {self.ID_v} in {self.ID_speicherort_L}")
+                    with open(self.ID_speicherort_L, "w+") as ID_n_gel:
+                        ID_n_gel.write(str(self.ID_v)) # die var wird dann noch an die json eintrags dings übergeben und deswegen nicht gecleart
+                        print("ID aktualisiert.")
+                except Exception as ehjk:
+                    print(f"Es gab einen Fehler beim laden der IDs, es wird nun wieder bei Null angefangen. Fehlermeldung: {ehjk}")
+                    try:
+                        with open(self.ID_speicherort_L, "w+") as ID_gel:
+                            ID_gel.write("1")
+                            self.ID_v = 1
+                    except Exception as ehjk:
+                        print(f"okay, also das mit den IDs klappt heute garnicht. Fehlermeldung: {ehjk}")
+                        self.ID_v = 1
+            else:
+                try:
+                    with open(self.ID_speicherort_L, "w+") as ID_gel:
+                        ID_gel.write("1")
+                        self.ID_v = 1
+                except:
+                    print("Es gab einen Fehler beim laden der IDs, es wird nun wieder bei Null angefangen.")
+                    self.ID_v = 1
 
+            self.Anrufer_Bezeichnung_l.configure(text=f"Anrufer: {kunde}")
+            self.Zeit_aus_JSON.configure(text=f"Uhrzeit: {self.Uhrzeit_text}")
+            self.ID_M_l.configure(text=f"ID: {self.ID_v}")
+            self.Eintrag_Telefonnummer_l.configure(text=f"  Tel.: {T_Nummer}  ")
+
+########## JTEZT WERDEN DIE TEXTBOXEN BEARBEITET
+            self.Problem_text_neu.configure(state="normal")
+            self.Problem_text_neu.delete("0.0", Atk.END) # f"Uhrzeit: {eintrag["Uhrzeit"]}\nProblem: {eintrag["description"]}\nNotizen: {eintrag["notizen"]}\n\n\nMit Wem sprechen: {eintrag["wen_sprechen"]}\nAn wen Weitergeleitet: {eintrag["an_wen_gegeben"]}"
+            self.Problem_text_neu.insert("0.0", f"Uhrzeit: {self.Uhrzeit_text}\nProblem: {problem}\nNotizen: {info}\n\n\nMit Wem sprechen: {self.wollte_sprechen}\nAn wen Weitergeleitet: {self.Weiterleitung_an}")
+            self.Problem_text_neu.configure(state="disabled")
+########## JTEZT WERDEN DIE TEXTBOXEN BEARBEITET-FERTSCHSHCSCHSCHSCHSHCH
+            self.Eintrag_in_JSON_schmeissen()
             if os.path.exists(self.Liste_mit_datum):
                 with open(self.Liste_mit_datum, "a") as f:
                     f.write(f"Uhrzeit: {self.Uhrzeit_text}\nAnrufer: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
-                with open(self.Liste_mit_datum, "r") as f:
-                    feedback_text = f.read()
-                    self.ausgabe_text.delete("1.0", tk.END)
-                    self.ausgabe_text.insert(tk.END, feedback_text)
-                self.ausgabe_text.configure(state='disabled')
-                self.ausgabe_text.see(tk.END)
                 self.Weiterleitung_an = ""
                 self.Uhrzeit_anruf_ende = None
                 self.optionmenu.set("Keine Weiterleitung")
@@ -2038,24 +2349,19 @@ class Listendings:
             else:
                 print("(INFO) Liste zum beschreiben existiert bereits.")
                 with open(self.Liste_mit_datum, "w+") as f:
-                    f.write(f"Uhrzeit: {self.Uhrzeit_text}\nAnrufer: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
-                with open(self.Liste_mit_datum, "r") as f:
-                    feedback_text = f.read()
-                    self.ausgabe_text.delete("1.0", tk.END)
-                    self.ausgabe_text.insert(tk.END, feedback_text)
-                    self.ausgabe_text.configure(state='disabled')
-                    self.Weiterleitung_an = ""
-                    self.wollte_sprechen = ""
-                    self.Uhrzeit_anruf_ende = None
-                    self.optionmenu.set("Keine Weiterleitung")
-                    self.optionmenu1.set("Mit Wem sprechen?")
-                    self.kunde_entry.focus()
-                    self.zeugs()
-                    # jetzt wurde das ding fertig in eine bestehende Datei versendet
+                    f.write(f"Uhrzeit: {self.Uhrzeit_text}\nAnrufer: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")                
+                self.Weiterleitung_an = ""
+                self.wollte_sprechen = ""
+                self.Uhrzeit_anruf_ende = None
+                self.optionmenu.set("Keine Weiterleitung")
+                self.optionmenu1.set("Mit Wem sprechen?")
+                self.kunde_entry.focus()
+                self.zeugs()
+                # jetzt wurde das ding fertig in eine bestehende Datei versendet
         else:
             print("(ERR) Da hat wer Enter gedrückt obwohl noch nicht geschrieben war.")
             messagebox.showinfo(title="Fehler", message="Bitte geben Sie zuerst in wenigsten eine Spalte etwas ein.")
-            self.ausgabe_text.configure(state='disabled')
+            #self.ausgabe_text.configure(state='disabled')
             self.Weiterleitung_an = ""
             self.wollte_sprechen = ""
             self.optionmenu.set("Keine Weiterleitung")
@@ -2074,24 +2380,146 @@ class Listendings:
         self.optionmenu.set("Keine Weiterleitung")
     
     def beb_c(self):
-        self.text_tk_text = self.ausgabe_text.get("1.0", "end-1c") # mir fällt jetzt erst im Nachhinein (3-4 Monate später) auf das da "end-1c" steht, wtf ist das und warum ist das da?
         if self.beb == "0":
-            print("beb is jetzt = 1")
-            self.ausgabe_text.configure(state='normal')
-            self.t_nummer.configure(state="normal")
-            self.beb_knopp.configure(text="Fertig", fg_color="aquamarine", hover_color="aquamarine3")
-            self.beb = "1"
-            root.unbind('<Return>')
+            if self.Eintrag_geladen_jetzt != None:
+                print("ein Eintrag aus der Liste wird nun bearbeitet")
+                self.LB_auswahl_index = self.Eintrags_Liste.curselection()
+                self.beb_knopp.configure(text="Fertig", fg_color="aquamarine", hover_color="aquamarine3")
+                self.Eintrag_Uhrzeit_e.configure(state="normal")
+                self.Eintrag_Telefonnummer_e.configure(state="normal")
+                self.Eintrag_Beschreibung_e.configure(state="normal")
+                self.Eintrag_Notizen_e.configure(state="normal")
+                self.Eintrag_wollte_sprechen_e.configure(state="normal")
+                self.Eintrag_an_weitergeleitet_e.configure(state="normal")
+
+                self.E_U_l.configure(text_color=self.Txt_farbe)
+                self.E_T_l.configure(text_color=self.Txt_farbe)
+                self.E_N_l.configure(text_color=self.Txt_farbe)
+                self.E_B_l.configure(text_color=self.Txt_farbe)
+                self.E_ws_l.configure(text_color=self.Txt_farbe)
+                self.E_aw_l.configure(text_color=self.Txt_farbe)
+
+                self.Eintrag_Telefonnummer_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
+                self.Eintrag_Uhrzeit_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
+                self.Eintrag_Beschreibung_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
+                self.Eintrag_Notizen_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
+                self.Eintrag_wollte_sprechen_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
+                self.Eintrag_an_weitergeleitet_e.configure(fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_Plt)
+
+                self.Eintrag_Uhrzeit_e.insert(0, f"{self.Eintrag_geladen_jetzt["Uhrzeit"]}")
+                self.Eintrag_Telefonnummer_e.insert(0, f"{self.Eintrag_geladen_jetzt["Telefonnummer"]}")
+                self.Eintrag_Beschreibung_e.insert(0, f"{self.Eintrag_geladen_jetzt["description"]}")
+                self.Eintrag_Notizen_e.insert(0, f"{self.Eintrag_geladen_jetzt["notizen"]}")
+                self.Eintrag_wollte_sprechen_e.insert(0, f"{self.Eintrag_geladen_jetzt["wen_sprechen"]}")
+                self.Eintrag_an_weitergeleitet_e.insert(0, f"{self.Eintrag_geladen_jetzt["an_wen_gegeben"]}")
+                ## hier kommen dann noch die weiteren Entrys hin, die benötigt werden um die shaise zu bearbeiten.
+                self.beb = "1"
+                print("beb is jetzt = 1")
+                root.unbind('<Return>')
+            else:
+                messagebox.showinfo(title=self.Programm_Name_lang, message="Kein Eintrag zum bearbeiten ausgewählt.")
+                root.bind('<Return>', self.senden)
+                self.beb_knopp.configure(text="Bearbeiten", fg_color=self.f_e, hover_color=self.f_hover_normal)
+                self.beb = "0"
+
+
+            
         else:
             print("beb = 0")
-            self.ausgabe_text.configure(state='disabled')
-            self.t_nummer.configure(state="disabled")
             root.bind('<Return>', self.senden)
-            self.beb_knopp.configure(text="Bearbeiten", fg_color="white", hover_color="DarkSlateGray1")
+            self.beb_knopp.configure(text="Bearbeiten", fg_color=self.f_e, hover_color=self.f_hover_normal)
             self.beb = "0"
-            with open(self.Liste_mit_datum, "w+") as f:
-                f.write(self.text_tk_text)
-                print("das beb wurde geschrieben.")
+            #with open(self.Liste_mit_datum, "w+") as f:
+            #    f.write(self.text_tk_text)
+            #    print("das beb wurde geschrieben.")
+            self.E_U_l.configure(text_color=self.Txt_farbe_deak)
+            self.E_T_l.configure(text_color=self.Txt_farbe_deak)
+            self.E_N_l.configure(text_color=self.Txt_farbe_deak)
+            self.E_B_l.configure(text_color=self.Txt_farbe_deak)
+            self.E_ws_l.configure(text_color=self.Txt_farbe_deak)
+            self.E_aw_l.configure(text_color=self.Txt_farbe_deak)
+            self.neue_uhrzeit_aus_Eintrag = self.Eintrag_Uhrzeit_e.get()
+            self.neue_Telefonummer_aus_Eintrag = self.Eintrag_Telefonnummer_e.get()
+            self.neue_Notizen_aus_Eintrag = self.Eintrag_Notizen_e.get()
+            self.neue_Beschreibung_aus_Eintrag = self.Eintrag_Beschreibung_e.get()
+            self.neue_Wollte_sprechen_aus_Eintrag = self.Eintrag_wollte_sprechen_e.get()
+            self.neue_Weiterleitung_an_aus_Eintrag = self.Eintrag_an_weitergeleitet_e.get()
+            self.neue_anzeigen_Eintragen = True # wenn der Eintrag nicht mehr sichtbar wäre, könnte man ihn auch nicht bearbeiten
+
+            if self.neue_uhrzeit_aus_Eintrag == "":
+                self.neue_uhrzeit_aus_Eintrag = "-"
+            if self.neue_Telefonummer_aus_Eintrag == "":
+                self.neue_Telefonummer_aus_Eintrag = "-"
+            if self.neue_Notizen_aus_Eintrag == "":
+                self.neue_Notizen_aus_Eintrag = "-"
+            if self.neue_Beschreibung_aus_Eintrag == "":
+                self.neue_Beschreibung_aus_Eintrag = "-"
+            if self.neue_Wollte_sprechen_aus_Eintrag == "":
+                self.neue_Wollte_sprechen_aus_Eintrag = "-"
+            if self.neue_Weiterleitung_an_aus_Eintrag == "":
+                self.neue_Weiterleitung_an_aus_Eintrag = "-"
+            
+    #/todo wenn man beim bearbeiten den Eintrag in der LB ändert, muss der rest hier auch gleich mit gewechselt werden!
+    #/todo man kann den Anrufer Namen noch nicht wechseln
+            self.Eintrag_Uhrzeit_e.delete("0", tk.END)
+            self.Eintrag_Telefonnummer_e.delete("0", tk.END)
+            self.Eintrag_Beschreibung_e.delete("0", tk.END)
+            self.Eintrag_Notizen_e.delete("0", tk.END)
+            self.Eintrag_wollte_sprechen_e.delete("0", tk.END)
+            self.Eintrag_an_weitergeleitet_e.delete("0", tk.END)
+            self.neuer_eintrag = { 
+                "name": f"{self.Eintrag_geladen_jetzt["name"]}",
+                "description": f"{self.neue_Beschreibung_aus_Eintrag}",
+                "Uhrzeit": f"{self.neue_uhrzeit_aus_Eintrag}",
+                "notizen": f"{self.neue_Notizen_aus_Eintrag}",
+                "Telefonnummer": f"{self.neue_Telefonummer_aus_Eintrag}",
+                "ID_L": self.Eintrag_geladen_jetzt["ID_L"],  # ID des zu ersetzenden Eintrags
+                "fertsch": "X",
+                "wen_sprechen": f"{self.neue_Wollte_sprechen_aus_Eintrag}",
+                "an_wen_gegeben": f"{self.neue_Weiterleitung_an_aus_Eintrag}",
+                "anzeigen": self.neue_anzeigen_Eintragen
+                }
+            
+            self.beb_speichern_mit_JSON(self.Eintrags_DB, self.neuer_eintrag, self.Eintrag_geladen_jetzt["ID_L"]) # Das hier speichert dann alles im neuen Eintrag, alles was hier drunter steht ist dann also nur, um den Normalzustand wiederherzustellen.
+            self.Eintrag_Telefonnummer_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.f_border, placeholder_text="Telefonnummer")
+            self.Eintrag_Uhrzeit_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.f_border, placeholder_text="Uhrzeit")
+            self.Eintrag_Notizen_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.f_border, placeholder_text="Beschreibung")
+            self.Eintrag_Beschreibung_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.f_border, placeholder_text="Notizen")
+            self.Eintrag_wollte_sprechen_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.f_border, placeholder_text="Wollte wen sprechen:")
+            self.Eintrag_an_weitergeleitet_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.f_border, placeholder_text="Weitergeleitet an:")
+            self.Eintrag_Uhrzeit_e.configure(state="disabled")
+            self.Eintrag_Telefonnummer_e.configure(state="disabled")
+            self.Eintrag_Beschreibung_e.configure(state="disabled")
+            self.Eintrag_Notizen_e.configure(state="disabled")
+            self.Eintrag_wollte_sprechen_e.configure(state="disabled")
+            self.Eintrag_an_weitergeleitet_e.configure(state="disabled")
+            try:
+                self.Eintrags_Liste.selection_set(self.LB_auswahl_index)
+                self.Eintrags_Liste.event_generate("<<ListboxSelect>>")
+                self.LB_auswahl_index = None
+            except Exception as Exc_LB_Curselect:
+                print(f"Ich konnte den letzten Eintrag nicht wieder in der LB auswählen: {Exc_LB_Curselect}")
+
+
+    def beb_speichern_mit_JSON(self, jdb_pfad, neue_daten, id_l):
+        print("beb_speichern_mit_JSON(def)")
+        print(f"Bearbeite nun den Eintrag mit folgender ID: {self.Eintrag_geladen_jetzt["ID_L"]}")
+        with open(jdb_pfad, 'r', encoding='utf-8') as f:
+            daten = json.load(f)
+        # Eintrag suchen und ersetzen
+        ersetzt = False
+        for index, eintrag in enumerate(daten):
+            if eintrag['ID_L'] == id_l:
+                daten[index] = neue_daten  # Den Eintrag ersetzen
+                ersetzt = True
+                break
+        if ersetzt:
+            # Datei mit den neuen Daten speichern
+            with open(jdb_pfad, 'w', encoding='utf-8') as f:
+                json.dump(daten, f, ensure_ascii=False, indent=4)
+            print(f"Eintrag mit ID_L {id_l} erfolgreich ersetzt.")
+        else:
+            print(f"Kein Eintrag mit ID_L {id_l} gefunden.")
 
     def alles_löschen(self):
         print("alles_löschen(def)")
@@ -2100,16 +2528,16 @@ class Listendings:
             print("löschen der db vom Nutzer bestätigt")
             self.tag_und_zeit_string = time.strftime("%m/%d/%Y, %H:%M:%S")
             print(self.tag_und_zeit_string)
-            self.ausgabe_text.configure(state='normal')
-            self.ausgabe_text.delete("1.0", tk.END)  # Hier wird der Inhalt des Textfelds gelöscht
-            self.ausgabe_text.configure(state='disabled')
+            #self.ausgabe_text.configure(state='normal')
+            #self.ausgabe_text.delete("1.0", tk.END)  # Hier wird der Inhalt des Textfelds gelöscht
+            #self.ausgabe_text.configure(state='disabled')
             try:
                 print("try1")
                 if os.path.exists(self.DB):
                     print("Liste existiert")
                     os.remove(self.DB)
                     print("datei gelöscht")
-                    self.ausgabe_text.delete("1.0", tk.END)
+                    #self.ausgabe_text.delete("1.0", tk.END)
                     print("textfeld gelöscht")
                 else:
                     messagebox.showerror(title="Fehler", message="Es gab keine alten Einträge zum löschen.")
@@ -2128,7 +2556,7 @@ class Listendings:
             self.problem_entry.grid_forget()
             self.info_entry.grid_forget()
             self.senden_button.grid_forget()
-            self.ausgabe_text.grid_forget()
+            #self.ausgabe_text.grid_forget()
         except:
             pass
         self.p_text = tk.CTkLabel(root, text="Jetzt ist gerade Pause und mit vollem Mund spricht man nicht!")
@@ -2345,11 +2773,6 @@ class Listendings:
 
         speichern_knopp = tk.CTkButton(Checklisten_Fenster, text="Als PDF Speichern", command=lambda: checkliste_als_pdf_speichern(pdf_dateiname))
         speichern_knopp.pack()
-
-
-        
-        
-   
     
     def Netzlaufwerk_speichern(self):
         print("Netzlaufwerk_speichern(def)")
@@ -2393,6 +2816,63 @@ class Listendings:
                 print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
                 messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern schiefgelaufen.")
 
+    def DB_Migration(self):
+        messagebox.showinfo(title=self.Programm_Name_lang, message="Viel Glück.")
+        def parse_entry(entry, id_counter):
+            # Regex für die einzelnen Felder im Eintrag
+            uhrzeit_re = re.search(r"Uhrzeit: (.*?) bis (.*?)\n", entry)
+            name_re = re.search(r"Anrufer: (.*?)\n", entry)
+            problem_re = re.search(r"Problem: (.*?)\n", entry)
+            info_re = re.search(r"Info: (.*?)\n", entry)
+            telefonnummer_re = re.search(r"Telefonnummer: (.*?)\n", entry)
+            wen_sprechen_re = re.search(r"Jemand bestimmtes sprechen: (.*?)\n", entry)
+            weiterleitung_re = re.search(r"Weiterleitung: (.*?)\n", entry)
+
+            uhrzeit_von_bis = f"{uhrzeit_re.group(1)} bis {uhrzeit_re.group(2)}" if uhrzeit_re else "-"
+            name = name_re.group(1) if name_re else "Unbekannt"
+            problem = problem_re.group(1) if problem_re else "Unbekannt"
+            info = info_re.group(1) if info_re else "keine infos"
+            telefonnummer = telefonnummer_re.group(1) if telefonnummer_re else "keine Nummer"
+            wen_sprechen = wen_sprechen_re.group(1) if wen_sprechen_re else "Nein"
+            weiterleitung = weiterleitung_re.group(1) if weiterleitung_re else "Keine Weiterleitung"
+
+        
+            json_entry = {
+                "name": name,
+                "description": problem, 
+                "Uhrzeit": uhrzeit_von_bis,  
+                "notizen": info,  
+                "Telefonnummer": telefonnummer,
+                "ID_L": id_counter,  
+                "fertsch": "X",  
+                "wen_sprechen": wen_sprechen,
+                "an_wen_gegeben": weiterleitung,
+                "anzeigen": True,
+            }
+
+            return json_entry
+
+        def process_file_to_json(file_path):
+            json_data = [] 
+            id_counter = 1
+
+            with open(file_path, 'r') as file:
+                content = file.read()
+
+            entries = content.split("\n\n")
+            for entry in entries:
+                if entry.strip():
+                    json_entry = parse_entry(entry, id_counter)
+                    json_data.append(json_entry)
+                    id_counter += 1
+
+            with open(self.Eintrags_DB, 'w') as json_file:
+                json.dump(json_data, json_file, indent=4)
+
+            print("Datei erfolgreich verarbeitet und als JSON gespeichert.")
+            messagebox.showinfo(title=self.Programm_Name_lang, message="Migration des heutigen Tages erfolgreich abgeschlossen.")
+        process_file_to_json(self.Liste_mit_datum)
+
 
     def bye(self):
         print("(ENDE) Das Programm wurde Beendet, auf wiedersehen! :3 ")
@@ -2420,54 +2900,58 @@ class Listendings:
                 auto_speichern = dings_aSp
         except:
             auto_speichern = "0"
+        try:
 
-        if auto_speichern == "1":
-            self.csv_datei_pfad = Listen_Speicherort_Netzwerk_geladen
-            if self.csv_datei_pfad:
-                try:
-                    with open(self.Liste_mit_datum, 'r') as text_datei:
-                        daten = text_datei.read()
-                except FileNotFoundError:
-                    sys.exit()
-                zeilen = daten.strip().split('\n')
-                datensaetze = []
-                uhrzeit, kunde, problem, info, Telefonnummer, wollte_sprechen, Weiterleitung = "", "", "", "", "", "", ""
-                for zeile in zeilen:
-                    if zeile.startswith("Uhrzeit:"):
-                        uhrzeit = zeile.replace("Uhrzeit:", "").strip()
-                    elif zeile.startswith("Anrufer:"):
-                        kunde = zeile.replace("Anrufer:", "").strip()
-                    elif zeile.startswith("Problem:"):
-                        problem = zeile.replace("Problem:", "").strip()
-                    elif zeile.startswith("Info:"):
-                        info = zeile.replace("Info:", "").strip()
-                    elif zeile.startswith("Telefonnummer:"):
-                        Telefonnummer = zeile.replace("Telefonnummer:", "").strip()
-                    elif zeile.startswith("Jemand bestimmtes sprechen:"):
-                        wollte_sprechen = zeile.replace("Jemand bestimmtes sprechen:", "").strip()
-                    elif zeile.startswith("Weiterleitung:"):
-                        Weiterleitung = zeile.replace("Weiterleitung:", "").strip()
-                        
-                    if kunde and problem and info and uhrzeit and Telefonnummer and wollte_sprechen and Weiterleitung:
-                        datensaetze.append([ uhrzeit, kunde, problem, info, Telefonnummer,  wollte_sprechen, Weiterleitung])
-                        uhrzeit, kunde, problem, info, Telefonnummer,  wollte_sprechen, Weiterleitung = "", "", "", "", "", "", ""
+            if auto_speichern == "1":
+                self.csv_datei_pfad = Listen_Speicherort_Netzwerk_geladen
+                if self.csv_datei_pfad:
+                    try:
+                        with open(self.Liste_mit_datum, 'r') as text_datei:
+                            daten = text_datei.read()
+                    except FileNotFoundError:
+                        sys.exit()
+                    zeilen = daten.strip().split('\n')
+                    datensaetze = []
+                    uhrzeit, kunde, problem, info, Telefonnummer, wollte_sprechen, Weiterleitung = "", "", "", "", "", "", ""
+                    for zeile in zeilen:
+                        if zeile.startswith("Uhrzeit:"):
+                            uhrzeit = zeile.replace("Uhrzeit:", "").strip()
+                        elif zeile.startswith("Anrufer:"):
+                            kunde = zeile.replace("Anrufer:", "").strip()
+                        elif zeile.startswith("Problem:"):
+                            problem = zeile.replace("Problem:", "").strip()
+                        elif zeile.startswith("Info:"):
+                            info = zeile.replace("Info:", "").strip()
+                        elif zeile.startswith("Telefonnummer:"):
+                            Telefonnummer = zeile.replace("Telefonnummer:", "").strip()
+                        elif zeile.startswith("Jemand bestimmtes sprechen:"):
+                            wollte_sprechen = zeile.replace("Jemand bestimmtes sprechen:", "").strip()
+                        elif zeile.startswith("Weiterleitung:"):
+                            Weiterleitung = zeile.replace("Weiterleitung:", "").strip()
+                            
+                        if kunde and problem and info and uhrzeit and Telefonnummer and wollte_sprechen and Weiterleitung:
+                            datensaetze.append([ uhrzeit, kunde, problem, info, Telefonnummer,  wollte_sprechen, Weiterleitung])
+                            uhrzeit, kunde, problem, info, Telefonnummer,  wollte_sprechen, Weiterleitung = "", "", "", "", "", "", ""
 
-                if datensaetze:
-                    self.tag_string = str(time.strftime("%d %m %Y"))
-                    with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w+', newline='') as datei:
-                        schreiber = csv.writer(datei)
-                        schreiber.writerow(["Uhrzeit", "Anrufer", "Problem", "Info", "Telefonnummer", "Wollte Sprechen", "Weiterleitung"])
-                        schreiber.writerows(datensaetze)
-                        self.zeit_string = time.strftime("%H:%M:%S")
+                    if datensaetze:
                         self.tag_string = str(time.strftime("%d %m %Y"))
-                    print("Daten wurden in die CSV-Datei gespeichert.")
-                    print(f"Dateien wurden unter {self.csv_datei_pfad} gespeichert.")
-                    messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich im Netzlaufwerkpfad gespeichert.")
+                        with open(self.csv_datei_pfad + "/AnruferlistenDings" + self.tag_string + ".csv" , 'w', newline='') as datei:
+                            schreiber = csv.writer(datei)
+                            schreiber.writerow(["Uhrzeit", "Anrufer", "Problem", "Info", "Telefonnummer", "Wollte Sprechen", "Weiterleitung"])
+                            schreiber.writerows(datensaetze)
+                            self.zeit_string = time.strftime("%H:%M:%S")
+                            self.tag_string = str(time.strftime("%d %m %Y"))
+                        print("Daten wurden in die CSV-Datei gespeichert.")
+                        print(f"Dateien wurden unter {self.csv_datei_pfad} gespeichert.")
+                        messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich im Netzlaufwerkpfad gespeichert.")
+                    else:
+                        print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
+                        messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern im Netzlaufwerkpfad schiefgelaufen. (vielleicht keine Datensätze?)")
                 else:
-                    print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
-                    messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern im Netzlaufwerkpfad schiefgelaufen. (vielleicht keine Datensätze?)")
-            else:
-                print("die var zum auto_speichern lag bei was anderem als 1")
+                    print("die var zum auto_speichern lag bei was anderem als 1")
+        except Exception as Ex_sp142:
+            print(Ex_sp142)
+            messagebox.showerror(title=self.Programm_Name_lang, message=f"Beim speichern auf dem Netzlaufwerk ist folgender Fehler aufgetreten: {Ex_sp142}\n\nDie Daten wurden höchstwahrscheinlich nicht gespeichert. ")
         print("======================================")
         sys.exit()
 
