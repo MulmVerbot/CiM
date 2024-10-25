@@ -381,6 +381,7 @@ class Listendings:
         self.ausgewaehlter_Eintrag = None
         self.Eintrag_geladen_jetzt = None
         self.ID_v = None
+        self.LB_auswahl_index = None
     ################ Jetzt werden hier so Dinge geladen wie Einstellungen, oder es wird hier geguckt, ob alle benötigten Ordner Existieren ############
         
 
@@ -730,6 +731,23 @@ class Listendings:
                 print(f"Es gab einen Fehler beim raussuchen der ID: {E_ID_f}")
             eintrag = self.lade_eintrag_aus_json_nach_id(eintrag_id)
             self.Eintrag_geladen_jetzt = eintrag # das is auch wieder kacke gelöst aber naja #DieFaulheitsiegt
+
+            if self.beb == "1":
+                self.Eintrag_Uhrzeit_e.delete("0", tk.END)
+                self.Eintrag_Telefonnummer_e.delete("0", tk.END)
+                self.Eintrag_Beschreibung_e.delete("0", tk.END)
+                self.Eintrag_Notizen_e.delete("0", tk.END)
+                self.Eintrag_wollte_sprechen_e.delete("0", tk.END)
+                self.Eintrag_an_weitergeleitet_e.delete("0", tk.END)
+
+                self.Eintrag_Uhrzeit_e.insert(0, f"{self.Eintrag_geladen_jetzt["Uhrzeit"]}")
+                self.Eintrag_Telefonnummer_e.insert(0, f"{self.Eintrag_geladen_jetzt["Telefonnummer"]}")
+                self.Eintrag_Beschreibung_e.insert(0, f"{self.Eintrag_geladen_jetzt["description"]}")
+                self.Eintrag_Notizen_e.insert(0, f"{self.Eintrag_geladen_jetzt["notizen"]}")
+                self.Eintrag_wollte_sprechen_e.insert(0, f"{self.Eintrag_geladen_jetzt["wen_sprechen"]}")
+                self.Eintrag_an_weitergeleitet_e.insert(0, f"{self.Eintrag_geladen_jetzt["an_wen_gegeben"]}")
+            else:
+                print("Bearbeiten war aus, habe die Werte nicht ersetz.")
             if eintrag:
                 self.Anrufer_Bezeichnung_l.configure(text=f"Anrufer: {eintrag["name"]}")
                 self.Zeit_aus_JSON.configure(text=f"Uhrzeit: {eintrag["Uhrzeit"]}")
@@ -2279,18 +2297,12 @@ class Listendings:
 
 ########## JTEZT WERDEN DIE TEXTBOXEN BEARBEITET
             self.Problem_text_neu.delete("0.0",Atk.END)
-            #self.Info_text_neu.delete("0.0",Atk.END)
             self.Problem_text_neu.insert("0.0", f"Uhrzeit: {self.Uhrzeit_text}\nAnrufer: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}")
-            #self.Info_text_neu.insert("0.0", f"ID: {self.ID_v}\n")
 ########## JTEZT WERDEN DIE TEXTBOXEN BEARBEITET-FERTSCHSHCSCHSCHSCHSHCH
             self.Eintrag_in_JSON_schmeissen()
             if os.path.exists(self.Liste_mit_datum):
                 with open(self.Liste_mit_datum, "a") as f:
                     f.write(f"Uhrzeit: {self.Uhrzeit_text}\nAnrufer: {kunde}\nProblem: {problem}\nInfo: {info}\nTelefonnummer: {T_Nummer}\nJemand bestimmtes sprechen: {self.wollte_sprechen}\nWeiterleitung: {self.Weiterleitung_an}\n\n")
-                with open(self.Liste_mit_datum, "r") as f:
-                    feedback_text = f.read()
-                    #self.ausgabe_text.delete("1.0", tk.END)
-                    #self.ausgabe_text.insert(tk.END, feedback_text)
                 self.Weiterleitung_an = ""
                 self.Uhrzeit_anruf_ende = None
                 self.optionmenu.set("Keine Weiterleitung")
@@ -2332,14 +2344,12 @@ class Listendings:
         self.optionmenu.set("Keine Weiterleitung")
     
     def beb_c(self):
-        #self.text_tk_text = #self.ausgabe_text.get("1.0", "end-1c") # mir fällt jetzt erst im Nachhinein (3-4 Monate später) auf das da "end-1c" steht, wtf ist das und warum ist das da?
         if self.beb == "0":
-            print("beb is jetzt = 1")
-            #self.ausgabe_text.configure(state='normal')
-            self.t_nummer.configure(state="normal")
-            self.beb_knopp.configure(text="Fertig", fg_color="aquamarine", hover_color="aquamarine3")
             if self.Eintrag_geladen_jetzt != None:
                 print("ein Eintrag aus der Liste wird nun bearbeitet")
+                self.LB_auswahl_index = self.Eintrags_Liste.curselection()
+                self.t_nummer.configure(state="normal")
+                self.beb_knopp.configure(text="Fertig", fg_color="aquamarine", hover_color="aquamarine3")
                 self.Eintrag_Uhrzeit_e.configure(state="normal")
                 self.Eintrag_Telefonnummer_e.configure(state="normal")
                 self.Eintrag_Beschreibung_e.configure(state="normal")
@@ -2367,12 +2377,19 @@ class Listendings:
                 self.Eintrag_Notizen_e.insert(0, f"{self.Eintrag_geladen_jetzt["notizen"]}")
                 self.Eintrag_wollte_sprechen_e.insert(0, f"{self.Eintrag_geladen_jetzt["wen_sprechen"]}")
                 self.Eintrag_an_weitergeleitet_e.insert(0, f"{self.Eintrag_geladen_jetzt["an_wen_gegeben"]}")
-                ## hier kommen dann noch die weiteren Entrys hin, die benötigt werden um die shaise zu bearbeiten. //
-                #// wenn das bearbeiten an ist und in der Liste was anderes gewählt wird muss sich der shais hier aktualisieren
+                ## hier kommen dann noch die weiteren Entrys hin, die benötigt werden um die shaise zu bearbeiten.
+                self.beb = "1"
+                print("beb is jetzt = 1")
+                root.unbind('<Return>')
+            else:
+                messagebox.showinfo(title=self.Programm_Name_lang, message="Kein Eintrag zum bearbeiten ausgewählt.")
+                self.t_nummer.configure(state="disabled")
+                root.bind('<Return>', self.senden)
+                self.beb_knopp.configure(text="Bearbeiten", fg_color=self.f_e, hover_color=self.f_hover_normal)
+                self.beb = "0"
 
 
-            self.beb = "1"
-            root.unbind('<Return>')
+            
         else:
             print("beb = 0")
             #self.ausgabe_text.configure(state='disabled')
@@ -2419,7 +2436,6 @@ class Listendings:
                 }
             
             self.beb_speichern_mit_JSON(self.Eintrags_DB, self.neuer_eintrag, self.Eintrag_geladen_jetzt["ID_L"]) # Das hier speichert dann alles im neuen Eintrag, alles was hier drunter steht ist dann also nur, um den Normalzustand wiederherzustellen.
-            
             self.Eintrag_Telefonnummer_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.f_border, placeholder_text="Telefonnummer")
             self.Eintrag_Uhrzeit_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.f_border, placeholder_text="Uhrzeit")
             self.Eintrag_Notizen_e.configure(fg_color=self.f_e_deak, text_color=self.f_e, placeholder_text_color=self.f_e, border_color=self.f_border, placeholder_text="Beschreibung")
@@ -2432,6 +2448,12 @@ class Listendings:
             self.Eintrag_Notizen_e.configure(state="disabled")
             self.Eintrag_wollte_sprechen_e.configure(state="disabled")
             self.Eintrag_an_weitergeleitet_e.configure(state="disabled")
+
+            self.Eintrags_Liste.selection_set(self.LB_auswahl_index)
+            self.Eintrags_Liste.event_generate("<<ListboxSelect>>")
+            self.LB_auswahl_index = None
+
+
 
     def beb_speichern_mit_JSON(self, jdb_pfad, neue_daten, id_l):
         print("beb_speichern_mit_JSON(def)")
