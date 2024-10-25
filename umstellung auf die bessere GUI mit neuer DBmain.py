@@ -1082,12 +1082,12 @@ class Listendings:
         return
 
     #def schnellnotizen_öffnen(self, event):  wie oben geschildert, musste die event var mit raus weil ich den mist deaktiviert hab
-    def schnellnotizen_öffnen(self, event):
+    def schnellnotizen_öffnen(self, event): # aber sie ist noch drin????
         print("[-INFO-] schnellnotizen_öffnen(def)")
         self.schnellnotizen_Fenster = tk.CTkToplevel(root)
         self.schnellnotizen_Fenster.title("Schnellnotiz")
         self.schnellnotizen_Fenster.configure(fg_color=self.f_e)
-        self.Textfeld_Schnellnotizen = tk.CTkTextbox(self.schnellnotizen_Fenster, width=420, height=420, text_color=self.Txt_farbe, fg_color="azure", wrap="word")
+        self.Textfeld_Schnellnotizen = tk.CTkTextbox(self.schnellnotizen_Fenster, width=420, height=420, text_color=self.Txt_farbe, fg_color=self.f_bg, wrap="word")
         height = 420
         width = 420
 
