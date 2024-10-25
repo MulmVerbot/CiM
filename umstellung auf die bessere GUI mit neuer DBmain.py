@@ -723,6 +723,7 @@ class Listendings:
         auswahl = self.Eintrags_Liste.curselection()
         print(f"Das hier wurde ausgewählt: {auswahl}")
         if auswahl:
+            print("auswahl existiert.")
             index = auswahl[0]
             auswahl = self.Eintrags_Liste.get(index)
             try:
@@ -733,6 +734,7 @@ class Listendings:
             self.Eintrag_geladen_jetzt = eintrag # das is auch wieder kacke gelöst aber naja #DieFaulheitsiegt
 
             if self.beb == "1":
+                print("LB event mit self.beb == 1")
                 self.Eintrag_Uhrzeit_e.delete("0", tk.END)
                 self.Eintrag_Telefonnummer_e.delete("0", tk.END)
                 self.Eintrag_Beschreibung_e.delete("0", tk.END)
@@ -746,6 +748,7 @@ class Listendings:
                 self.Eintrag_Notizen_e.insert(0, f"{self.Eintrag_geladen_jetzt["notizen"]}")
                 self.Eintrag_wollte_sprechen_e.insert(0, f"{self.Eintrag_geladen_jetzt["wen_sprechen"]}")
                 self.Eintrag_an_weitergeleitet_e.insert(0, f"{self.Eintrag_geladen_jetzt["an_wen_gegeben"]}")
+                self.LB_auswahl_index = self.Eintrags_Liste.curselection()
             else:
                 print("Bearbeiten war aus, habe die Werte nicht ersetz.")
             if eintrag:
@@ -770,7 +773,8 @@ class Listendings:
             else:
                 messagebox.showwarning(title=self.Programm_Name, message=f"Kein Eintrag mit ID {eintrag_id} gefunden.")
                 print(f"Kein Eintrag mit ID {eintrag_id} gefunden.")
-        
+        else:
+            print("auswahl existiert NICHT.")
     
 
     def Eintrag_aus_LB_verstecken(self):
