@@ -188,7 +188,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1"
+        self.Version = "Beta 1.1 (1)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -878,10 +878,10 @@ class Listendings:
     def Liste_laden_aus_JSON(self): # lädt die Enträge und packt sie in die LB, klappt nur wenn die LB schon geladen wurde!! (obvius ich weiß, aber ich sachs mal trotzdem)
         self.clear_L_LB()
         Eintrag_v = self.Eintrag_aus_JSON_DB_laden()
-        print(f"Hier ist das geladene: \n{Eintrag_v}") #self.Eintrag_geladen_jetzt["anzeigen"]
+        #print(f"Hier ist das geladene: \n{Eintrag_v}")
         for Dings in Eintrag_v:
             if Dings["anzeigen"] == True:                     
-                self.Eintrags_Liste.insert(Atk.END, f"  ID: {Dings['ID_L']} | {Dings['name']} | {Dings['Uhrzeit']}  ")          ### Hier kackts noch mächtig ab, der Rest geht aber
+                self.Eintrags_Liste.insert(Atk.END, f"  ID: {Dings['ID_L']} | {Dings['Uhrzeit']} | {Dings['name']}")          ### Hier kackts noch mächtig ab, der Rest geht aber
             else:
                 print(f"Eintrag mit id {Dings["ID_L"]} wird versteckt da Dings['anzeigen'] == {Dings["anzeigen"]} ist.")
         self.Eintrags_Liste.see(Atk.END)
@@ -2217,7 +2217,7 @@ class Listendings:
                     self.Uhrzeit_anruf_ende = gel_tmp1
                     print("End-Uhrzeit: ", self.Uhrzeit_anruf_ende)
                     tmp1_ld.close()
-                    self.Anruf_Zeit.configure(text=f"Kein akiver Anruf             ")
+                    self.Anruf_Zeit.configure(text=f"  Kein akiver Anruf  ")
                     try:
                         os.remove("tmp1.txt")
                     except:
