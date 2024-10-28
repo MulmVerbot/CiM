@@ -78,6 +78,12 @@ class TodoApp:
         #self.thread_autospeichern = threading.Timer(1, self.auto_speichern)
         #self.thread_autospeichern.daemon = True
         #self.thread_autospeichern.start()
+        self.nur_tag_string = str(time.strftime("%d"))
+        self.tag_string = str(time.strftime("%d %m %Y"))
+        self.Monat = time.strftime("%m")
+        self.zeit_string = time.strftime("%H:%M:%S")
+        self.tag_string = str(time.strftime("%d %m %Y"))
+        self.Jahr = str(time.strftime("%Y"))
 
         try:
             if not os.path.exists(self.tasks_pfad):
@@ -286,6 +292,7 @@ class TodoApp:
         task_name = None
         task_description = None
         task_name = self.Aufgaben_Titel_e.get().strip()
+        fertsch_var = False
         if task_name == None:
             task_name = self.Aufgaben_Titel_t.get()
         try:
@@ -310,8 +317,10 @@ class TodoApp:
                 task_description = "-"
             if task_notizen == "" or None:
                 task_notizen = "-"
+            if fertsch_var == "" or None:
+                fertsch_var = False
             #print(f"Hier haste die scheiße ma im Log: {task_notizen} und jetzt die kack beschreibung: {task_description}")
-            self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': self.ID}
+            self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': self.ID, 'fertsch': fertsch_var}
             self.ID += 1
             self.ID_speichern()
             self.Aufgaben_Titel_e.delete(0, tk.END) # das hier wird immmer klappen weil... naja. ohne Aufgabentitel auch keine Aufgabe!
@@ -362,7 +371,7 @@ class TodoApp:
             task_description = "-"
         if task_notizen == "" or None:
             task_notizen = "-"
-        self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': ID_der_gewählten_Aufgabe}
+        self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': ID_der_gewählten_Aufgabe, 'fertsch': False}
         self.save_task(self.task)
         self.create_task_button(self.task)
         self.refresh_tasks()
@@ -374,13 +383,24 @@ class TodoApp:
             self.show_task(task)
             self.aufgabe_loeschen_frage()
 
-        self.Knopp_frame = tk.CTkFrame(self.todo_frame_einz, fg_color="transparent")
-        self.Knopp_frame.pack(padx=10, pady=1)
-        self.button = tk.CTkButton(self.Knopp_frame, text=f"Nr. {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w")
-        self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="X", width=10, command=weghauen, border_color=self.rot, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
-        self.fertsch_knopp.pack(side=tk.LEFT)
-        self.button.pack(side=tk.LEFT)
-
+        try:
+            if task['fertsch'] == True:
+                print(f"Aufgabe wird versteckt weil task['fertsch'] == {task['fertsch']} ist.")
+            else:
+                self.Knopp_frame = tk.CTkFrame(self.todo_frame_einz, fg_color="transparent")
+                self.Knopp_frame.pack(padx=10, pady=1)
+                self.button = tk.CTkButton(self.Knopp_frame, text=f"Nr. {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w")
+                self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="X", width=10, command=weghauen, border_color=self.rot, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
+                self.fertsch_knopp.pack(side=tk.LEFT)
+                self.button.pack(side=tk.LEFT)
+        except KeyError:
+            print("task['fertsch'] war noch nicht in der DB vorhanden.")
+            self.Knopp_frame = tk.CTkFrame(self.todo_frame_einz, fg_color="transparent")
+            self.Knopp_frame.pack(padx=10, pady=1)
+            self.button = tk.CTkButton(self.Knopp_frame, text=f"Nr. {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w")
+            self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="X", width=10, command=weghauen, border_color=self.rot, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
+            self.fertsch_knopp.pack(side=tk.LEFT)
+            self.button.pack(side=tk.LEFT)
     
 
     def l_ja(self):
@@ -539,7 +559,7 @@ class TodoApp:
                             task_description = "-"
                         if not task_notizen:
                             task_notizen = "-"
-                        self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': self.ID}
+                        self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': self.ID, 'fertsch': False}
                         print(f"ich speichere jetzt das hier: {self.task}")
                         self.ID += 1
                         self.cim = None
@@ -576,7 +596,7 @@ class TodoApp:
         return []
 
     def delete_task(self, task):
-        tasks = self.load_tasks_from_file()
+        tasks = self.load_tasks_from_file() # jetzt fehlt hier nurnoch etwas um anhand der ID "fertsch" auf True zu setzen.
         tasks = [t for t in tasks if t['id'] != task['id']]
         with open(self.TASK_FILE, 'w') as file:
             json.dump(tasks, file, indent=4)
