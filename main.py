@@ -188,7 +188,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1 (1)"
+        self.Version = "Beta 1.1 (2)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -336,6 +336,8 @@ class Listendings:
         self.Txt_farbe_deak = self.f_e_deak
         self.f_e_PlH_Text = "LightSteelBlue1"
         self.f_hover_normal = "#424242"
+        self.f_LB_S = self.f_e_PlH_Text
+        self.f_LB_s_txt = "Black"
     #### Farben Ende ####
 
         root.configure(fg_color=self.Hintergrund_farbe)
@@ -541,13 +543,15 @@ class Listendings:
         root.bind('<Return>', self.senden)
         self.Listen_Liste_frame = tk.CTkFrame(root, fg_color=self.f_e_deak)
         self.Listen_Liste_frame.place(x=0,y=100)
-        self.Eintrags_Liste = Atk.Listbox(self.Listen_Liste_frame, bg=self.Ereignislog_farbe, fg=self.Txt_farbe, height=12, width=40)
+######## Eintrags LB
+        self.Eintrags_Liste = Atk.Listbox(self.Listen_Liste_frame, bg=self.Ereignislog_farbe, fg=self.Txt_farbe, height=12, width=40, selectbackground=self.f_LB_S, selectforeground=self.f_LB_s_txt)
         self.Eintrags_Liste.bind("<<ListboxSelect>>", self.LB_ausgewaehlt)
         scrollbar1 = tk.CTkScrollbar(self.Listen_Liste_frame, orientation=Atk.VERTICAL)
         self.Eintrags_Liste.config(yscrollcommand=scrollbar1.set)
         self.Eintrags_Liste.pack(side=Atk.LEFT, fill="both")
         scrollbar1.pack()
         scrollbar1.configure(command=self.Eintrags_Liste.yview)
+####### Eintrags LB
         self.Liste_laden_aus_JSON() ########################################################################### DAS HIER NICHT VERGESSEN RAUSZUNEHMEN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#####################
         self.kunde_entry.place(x=5,y=5)
         self.problem_entry.place(x=5,y=35)
@@ -615,7 +619,7 @@ class Listendings:
         self.Menü_Knopp = tk.CTkButton(master, text="Statistik", command=self.Menu_anzeige_wechseln, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Menü_Bild)
         self.Menü_Knopp.place(x=1260, y=160)
         self.Pause_menu = tk.CTkFrame(master, width=769, height=420, fg_color="LightSlateGray", border_color="White", border_width=1, corner_radius=1)
-        self.Ereignislog = tk.CTkTextbox(root, width=220, height=80, wrap="word", text_color=self.Txt_farbe, fg_color=self.Ereignislog_farbe, border_color=self.f_border, border_width=2, font=("Courier", 14, "bold"))
+        self.Ereignislog = tk.CTkTextbox(root, width=220, height=80, wrap="word", text_color=self.Txt_farbe, fg_color=self.Ereignislog_farbe, border_color=self.f_border, border_width=2, font=("Bangla MN", 12))
         self.Ereignislog.place(x=1210,y=10)
         self.Ereignislog_insert(nachricht_f_e="[-Ereignislog-]")
         #self.Ereignislog_insert(nachricht_f_e="[-Ereignislog-]\n")
@@ -1138,11 +1142,11 @@ class Listendings:
     def schnellnotizen_öffnen(self, event): # aber sie ist noch drin????
         print("[-INFO-] schnellnotizen_öffnen(def)")
         self.schnellnotizen_Fenster = tk.CTkToplevel(root)
-        self.schnellnotizen_Fenster.title("Schnellnotiz")
+        self.schnellnotizen_Fenster.title("Schnellnotiz (nicht gespeichert)")
         self.schnellnotizen_Fenster.configure(fg_color=self.f_e)
         self.Textfeld_Schnellnotizen = tk.CTkTextbox(self.schnellnotizen_Fenster, width=420, height=420, text_color=self.Txt_farbe, fg_color=self.f_bg, wrap="word")
         height = 420
-        width = 420
+        width = 620
 
         try:
             x = root.winfo_x() + root.winfo_width()//2 - self.schnellnotizen_Fenster.winfo_width()//2
@@ -1176,9 +1180,9 @@ class Listendings:
         else:
             self.Starface_Modul_Einstellung_Knopp.configure(text="Starface Modul ist deaktiviert.", fg_color="chocolate1", text_color="White")
         if self.Auto_speichern_Einstellungsdatei_var == "1":
-            self.Auto_speichern_ändern_knopp.configure(text="Autospeichern aktiviert.",fg_color=self.f_grün, text_color=self.Txt_farbe)
+            self.Auto_speichern_ändern_knopp.configure(text="Autospeichern ist aktiviert.", fg_color=self.f_grün, text_color=self.Txt_farbe)
         else:
-            self.Auto_speichern_ändern_knopp.configure(text="Autospeichern deaktiviert.", fg_color="chocolate1", text_color="White")  # den shais hier kann man so safe beser machen aber egal, vllt irgendwann mal
+            self.Auto_speichern_ändern_knopp.configure(text="Autospeichern ist deaktiviert.", fg_color="chocolate1", text_color="White")  # den shais hier kann man so safe beser machen aber egal, vllt irgendwann mal
         self.Listen_Speicherort_geladen_anders_Entry = tk.CTkEntry(self.tabview.tab("Speicherorte"), width=300, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, border_color=self.f_e)
         self.Listen_Speicherort_Netzwerk_geladen_anders_Entry = tk.CTkEntry(self.tabview.tab("Speicherorte"), width=300, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, border_color=self.f_e)
         self.Netzlaufwerk_pfad_geladen_Label = tk.CTkLabel(self.tabview.tab("Speicherorte"), text=self.Listen_Speicherort_Netzwerk_geladen_anders, text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
@@ -1642,7 +1646,7 @@ class Listendings:
             try:
                 with open(self.Auto_speichern_Einstellungsdatei, "w+") as schr_asp:
                     schr_asp.write("0")
-                    self.Auto_speichern_ändern_knopp.configure(text="Autospeichern deaktiviert",fg_color="chocolate1", text_color="White")
+                    self.Auto_speichern_ändern_knopp.configure(text="Autospeichern ist deaktiviert", fg_color="chocolate1", text_color="White")
                     self.Auto_speichern_Einstellungsdatei_var = "0"
             except Exception as o:
                 print("Es ist ein fehler aufgetreten: ",o)
@@ -1651,7 +1655,7 @@ class Listendings:
             try:
                 with open(self.Auto_speichern_Einstellungsdatei, "w+") as schr_asp:
                     schr_asp.write("1")
-                    self.Auto_speichern_ändern_knopp.configure(text="Autospeichern aktiviert", fg_color="aquamarine", text_color=self.Txt_farbe)
+                    self.Auto_speichern_ändern_knopp.configure(text="Autospeichern ist aktiviert", fg_color="aquamarine", text_color=self.Txt_farbe)
                     self.Auto_speichern_Einstellungsdatei_var = "1"
             except Exception as o1:
                 print("Es ist ein fehler aufgetreten: ",o1)
