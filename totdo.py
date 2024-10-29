@@ -103,7 +103,7 @@ class TodoApp:
         
         self.ID_laden()
         self.todo_aufmachen()
-        self.fake_laden()
+        #self.fake_laden()
         self.todo_r_dispawn()
         self.Listennamen_laden()
 
@@ -230,7 +230,11 @@ class TodoApp:
 
         self.Datum_fertsch_e = tk.CTkEntry(self.todo_frame_rechts, text_color="White") # hier hinter noch die ganze funktionalität mit einbauen
         self.Datum_fertsch_e.place(x=250,y=840)
-        self.load_tasks()
+
+        self.Erledigt_Liste_öffnen_knopp = tk.CTkButton(self.todo_frame_links, text="erledigte Aufgaben anzeigen", command=self.erledigte_Aufgaben_laden)
+        self.Erledigt_Liste_öffnen_knopp.place(x=10,y=100)
+
+        self.load_tasks() # lädt die akuellen Aufgaben
 
     def info(self):
         print("Programmiert von Maximilian Becker")
@@ -238,6 +242,10 @@ class TodoApp:
 
     def task_update_knopp(self, event):
         self.task_update()
+
+    def erledigte_Aufgaben_laden(self): # hier muss dann noch das hin //todo
+        print("erledigte_Aufgaben_laden(def)")
+
 
     def Uhr(self):
         print("Thread gestartet: Uhr(def)")
@@ -253,6 +261,41 @@ class TodoApp:
                 self.Zeit_text.configure(text=lokaler_zeit_string)
             time.sleep(1)
         print("Thread Beendet: Uhr(def)")
+
+    def Aufgabe_erledigt(self, jdb_pfad, neue_daten, id_a):
+        print("beb_speichern_mit_JSON(def)")
+        print(f"Bearbeite nun den Eintrag mit folgender ID: {self.task_übergabe["id"]}")
+        with open(jdb_pfad, 'r', encoding='utf-8') as f:
+            daten = json.load(f)
+        # Eintrag suchen und ersetzen
+        ersetzt = False
+        for index, eintrag in enumerate(daten):
+            if eintrag['id'] == id_a:
+                daten[index] = neue_daten  # Den Eintrag ersetzen
+                ersetzt = True
+                break
+        if ersetzt:
+            # Datei mit den neuen Daten speichern
+            with open(jdb_pfad, 'w', encoding='utf-8') as f:
+                json.dump(daten, f, ensure_ascii=False, indent=4)
+            print(f"Eintrag mit ID_L {id_a} erfolgreich ersetzt.")
+        else:
+            print(f"Kein Eintrag mit ID_a {id_a} gefunden.")
+
+    def l_ja(self):
+        self.neuer_eintrag = {
+            "name": self.task_übergabe["name"],
+            "description": self.task_übergabe["description"],
+            "Uhrzeit": self.task_übergabe["Uhrzeit"],
+            "notizen": self.task_übergabe["notizen"],
+            "id": self.task_übergabe["id"],
+            "fertsch": True # das hier wird immer auf True gesetzt weil es ja der sinn der Funktion ist.
+        }
+        self.Aufgabe_erledigt(self.tasks_pfad_datei, self.neuer_eintrag, self.task_übergabe["id"])
+        self.refresh_tasks()
+
+    def l_nein(self):
+        pass
 
     def Listenname_change(self): # Den Namen der Liste ändern
         print("Listenname_change (def)")
@@ -298,7 +341,7 @@ class TodoApp:
         try:
             task_description = self.Aufgaben_Beschreibung_t.get("0.0", "end").strip()
         except:
-            print("desc war leeer")
+            print("desc war leer")
             task_description = ""
         try:
             task_notizen = self.Notizen_feld.get("0.0", "end").strip()
@@ -336,7 +379,7 @@ class TodoApp:
         else:
             messagebox.showinfo(title=self.Programm_Name, message="Bitte geben Sie zuerst einen Aufgabentitel ein.")
         
-        ## kriegt immer die des als letztes gesetzen  // worfür ist diese Notiz???
+        ## kriegt immer die des als letztes gesetzen  // worfür ist diese Notiz??? /// tchjoar...
 
     def jsons_durchsuchen(self): # das hier ist teoretisch der Code zum durchsuchen der json dateien (unfertig))
         try:
@@ -352,7 +395,7 @@ class TodoApp:
         ID_der_gewählten_Aufgabe = None
         task_name = None
 
-        task = self.task_übergabe
+        task = self.task_übergabe #  heißt beim cim "self.Eintrag_geladen_jetzt"
         ID_der_gewählten_Aufgabe = task['id']
         tasks = self.load_tasks_from_file()
         tasks = [t for t in tasks if t['id'] != task['id']]
@@ -403,11 +446,7 @@ class TodoApp:
             self.button.pack(side=tk.LEFT)
     
 
-    def l_ja(self):
-        self.delete_task(self.task)
-
-    def l_nein(self):
-        pass
+    
 
     def entry_rein(self, event):
         print("despawn durch entry")
@@ -484,7 +523,7 @@ class TodoApp:
     def show_task(self, task): # Das hier wird jedesmal ausgeführt wenn jemand eine Aufgabe anclickt
         print("Aufgabe anzeigen")
         self.task = task
-        self.task_übergabe = task 
+        self.task_übergabe = task # im cim würde diese Variable jetzt "self.Eintrag_geladen_jetzt" oderso heißen
         ## Das hier oben ist auch wieder mega dumm gelöst weil die var drüber bereits existert, 
         ## ich bin nur gerade zu faul zu gucken ob die zu fürhezeitig wieder freigegeben wird. Sorry zukunfst Max! -- digga wie oft willst Du diese Ausrede noch bringen? 25.10
         self.todo_r_dispawn()
@@ -595,7 +634,7 @@ class TodoApp:
                 return json.load(file)
         return []
 
-    def delete_task(self, task):
+    def delete_task(self, task): ## obsolete
         tasks = self.load_tasks_from_file() # jetzt fehlt hier nurnoch etwas um anhand der ID "fertsch" auf True zu setzen.
         tasks = [t for t in tasks if t['id'] != task['id']]
         with open(self.TASK_FILE, 'w') as file:
