@@ -188,7 +188,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1 (2)"
+        self.Version = "Beta 1.1.1"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -777,8 +777,19 @@ class Listendings:
                         self.Eintrag_aus_LB_verstecken()
                     else:
                         print("Eintrag verstecken vom Nutzer abgebrochen.")
+                try:
+                    print("despawn des LB_GUI zeugs")
+                    self.Eintrag_verstecken_Knopp.place_forget()
+                    self.Anruf_starten_LB_Knopp.place_forget()    
+                except:
+                    print("war wohl nicht da")
+
+            ### hier jetzt einfach GUI Elemente einfügen die erscheinen sollen wenn ich etwas in der LB auswähle.
                 self.Eintrag_verstecken_Knopp = tk.CTkButton(root, text="Eintrag verstecken", command=v_F, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.rot, image=self.entfernen_Bild)
                 self.Eintrag_verstecken_Knopp.place(x=1260,y=250)
+                self.Anruf_starten_LB_Knopp = tk.CTkButton(root, text="anrufen", command=lambda: self.Anruf_tätigen({eintrag["Telefonnummer"]}), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.rot)
+                self.Anruf_starten_LB_Knopp.place(x=10,y=320)          
+            ###
             else:
                 messagebox.showwarning(title=self.Programm_Name, message=f"Kein Eintrag mit ID {eintrag_id} gefunden.")
                 print(f"Kein Eintrag mit ID {eintrag_id} gefunden.")
@@ -979,6 +990,25 @@ class Listendings:
         self.weiterleitung_laden()
         self.Einstellungen_laden()
         print("[-init-] Die Wish init is vorbei.")
+
+    def Anruf_tätigen(self, telefonummer):
+        tel_url = f"tel://{telefonummer}"
+        if self.Windows == True:
+            try:
+                messagebox.showinfo(title=self.Programm_Name_lang, message="Diese Funktion ist unter Windows noch nicht getestet.")
+                print(f"Ich rufe nun {telefonummer} an.")
+                subprocess.run(["open", tel_url])
+            except Exception as strippenkasper:
+                print(f"Beim starten des Anrufes ist ein Fehler aufgetreten. Fehlermeldung: {strippenkasper}")
+                messagebox.showerror(title=self.Programm_Name_lang, message=f"Beim starten des Anrufes ist ein Fehler aufgetreten. Fehlermeldung: {strippenkasper}")
+        else:
+            try:
+                print(f"Ich rufe nun {telefonummer} an.")
+                subprocess.run(["open", tel_url])
+            except Exception as strippenkasper:
+                print(f"Beim starten des Anrufes ist ein Fehler aufgetreten. Fehlermeldung: {strippenkasper}")
+                messagebox.showerror(title=self.Programm_Name_lang, message=f"Beim starten des Anrufes ist ein Fehler aufgetreten. Fehlermeldung: {strippenkasper}")
+
 
     def email_baukasten(self):
         print("email_baukasten(def)")
