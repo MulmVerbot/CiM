@@ -22,7 +22,7 @@ import re
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Beta 1.0 (3)"
+        self.Version = "Beta 1.0 (4)"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -606,7 +606,6 @@ class TodoApp:
                         self.save_task(self.task)
                         self.create_task_button(self.task)
                         self.button.invoke()
-                        self.refresh_tasks()
             except:
                 pass
             time.sleep(1)
