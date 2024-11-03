@@ -528,7 +528,6 @@ class TodoApp:
         ## ich bin nur gerade zu faul zu gucken ob die zu fürhezeitig wieder freigegeben wird. Sorry zukunfst Max! -- digga wie oft willst Du diese Ausrede noch bringen? 25.10
         self.todo_r_dispawn()
 
-        # Definiere die Widgets im rechten Frame
         self.Notizen_feld = tk.CTkTextbox(self.todo_frame_rechts, text_color="White", fg_color=self.f_r_1, wrap="word", border_width=0)
         self.ID_label = tk.CTkLabel(self.todo_frame_rechts, text=f"Aufgaben-ID:  {task['id']}", text_color="White", font=self.Schriftart_n)
         self.Aufgaben_Titel_t = tk.CTkTextbox(self.todo_frame_rechts, width=330, height=40, text_color="White", fg_color=self.f_r_1, wrap="word", border_width=0, activate_scrollbars=False)
@@ -567,7 +566,7 @@ class TodoApp:
                 self.l_nein()
         
     def Mod_suche(self): # Das hier ist die Funktion die jede sekunde nachschaut ob es vom CiM eine neue Aufgabe gibt.
-        print("Mod suche läuft")
+        print("Mod suche läuft") # Das ist mega fehleranfällig und manchmal stürzt das ding auch einfach so krass ab dass sich das ganze Programm schließt aber ich bin zu faul einfach die JSON zu bearbeiten.
         print(self.cim_txt_pfad)
         while self.Mod_Suche_aktiv == True:
             try:
