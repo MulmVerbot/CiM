@@ -188,7 +188,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.1"
+        self.Version = "Beta 1.1.1 (1)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -544,7 +544,10 @@ class Listendings:
         self.Listen_Liste_frame = tk.CTkFrame(root, fg_color=self.f_e_deak)
         self.Listen_Liste_frame.place(x=0,y=100)
 ######## Eintrags LB
-        self.Eintrags_Liste = Atk.Listbox(self.Listen_Liste_frame, bg=self.Ereignislog_farbe, fg=self.Txt_farbe, height=12, width=40, selectbackground=self.f_LB_S, selectforeground=self.f_LB_s_txt)
+        if self.Windows == False: # unter windows ist die LB sonst nicht breit genug.
+            self.Eintrags_Liste = Atk.Listbox(self.Listen_Liste_frame, bg=self.Ereignislog_farbe, fg=self.Txt_farbe, height=12, width=40, selectbackground=self.f_LB_S, selectforeground=self.f_LB_s_txt)
+        else:
+            self.Eintrags_Liste = Atk.Listbox(self.Listen_Liste_frame, bg=self.Ereignislog_farbe, fg=self.Txt_farbe, height=12, width=60, selectbackground=self.f_LB_S, selectforeground=self.f_LB_s_txt)
         self.Eintrags_Liste.bind("<<ListboxSelect>>", self.LB_ausgewaehlt)
         scrollbar1 = tk.CTkScrollbar(self.Listen_Liste_frame, orientation=Atk.VERTICAL)
         self.Eintrags_Liste.config(yscrollcommand=scrollbar1.set)
@@ -565,7 +568,7 @@ class Listendings:
         self.Anrufer_Bezeichnung_l.place(x=420,y=100)
         self.ID_M_l = Atk.Label(root, text="", fg=self.Txt_farbe, bg=self.f_e, width=10)
         self.ID_M_l.place(x=950, y=100)                     ############## den ganzen mist dann bitte auch so machen dass ich das mit strg + s schnell speichern kann, danke //todo
-        self.Eintrag_Telefonnummer_l = Atk.Label(root, text=f"                    ", anchor="center", bg=self.f_e)
+        self.Eintrag_Telefonnummer_l = Atk.Label(root, text=f"                    ", bg=self.f_e, fg=self.Txt_farbe)
         self.Eintrag_Telefonnummer_l.place(x=1050, y=100)    
 
         self.Problem_text_neu = tk.CTkTextbox(root, width=820, height=200, bg_color=self.Entry_Farbe, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, wrap="word", state="disabled") # die var dann noch ändern //todo wird dann aus der Liste geladen
@@ -677,6 +680,7 @@ class Listendings:
         self.tabview.add("SMTP")
         self.tabview.add("Speicherorte")
         self.tabview.add("Weiterleitungen")
+        self.Email_Einstellungen_info = tk.CTkLabel(self.tabview.tab("SMTP"), text='Diese Einstellungen werden von der Funktion "Ticket erstellen" benötigt.', text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
         self.gel_Email_Empfänger_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Ziel Email Adresse", text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
         self.gel_Email_Sender_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Absende Email Adresse", text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
         self.gel_Email_Absender_Passwort_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Absende Mail Kennwort", text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
@@ -1273,6 +1277,7 @@ class Listendings:
         self.weiterleitungen_vier_e.place(x=10,y=190)
         self.Weiterleitungen_speichern_knopp.place(x=10,y=240)
         self.Adressbuch_anzeigen_frame.place(x=5,y=20)
+        self.Email_Einstellungen_info.place(x=10, y=100)
 
         try:
             if self.smtp_login_erfolgreich == True:
@@ -1333,6 +1338,7 @@ class Listendings:
         print("[-INFO-] Einstellungen_schließen(def)")
         self.Einstellungsseite_Knopp.configure(command=self.Einstellungen_öffnen, text="Einstellungen", fg_color=self.f_e, hover_color=self.f_hover_normal)
         self.Starface_Modul_Einstellung_Knopp.pack_forget()
+        self.Email_Einstellungen_info.place_forget()
         self.Einstellungen_Frame.place_forget()
         self.tabview.place_forget()
         
