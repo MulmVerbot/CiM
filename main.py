@@ -2197,7 +2197,6 @@ class Listendings:
 
 
     def Suche_KDabl(self):
-        self.Ort_wo_gesucht_wird = self.eigener_Suchort
         print("[ SUCHE 2.0 - INFO ] Suchen(def)")
         self.Suche_suche = ""
         self.gesucht_zahl = 0
