@@ -188,7 +188,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.1 (2)"
+        self.Version = "Beta 1.1.2"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -264,6 +264,8 @@ class Listendings:
         self.Eintrags_DB_ordnerpfad = os.path.join(self.Listen_Speicherort_standard, self.Jahr, self.Monat, self.nur_tag_string)
         self.ID_speicherort_L_pfad = self.Db_Ordner_pfad
         self.ID_speicherort_L = os.path.join(self.Eintrags_DB_ordnerpfad, "M_ID.txt")
+        self.eigener_Suchort_Einstellungsdatei = os.path.join(self.Einstellungen_ordner, "eigener_suchort.txt")
+
 #            _ .-') _             .-') _                   
 #           ( (  OO) )           ( OO ) )                  
 #           \     .'_  .---.,--./ ,--,'   ,--.   .-----.  
@@ -384,6 +386,7 @@ class Listendings:
         self.Eintrag_geladen_jetzt = None
         self.ID_v = None
         self.LB_auswahl_index = None
+        self.eigener_Suchort = None
     ################ Jetzt werden hier so Dinge geladen wie Einstellungen, oder es wird hier geguckt, ob alle benötigten Ordner Existieren ############
         
 
@@ -805,6 +808,100 @@ class Listendings:
 
     def Eintrag_per_Mail_weiterleiten(self):
         print("Eintrag_per_Mail_weiterleiten(def)")
+
+        print("[-INFO-] Ticket_erstellen (Email)")
+        Mail_Anhang = None
+        empfänger_adresse = ""
+        self.Betreff_Mail = ""
+        self.alternative_empfänger_adresse = ""
+        self.Nachricht_Mail_Inhalt = ""
+
+        msg = MIMEMultipart()
+        msg["From"] = self.sender_email
+        msg["To"] = empfänger_adresse
+        msg["Subject"] = self.Betreff_Mail
+        msg.attach(MIMEText(self.Nachricht_Mail_Inhalt, "plain"))
+
+        ##### Anhänge an die Mail packen ####
+        if Mail_Anhang:
+            try:
+                part = MIMEBase("application", "octet-stream")
+                with open(Mail_Anhang, "rb") as attachment:
+                    part.set_payload(attachment.read())
+                encoders.encode_base64(part)
+                filename = Mail_Anhang.split('/')[-1]
+                part.add_header("Content-Disposition", f"attachment; filename={filename}")
+                msg.attach(part)
+                Mail_Anhang = None
+                filename = None
+                print("Datei an Ticket angehängt.")
+            except Exception as ez3:
+                print("Fehler beim Anhängen der Datei: ", ez3)
+                messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim Anhängen der Datei. Fehlercode: {ez3}")
+                return
+
+        with smtplib.SMTP_SSL(self.smtp_server, 465) as server: # Das hier kann man bestimmt einfach so machen dass es eine funktion gibt bei der sich am Server angemeldet wird.
+            try:
+                ###server.set_debuglevel(1)
+                server.login(self.sender_email, self.pw_email)
+                self.smtp_login_erfolgreich = True
+            except Exception as EmailEx1:
+                print("Fehler beim anmelde beim Mailserver. Fehlercode: ", EmailEx1)
+                self.smtp_login_erfolgreich = False
+                try:
+                    self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP fehlgeschlagen.", text_color="Red")
+                    self.Ereignislog_insert(nachricht_f_e="-Anmeldung am SMTP fehlgeschlagen.-")
+                except:
+                    pass
+                messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim Anmelden am Mailserver. Fehlercode: {self.smtp_server}")
+            if self.alternative_empfänger_adresse == "":
+                try:
+                    server.sendmail(self.sender_email, self.empfänger_email, msg.as_string())
+                    if self.kopie_der_mail_erhalten == True:
+                        server.sendmail(self.sender_email, self.sender_email, msg.as_string())
+                        self.Ereignislog_insert(nachricht_f_e="-Email Kopie an SMTP Server versendet.-")
+                    self.Ereignislog_insert(nachricht_f_e="-Email an SMTP Server versendet.-")
+                except Exception as EmailEx2:
+                    print("Fehler beim anmelden beim senden an den Mailserver. Fehlercode: ", EmailEx2)
+                    self.Ereignislog_insert(nachricht_f_e="-Anmeldung am SMTP fehlgeschlagen.-")
+                    messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der Nachricht an den Mailserver. Fehlercode: {EmailEx2}")
+                self.Ticket_Fenster.destroy()
+                messagebox.showinfo(title="CiM", message="Das Ticket wurde erfolgreich erstellt.")
+                print("E-Mail erfolgreich gesendet!")
+            elif self.alternative_empfänger_adresse != "":
+                try:
+                    server.sendmail(self.sender_email, self.alternative_empfänger_adresse, msg.as_string())
+                    self.Ereignislog_insert(nachricht_f_e="-Email an SMTP Server versendet.-")
+                except Exception as EmailEx2:
+                    print("Fehler beim anmelden beim senden an den Mailserver. Fehlercode: ", EmailEx2)
+                    self.Ereignislog_insert(nachricht_f_e="-Anmeldung am SMTP fehlgeschlagen.-")
+                    messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der Nachricht an den Mailserver. Fehlercode: {EmailEx2}")
+                self.Ticket_Fenster.destroy()
+                messagebox.showinfo(title="CiM", message="Das Ticket wurde erfolgreich erstellt.")
+                print("E-Mail erfolgreich gesendet!")
+    
+    def eigenen_suchort_einstellen(self):
+        print("eigenen_suchort_einstellen(def)")
+        gew_pfad = filedialog.askdirectory()
+
+        if gew_pfad:
+            try:
+                with open(self.eigener_Suchort_Einstellungsdatei, "w+") as einst_schr:
+                    einst_schr.write(gew_pfad)
+                messagebox.showinfo(title=self.Programm_Name_lang, message=f"Der neue Pfad für die Schnellsuche liegt nun bei {gew_pfad}")
+                try:
+                    self.eigen_such_pfad_gel_e.delete(0, tk.END)
+                    self.eigen_such_pfad_gel_e.insert(0, gew_pfad)
+                except:
+                    pass
+                gew_pfad = None
+                self.eigener_suchort_Einstellung_laden()
+            except Exception as Exc000:
+                print(f"Fehler beim speichern der Einstellung: {Exc000}")
+                gew_pfad = None
+        else:
+            messagebox.showinfo(title=self.Programm_Name_lang, message="Einstellung wurde vom Nutzer abgebrochen und wird nicht gespeichert")
+            gew_pfad = None
         
     
 
@@ -948,6 +1045,7 @@ class Listendings:
         print("[-Einstellungen_laden - INFO -] Lade nun alle Einstellungen")
         self.Netzlaufwerk_Einstellung_laden()
         self.Theme_Einstellungen_laden()
+        self.eigener_suchort_Einstellung_laden()
         print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die Mail Einstellungen")
         try:
             print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail Sender Einstellungen")
@@ -981,6 +1079,16 @@ class Listendings:
         except Exception as EmailEx3_l:
             print(f"Fehler beim laden der Passwort Maileinstellungen: {EmailEx3_l}")
             self.pw_email = ""
+
+        
+    def eigener_suchort_Einstellung_laden(self):
+        try:
+            print("-EINSTLLUNGEN LADEN-] Lade nun den eigenen Suchort")
+            with open(self.eigener_Suchort_Einstellungsdatei, "r") as esp_gel:
+                self.eigener_Suchort = esp_gel.read()
+                print("-EINSTLLUNGEN LADEN-] eigener Suchort geladen.")
+        except Exception as Exc89283:
+            print(f"-EINSTLLUNGEN LADEN- ERR-] Fehler beim laden des eigenen Suchortes. Fehlermeldung: {Exc89283}")
         
     def ordner_erstellen(self):
         print("[ INFO - INIT - PFADE ] Erstelle nun die Ordner für die Listen DB")
@@ -1234,6 +1342,10 @@ class Listendings:
         self.Listen_Speicherort_Netzwerk_geladen_anders_Entry = tk.CTkEntry(self.tabview.tab("Speicherorte"), width=300, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, border_color=self.f_e)
         self.Netzlaufwerk_pfad_geladen_Label = tk.CTkLabel(self.tabview.tab("Speicherorte"), text=self.Listen_Speicherort_Netzwerk_geladen_anders, text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
         self.Pfad_geladen_Label = tk.CTkLabel(self.tabview.tab("Speicherorte"), text=self.Listen_Speicherort_geladen_anders, text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
+        
+        self.eigen_such_pfad_gel_l = tk.CTkLabel(self.tabview.tab("Speicherorte"), text="Pfad für Suchen", text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
+        self.eigen_such_pfad_gel_e = tk.CTkEntry(self.tabview.tab("Speicherorte"), width=300, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, border_color=self.f_e)
+        self.eigen_such_pfad_sp_k = tk.CTkButton(self.tabview.tab("Speicherorte"), text="ändern",command=self.eigenen_suchort_einstellen, width=100, fg_color=self.f_grün, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.aktiviert_farbe)
 
         self.Normaler_Speicherort_change = tk.CTkButton(self.tabview.tab("Speicherorte"), text="ändern", command=self.ListenDings_speicherort_ändern, width=100, fg_color=self.f_grün, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.aktiviert_farbe)
         self.Netzwerk_Speicherort_change = tk.CTkButton(self.tabview.tab("Speicherorte"), text="ändern", command=self.ListenDings_speicherort_Netzwerk_ändern, width=100, fg_color=self.f_grün, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.aktiviert_farbe)
@@ -1249,18 +1361,24 @@ class Listendings:
         self.Netzwerk_Speicherort_change.place(x=470,y=80)
         self.Listen_Speicherort_geladen_anders_Entry.place(x=160, y=110)
         self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.place(x=160,y=80)
+        self.eigen_such_pfad_gel_l.place(x=10,y=140)
+        self.eigen_such_pfad_gel_e.place(x=160,y=140)
+        self.eigen_such_pfad_sp_k.place(x=470,y=140)
         try:
             self.Listen_Speicherort_geladen_anders_Entry.delete(0, tk.END)
             self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.delete(0, tk.END)
+            self.eigen_such_pfad_gel_e.delete(0, tk.END)
         except:
             print("Konnte den Inhalt der Entrys für die Pfade nicht löschen")
             self.Ereignislog_insert(nachricht_f_e="Konnte den Inhalt der Entrys für die Pfade nicht löschen")
         try:
             self.Listen_Speicherort_geladen_anders_Entry.insert(0, self.Listen_Speicherort_geladen)
             self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.insert(0, self.Listen_Speicherort_Netzwerk_geladen)
+            self.eigen_such_pfad_gel_e.insert(0, self.eigener_Suchort)
         except:
             print("Konnte die geladenen Speicherorte nicht in die Entrys übernehmen.")
             self.Ereignislog_insert(nachricht_f_e="Konnte den Inhalt der Entrys für die Pfade nicht löschen")
+
         def rückruf_speichern():
             print(f"self.mitspeichern.get() = : {self.mitspeichern.get()}")
             self.Kontakt_soll_gleich_mitgespeichert_werden = True
@@ -1778,9 +1896,9 @@ class Listendings:
         print("def such_menü_hauptmenu(self)")
         self.irgendwo_suchen.configure(text="schließen", command=self.such_menü_hauptmenu_schließen, hover_color="CadetBlue1", fg_color=self.aktiviert_farbe, image=self.Durchsuchen_Bild)
         self.Such_menu_haupt_frame.place(x=1060,y=100)
-        self.KDabl_durchsuchen_Knopp = tk.CTkButton(self.Such_menu_haupt_frame, text="In Kndn-DB suchen", command=self.Suche_KDabl, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Kunde_suchen_Bild)
+        self.KDabl_durchsuchen_Knopp = tk.CTkButton(self.Such_menu_haupt_frame, text="Schnell Suche", command=self.Suche_KDabl, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Kunde_suchen_Bild)
         self.KDabl_durchsuchen_Knopp.place(x=10,y=40)
-        self.durchsuchen_egal = tk.CTkButton(self.Such_menu_haupt_frame, text="irgendwo suchen...", command=self.Suche1, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Durchsuchen_Bild)
+        self.durchsuchen_egal = tk.CTkButton(self.Such_menu_haupt_frame, text="irgendwo suchen", command=self.Suche1, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Durchsuchen_Bild)
         self.durchsuchen_egal.place(x=10, y=10)
         self.In_alten_Einträgen_suchen = tk.CTkButton(self.Such_menu_haupt_frame, text="In DB suchen", command=self.Suche_alte_Einträge, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Dings_Liste_Bild)
         self.In_alten_Einträgen_suchen.place(x=10,y=70)
@@ -2031,7 +2149,7 @@ class Listendings:
         scrollbar.config(command=self.Ergebnisse_Listbox.yview)
         
         if self.Ort_wo_gesucht_wird == "":
-            self.Ort_wo_gesucht_wird = filedialog.askdirectory()
+            self.Ort_wo_gesucht_wird = filedialog.askdirectory(title="Suchpfad auswählen")
         print("[ SUCHE 2.0 - INFO ] Pfad wurde ausgewählt")
         such_dialog = tk.CTkInputDialog(title="CiM Suche", text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht. (Groß-und Kleinschreibung wird ignoriert)")
         try:
@@ -2079,8 +2197,74 @@ class Listendings:
 
 
     def Suche_KDabl(self):
-        self.Ort_wo_gesucht_wird = "/Volumes/Kundenablage/"
-        self.Suche1()
+        self.Ort_wo_gesucht_wird = self.eigener_Suchort
+        print("[ SUCHE 2.0 - INFO ] Suchen(def)")
+        self.Suche_suche = ""
+        self.gesucht_zahl = 0
+        self.gesucht_zahl_mit_fehlern = 0
+        self.Ergebnise_zahl = 0
+        try:
+            self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500, fg_color=self.Hintergrund_farbe_Text_Widget, text_color=self.Textfarbe, border_color=self.f_border, border_width=2)
+        except:
+            pass
+        self.durchsucht_text = f"bis jetzt wurden {self.gesucht_zahl} Dateien durchsucht."
+        self.durchsucht_text_mit_fehlern = f"Fehler: {self.gesucht_zahl_mit_fehlern}"
+        try:
+            self.suchfenster_ergebnisse = tk.CTkToplevel(root)
+            self.suchfenster_ergebnisse.resizable(False,False)
+            try:
+                height = 350
+                width = 920
+                x = root.winfo_x() + root.winfo_width()//2 - self.suchfenster_ergebnisse.winfo_width()//2
+                y = root.winfo_y() + root.winfo_height()//2 - self.suchfenster_ergebnisse.winfo_height()//2
+                self.suchfenster_ergebnisse.geometry(f"{width}x{height}+{x}+{y}")
+            except:
+                pass
+            self.suchfenster_ergebnisse.title("Suchergebnisse")
+        except:
+            pass
+        
+        print("[ SUCHE 2.0 - INFO ] Fenster fürs suchen geladen...")
+        self.Zahl_anzeige = tk.CTkLabel(self.suchfenster_ergebnisse, text=self.durchsucht_text)
+        self.Zahl_anzeige.pack()
+        self.Zahl_anzeige_der_fehler = tk.CTkLabel(self.suchfenster_ergebnisse, text=self.durchsucht_text_mit_fehlern)
+        self.Zahl_anzeige_der_fehler.pack()
+        self.Ergebnisse_Listbox = Atk.Listbox(self.suchfenster_ergebnisse)
+        self.Ergebnisse_Listbox.pack(fill="both", expand=True)
+        self.suchfenster_ergebnisse.protocol("WM_DELETE_WINDOW", self.bye_suchfenster)
+        scrollbar = Atk.Scrollbar(self.Ergebnisse_Listbox, orient=Atk.VERTICAL)
+        scrollbar.pack(side=Atk.RIGHT, fill=Atk.Y)
+        self.Ergebnisse_Listbox.config(yscrollcommand=scrollbar.set)
+        scrollbar.config(command=self.Ergebnisse_Listbox.yview)
+        
+        if self.Ort_wo_gesucht_wird == "":
+            self.Ort_wo_gesucht_wird = filedialog.askdirectory(initialdir=self.eigener_Suchort, title="Suchpfad auswählen")
+        print("[ SUCHE 2.0 - INFO ] Pfad wurde ausgewählt")
+        such_dialog = tk.CTkInputDialog(title="CiM Suche", text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht. (Groß-und Kleinschreibung wird ignoriert)")
+        try:
+            x = root.winfo_x() + root.winfo_width()//2 - such_dialog.winfo_width()//2
+            y = root.winfo_y() + root.winfo_height()//2 - such_dialog.winfo_height()//2
+            such_dialog.geometry(f"x+{x}+{y}")
+        except:
+            print("[ SUCHE 2.0 - ERR ] Fehler beim zentrieren des Such-Dialogs. selbst wenn ich hier die Fehlermeldung hinschreiben würde, würdest Du sie nicht verstehen denn ich habe auch keine Ahnung.")
+
+        self.Suche_suche = such_dialog.get_input()
+        such_dialog.destroy()
+        if self.Suche_suche != "":
+            try:
+                self.thread_suche = threading.Thread(target=self.Suche_algo)
+                self.thread_suche.start()
+                print("[ SUCHE 2.0 - INFO ] Thread für die Suche gestartet.")
+            except:
+                print("[ SUCHE 2.0 - INFO ] Thread für die Suche konnte nicht gestartet werden.")
+                try:
+                    self.etwas_suchen1 = True
+                    self.Suche_algo()
+                except Exception as esisx:
+                    print("[ SUCHE 2.0 - ERR ] fehler161: ",esisx)
+        else:
+            messagebox.showinfo(message="Suche abgebrochen.")
+            self.suchfenster_ergebnisse.destroy()
 
     def Suche_alte_Einträge(self):
         self.Ort_wo_gesucht_wird = self.Listen_Speicherort_standard
@@ -2211,6 +2395,15 @@ class Listendings:
             print(f"[ SUCHE 2.0 - INFO ] Es sind weniger als 20 Suchergbnisse.{self.Anzahl_der_Ergebnisse}")
             self.aufmachen_results()
 
+    def bereits_aktiver_anruf(self):
+        print("bereits_aktiver_anruf(def)")
+        try:
+            messagebox.showerror(title=self.Programm_Name_lang, message=f"Ein Anruf läuft bereits seit: {self.Uhrzeit_anruf_start}.")
+        except Exception as e6789:
+            print(f"Fehler bei der Meldung dass bereits ein Anruf läuft: {e6789}")
+            messagebox.showerror(title=self.Programm_Name_lang, message=f"Ein Anruf läuft bereits.")
+
+
     def Kunde_ruft_an(self):
         print("Thread gestartet: Kunde_ruft_an (def)")
         while self.Programm_läuft == True:
@@ -2222,6 +2415,10 @@ class Listendings:
                     self.Ereignislog_insert(nachricht_f_e=print1)
                     self.Uhrzeit_anruf_start = self.Zeit
                     self.Anruf_Zeit.configure(text=f" 🔴 aktiver Anruf seit: {self.Uhrzeit_anruf_start}  ")
+                    try:
+                        self.Anruf_starten_LB_Knopp.configure(text="🔴 aktiver Anruf", command=self.bereits_aktiver_anruf)
+                    except:
+                        pass
                     tmp_ld.close()
                     os.remove("tmp.txt")
                     self.Gesperrte_Nummer = False
@@ -2264,13 +2461,19 @@ class Listendings:
                             print(f"Fehler beim Durchsuchen der JSON DB nach dem Kontakt. Fehlercode: {ExcK1}")
             except Exception:
                 pass
-            try:    ##### Das hier lädt nachdem der webserver aufm localhost die Datei tmp1.txt geschrieben hat, genau diese Datei und holt sich daraus die end-Uhrzeit des Anrufs
+
+            ##### Das hier lädt nachdem der webserver aufm localhost die Datei tmp1.txt geschrieben hat, genau diese Datei und holt sich daraus die end-Uhrzeit des Anrufs        
+            try:    
                 with open("tmp1.txt", "r") as tmp1_ld:
                     gel_tmp1 = tmp1_ld.read()
                     self.Uhrzeit_anruf_ende = gel_tmp1
                     print("End-Uhrzeit: ", self.Uhrzeit_anruf_ende)
                     tmp1_ld.close()
                     self.Anruf_Zeit.configure(text=f"  Kein akiver Anruf  ")
+                    try:
+                        self.Anruf_starten_LB_Knopp.place_forget()
+                    except:
+                        pass
                     try:
                         os.remove("tmp1.txt")
                     except:
