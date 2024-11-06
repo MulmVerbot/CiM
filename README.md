@@ -22,6 +22,7 @@ Hier kommt noch bissl Zeugs dazu.
 - Es gibt ein eigenes Todo Programm, "Totdo - jetzt kannst Du Dir sogar aufschreiben wie Du Dich totarbeitest". Es können aus vergangenen Anrufen mittels One-Click Aufgaben erstellt werden.
 - Es kann eine Statistik zur Anrufhäufgigkeit als Diagram dargestellt werden.
 - Demo zum neuen Checklisten System (Im Tab unter INFO -> Checklisten)
+- anrufen von eingetragenen Nummern via webaufruf (Mit allen TK Programmen Kompatibel)
 
 
 ## Zukünftige Features:
