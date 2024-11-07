@@ -188,7 +188,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.2"
+        self.Version = "Beta 1.1.2 (0)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -388,6 +388,13 @@ class Listendings:
         self.LB_auswahl_index = None
         self.eigener_Suchort = None
     ################ Jetzt werden hier so Dinge geladen wie Einstellungen, oder es wird hier geguckt, ob alle benötigten Ordner Existieren ############
+
+        if sys.platform == "darwin":
+            self.Windows = False
+            print("[-Plattform-] Darwin")
+        else:
+            self.Windows = True
+            print("[-Plattform-] Windows")
         
 
         try:
@@ -1112,7 +1119,7 @@ class Listendings:
 
     def Anruf_tätigen(self, telefonummer):
         tel_url = f"tel://{telefonummer}"
-        antw = messagebox.askyesno(title=self.Programm_Name_lang, message=f"Möchten Sie die Nummer {telefonummer} anrufen?")
+        antw = messagebox.askyesno(title=self.Programm_Name_lang, message=f"Möchten Sie die Nummer {str(telefonummer)} anrufen?")
         
         if antw == True:
             if self.Windows == True:
