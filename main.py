@@ -188,7 +188,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.2 (0)"
+        self.Version = "Beta 1.1.2 (1)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -1255,7 +1255,7 @@ class Listendings:
         self.changelog_Fenster = tk.CTkToplevel(root)
         self.changelog_Fenster.title("Changelogs")
         self.changelog_Fenster.configure(fg_color=self.f_e)
-        self.Textfeld_changelog = tk.CTkTextbox(self.changelog_Fenster, width=820, height=420, text_color=self.Txt_farbe, fg_color="azure", wrap="word", border_width=0)
+        self.Textfeld_changelog = tk.CTkTextbox(self.changelog_Fenster, width=820, height=420, text_color=self.Txt_farbe, fg_color=self.f_bg, wrap="word", border_width=0)
         height = 420
         width = 820
         try:
