@@ -188,7 +188,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.2 (1)"
+        self.Version = "Beta 1.1.2 (2)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -1049,7 +1049,7 @@ class Listendings:
             print(f"[-ERR-] Es ist ein Fehler beim Laden der Theme Einstellungen aufgetreten. Fehlercode: {exko}")
 
     def Einstellungen_laden(self): # hier sollen zukünftig alle Einstellungen geladen werden
-        print("[-Einstellungen_laden - INFO -] Lade nun alle Einstellungen")
+        print("[-EINSTLLUNGEN LADEN- - INFO -] Lade nun alle Einstellungen")
         self.Netzlaufwerk_Einstellung_laden()
         self.Theme_Einstellungen_laden()
         self.eigener_suchort_Einstellung_laden()
@@ -1090,12 +1090,12 @@ class Listendings:
         
     def eigener_suchort_Einstellung_laden(self):
         try:
-            print("-EINSTLLUNGEN LADEN-] Lade nun den eigenen Suchort")
+            print("[-EINSTLLUNGEN LADEN-] Lade nun den eigenen Suchort")
             with open(self.eigener_Suchort_Einstellungsdatei, "r") as esp_gel:
                 self.eigener_Suchort = esp_gel.read()
-                print("-EINSTLLUNGEN LADEN-] eigener Suchort geladen.")
+                print("[-EINSTLLUNGEN LADEN-] eigener Suchort geladen.")
         except Exception as Exc89283:
-            print(f"-EINSTLLUNGEN LADEN- ERR-] Fehler beim laden des eigenen Suchortes. Fehlermeldung: {Exc89283}")
+            print(f"[-EINSTLLUNGEN LADEN- ERR-] Fehler beim laden des eigenen Suchortes. Fehlermeldung: {Exc89283}")
         
     def ordner_erstellen(self):
         print("[ INFO - INIT - PFADE ] Erstelle nun die Ordner für die Listen DB")
@@ -1125,46 +1125,46 @@ class Listendings:
             if self.Windows == True:
                 try:
                     messagebox.showinfo(title=self.Programm_Name_lang, message="Diese Funktion ist unter Windows noch nicht getestet.")
-                    print(f"Ich rufe nun {telefonummer} an.")
+                    print(f"[-INFO-] Ich rufe nun {telefonummer} an.")
                     subprocess.run(["open", tel_url])
                 except Exception as strippenkasper:
-                    print(f"Beim starten des Anrufes ist ein Fehler aufgetreten. Fehlermeldung: {strippenkasper}")
+                    print(f"[-INFO-] Beim starten des Anrufes ist ein Fehler aufgetreten. Fehlermeldung: {strippenkasper}")
                     messagebox.showerror(title=self.Programm_Name_lang, message=f"Beim starten des Anrufes ist ein Fehler aufgetreten. Fehlermeldung: {strippenkasper}")
             else:
                 try:
-                    print(f"Ich rufe nun {telefonummer} an.")
+                    print(f"[-INFO-] Ich rufe nun {telefonummer} an.")
                     subprocess.run(["open", tel_url])
                 except Exception as strippenkasper:
-                    print(f"Beim starten des Anrufes ist ein Fehler aufgetreten. Fehlermeldung: {strippenkasper}")
+                    print(f"[-ERR-] Beim starten des Anrufes ist ein Fehler aufgetreten. Fehlermeldung: {strippenkasper}")
                     messagebox.showerror(title=self.Programm_Name_lang, message=f"Beim starten des Anrufes ist ein Fehler aufgetreten. Fehlermeldung: {strippenkasper}")
         else:
-            print("anrufen vom Nutzer abgebrochen.")
+            print("[-INFO-] anrufen vom Nutzer abgebrochen.")
         
 
 
     def email_baukasten(self):
-        print("email_baukasten(def)")
+        print("[-INFO-] email_baukasten(def)")
 
         self.Email_Text_Widget = tk.CTkTextbox(width=200,height=100)
 
     def einf_f_schnellnotizen_switch(self, event): # Das Dings hier ist relativ obsolete, weil die event binder in der init deaktiviert sind. (ca Zeile: 526, Commit vom 4.9.24)
-        print("einf_f_schnellnotizen_switch(def)")
+        print("[-INFO-] einf_f_schnellnotizen_switch(def)")
         if self.Einf_aktiv == False:
             if self.Windows == True:  #  Das gegenteil von dem was da oben steht
                 self.master.bind('<Control-v>', self.schnellnotizen_öffnen(event))  # Windows/Linux
                 self.Einf_aktiv = True
-                print("Das bind steht nun wieder")
+                print("[-INFO-] Das bind steht nun wieder")
             else:
                 self.master.bind('<Command-v>', self.schnellnotizen_öffnen(event)) # Normal
                 self.Einf_aktiv = True
-                print("Das bind steht nun wieder")
+                print("[-INFO-] Das bind steht nun wieder")
         else:   ## Das .bind wieder deaktivieren (es wird kein schnellnotizen Fenster mehr geöffnet)
             if self.Windows == True:
-                print("Das Bind wurde deaktiviert")
+                print("[-INFO-] Das Bind wurde deaktiviert")
                 self.master.unbind('<Control-v>')
                 self.Einf_aktiv = False
             else:
-                print("Das Bind wurde deaktiviert")
+                print("[-INFO-] Das Bind wurde deaktiviert")
                 self.master.unbind('<Command-v>')
                 self.Einf_aktiv = False
 
@@ -1376,14 +1376,14 @@ class Listendings:
             self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.delete(0, tk.END)
             self.eigen_such_pfad_gel_e.delete(0, tk.END)
         except:
-            print("Konnte den Inhalt der Entrys für die Pfade nicht löschen")
+            print("[-ERR-] Konnte den Inhalt der Entrys für die Pfade nicht löschen")
             self.Ereignislog_insert(nachricht_f_e="Konnte den Inhalt der Entrys für die Pfade nicht löschen")
         try:
             self.Listen_Speicherort_geladen_anders_Entry.insert(0, self.Listen_Speicherort_geladen)
             self.Listen_Speicherort_Netzwerk_geladen_anders_Entry.insert(0, self.Listen_Speicherort_Netzwerk_geladen)
             self.eigen_such_pfad_gel_e.insert(0, self.eigener_Suchort)
         except:
-            print("Konnte die geladenen Speicherorte nicht in die Entrys übernehmen.")
+            print("[-ERR-] Konnte die geladenen Speicherorte nicht in die Entrys übernehmen.")
             self.Ereignislog_insert(nachricht_f_e="Konnte den Inhalt der Entrys für die Pfade nicht löschen")
 
         def rückruf_speichern():
@@ -1425,7 +1425,7 @@ class Listendings:
                 self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP fehlgeschlagen.", text_color="Red")
                 self.smtp_login_erfolgreich_l.place(x=20,y=20)
         except Exception as Exc21:
-            print(f"Fehler bei der entscheidung ob die Anmeldung bei Server erfolgreich war, wie auch immer das jetzt nun wieder schiefgehen konnte... Fehlercode: {Exc21}")
+            print(f"[-ERR-] Fehler bei der entscheidung ob die Anmeldung bei Server erfolgreich war, wie auch immer das jetzt nun wieder schiefgehen konnte... Fehlercode: {Exc21}")
         try:
             try:
                 self.gel_Email_Empfänger_E.delete(0, tk.END)
@@ -1435,15 +1435,15 @@ class Listendings:
                 self.gel_Email_Empfänger_E.delete(0, tk.END)
             except:
                 self.Ereignislog_insert(nachricht_f_e="konnte die Entrys nicht leeren")
-                print("konnte die entrys nicht leeren")
+                print("[-ERR-] konnte die entrys nicht leeren")
             self.gel_Email_Empfänger_E.insert(0, self.empfänger_email)
             self.gel_Email_Sender_E.insert(0, self.sender_email)
             self.gel_Email_Absender_Passwort_E.insert(0, self.pw_email)
             self.gel_SMTP_Server_E.insert(0, self.smtp_server)
-            print("Alles was mit den Email Einstellungen zu tun hat wurde erfolgreich gelade")
+            print("[-INFO-] Alles was mit den Email Einstellungen zu tun hat wurde erfolgreich gelade")
             self.Ereignislog_insert(nachricht_f_e="Alles was mit den Email Einstellungen zu tun hat wurde erfolgreich geladen")
         except Exception as ExGelEm1:
-            print("Fehler beim einfügen der Email Daten in die Entrys. Fehlercode: ", ExGelEm1)
+            print("[-ERR-] Fehler beim einfügen der Email Daten in die Entrys. Fehlercode: ", ExGelEm1)
         
         try:
             try:
@@ -1459,7 +1459,6 @@ class Listendings:
             self.weiterleitungen_vier_e.insert(0, self.vir)
         except:
             print(f"[-EINSTELLUNGEN - ERR -]")
-            pass
 
         try:
             Adressbuch = self.Adressbuch_laden()
@@ -1483,9 +1482,8 @@ class Listendings:
 
     def Eintrag_raus_kopieren(self): # kopiert den letzten in der Liste stehenden Eintrag in die Zwischenablage.
         print("[-INFO-] Eintrag_raus_kopieren(def)")
-        #self.geladener_Text = self.ausgabe_text.get("0.0", "end")
         self.letzten_text_erhalten()
-        kopierter_text = "Hier nun der kopierte Text aus dem M.U.L.M: \n" + self.letzter_eintrag_text
+        kopierter_text = "Gesprächinfos: ID: \n" + self.letzter_eintrag_text
         pyperclip.copy(kopierter_text)
         print(f"Text in der Zwischenablage: {kopierter_text}")
         self.Ereignislog_insert(nachricht_f_e="- letzte Nachricht kopiert. -")
@@ -1609,14 +1607,13 @@ class Listendings:
             messagebox.showerror(title=self.Programm_Name_lang, message="Konnte die Seite nicht öffnen.")
 
     def anhang_suchen_ticket(self):
-        print("anhang_suchen_ticket(def)")
+        print("[-INFO-] anhang_suchen_ticket(def)")
         self.Mail_Anhang = filedialog.askopenfilename()
         if self.Mail_Anhang:
             self.Mail_Anhang_status_l.configure(text=f"Anhang: {self.Mail_Anhang}")
 
     def letzten_text_erhalten(self):
-        print("letzten_importieren(def)")
-        #self.geladener_Text = self.ausgabe_text.get("0.0", "end")
+        print("[-INFO-] letzten_importieren(def)")
         with open(self.Liste_mit_datum, "r") as gel_t:
             self.geladener_Text = gel_t.read()
         self.einzelner_Eintrag = self.geladener_Text.split("\n\n")
@@ -1624,21 +1621,16 @@ class Listendings:
             for eintrag in reversed(self.einzelner_Eintrag):
                 if eintrag.startswith("Uhrzeit:") and "Telefonnummer:" in eintrag:
                     self.letzter_eintrag_text = eintrag
-                    break # das break weil wir einfach die liste umdrehen und mit dem daruch ersten Eintrag zufrieden sind.
+                    break # das break weil wir einfach die liste umdrehen und mit dem dadurch ersten Eintrag zufrieden sind.
             else:
-                print("Kein passender Eintrag gefunden")
+                print("[-ERR-] Kein passender Eintrag gefunden")
         else:
-            print("Die Liste ist leer")
+            print("[-ERR-] Die Liste ist leer")
 
     def letzten_importieren(self):
         self.letzten_text_erhalten()
         self.Nachricht_Ticket_e.insert(tk.END, self.letzter_eintrag_text)
         self.letzter_eintrag_text = None
-
-
-
-        
-        
 
     def Ticket_erstellen(self): # Die erste frage, ob es per Mail oder API erstellt werden soll.
         print("Ticket_erstellen(def)")
