@@ -3199,8 +3199,8 @@ class Listendings:
                         print(f"Dateien wurden unter {self.csv_datei_pfad} gespeichert.")
                         messagebox.showinfo(title="Gespeichert", message="Daten wurden erfolgreich im Netzlaufwerkpfad gespeichert.")
                     else:
-                        print("Fehler: Keine vollständigen Informationen wurden in der Textdatei gefunden.")
-                        messagebox.showerror(title="Fehler", message="Das ist etwas beim Speichern im Netzlaufwerkpfad schiefgelaufen. (vielleicht keine Datensätze?)")
+                        print("Fehler: Keine vollständigen Informationen in der Textdatei gefunden.")
+                        messagebox.showerror(title="Fehler", message="Da ist etwas beim Speichern im Netzlaufwerkpfad schiefgelaufen. (vielleicht keine Datensätze?)")
                 else:
                     print("die var zum auto_speichern lag bei was anderem als 1")
         except Exception as Ex_sp142:
