@@ -1144,8 +1144,34 @@ class Listendings:
 
     def email_baukasten(self):
         print("[-INFO-] email_baukasten(def)")
+        self.BK_f = tk.CTkToplevel()
+        self.BK_f.configure(title="Email Baukasten")
 
-        self.Email_Text_Widget = tk.CTkTextbox(width=200,height=100)
+        self.info_text_l = tk.CTkLabel(self.BK_f, text="Email Baukasten")
+        self.info_text_l.place(x=20,y=10)
+        self.erstellen_neu_knopp = tk.CTkButton(self.BK_f, text="Neue Vorlage erstellen", command=self.Vorlage_neu_erstellen)
+        self.erstellen_neu_knopp.place(x=10,y=50)
+
+    def Vorlage_neu_erstellen(self):
+        print("Vorlage_neu_erstellen")
+        ### // todo hier kommt jetzt die ganze Oberfläche für das erstellen hin
+        self.erstellen_neu_knopp.place_forget()
+        self.info_text_l.place_forget()
+
+
+        self.Eingabe_liste_hinzfg_e = tk.CTkEntry(self.BK_f, width=220)
+        self.Eingabe_liste_hinzfg_e.place(x=10,y=60)
+        
+        self.Eingabe_liste_hinzfg_knopp = tk.CTkButton(self.BK_f, text="speichern und hinzufügen", command=self.Vorlage_erweitern_c)
+        self.Eingabe_liste_hinzfg_knopp.place(x=100,y=60)
+
+    def Vorlage_öffnen(self):
+        print("Vorlage_öffnen(def)")
+        messagebox.showinfo(title=self.Programm_Name_lang, message="Noch nicht implementiert.")
+
+    def Vorlage_erweitern_c(self):
+        print("Vorlage_erweitern_c(def)")
+        messagebox.showinfo(title=self.Programm_Name_lang, message="Noch nicht implementiert.")
 
     def einf_f_schnellnotizen_switch(self, event): # Das Dings hier ist relativ obsolete, weil die event binder in der init deaktiviert sind. (ca Zeile: 526, Commit vom 4.9.24)
         print("[-INFO-] einf_f_schnellnotizen_switch(def)")
