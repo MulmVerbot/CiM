@@ -1851,7 +1851,12 @@ class Listendings:
                     self.Auto_speichern_Einstellungsdatei_var = "1"
             except Exception as o1:
                 print("Es ist ein fehler aufgetreten: ",o1)
-                    
+
+    def HW_Mon_menü_anzeigen(self):
+        print("HW_Mon_menü_anzeigen(def)")
+        
+    
+
     def Menu_anzeige_wechseln(self): ############# Hier kommt der ganze Text für das Menü rein.
         print("Menu_anzeige_wechseln(def)")
         if self.Menü_da == True:
@@ -1862,7 +1867,7 @@ class Listendings:
             self.Menü_Knopp.configure(text="Statistik", fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
             self.smtp_login_erfolgreich_l.place_forget()
             self.Einstellung_Design_auswahl.place_forget()
-            ##self.Berichtsheft_knopp.place_forget()
+            self.Berichtsheft_knopp.place_forget()
             #self.Statistiken_anzeigen_linie_knopp.place_forget()
             #self.Statistiken_anzeigen_saeule_knopp.place_forget()
             self.Stat_ID_l.place_forget()
@@ -1872,7 +1877,7 @@ class Listendings:
             self.Pause_menu.place(x=300,y=10)
             self.Menü_da = True
             self.Menü_Knopp.configure(text="Statistik schließen", fg_color="aquamarine", hover_color="aquamarine3")
-            ##self.Berichtsheft_knopp.place(x=400,y=100)
+            self.Berichtsheft_knopp.place(x=400,y=100)
             self.Einstellung_Design_auswahl.place(x=10,y=200)
             self.Einstellung_Design_L.place(x=10,y=170)
             #self.Statistiken_anzeigen_linie_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Liniendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_linie, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
@@ -1881,6 +1886,7 @@ class Listendings:
             #self.Statistiken_anzeigen_saeule_knopp.place(x=10,y=140)
             self.Stat_ID_l = Atk.Label(self.Pause_menu, text=f"Einträge heute: {self.ID_v}")
             self.Stat_ID_l.place(x=10,y=50)
+            self.HWMon_anzeigen_wechsel = tk.CTkButton(self.Menü, text="Hardware Monitor starten", command=self.HW_Mon_menü_anzeigen)
             try:
                 try:
                     self.gel_Email_Empfänger_E.delete(0, tk.END)
