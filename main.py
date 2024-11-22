@@ -1854,7 +1854,7 @@ class Listendings:
 
     def HW_Mon_menü_anzeigen(self):
         print("HW_Mon_menü_anzeigen(def)")
-        
+        self.CPU_A_l = tk.CTkLabel(text="CPU Auslastung (%)")
     
 
     def Menu_anzeige_wechseln(self): ############# Hier kommt der ganze Text für das Menü rein.
