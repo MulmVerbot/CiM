@@ -22,7 +22,7 @@ import re
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Beta 1.0 (4)"
+        self.Version = "Beta 1.0 (5)"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -42,6 +42,7 @@ class TodoApp:
         self.Hintergrund_farbe = "AntiqueWhite2"
         self.Hintergrund_farbe_Text_Widget = "AntiqueWhite2"
         self.Textfarbe = "Black"
+        self.Txt_farbe = "White"
         self.Border_Farbe = "AntiqueWhite4"
         self.Entry_Farbe = "AntiqueWhite3"
         self.Ereignislog_farbe = self.Hintergrund_farbe_Text_Widget
@@ -60,6 +61,7 @@ class TodoApp:
         self.f_e = "#2A2A2A"
         self.f_border = "#232323"
         self.f_r_1 = "#323232"
+        self.f_hover_normal = "#424242"
         self.gruen_hell = "LawnGreen"
         self.rot = "firebrick"
     #### Farben Ende ####
@@ -224,14 +226,14 @@ class TodoApp:
         self.Aufgaben_Titel_e.bind("<FocusIn>", self.entry_rein)
         self.root.bind("<Double-1>", self.entry_rein)
         try:
-            self.Aufgaben_Beschreibung_t.delete("0.0", "end")  # keine Ahnung was das hier macht, aber ich lass das einfach mal hier so stehen.
+            self.Aufgaben_Beschreibung_t.delete("0.0", "end")  # also sagen wir so ich weiß nicht warum das ding hier gecleared wird wenn es gerade erst erschaffen wurden.
         except:
             pass
 
         self.Datum_fertsch_e = tk.CTkEntry(self.todo_frame_rechts, text_color="White") # hier hinter noch die ganze funktionalität mit einbauen
         self.Datum_fertsch_e.place(x=250,y=840)
 
-        self.Erledigt_Liste_öffnen_knopp = tk.CTkButton(self.todo_frame_links, text="erledigte Aufgaben anzeigen", command=self.erledigte_Aufgaben_laden)
+        self.Erledigt_Liste_öffnen_knopp = tk.CTkButton(self.todo_frame_links, text="erledigte Aufgaben anzeigen", command=self.erledigte_Aufgaben_laden, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
         self.Erledigt_Liste_öffnen_knopp.place(x=10,y=100)
 
         self.load_tasks() # lädt die akuellen Aufgaben
@@ -243,8 +245,14 @@ class TodoApp:
     def task_update_knopp(self, event):
         self.task_update()
 
-    def erledigte_Aufgaben_laden(self): # hier muss dann noch das hin //todo
+    def erledigte_Aufgaben_laden(self):
         print("erledigte_Aufgaben_laden(def)")
+        self.clear_tasks_frame()
+        tasks = self.load_tasks_from_file()
+        for task in tasks:
+            self.create_task_button_fertsch(task)
+        self.Erledigt_Liste_öffnen_knopp.configure(text="unerledigte Aufgaben anzeigen", command=self.load_tasks)
+
 
 
     def Uhr(self):
@@ -414,7 +422,7 @@ class TodoApp:
             task_description = "-"
         if task_notizen == "" or None:
             task_notizen = "-"
-        self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': ID_der_gewählten_Aufgabe, 'fertsch': False}
+        self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': ID_der_gewählten_Aufgabe, 'fertsch': task["fertsch"]}
         self.save_task(self.task)
         self.create_task_button(self.task)
         self.refresh_tasks()
@@ -433,7 +441,7 @@ class TodoApp:
                 self.Knopp_frame = tk.CTkFrame(self.todo_frame_einz, fg_color="transparent")
                 self.Knopp_frame.pack(padx=10, pady=1)
                 self.button = tk.CTkButton(self.Knopp_frame, text=f"Nr. {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w")
-                self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="X", width=10, command=weghauen, border_color=self.rot, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
+                self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="☐", width=10, command=weghauen, border_color=self.rot, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
                 self.fertsch_knopp.pack(side=tk.LEFT)
                 self.button.pack(side=tk.LEFT)
         except KeyError:
@@ -441,9 +449,55 @@ class TodoApp:
             self.Knopp_frame = tk.CTkFrame(self.todo_frame_einz, fg_color="transparent")
             self.Knopp_frame.pack(padx=10, pady=1)
             self.button = tk.CTkButton(self.Knopp_frame, text=f"Nr. {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w")
-            self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="X", width=10, command=weghauen, border_color=self.rot, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
+            self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="☐", width=10, command=weghauen, border_color=self.rot, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
             self.fertsch_knopp.pack(side=tk.LEFT)
             self.button.pack(side=tk.LEFT)
+
+    def create_task_button_fertsch(self, task): # :: ich seh schon, irgendwann muss ich das in nen eigenen Thread umlagern wenn die Listen zu groß werden
+        def weghauen_fertsch(): # callback zum löschen
+            self.show_task(task)
+            self.Aufgabe_wiederherstellen_frage()
+
+        try:
+            if task['fertsch'] == False:
+                print(f"Aufgabe wird versteckt weil task['fertsch'] == {task['fertsch']} ist. (Die fertigen Aufgaben werden angezeigt.)")
+            else:
+                self.Knopp_frame = tk.CTkFrame(self.todo_frame_einz, fg_color="transparent")
+                self.Knopp_frame.pack(padx=10, pady=1)
+                self.button = tk.CTkButton(self.Knopp_frame, text=f"Nr. {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w")
+                self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="☑", width=10, command=weghauen_fertsch, border_color=self.gruen_hell, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
+                self.fertsch_knopp.pack(side=tk.LEFT)
+                self.button.pack(side=tk.LEFT)
+        except KeyError:
+            print("task['fertsch'] war noch nicht in der DB vorhanden und wird dennoch angezeigt.")
+            self.Knopp_frame = tk.CTkFrame(self.todo_frame_einz, fg_color="transparent")
+            self.Knopp_frame.pack(padx=10, pady=1)
+            self.button = tk.CTkButton(self.Knopp_frame, text=f"Nr. {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w")
+            self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="X", width=10, command=weghauen_fertsch, border_color=self.gruen_hell, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
+            self.fertsch_knopp.pack(side=tk.LEFT)
+            self.button.pack(side=tk.LEFT)
+
+
+    def Aufgabe_wiederherstellen_frage(self):
+        print("Aufgabe_wiederherstellen_frage(def)")
+        antw = messagebox.askyesno(title=self.Programm_Name, message=f"Soll diese Aufgabe wiederhergestellt werden?")
+        if antw == True:
+            print("Wiederherstellung vom Nutzer bestätigt.")
+            self.Aufgabe_wiederherstellen()
+        else:
+            print("Wiederherstellung vom Nutzer abgebrochen.")
+
+    def Aufgabe_wiederherstellen(self):
+        self.neuer_eintrag = {
+            "name": self.task_übergabe["name"],
+            "description": self.task_übergabe["description"],
+            "Uhrzeit": self.task_übergabe["Uhrzeit"],
+            "notizen": self.task_übergabe["notizen"],
+            "id": self.task_übergabe["id"],
+            "fertsch": False # das hier wird immer auf False gesetzt, weil es ja der Sinn der Funktion ist.
+        }
+        self.Aufgabe_erledigt(self.tasks_pfad_datei, self.neuer_eintrag, self.task_übergabe["id"])
+        self.refresh_tasks()
     
 
     
@@ -621,6 +675,10 @@ class TodoApp:
             json.dump(tasks, file, indent=4)
 
     def load_tasks(self):
+        try:
+            self.Erledigt_Liste_öffnen_knopp.configure(text="erledigte Aufgaben anzeigen", command=self.erledigte_Aufgaben_laden)
+        except Exception as Ex678:
+            print(f"self.Erledigt_Liste_öffnen_knopp konnte nicht bearbeitet werden. Fehlermeldung: {Ex678}")
         self.clear_tasks_frame()
         tasks = self.load_tasks_from_file()
         for task in tasks:
@@ -644,7 +702,7 @@ class TodoApp:
         self.clear_tasks_frame()
         self.load_tasks()
 
-    def clear_tasks_frame(self):
+    def clear_tasks_frame(self): # entfernt alle bisher gelisteteten Aufgaben (UND ALLE WIDGETS!!!!) aus Frame_einz
         for widget in self.todo_frame_einz.winfo_children():
             widget.destroy()
     
