@@ -34,6 +34,7 @@ try:
     import numpy as np
     from reportlab.lib.pagesizes import letter
     from reportlab.pdfgen import canvas
+    import psutil
     #import shutil
     #import fitz  # Das ist dieses PyMuPDF für die Checklisten, bitte frag mich nicht wie man auf so einen Namen kommt (ich weiß, meine Namen sind auch nicht besser *Hust* M.U.L.M *Hust* )
 except Exception as E:
@@ -188,7 +189,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.2 (2)"
+        self.Version = "Beta 1.1.2 (3)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -631,7 +632,7 @@ class Listendings:
         self.irgendwo_suchen.place(x=1260, y=130)
         self.Menü_Knopp = tk.CTkButton(master, text="Statistik", command=self.Menu_anzeige_wechseln, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Menü_Bild)
         self.Menü_Knopp.place(x=1260, y=160)
-        self.Pause_menu = tk.CTkFrame(master, width=769, height=420, fg_color="LightSlateGray", border_color="White", border_width=1, corner_radius=1)
+        self.Pause_menu = tk.CTkScrollableFrame(master, width=769, height=420, fg_color="LightSlateGray", border_color="White", border_width=1, corner_radius=1)
         self.Ereignislog = tk.CTkTextbox(root, width=220, height=80, wrap="word", text_color=self.Txt_farbe, fg_color=self.Ereignislog_farbe, border_color=self.f_border, border_width=2, font=("Bangla MN", 12))
         self.Ereignislog.place(x=1210,y=10)
         self.Ereignislog_insert(nachricht_f_e="[-Ereignislog-]")
@@ -1761,24 +1762,27 @@ class Listendings:
 
     def SMTP_Anmeldung(self):
         print("[-SMTP ANMELDUNG-] Melde mich nun am SMTP Server an...")
-        with smtplib.SMTP_SSL(self.smtp_server, 465) as server:
-            try:
-                print(f"[-SMTP ANMELDUNG - INFO ] melde mich nun mit dem Nutzer {self.sender_email} an dem Server {self.smtp_server} an..")
-                server.login(self.sender_email, self.pw_email)
-                print("[-SMTP ANMELDUNG-] Anmeldung beim SMTP Server erfolgreich.")
-                self.smtp_login_erfolgreich = True
+        try:
+            with smtplib.SMTP_SSL(self.smtp_server, 465) as server:
                 try:
-                    self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP Server war erfolgreich.", text_color="SeaGreen1")
-                except:
-                    pass
-            except Exception as EmailEx1:
-                print("[-SMTP ANMELDUNG-] Fehler beim anmelden beim Mailserver. Fehlercode: ", EmailEx1)
-                self.Ereignislog_insert(nachricht_f_e="- [-SMTP ANMELDUNG-] Fehler bei der Anmeldung beim Mailserver. -")
-                self.smtp_login_erfolgreich = False
-                try:
-                    self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP fehlgeschlagen.", text_color="Red")
-                except:
-                    pass
+                    print(f"[-SMTP ANMELDUNG - INFO ] melde mich nun mit dem Nutzer {self.sender_email} an dem Server {self.smtp_server} an..")
+                    server.login(self.sender_email, self.pw_email)
+                    print("[-SMTP ANMELDUNG-] Anmeldung beim SMTP Server erfolgreich.")
+                    self.smtp_login_erfolgreich = True
+                    try:
+                        self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP Server war erfolgreich.", text_color="SeaGreen1")
+                    except:
+                        pass
+                except Exception as EmailEx1:
+                    print("[-SMTP ANMELDUNG-] Fehler beim anmelden beim Mailserver. Fehlercode: ", EmailEx1)
+                    self.Ereignislog_insert(nachricht_f_e="- [-SMTP ANMELDUNG-] Fehler bei der Anmeldung beim Mailserver. -")
+                    self.smtp_login_erfolgreich = False
+                    try:
+                        self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP fehlgeschlagen.", text_color="Red")
+                    except:
+                        pass
+        except Exception as e_mail_init:
+            print(f"[-SMTP ANMELDUNG - FATAL ] Es ist ein Fehler bei der Anmeldung am SMTP Server aufgetreten {e_mail_init}")
                  
     def Starface_Modul_umschalten(self):
         print("Starface_Modul_umschalten(def)")
@@ -1854,7 +1858,63 @@ class Listendings:
 
     def HW_Mon_menü_anzeigen(self):
         print("HW_Mon_menü_anzeigen(def)")
-        self.CPU_A_l = tk.CTkLabel(text="CPU Auslastung (%)")
+        self.HW_Mon_refresh()
+
+    def HW_Mon_refresh(self):
+        print("HW_refresh")
+        metrics = {}
+        metrics['System'] = {
+            'Platform': platform.system(),
+            'Platform Version': platform.version(),
+            'Platform Release': platform.release(),
+            'Architecture': platform.architecture(),
+            'Machine': platform.machine(),
+            'Processor': platform.processor(),
+        }
+
+        metrics['CPU'] = {
+            'Cores': psutil.cpu_count(logical=False),
+            'Logical CPUs': psutil.cpu_count(logical=True),
+            'CPU Frequency': psutil.cpu_freq().current if psutil.cpu_freq() else 'N/A',
+            'CPU Usage (%)': psutil.cpu_percent(interval=0),
+        }
+
+        vm = psutil.virtual_memory()
+        metrics['Memory'] = {
+            'Total Memory': f"{vm.total / (1024 ** 3):.2f} GB",
+            'Available Memory': f"{vm.available / (1024 ** 3):.2f} GB",
+            'Used Memory': f"{vm.used / (1024 ** 3):.2f} GB",
+            'Memory Usage (%)': vm.percent,
+        }
+
+        disk = psutil.disk_usage('/')
+        metrics['Disk'] = {
+            'Total Disk Space': f"{disk.total / (1024 ** 3):.2f} GB",
+            'Used Disk Space': f"{disk.used / (1024 ** 3):.2f} GB",
+            'Free Disk Space': f"{disk.free / (1024 ** 3):.2f} GB",
+            'Disk Usage (%)': disk.percent,
+        }
+
+        net = psutil.net_if_addrs()
+        metrics['Network'] = {
+            'Network Interfaces': list(net.keys()),
+        }
+
+        row = 0
+        for category, sub_metrics in metrics.items():
+            # Kategorie Label
+            category_label = tk.CTkLabel(self.Pause_menu, text=f"{category}", font=("Arial", 16, "bold"))
+            category_label.grid(row=row, column=0, columnspan=2, pady=(10, 5), sticky="w")
+            row += 1
+
+            # Sub-Metrics Labels
+            for key, value in sub_metrics.items():
+                metric_label = tk.CTkLabel(self.Pause_menu, text=f"{key}:", anchor="w")
+                metric_label.grid(row=row, column=0, padx=10, pady=2, sticky="w")
+
+                value_label = tk.CTkLabel(self.Pause_menu, text=f"{value}", anchor="w")
+                value_label.grid(row=row, column=1, padx=10, pady=2, sticky="w")
+                row += 1
     
 
     def Menu_anzeige_wechseln(self): ############# Hier kommt der ganze Text für das Menü rein.
@@ -1886,7 +1946,8 @@ class Listendings:
             #self.Statistiken_anzeigen_saeule_knopp.place(x=10,y=140)
             self.Stat_ID_l = Atk.Label(self.Pause_menu, text=f"Einträge heute: {self.ID_v}")
             self.Stat_ID_l.place(x=10,y=50)
-            self.HWMon_anzeigen_wechsel = tk.CTkButton(self.Menü, text="Hardware Monitor starten", command=self.HW_Mon_menü_anzeigen)
+            self.HWMon_anzeigen_wechsel = tk.CTkButton(self.Pause_menu, text="Hardware Monitor starten", command=self.HW_Mon_menü_anzeigen)
+            self.HWMon_anzeigen_wechsel.place(x=400,y=140)
             try:
                 try:
                     self.gel_Email_Empfänger_E.delete(0, tk.END)
