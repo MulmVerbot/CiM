@@ -189,7 +189,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.2 (3)"
+        self.Version = "Beta 1.1.2 (4)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -537,7 +537,7 @@ class Listendings:
     #### Die Stars der Stunde ####
         self.kunde_entry = tk.CTkEntry(master,width=600, placeholder_text="Name des Anrufers", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_e_PlH_Text, border_color=self.f_e)
         self.t_nummer = tk.CTkEntry(master, width=250, placeholder_text="Telefonnummer", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_e_PlH_Text, border_color=self.f_e)
-        self.t_nummer.configure(state="disabled")# Das hier muss nachträglich gemacht werden, da sonst der Placeholder Text nicht angezeigt wird.
+        #self.t_nummer.configure(state="disabled")# Das hier muss nachträglich gemacht werden, da sonst der Placeholder Text nicht angezeigt wird.
         self.problem_entry = tk.CTkEntry(master,width=1200, placeholder_text="Problem", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_e_PlH_Text, border_color=self.f_e)
         self.info_entry = tk.CTkEntry(master,width=1200, placeholder_text="Info", fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color=self.f_e_PlH_Text, border_color=self.f_e)
         self.Anruf_Zeit = tk.CTkLabel(master, text_color=self.Txt_farbe, text=f"  Kein akiver Anruf  ", bg_color=self.Entry_Farbe, anchor="center")
@@ -2534,10 +2534,10 @@ class Listendings:
                         if self.Gesperrte_Nummer == False:
                             print("else f 1")
                             print("die Nummer stand nicht in der Blacklist")
-                            self.t_nummer.configure(state="normal")
+                            #self.t_nummer.configure(state="normal")
                             self.t_nummer.delete(0,tk.END)
                             self.t_nummer.insert(1,self.Anruf_Telefonnummer)
-                            self.t_nummer.configure(state="disabled")
+                            #self.t_nummer.configure(state="disabled")
                             for kontakt in daten.get("Kontakte", []):
                                 if kontakt.get("Telefonnummer_jsn") == self.Anruf_Telefonnummer: # WENN ES IN DER KTK GEFUNDEN WURDE
                                     print("if f 1")
@@ -2715,12 +2715,12 @@ class Listendings:
             self.optionmenu1.set("Mit Wem sprechen?")
             self.Uhrzeit_anruf_start = None
             return
-        self.t_nummer.configure(state="normal")
+        #self.t_nummer.configure(state="normal")
         self.t_nummer.delete(0,tk.END)
         self.kunde_entry.delete(0, tk.END)
         self.problem_entry.delete(0, tk.END)
         self.info_entry.delete(0, tk.END)
-        self.t_nummer.configure(state="disabled")
+        #self.t_nummer.configure(state="disabled")
         self.Weiterleitung_an = ""
         self.wollte_sprechen = ""
         self.Uhrzeit_anruf_start = None
