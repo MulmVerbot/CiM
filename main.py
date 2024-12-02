@@ -796,7 +796,7 @@ class Listendings:
                     print("despawn des LB_GUI zeugs")
                     self.Eintrag_verstecken_Knopp.place_forget()
                     self.Anruf_starten_LB_Knopp.place_forget()
-                    self.per_mail_weitereiten.place_forget()   
+                    #self.per_mail_weitereiten.place_forget()   
                 except:
                     print("war wohl nicht da")
 
@@ -806,7 +806,7 @@ class Listendings:
                 self.Anruf_starten_LB_Knopp = tk.CTkButton(root, text="anrufen", command=lambda: self.Anruf_tätigen({eintrag["Telefonnummer"]}), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.rot)
                 self.Anruf_starten_LB_Knopp.place(x=10,y=320)
                 self.per_mail_weitereiten = tk.CTkButton(root, text="per Mail weiterleiten", command=self.Eintrag_per_Mail_weiterleiten, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
-                self.per_mail_weitereiten.place(x=10,y=360)
+                #self.per_mail_weitereiten.place(x=10,y=360)
             ###
             else:
                 messagebox.showwarning(title=self.Programm_Name, message=f"Kein Eintrag mit ID {eintrag_id} gefunden.")
