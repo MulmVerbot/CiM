@@ -189,7 +189,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.2 (4)"
+        self.Version = "Beta 1.1.2 (5)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -1510,7 +1510,7 @@ class Listendings:
     def Eintrag_raus_kopieren(self): # kopiert den letzten in der Liste stehenden Eintrag in die Zwischenablage.
         print("[-INFO-] Eintrag_raus_kopieren(def)")
         self.letzten_text_erhalten()
-        kopierter_text = "Gesprächinfos: ID: \n" + self.letzter_eintrag_text
+        kopierter_text = f"Gesprächinfos: ID: {self.Eintrag_geladen_jetzt["ID_L"]}\n{self.letzter_eintrag_text}"
         pyperclip.copy(kopierter_text)
         print(f"Text in der Zwischenablage: {kopierter_text}")
         self.Ereignislog_insert(nachricht_f_e="- letzte Nachricht kopiert. -")
