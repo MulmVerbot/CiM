@@ -189,7 +189,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.2 (5)"
+        self.Version = "Beta 1.1.2 (6)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -805,8 +805,8 @@ class Listendings:
                 self.Eintrag_verstecken_Knopp.place(x=160,y=320)
                 self.Anruf_starten_LB_Knopp = tk.CTkButton(root, text="anrufen", command=lambda: self.Anruf_tätigen({eintrag["Telefonnummer"]}), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.rot)
                 self.Anruf_starten_LB_Knopp.place(x=10,y=320)
-                self.per_mail_weitereiten = tk.CTkButton(root, text="per Mail weiterleiten", command=self.Eintrag_per_Mail_weiterleiten, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
-                #self.per_mail_weitereiten.place(x=10,y=360)
+                self.per_mail_weitereiten = tk.CTkButton(root, text="per Mail weiterleiten", command=self.Eintrag_per_Mail_weiterleiten_vor, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
+                self.per_mail_weitereiten.place(x=10,y=360)
             ###
             else:
                 messagebox.showwarning(title=self.Programm_Name, message=f"Kein Eintrag mit ID {eintrag_id} gefunden.")
@@ -814,15 +814,50 @@ class Listendings:
         else:
             print("auswahl existiert NICHT.")
 
+    def Eintrag_per_Mail_weiterleiten_vor(self):
+        print("Eintrag_per_Mail_weiterleiten(def)")
+        self.Fenster_Frage = tk.CTkToplevel()
+        self.Fenster_Frage.title("Als Mail weiterleiten")
+        self.Fenster_Frage.geometry("400x500")
+        self.Standard_addr = False
+
+        f_l = tk.CTkLabel(self.Fenster_Frage, text="Empfänger")
+        f_l.place(x=10,y=10)
+        self.Empf_e = tk.CTkEntry(self.Fenster_Frage, width=200)  ## //todo soll dann auch per pre konfig. Liste auswählbar sein.
+        self.Empf_e.place(x=10,y=50)
+
+        self.Domain_einsetzen = tk.CTkButton(self.Fenster_Frage, text="Domäne einfügen", command=self.Domain_einsetzen_Email_weiterleitung) #  einen Knopf daneben mit "Firmendomäne einsetzen" um die Domains der Email Adressen einzufügen
+
+        # standard_empf_knopp = tk.CTkButton(self.Fenster_Frage, text="Standard Empfänger", command=self.stnd_true) //todo: gui feedback wenn das gedrückt wurde
+
+        senden_knopp = tk.CTkButton(self.Fenster_Frage, text="senden", command=self.Eintrag_per_Mail_weiterleiten)
+        senden_knopp.place(x=100,y=250)
+
+    def Domain_einsetzen_Email_weiterleitung(self):
+        print("Domain_einsetzen_Email_weiterleitung(def)")
+        try:
+            with open(self.Domain_name_Einstellungsdatei, "r") as d_gel:
+                Domain_name = d_gel.read()
+        except Exception as exuz:
+            print(f"{exuz}")
+
+    def stnd_true(self):
+        self.Standard_addr = True
+
     def Eintrag_per_Mail_weiterleiten(self):
         print("Eintrag_per_Mail_weiterleiten(def)")
-
-        print("[-INFO-] Ticket_erstellen (Email)")
         Mail_Anhang = None
-        empfänger_adresse = ""
-        self.Betreff_Mail = ""
-        self.alternative_empfänger_adresse = ""
-        self.Nachricht_Mail_Inhalt = ""
+        if self.Standard_addr == False:
+            print("Eigener Empfänger wird gezogen..")
+            empfänger_adresse = self.Empf_e.get()
+            print("Eigener Empfänger wurde gezogen.")
+        else:
+            empfänger_adresse = self.empfänger_email
+
+        self.Betreff_Mail = f"Anruf von {self.Eintrag_geladen_jetzt["name"]}"
+        self.alternative_empfänger_adresse = self.sender_email
+        self.Nachricht_Mail_Inhalt = f"Guten Tag,\nfolgenden Anruf habe ich erhalten: \n\nUhrzeit: {self.Eintrag_geladen_jetzt["Uhrzeit"]}\nAnrufer: {self.Eintrag_geladen_jetzt["name"]}\nBeschreibung: {self.Eintrag_geladen_jetzt["description"]}\nNotizen/ weitere Infos: {self.Eintrag_geladen_jetzt["notizen"]}\n\nWen sprechen: {self.Eintrag_geladen_jetzt["wen_sprechen"]}\nweitergeleitet an: {self.Eintrag_geladen_jetzt["an_wen_gegeben"]}\nID: {self.Eintrag_geladen_jetzt["ID_L"]}\n\n\nDiese Email wurde automatisch erstellt."
+        self.Fenster_Frage.destroy()
 
         msg = MIMEMultipart()
         msg["From"] = self.sender_email
@@ -873,7 +908,6 @@ class Listendings:
                     print("Fehler beim anmelden beim senden an den Mailserver. Fehlercode: ", EmailEx2)
                     self.Ereignislog_insert(nachricht_f_e="-Anmeldung am SMTP fehlgeschlagen.-")
                     messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der Nachricht an den Mailserver. Fehlercode: {EmailEx2}")
-                self.Ticket_Fenster.destroy()
                 messagebox.showinfo(title="CiM", message="Das Ticket wurde erfolgreich erstellt.")
                 print("E-Mail erfolgreich gesendet!")
             elif self.alternative_empfänger_adresse != "":
@@ -884,7 +918,6 @@ class Listendings:
                     print("Fehler beim anmelden beim senden an den Mailserver. Fehlercode: ", EmailEx2)
                     self.Ereignislog_insert(nachricht_f_e="-Anmeldung am SMTP fehlgeschlagen.-")
                     messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der Nachricht an den Mailserver. Fehlercode: {EmailEx2}")
-                self.Ticket_Fenster.destroy()
                 messagebox.showinfo(title="CiM", message="Das Ticket wurde erfolgreich erstellt.")
                 print("E-Mail erfolgreich gesendet!")
     
