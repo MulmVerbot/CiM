@@ -189,7 +189,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.2 (7)"
+        self.Version = "Beta 1.1.2 (8)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -237,6 +237,10 @@ class Listendings:
         self.Blacklist_pfad = os.path.join(self.Db_Ordner_pfad, "Db_Blacklist.json")
         self.Weiterleitungs_ordner_datei = os.path.join(self.Einstellungen_ordner, "Weiterleitung.txt")
         self.TASKS_FILE = 'tasks.json'
+        self.Adressbuch_Datei_pfad = os.path.join(self.Einstellungen_ordner, "Mail_Adressbuch.json")
+        self.Domain_name_Einstellungsdatei = os.path.join(self.Einstellungen_ordner, "Domain_Name.txt")  # //todo so langsam werden das echt viele Einstellungen, das muss mal auf eine Datei zusammengefasst werden.
+
+
     ## assets
         self.Asset_ordner_beb_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Bearbeiten.png')
         self.Asset_ordner_dur_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Durchsuchen.png') 
@@ -388,6 +392,9 @@ class Listendings:
         self.ID_v = None
         self.LB_auswahl_index = None
         self.eigener_Suchort = None
+        self.Adressbuch_geladen = None
+        self.Domain_name = None
+        self.zu_verschenken = None
     ################ Jetzt werden hier so Dinge geladen wie Einstellungen, oder es wird hier geguckt, ob alle benötigten Ordner Existieren ############
 
         if sys.platform == "darwin":
@@ -522,6 +529,7 @@ class Listendings:
         self.Speichern_Menu.add_command(label="als CSV Speichern unter...", command=self.als_csv_speichern)
         self.Speichern_Menu.add_command(label="als CSV Speichern auf Netzlaufwerk", command=self.Netzlaufwerk_speichern)
         self.Einstellungen.add_command(label="Einen neuen Kontakt hinzufügen...", command=self.zeugs1)
+        self.Einstellungen.add_command(label="Domain Namen ändern...", command=self.Domain_name_setzen)
         self.Bearbeiten_Menu.add_command(label="Blacklist erweitern...", command=self.zeugs1_blacklist)
         self.Bearbeiten_Menu.add_command(label="Alle Einträge löschen", command=self.alles_löschen)
         self.Bearbeiten_Menu.add_command(label="JSON Explorer öffnen", command=self.JSON_Explorer_öffnen)
@@ -817,29 +825,79 @@ class Listendings:
     def Eintrag_per_Mail_weiterleiten_vor(self):
         print("Eintrag_per_Mail_weiterleiten(def)")
         self.Fenster_Frage = tk.CTkToplevel()
+        width = 420
+        height = 400
+        fenster_breite = self.Fenster_Frage.winfo_screenwidth()
+        fenster_höhe = self.Fenster_Frage.winfo_screenheight()
+        x = (fenster_breite - width) // 2
+        y = (fenster_höhe - height) // 2
+        self.Fenster_Frage.geometry(f"{width}x{height}+{x}+{y}")
         self.Fenster_Frage.title("Als Mail weiterleiten")
-        self.Fenster_Frage.geometry("400x500")
+        self.Fenster_Frage.resizable(False,False)
         self.Standard_addr = False
 
-        f_l = tk.CTkLabel(self.Fenster_Frage, text="Empfänger")
+        f_l = tk.CTkLabel(self.Fenster_Frage, text="Empfänger Adresse:")
         f_l.place(x=10,y=10)
         self.Empf_e = tk.CTkEntry(self.Fenster_Frage, width=200)  ## //todo soll dann auch per pre konfig. Liste auswählbar sein.
         self.Empf_e.place(x=10,y=50)
 
-        self.Domain_einsetzen = tk.CTkButton(self.Fenster_Frage, text="Domäne einfügen", command=self.Domain_einsetzen_Email_weiterleitung) #  einen Knopf daneben mit "Firmendomäne einsetzen" um die Domains der Email Adressen einzufügen
-
+        self.Domain_einsetzen = tk.CTkButton(self.Fenster_Frage, text="Domäne einfügen", command=self.Domain_einsetzen_Email_weiterleitung, fg_color=self.f_grün, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal) #  einen Knopf daneben mit "Firmendomäne einsetzen" um die Domains der Email Adressen einzufügen
+        self.Domain_einsetzen.place(x=10,y=220)
         # standard_empf_knopp = tk.CTkButton(self.Fenster_Frage, text="Standard Empfänger", command=self.stnd_true) //todo: gui feedback wenn das gedrückt wurde
 
-        senden_knopp = tk.CTkButton(self.Fenster_Frage, text="senden", command=self.Eintrag_per_Mail_weiterleiten)
-        senden_knopp.place(x=100,y=250)
+        senden_knopp = tk.CTkButton(self.Fenster_Frage, text="senden", command=self.Eintrag_per_Mail_weiterleiten, fg_color=self.rot, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
+        senden_knopp.place(x=100,y=100)
+
+    def Mail_Adressbuch_laden(self):
+        try:
+            with open(self.Adressbuch_Datei_pfad, "r") as M_A_gel:
+                self.Adressbuch_geladen = M_A_gel.read()
+        except FileNotFoundError:
+            print("[-EINSTLLUNGEN LADEN-] Es gibt kein Adressbuch zum laden.")
+            self.Adressbuch_geladen = None
+        except Exception as Einst_l_e_M_Addr:
+            messagebox.showerror(title=self.Programm_Name_lang, message=f"Beim laden des Adressbuchs gab es einen Fehler. Fehlermeldung: {Einst_l_e_M_Addr}.")
+            print(f"[-EINSTLLUNGEN LADEN-] Beim laden des Adressbuchs gab es einen Fehler. Fehlermeldung: {Einst_l_e_M_Addr}")
+            self.Adressbuch_geladen = None
+
+    def Domain_name_laden(self):
+        try:
+            with open(self.Domain_name_Einstellungsdatei, "r") as d_gel:
+                self.Domain_name = d_gel.read()
+                if self.Domain_name == "":
+                    self.Domain_name = None
+        except FileNotFoundError:
+            print("[-EINSTLLUNGEN LADEN-] Es gibt keinen Domänennamen zum laden.")
+            self.Domain_name = None
+        except Exception as exuz:
+            print(f"{exuz}")
+            self.Domain_name = None
+
+    def Domain_name_setzen(self):
+        print("Domain Namen setzen")
+
+        self.zu_verschenken = simpledialog.askstring(title=self.Programm_Name, prompt="Bitte geben Sie nun den Domain Namen ein.")
+        if self.zu_verschenken:
+            print(f"erhaltener wert: {self.zu_verschenken}")
+            try:
+                with open(self.Domain_name_Einstellungsdatei, "w+") as schr:
+                    schr.write(self.zu_verschenken)
+                    print("Einstellung Domain_Name wurde gespeichert.")
+            except PermissionError:
+                messagebox.showerror(title=self.Programm_Name_lang, message="Das Programm hat so wie es aussieht keine Schreibberechtigung.")
+                print("Fehler beim speichern des Domainnames: Das Programm hat so wie es aussieht keine Schreibberechtigung.")
+            except Exception as Egfhfbkhvjkl:
+                print(f"Beim schreiben des neuen Domain Namens ist ein Fehler aufgreteten. Fehlermeldunng: {Egfhfbkhvjkl}")
+                messagebox.showerror(title=self.Programm_Name_lang, message=f"Beim schreiben des neuen Domain Namens ist ein Fehler aufgreteten. Fehlermeldunng: {Egfhfbkhvjkl}")
 
     def Domain_einsetzen_Email_weiterleitung(self):
         print("Domain_einsetzen_Email_weiterleitung(def)")
-        try:
-            with open(self.Domain_name_Einstellungsdatei, "r") as d_gel:
-                Domain_name = d_gel.read()
-        except Exception as exuz:
-            print(f"{exuz}")
+        if self.Domain_name == None:
+            self.Domain_name = ""
+            self.Empf_e.insert(Atk.END, self.Domain_name)
+            self.Domain_name = None
+        else:
+            self.Empf_e.insert(Atk.END, self.Domain_name)
 
     def stnd_true(self):
         self.Standard_addr = True
@@ -1087,6 +1145,8 @@ class Listendings:
         self.Netzlaufwerk_Einstellung_laden()
         self.Theme_Einstellungen_laden()
         self.eigener_suchort_Einstellung_laden()
+        self.Mail_Adressbuch_laden()
+        self.Domain_name_laden()
         print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die Mail Einstellungen")
         try:
             print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail Sender Einstellungen")
