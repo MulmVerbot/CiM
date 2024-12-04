@@ -856,7 +856,7 @@ class Listendings:
 
         self.Betreff_Mail = f"Anruf von {self.Eintrag_geladen_jetzt["name"]}"
         self.alternative_empfänger_adresse = self.sender_email
-        self.Nachricht_Mail_Inhalt = f"Guten Tag,\nfolgenden Anruf habe ich erhalten: \n\nUhrzeit: {self.Eintrag_geladen_jetzt["Uhrzeit"]}\nAnrufer: {self.Eintrag_geladen_jetzt["name"]}\nBeschreibung: {self.Eintrag_geladen_jetzt["description"]}\nNotizen/ weitere Infos: {self.Eintrag_geladen_jetzt["notizen"]}\n\nWen sprechen: {self.Eintrag_geladen_jetzt["wen_sprechen"]}\nweitergeleitet an: {self.Eintrag_geladen_jetzt["an_wen_gegeben"]}\nID: {self.Eintrag_geladen_jetzt["ID_L"]}\n\n\nDiese Email wurde automatisch erstellt."
+        self.Nachricht_Mail_Inhalt = f"Guten Tag,\nfolgenden Anruf habe ich erhalten: \n\nUhrzeit: {self.Eintrag_geladen_jetzt["Uhrzeit"]}\nTelefonnummer: {self.Eintrag_geladen_jetzt["Telefonnummer"]}\nAnrufer: {self.Eintrag_geladen_jetzt["name"]}\nBeschreibung: {self.Eintrag_geladen_jetzt["description"]}\nNotizen/ weitere Infos: {self.Eintrag_geladen_jetzt["notizen"]}\n\nWen sprechen: {self.Eintrag_geladen_jetzt["wen_sprechen"]}\nweitergeleitet an: {self.Eintrag_geladen_jetzt["an_wen_gegeben"]}\nID: {self.Eintrag_geladen_jetzt["ID_L"]}\n\n\nDiese Email wurde automatisch erstellt."
         self.Fenster_Frage.destroy()
 
         msg = MIMEMultipart()
