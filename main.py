@@ -189,7 +189,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.2 (8)"
+        self.Version = "Beta 1.1.2 (9)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -866,6 +866,8 @@ class Listendings:
                 self.Domain_name = d_gel.read()
                 if self.Domain_name == "":
                     self.Domain_name = None
+                    print("[-EINSTLLUNGEN LADEN-] Domain Name war leer und wurde genullt.")
+                print("[-EINSTLLUNGEN LADEN-] Domain Name wurde erfolgreich geladen.")
         except FileNotFoundError:
             print("[-EINSTLLUNGEN LADEN-] Es gibt keinen Domänennamen zum laden.")
             self.Domain_name = None
@@ -883,6 +885,7 @@ class Listendings:
                 with open(self.Domain_name_Einstellungsdatei, "w+") as schr:
                     schr.write(self.zu_verschenken)
                     print("Einstellung Domain_Name wurde gespeichert.")
+                self.Domain_name_laden()
             except PermissionError:
                 messagebox.showerror(title=self.Programm_Name_lang, message="Das Programm hat so wie es aussieht keine Schreibberechtigung.")
                 print("Fehler beim speichern des Domainnames: Das Programm hat so wie es aussieht keine Schreibberechtigung.")
