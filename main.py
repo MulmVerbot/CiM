@@ -189,7 +189,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.2 (9)"
+        self.Version = "Beta 1.1.2 (10)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -917,7 +917,7 @@ class Listendings:
 
         self.Betreff_Mail = f"Anruf von {self.Eintrag_geladen_jetzt["name"]}"
         self.alternative_empfänger_adresse = self.sender_email
-        self.Nachricht_Mail_Inhalt = f"Guten Tag,\nfolgenden Anruf habe ich erhalten: \n\nUhrzeit: {self.Eintrag_geladen_jetzt["Uhrzeit"]}\nTelefonnummer: {self.Eintrag_geladen_jetzt["Telefonnummer"]}\nAnrufer: {self.Eintrag_geladen_jetzt["name"]}\nBeschreibung: {self.Eintrag_geladen_jetzt["description"]}\nNotizen/ weitere Infos: {self.Eintrag_geladen_jetzt["notizen"]}\n\nWen sprechen: {self.Eintrag_geladen_jetzt["wen_sprechen"]}\nweitergeleitet an: {self.Eintrag_geladen_jetzt["an_wen_gegeben"]}\nID: {self.Eintrag_geladen_jetzt["ID_L"]}\n\n\nDiese Email wurde automatisch erstellt."
+        self.Nachricht_Mail_Inhalt = f"Guten Tag,\nfolgenden Anruf habe ich erhalten: \n\n\nUhrzeit: {self.Eintrag_geladen_jetzt["Uhrzeit"]}\nTelefonnummer: {self.Eintrag_geladen_jetzt["Telefonnummer"]}\n\n\nAnrufer: {self.Eintrag_geladen_jetzt["name"]}\n\nBeschreibung: {self.Eintrag_geladen_jetzt["description"]}\n\nNotizen/ weitere Infos: {self.Eintrag_geladen_jetzt["notizen"]}\n\nWen sprechen: {self.Eintrag_geladen_jetzt["wen_sprechen"]}\nweitergeleitet an: {self.Eintrag_geladen_jetzt["an_wen_gegeben"]}\nID: {self.Eintrag_geladen_jetzt["ID_L"]}\n\n\nDiese Email wurde automatisch erstellt."
         self.Fenster_Frage.destroy()
 
         msg = MIMEMultipart()
