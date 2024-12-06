@@ -640,7 +640,7 @@ class Listendings:
         self.irgendwo_suchen.place(x=1260, y=130)
         self.Menü_Knopp = tk.CTkButton(master, text="Statistik", command=self.Menu_anzeige_wechseln, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Menü_Bild)
         self.Menü_Knopp.place(x=1260, y=160)
-        self.Pause_menu = tk.CTkScrollableFrame(master, width=769, height=420, fg_color="LightSlateGray", border_color="White", border_width=1, corner_radius=1)
+        self.Pause_menu = tk.CTkFrame(master, width=769, height=420, fg_color="LightSlateGray", border_color="White", border_width=1, corner_radius=1)
         self.Ereignislog = tk.CTkTextbox(root, width=220, height=80, wrap="word", text_color=self.Txt_farbe, fg_color=self.Ereignislog_farbe, border_color=self.f_border, border_width=2, font=("Bangla MN", 12))
         self.Ereignislog.place(x=1210,y=10)
         self.Ereignislog_insert(nachricht_f_e="[-Ereignislog-]")
