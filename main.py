@@ -189,7 +189,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.2 (11)"
+        self.Version = "Beta 1.1.2 (12)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -969,7 +969,7 @@ class Listendings:
                     print("Fehler beim anmelden beim senden an den Mailserver. Fehlercode: ", EmailEx2)
                     self.Ereignislog_insert(nachricht_f_e="-Anmeldung am SMTP fehlgeschlagen.-")
                     messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der Nachricht an den Mailserver. Fehlercode: {EmailEx2}")
-                messagebox.showinfo(title="CiM", message="Das Ticket wurde erfolgreich erstellt.")
+                messagebox.showinfo(title="CiM", message="Der Eintrag wurde erfolgreich weitergeleitet.")
                 print("E-Mail erfolgreich gesendet!")
             elif self.alternative_empfänger_adresse != "":
                 try:
@@ -979,7 +979,7 @@ class Listendings:
                     print("Fehler beim anmelden beim senden an den Mailserver. Fehlercode: ", EmailEx2)
                     self.Ereignislog_insert(nachricht_f_e="-Anmeldung am SMTP fehlgeschlagen.-")
                     messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der Nachricht an den Mailserver. Fehlercode: {EmailEx2}")
-                messagebox.showinfo(title="CiM", message="Das Ticket wurde erfolgreich erstellt.")
+                messagebox.showinfo(title="CiM", message="Der Eintrag wurde erfolgreich weitergeleitet.")
                 print("E-Mail erfolgreich gesendet!")
     
     def eigenen_suchort_einstellen(self):
