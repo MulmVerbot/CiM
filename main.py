@@ -1,5 +1,6 @@
 try:
     import sys
+    import atexit
     from tkinter import ttk
     import tkinter as Atk
     from tkinter import messagebox
@@ -144,8 +145,8 @@ class Listendings:
                 httpd.shutdown()
                 print(f'[- Starface-Modul - HTTP - INFO -] Server auf Port {port} gestoppt.')
 
-    class Logger(object):
-        def __init__(self): #eine init welche nur das "unwichtige" vorgeplänkel macht (Logs und so)
+    class Logger(object): # Erstellt Logdateien
+        def __init__(self):
             self.tag_und_zeit_string = time.strftime("%m/%d/%Y, %H:%M:%S")
             self.tag_string = str(time.strftime("%d %m %Y"))
             self.Benutzerordner = os.path.expanduser('~')
@@ -159,37 +160,50 @@ class Listendings:
                     print(f"Konnte den Ordner {self.Logs_Speicherort_ordner} erstellen.")
                 except:
                     print(f"Konnte den Ordner {self.Logs_Speicherort_ordner} nicht erstellen.")
-            
             try:
-                log_pfad = (self.Logs_Speicherort_Datei)
+                log_pfad = self.Logs_Speicherort_Datei
                 self.terminal = sys.stdout
-                self.log = open(log_pfad, "w")
-            except:
-                try:
-                    log_pfad = (self.Logs_Speicherort_Datei)
-                    self.terminal = sys.stdout
-                    self.log = open(log_pfad, "w+")
-                except:
-                    pass
+                self.log = open(log_pfad, "a")
+            except Exception as e:
+                print(f"Fehler beim Öffnen der Logdatei: {e}")
+
+            # Sicherstellen, dass die Log-Datei beim Beenden des Programms geschlossen wird
+            atexit.register(self.close_log)
+
         def write(self, message):
             try:
                 self.terminal.write(message)
-            except:
-                pass
+            except Exception as e:
+                print(f"Fehler beim Schreiben in die Konsole: {e}")
+            
             try:
                 self.log.write(message)
-            except:
+            except Exception as e:
                 pass
+                # Das hier sollte eigentlich kein Problem sein aber beim schließen wird aus irgendeinem Grund das Terminal auf gottlose Art und Weise zugespamt.
+                #print(f"Fehler beim Schreiben in die Logdatei: {e}")
+        
         def flush(self):
-            #für Python 3 wichtig wegen kompatibilität, hab aber keine wirkliche ahnung was das macht
-            pass    
+            # Für Python 3 erforderlich, um sicherzustellen, dass die Daten richtig gepuffert werden
+            try:
+                self.log.flush()
+            except Exception as e:
+                print(f"Fehler beim Puffern der Logdatei: {e}")
+
+        def close_log(self):
+            try:
+                if self.log:
+                    self.log.close()
+                    print("Logdatei erfolgreich geschlossen.")
+            except Exception as e:
+                print(f"Fehler beim Schließen der Logdatei: {e}")
     sys.stdout = Logger()
 # Freude ist bloß ein Mangel an Informationen
     def __init__(self, master):
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.2 (12)"
+        self.Version = "Beta 1.1.2 (13)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
