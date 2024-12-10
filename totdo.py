@@ -10,8 +10,7 @@ import threading
 import re
 from caldav import DAVClient
 from datetime import datetime, timedelta
-import urllib3
-import requests
+
 #            _ .-') _             .-') _                   
 #           ( (  OO) )           ( OO ) )                  
 #           \     .'_  .---.,--./ ,--,'   ,--.   .-----.  
@@ -25,7 +24,7 @@ import requests
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Beta 1.0 (6)"
+        self.Version = "Beta 1.0 (7)"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -34,6 +33,7 @@ class TodoApp:
         self.Programm_läuft = True
         self.Mod_Suche_aktiv = True
         self.Autospeichern = True
+        self.SSL_Zustand = False  #### Dafür umebdingt eine Einstellung bauen, für externe Netzwerke ist das wichtig!!!!!!!
         self.Benutzerordner = os.path.expanduser('~')
         self.tasks_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Db')
         self.tasks_pfad_datei = os.path.join(self.tasks_pfad, 'tasks.json')
@@ -109,12 +109,10 @@ class TodoApp:
                 os.mkdir(self.Einstellungsordner_pfad)
         except Exception as ex1:
             print(f"konnte den Einstellungsordner nicht erstellen. Fehlercode: {ex1}")
-        
-        self.ID_laden()
+
+        self.Einstellungen_laden_totdo()
         self.todo_aufmachen()
-        #self.fake_laden()
         self.todo_r_dispawn()
-        self.Listennamen_laden()
 
     def Einstellungen_laden_totdo(self):
         print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die Mail Einstellungen")
@@ -147,6 +145,9 @@ class TodoApp:
                 self.Einstellung_CalDav_Adresse = cl_gel.read()
         except Exception as CLDvE:
             print(f"Beim laden der CalDav Einstellungen ist ein Fehler aufgetreten: {CLDvE}")
+
+        self.ID_laden()
+        self.Listennamen_laden()
 
     def ID_laden(self):
         try:
@@ -196,17 +197,6 @@ class TodoApp:
         except:
             print("konnte den Listennamen nicht speichern.")
             self.top_ln_f.destroy()
-
-    def fake_laden(self):
-        print("lade nun die ganzen Konzept Sachen")
-        y1 = 100
-        i = 1
-        while i <= 20:
-            l = tk.CTkLabel(self.todo_frame_links, text=f"{i}. Liste (zukünftig anclickbar)", text_color="White")
-            l.place(x=10,y=y1)
-            y1 += 40
-            i += 1
-        print("Alle Fakes/ Konzepte wurden geladen")
 
     def Listen_arten_laden(self):
         print("Lade nun verfügbare Listen")
@@ -276,8 +266,6 @@ class TodoApp:
         self.Erledigt_Liste_öffnen_knopp = tk.CTkButton(self.todo_frame_links, text="erledigte Aufgaben anzeigen", command=self.erledigte_Aufgaben_laden, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
         self.Erledigt_Liste_öffnen_knopp.place(x=10,y=100)
 
-
-        self.Einstellungen_laden_totdo()
         self.load_tasks() # lädt die akuellen Aufgaben
 
     def info(self):
@@ -297,17 +285,16 @@ class TodoApp:
 
     def Kalender_eintrag_erstellen(self):
         print("Erstelle einen Kalendereintrag")
-        self.Kalender_Eintrag_zusammenfassung = "Zusammenfassung"
-        self.Kalender_eintag_beschreibung = "Kalenderbeschreibung"
-        self.Kalender_Eintrag_Ort = "Irgendwo"
-
+        Kalender_Eintrag_zusammenfassung = "Zusammenfassung"
+        Kalender_eintag_beschreibung = "Kalenderbeschreibung"
+        Kalender_Eintrag_Ort = "Irgendwo"
         try:
             # Verbindung ohne SSL-Überprüfung, mega unsicher und nur fürs interne Netzwerk gedacht!!!!!
             client = DAVClient(
                 url=f"{self.Einstellung_CalDav_Adresse}",
                 username=f"{self.sender_email}",
                 password=f"{self.pw_email}",
-                ssl_verify_cert=False
+                ssl_verify_cert=self.SSL_Zustand
             )
 
             principal = client.principal()
@@ -331,9 +318,9 @@ UID:unique-id-{datetime.now().timestamp()}@example.com
 DTSTAMP:{datetime.now().strftime('%Y%m%dT%H%M%SZ')}
 DTSTART:{event_start.strftime('%Y%m%dT%H%M%SZ')}
 DTEND:{event_end.strftime('%Y%m%dT%H%M%SZ')}
-SUMMARY:{self.Kalender_Eintrag_zusammenfassung}
-DESCRIPTION:{self.Kalender_eintag_beschreibung}
-LOCATION:{self.Kalender_Eintrag_Ort}
+SUMMARY:{Kalender_Eintrag_zusammenfassung}
+DESCRIPTION:{Kalender_eintag_beschreibung}
+LOCATION:{Kalender_Eintrag_Ort}
 END:VEVENT
 END:VCALENDAR
 """
@@ -524,7 +511,8 @@ END:VCALENDAR
 
         try:
             if task['fertsch'] == True:
-                print(f"Aufgabe wird versteckt weil task['fertsch'] == {task['fertsch']} ist.")
+                pass
+                #print(f"Aufgabe wird versteckt weil task['fertsch'] == {task['fertsch']} ist.")
             else:
                 self.Knopp_frame = tk.CTkFrame(self.todo_frame_einz, fg_color="transparent")
                 self.Knopp_frame.pack(padx=10, pady=1)
