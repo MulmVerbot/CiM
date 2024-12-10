@@ -8,7 +8,10 @@ import sys
 import time
 import threading
 import re
-
+from caldav import DAVClient
+from datetime import datetime, timedelta
+import urllib3
+import requests
 #            _ .-') _             .-') _                   
 #           ( (  OO) )           ( OO ) )                  
 #           \     .'_  .---.,--./ ,--,'   ,--.   .-----.  
@@ -22,7 +25,7 @@ import re
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Beta 1.0 (5)"
+        self.Version = "Beta 1.0 (6)"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -37,6 +40,10 @@ class TodoApp:
         self.Einstellungsordner_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Einstellungen')
         self.Listenname_speicherort = os.path.join(self.Einstellungsordner_pfad, 'Listenname.txt')
         self.cim_txt_pfad = os.path.join(self.Benutzerordner , "CiM", "cim.txt")
+        self.Einstellung_Email_Sender_Adresse = os.path.join(self.Einstellungsordner_pfad, "Email_sender.txt")
+        self.Einstellung_smtp_server = os.path.join(self.Einstellungsordner_pfad, "SMTP_Server.txt")
+        self.Einstellung_smtp_Passwort = os.path.join(self.Einstellungsordner_pfad, "SMTP_Passwort.txt")
+        self.Einstellung_CalDav_Adresse_pfad = os.path.join(self.Einstellungsordner_pfad, "CalDav.txt")
 
     #### Farben ####
         self.Hintergrund_farbe = "AntiqueWhite2"
@@ -108,6 +115,38 @@ class TodoApp:
         #self.fake_laden()
         self.todo_r_dispawn()
         self.Listennamen_laden()
+
+    def Einstellungen_laden_totdo(self):
+        print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die Mail Einstellungen")
+        try:
+            print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail Sender Einstellungen")
+            with open(self.Einstellung_Email_Sender_Adresse, "r") as Email_S_Datei:
+                self.sender_email = Email_S_Datei.read()
+                print(f"[-EINSTLLUNGEN LADEN-] Sender Email geladen: {self.sender_email}")
+        except Exception as EmailEx3_l:
+            print(f"Fehler beim laden der Maileinstellungen: {EmailEx3_l}")
+            self.sender_email = "Fehler"
+        try:
+            print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail SMTP Einstellungen")
+            with open(self.Einstellung_smtp_server, "r") as SMTP_Server_Datei:
+                self.smtp_server = SMTP_Server_Datei.read()
+                print("[-EINSTLLUNGEN LADEN-] SMTP Server Adresse geladen.")
+        except Exception as EmailEx3_l:
+            print(f"Fehler beim laden der Maileinstellungen: {EmailEx3_l}")
+            self.smtp_server = "Fehler"
+        try:
+            print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail Passwörters")
+            with open(self.Einstellung_smtp_Passwort, "r") as SMTP_Server_Passwort_Datei:
+                self.pw_email = SMTP_Server_Passwort_Datei.read()
+                print(f"[-EINSTLLUNGEN LADEN-] Absender Kennwort geladen. {self.pw_email}")
+        except Exception as EmailEx3_l:
+            print(f"Fehler beim laden der Passwort Maileinstellungen: {EmailEx3_l}")
+            self.pw_email = ""
+        try:
+            with open(self.Einstellung_CalDav_Adresse_pfad, "r") as cl_gel:
+                self.Einstellung_CalDav_Adresse = cl_gel.read()
+        except Exception as CLDvE:
+            print(f"Beim laden der CalDav Einstellungen ist ein Fehler aufgetreten: {CLDvE}")
 
     def ID_laden(self):
         try:
@@ -194,6 +233,7 @@ class TodoApp:
         self.Einstellungen.add_command(label="Liste aktualisieren", command=self.refresh_tasks)
         self.Einstellungen.add_command(label="Aufgabe aktualisieren", command=self.task_update)
         self.Einstellungen.add_command(label="GUI Neustarten", command=self.neustarten)
+        self.menudings.add_command(label="Kalender Eintrag demo senden", command=self.Kalender_eintrag_erstellen)
 
         self.todo_frame_links = tk.CTkFrame(self.root, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
         self.todo_frame_rechts = tk.CTkScrollableFrame(self.root, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
@@ -236,6 +276,8 @@ class TodoApp:
         self.Erledigt_Liste_öffnen_knopp = tk.CTkButton(self.todo_frame_links, text="erledigte Aufgaben anzeigen", command=self.erledigte_Aufgaben_laden, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
         self.Erledigt_Liste_öffnen_knopp.place(x=10,y=100)
 
+
+        self.Einstellungen_laden_totdo()
         self.load_tasks() # lädt die akuellen Aufgaben
 
     def info(self):
@@ -253,7 +295,53 @@ class TodoApp:
             self.create_task_button_fertsch(task)
         self.Erledigt_Liste_öffnen_knopp.configure(text="unerledigte Aufgaben anzeigen", command=self.load_tasks)
 
+    def Kalender_eintrag_erstellen(self):
+        print("Erstelle einen Kalendereintrag")
+        self.Kalender_Eintrag_zusammenfassung = "Zusammenfassung"
+        self.Kalender_eintag_beschreibung = "Kalenderbeschreibung"
+        self.Kalender_Eintrag_Ort = "Irgendwo"
 
+        try:
+            # Verbindung ohne SSL-Überprüfung, mega unsicher und nur fürs interne Netzwerk gedacht!!!!!
+            client = DAVClient(
+                url=f"{self.Einstellung_CalDav_Adresse}",
+                username=f"{self.sender_email}",
+                password=f"{self.pw_email}",
+                ssl_verify_cert=False
+            )
+
+            principal = client.principal()
+
+
+            calendars = principal.calendars()
+            if not calendars:
+                raise Exception("Keine Kalender gefunden!")
+            calendar = calendars[0]  # Erster gefundener Kalender
+
+            event_start = datetime.now() + timedelta(days=1)  # Startzeit: Morgen // muss noch geändert werden, ist nur zu testzwecken
+            event_end = event_start + timedelta(hours=1)      # Dauer: 1 Stunde
+
+    # Die formatierung MUSS so sein
+            icalendar_event = f"""
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//CiM//Totdo//DE
+BEGIN:VEVENT
+UID:unique-id-{datetime.now().timestamp()}@example.com
+DTSTAMP:{datetime.now().strftime('%Y%m%dT%H%M%SZ')}
+DTSTART:{event_start.strftime('%Y%m%dT%H%M%SZ')}
+DTEND:{event_end.strftime('%Y%m%dT%H%M%SZ')}
+SUMMARY:{self.Kalender_Eintrag_zusammenfassung}
+DESCRIPTION:{self.Kalender_eintag_beschreibung}
+LOCATION:{self.Kalender_Eintrag_Ort}
+END:VEVENT
+END:VCALENDAR
+"""
+            print(f"Erstelle Kalendereintrag mit folgenden Daten:\n {icalendar_event}")
+            calendar.add_event(icalendar_event)
+            messagebox.showinfo(title=self.Programm_Name, message=f"Kalendereintrag für den {event_start.strftime('%Y%m%dT%H%M%SZ')} erstellt.")
+        except Exception as KDe1:
+            messagebox.showerror(title=self.Programm_Name, message=f"Beim erstellen des Kalendereintrages ist ein Fehler aufgreten: {KDe1}")
 
     def Uhr(self):
         print("Thread gestartet: Uhr(def)")
