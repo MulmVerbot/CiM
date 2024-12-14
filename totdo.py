@@ -214,15 +214,10 @@ class TodoApp:
         root.configure(menu=self.menu)
         self.menudings = Menu(self.menu, tearoff=0)
         self.Einstellungen = Menu(self.menu, tearoff=0)
-        self.Bearbeiten_Menu = Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label=self.Programm_Name  + " " + self.Version, menu=self.menudings)
         self.menu.add_cascade(label="Einstellungen", menu=self.Einstellungen)
-        self.menu.add_cascade(label="Bearbeiten", menu=self.Bearbeiten_Menu)
+        self.Einstellungen.add_command(label="Listenmamen ändern", command=self.Listenname_change)
         self.menudings.add_command(label="Info", command=self.info)
-        self.Bearbeiten_Menu.add_command(label="Listenmamen ändern", command=self.Listenname_change)
-        self.Einstellungen.add_command(label="Liste aktualisieren", command=self.refresh_tasks)
-        self.Einstellungen.add_command(label="Aufgabe aktualisieren", command=self.task_update)
-        self.Einstellungen.add_command(label="GUI Neustarten", command=self.neustarten)
         self.menudings.add_command(label="Kalender Eintrag demo senden", command=self.Kalender_eintrag_erstellen)
 
         self.todo_frame_links = tk.CTkFrame(self.root, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
@@ -445,7 +440,6 @@ END:VCALENDAR
                 task_notizen = "-"
             if fertsch_var == "" or None:
                 fertsch_var = False
-            #print(f"Hier haste die scheiße ma im Log: {task_notizen} und jetzt die kack beschreibung: {task_description}")
             self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': self.ID, 'fertsch': fertsch_var}
             self.ID += 1
             self.ID_speichern()
@@ -462,7 +456,7 @@ END:VCALENDAR
         else:
             messagebox.showinfo(title=self.Programm_Name, message="Bitte geben Sie zuerst einen Aufgabentitel ein.")
         
-        ## kriegt immer die des als letztes gesetzen  // worfür ist diese Notiz??? /// tchjoar...
+        ## kriegt immer die des als letztes gesetzen  // worfür ist diese Notiz??? /// tchjoar... //// naja..
 
     def jsons_durchsuchen(self): # das hier ist teoretisch der Code zum durchsuchen der json dateien (unfertig))
         try:
