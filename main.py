@@ -203,7 +203,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.2 (13)"
+        self.Version = "Beta 1.1.2 (14)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -253,7 +253,8 @@ class Listendings:
         self.TASKS_FILE = 'tasks.json'
         self.Adressbuch_Datei_pfad = os.path.join(self.Einstellungen_ordner, "Mail_Adressbuch.json")
         self.Domain_name_Einstellungsdatei = os.path.join(self.Einstellungen_ordner, "Domain_Name.txt")  # //todo so langsam werden das echt viele Einstellungen, das muss mal auf eine Datei zusammengefasst werden.
-
+        self.tasks_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Db')
+        self.tasks_pfad_datei = os.path.join(self.tasks_pfad, 'tasks.json')
 
     ## assets
         self.Asset_ordner_beb_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Bearbeiten.png')
@@ -578,9 +579,9 @@ class Listendings:
         self.Listen_Liste_frame.place(x=0,y=100)
 ######## Eintrags LB
         if self.Windows == False: # unter windows ist die LB sonst nicht breit genug.
-            self.Eintrags_Liste = Atk.Listbox(self.Listen_Liste_frame, bg=self.Ereignislog_farbe, fg=self.Txt_farbe, height=12, width=40, selectbackground=self.f_LB_S, selectforeground=self.f_LB_s_txt)
+            self.Eintrags_Liste = Atk.Listbox(self.Listen_Liste_frame, bg=self.Ereignislog_farbe, fg=self.Txt_farbe, height=12, width=40, selectbackground=self.f_LB_S, selectforeground=self.f_LB_s_txt, activestyle="none")
         else:
-            self.Eintrags_Liste = Atk.Listbox(self.Listen_Liste_frame, bg=self.Ereignislog_farbe, fg=self.Txt_farbe, height=12, width=60, selectbackground=self.f_LB_S, selectforeground=self.f_LB_s_txt)
+            self.Eintrags_Liste = Atk.Listbox(self.Listen_Liste_frame, bg=self.Ereignislog_farbe, fg=self.Txt_farbe, height=12, width=60, selectbackground=self.f_LB_S, selectforeground=self.f_LB_s_txt, activestyle="none")
         self.Eintrags_Liste.bind("<<ListboxSelect>>", self.LB_ausgewaehlt)
         scrollbar1 = tk.CTkScrollbar(self.Listen_Liste_frame, orientation=Atk.VERTICAL)
         self.Eintrags_Liste.config(yscrollcommand=scrollbar1.set)
@@ -737,10 +738,6 @@ class Listendings:
     #### todo gui ####
         self.Todo_aufmachen_main_knopp = tk.CTkButton(root, text="Totdo öffnen", command=self.todo_aufmachen, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.totdo_Bild)
         self.Todo_aufmachen_main_knopp.place(x=1260,y=480)
-        self.ans_totdo_senden_knopp = tk.CTkButton(root, text="An TotDo senden", command=self.Eintrag_ans_totdo, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Menü_Bild)
-        self.ans_totdo_senden_knopp.place(x=1260,y=330)
-        
-        #self.todo_hinzufügen_knopp = tk.CTkButton(self.todo_frame, text="Aufgabe hinzufügen", command=self.todo_hinzufügen)
         self.Adressbuch_anzeigen_frame = tk.CTkFrame(self.tabview.tab("Adressbuch"), width=575, height=300, fg_color=self.Hintergrund_farbe, border_color=self.Ja_UI_Farbe, border_width=1, corner_radius=0)
         
     #### ende todo gui ####
@@ -818,7 +815,8 @@ class Listendings:
                     print("despawn des LB_GUI zeugs")
                     self.Eintrag_verstecken_Knopp.place_forget()
                     self.Anruf_starten_LB_Knopp.place_forget()
-                    self.per_mail_weitereiten.place_forget()   
+                    self.per_mail_weitereiten.place_forget()
+                    self.ans_totdo_senden_knopp.place_forget()   
                 except:
                     print("war wohl nicht da")
 
@@ -829,6 +827,8 @@ class Listendings:
                 self.Anruf_starten_LB_Knopp.place(x=10,y=320)
                 self.per_mail_weitereiten = tk.CTkButton(root, text="per Mail weiterleiten", command=self.Eintrag_per_Mail_weiterleiten_vor, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
                 self.per_mail_weitereiten.place(x=10,y=360)
+                self.ans_totdo_senden_knopp = tk.CTkButton(root, text="An TotDo senden", command=self.Eintrag_ans_totdo, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Menü_Bild)
+                self.ans_totdo_senden_knopp.place(x=160,y=360)
             ###
             else:
                 messagebox.showwarning(title=self.Programm_Name, message=f"Kein Eintrag mit ID {eintrag_id} gefunden.")
