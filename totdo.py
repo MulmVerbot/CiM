@@ -24,7 +24,7 @@ from datetime import datetime, timedelta
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Beta 1.0 (7)"
+        self.Version = "Beta 1.0 (8)"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
