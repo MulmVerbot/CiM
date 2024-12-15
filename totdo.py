@@ -24,7 +24,7 @@ from datetime import datetime, timedelta
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Beta 1.0 (8)"
+        self.Version = "Beta 1.0 (9)"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -241,7 +241,6 @@ class TodoApp:
         self.Aufgabe_hinzufuegen_Knopp = tk.CTkButton(self.root, text="Änderungen speichern", fg_color=self.f_bg, border_color=self.gruen_hell, border_width=1, text_color="White", hover_color=self.f_r_1)
         self.Aufgabe_entfernen = tk.CTkButton(self.root, text="Aufgabe entfernen", command=self.aufgabe_loeschen_frage, fg_color=self.f_bg, border_color=self.Border_Farbe, border_width=1, text_color="White", hover_color=self.f_r_1)
         self.Aufgabe_hinzufuegen_Knopp.grid(row=2, column=3, padx=(10,10), pady=(10,15), sticky="w")
-        #self.Aufgabe_entfernen.grid(row=2, column=3, padx=(10,10), pady=(10,15), sticky="w") # das bleibt ersma weg weil das feature eh ersetzt wird.
         
         self.Aufgabe_hinzufuegen_Knopp.bind('<Button-1>', self.task_update_knopp)
         self.root.bind('<Return>', self.create_task_button_vor)
@@ -250,11 +249,6 @@ class TodoApp:
         
         self.Aufgaben_Titel_e.bind("<FocusIn>", self.entry_rein)
         self.root.bind("<Double-1>", self.entry_rein)
-        try:
-            self.Aufgaben_Beschreibung_t.delete("0.0", "end")  # also sagen wir so ich weiß nicht warum das ding hier gecleared wird wenn es gerade erst erschaffen wurden.
-        except:
-            pass
-
         self.Datum_fertsch_e = tk.CTkEntry(self.todo_frame_rechts, text_color="White") # hier hinter noch die ganze funktionalität mit einbauen
         self.Datum_fertsch_e.place(x=250,y=840)
 
@@ -799,6 +793,7 @@ if __name__ == "__main__":
         x = (fenster_breite - width) // 2
         y = (fenster_hoehe - height) // 2
         root.geometry(f"{width}x{height}+{x}+{y}")
+        root.wm_minsize(1000, 600)
     mittig_fenster(root, width, height)
     app = TodoApp(root)
     root.mainloop()
