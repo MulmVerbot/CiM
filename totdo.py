@@ -10,6 +10,8 @@ import threading
 import re
 from caldav import DAVClient
 from datetime import datetime, timedelta
+from tkcalendar import Calendar
+import tkinter as Atk
 
 #            _ .-') _             .-') _                   
 #           ( (  OO) )           ( OO ) )                  
@@ -24,7 +26,7 @@ from datetime import datetime, timedelta
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Beta 1.0 (9)"
+        self.Version = "Beta 1.0 (10)"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -93,6 +95,9 @@ class TodoApp:
         self.zeit_string = time.strftime("%H:%M:%S")
         self.tag_string = str(time.strftime("%d %m %Y"))
         self.Jahr = str(time.strftime("%Y"))
+
+        self.ausgw_zeitpunkt = None
+        self.dauer_k = None
 
         try:
             if not os.path.exists(self.tasks_pfad):
@@ -220,6 +225,8 @@ class TodoApp:
         self.menudings.add_command(label="Info", command=self.info)
         self.menudings.add_command(label="Kalender Eintrag demo senden", command=self.Kalender_eintrag_erstellen)
 
+        self.menudings.add_command(label="Kalender Dialog (dev)", command=self.Kalender_Dialog)
+
         self.todo_frame_links = tk.CTkFrame(self.root, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
         self.todo_frame_rechts = tk.CTkScrollableFrame(self.root, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
         self.todo_frame_einz = tk.CTkScrollableFrame(self.root, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
@@ -278,7 +285,6 @@ class TodoApp:
         Kalender_eintag_beschreibung = "Kalenderbeschreibung"
         Kalender_Eintrag_Ort = "Irgendwo"
         try:
-            # Verbindung ohne SSL-Überprüfung, mega unsicher und nur fürs interne Netzwerk gedacht!!!!!
             client = DAVClient(
                 url=f"{self.Einstellung_CalDav_Adresse}",
                 username=f"{self.sender_email}",
@@ -731,6 +737,46 @@ END:VCALENDAR
         print("Checklisten_editor_start(def)")
         Checklisten_Editor_Fenster = tk.CTkToplevel()
 
+    def K_Eintrag_vorbereiten(self):
+        print("K_Eintrag_vorbereiten(def)")
+        print(f"self.ausgw_zeitpunkt : {self.ausgw_zeitpunkt}")
+        print(f"self.dauer_k : {self.dauer_k}")
+
+    def Kalender_Dialog(self):
+        def speichern_u_zumachen():
+            # Datum und Uhrzeit auslesen
+            date = cal.selection_get()
+            time = time_entry.get()
+            dauer_k = dauer_k_entry.get()
+
+            try:
+                ausgw_zeit = datetime.strptime(time, "%H:%M").time()
+                self.ausgw_zeitpunkt = datetime.combine(date, ausgw_zeit)
+                self.dauer_k = int(dauer_k)
+                top.destroy()
+                self.K_Eintrag_vorbereiten()
+            except ValueError:
+                fehler_l.config(text="Fehler: Bitte überprüfen Sie die Eingaben.")
+
+        top = Atk.Toplevel()
+        top.title("Datum, Uhrzeit und Dauer auswählen")
+
+        cal_label = Atk.Label(top, text="Wählen Sie ein Datum:")
+        cal_label.pack(pady=5)
+        cal = Calendar(top, date_pattern="yyyy-mm-dd")
+        cal.pack(pady=5)
+        zeit_l = Atk.Label(top, text="Uhrzeit eingeben (HH:MM):")
+        zeit_l.pack(pady=5)
+        time_entry = Atk.Entry(top)
+        time_entry.pack(pady=5)
+        dauer_k_label = Atk.Label(top, text="Dauer in Minuten eingeben:")
+        dauer_k_label.pack(pady=5)
+        dauer_k_entry = Atk.Entry(top)
+        dauer_k_entry.pack(pady=5)
+        fehler_l = Atk.Label(top, text="", fg="red")
+        fehler_l.pack(pady=5)
+        save_button = Atk.Button(top, text="Speichern", command=speichern_u_zumachen)
+        save_button.pack(pady=10)
 
     def save_task(self, task):
         tasks = self.load_tasks_from_file()
