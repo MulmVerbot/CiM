@@ -511,7 +511,7 @@ END:VCALENDAR
                 self.Knopp_frame = tk.CTkFrame(self.todo_frame_einz, fg_color="transparent")
                 self.Knopp_frame.pack(padx=10, pady=1)
                 self.button = tk.CTkButton(self.Knopp_frame, text=f"Nr. {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w")
-                self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="☐", width=10, command=weghauen, border_color=self.rot, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
+                self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="▢", width=10, command=weghauen, border_color=self.rot, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
                 self.fertsch_knopp.pack(side=tk.LEFT)
                 self.button.pack(side=tk.LEFT)
         except KeyError:
@@ -519,7 +519,7 @@ END:VCALENDAR
             self.Knopp_frame = tk.CTkFrame(self.todo_frame_einz, fg_color="transparent")
             self.Knopp_frame.pack(padx=10, pady=1)
             self.button = tk.CTkButton(self.Knopp_frame, text=f"Nr. {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w")
-            self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="☐", width=10, command=weghauen, border_color=self.rot, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
+            self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="▢", width=10, command=weghauen, border_color=self.rot, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
             self.fertsch_knopp.pack(side=tk.LEFT)
             self.button.pack(side=tk.LEFT)
 
