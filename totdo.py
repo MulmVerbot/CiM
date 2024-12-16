@@ -26,7 +26,7 @@ import tkinter as Atk
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Beta 1.0 (10)"
+        self.Version = "Beta 1.0 (11)"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
