@@ -262,6 +262,9 @@ class TodoApp:
         self.Erledigt_Liste_öffnen_knopp = tk.CTkButton(self.todo_frame_links, text="erledigte Aufgaben anzeigen", command=self.erledigte_Aufgaben_laden, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
         self.Erledigt_Liste_öffnen_knopp.place(x=10,y=100)
 
+        self.warten_lb = Atk.Listbox(self.todo_frame_links, width=30, height=10, background=self.f_e, activestyle="none")
+        ######self.warten_lb.place(x=10,y=350)
+
         self.load_tasks() # lädt die akuellen Aufgaben
 
     def info(self):
@@ -367,7 +370,8 @@ END:VCALENDAR
             "Uhrzeit": self.task_übergabe["Uhrzeit"],
             "notizen": self.task_übergabe["notizen"],
             "id": self.task_übergabe["id"],
-            "fertsch": True # das hier wird immer auf True gesetzt weil es ja der sinn der Funktion ist.
+            "fertsch": True, # das hier wird immer auf True gesetzt weil es ja der sinn der Funktion ist.
+            "warten": self.task_übergabe["warten"]
         }
         self.Aufgabe_erledigt(self.tasks_pfad_datei, self.neuer_eintrag, self.task_übergabe["id"])
         self.refresh_tasks()
@@ -440,7 +444,8 @@ END:VCALENDAR
                 task_notizen = "-"
             if fertsch_var == "" or None:
                 fertsch_var = False
-            self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': self.ID, 'fertsch': fertsch_var}
+            warten_var = False
+            self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': self.ID, 'fertsch': fertsch_var, 'warten': warten_var}
             self.ID += 1
             self.ID_speichern()
             self.Aufgaben_Titel_e.delete(0, tk.END) # das hier wird immmer klappen weil... naja. ohne Aufgabentitel auch keine Aufgabe!
@@ -454,7 +459,7 @@ END:VCALENDAR
             self.create_task_button(self.task)
             self.button.invoke()
         else:
-            messagebox.showinfo(title=self.Programm_Name, message="Bitte geben Sie zuerst einen Aufgabentitel ein.")
+            messagebox.showerror(title=self.Programm_Name, message="Bitte geben Sie zuerst einen Aufgabentitel ein.")
         
         ## kriegt immer die des als letztes gesetzen  // worfür ist diese Notiz??? /// tchjoar... //// naja..
 
@@ -491,7 +496,7 @@ END:VCALENDAR
             task_description = "-"
         if task_notizen == "" or None:
             task_notizen = "-"
-        self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': ID_der_gewählten_Aufgabe, 'fertsch': task["fertsch"]}
+        self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': ID_der_gewählten_Aufgabe, 'fertsch': task["fertsch"], 'warten': task['warten']}
         self.save_task(self.task)
         self.create_task_button(self.task)
         self.refresh_tasks()
@@ -499,6 +504,8 @@ END:VCALENDAR
         
 
     def create_task_button(self, task):
+        self.task = task
+        self.task_übergabe = task
         def weghauen(): # callback zum löschen
             self.show_task(task)
             self.aufgabe_loeschen_frage()
@@ -508,12 +515,18 @@ END:VCALENDAR
                 pass
                 #print(f"Aufgabe wird versteckt weil task['fertsch'] == {task['fertsch']} ist.")
             else:
-                self.Knopp_frame = tk.CTkFrame(self.todo_frame_einz, fg_color="transparent")
-                self.Knopp_frame.pack(padx=10, pady=1)
-                self.button = tk.CTkButton(self.Knopp_frame, text=f"Nr. {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w")
-                self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="▢", width=10, command=weghauen, border_color=self.rot, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
-                self.fertsch_knopp.pack(side=tk.LEFT)
-                self.button.pack(side=tk.LEFT)
+                #wenn es fertsch ist müsen wir es nicht im warten fenster lassen, also kein elif
+                if task['warten'] == True:
+                    self.warten_lb.insert(tk.END, f"Nr. {task['id']}    {task['name']}")
+                    self.warten_lb.bind("<<ListboxSelect>>", self.show_task(task))
+                    #self.warten_lb.bind("<<ListboxSelect>>", lambda t=task: self.show_task(t))
+                else:
+                    self.Knopp_frame = tk.CTkFrame(self.todo_frame_einz, fg_color="transparent")
+                    self.Knopp_frame.pack(padx=10, pady=1)
+                    self.button = tk.CTkButton(self.Knopp_frame, text=f"Nr. {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w")
+                    self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="▢", width=10, command=weghauen, border_color=self.rot, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
+                    self.fertsch_knopp.pack(side=tk.LEFT)
+                    self.button.pack(side=tk.LEFT)
         except KeyError:
             print("task['fertsch'] war noch nicht in der DB vorhanden.")
             self.Knopp_frame = tk.CTkFrame(self.todo_frame_einz, fg_color="transparent")
@@ -532,6 +545,8 @@ END:VCALENDAR
             if task['fertsch'] == False:
                 print(f"Aufgabe wird versteckt weil task['fertsch'] == {task['fertsch']} ist. (Die fertigen Aufgaben werden angezeigt.)")
             else:
+                if task['warten'] == True:
+                    print("Es wird gewartet und diese task in die treeview gepackt")
                 self.Knopp_frame = tk.CTkFrame(self.todo_frame_einz, fg_color="transparent")
                 self.Knopp_frame.pack(padx=10, pady=1)
                 self.button = tk.CTkButton(self.Knopp_frame, text=f"Nr. {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w")
@@ -622,7 +637,11 @@ END:VCALENDAR
         try:
             self.Datum_fertsch_e.grid_forget()
         except Exception as e:
-            print(f"Fehler beim Verstecken von Aufgaben_Beschreibung_l: {e}")        
+            print(f"Fehler beim Verstecken von Aufgaben_Beschreibung_l: {e}")      
+        try:
+             self.warten_aktivieren_knopp.place_forget()
+        except Exception as e:
+            print(f"Fehler beim Verstecken von self.warten_aktivieren_knopp: {e}") 
 
     def Aufgaben_erstelle_deak(self, event):
         print("Aufgaben_erstelle_deak(def)")
@@ -671,7 +690,53 @@ END:VCALENDAR
         self.Aufgaben_Beschreibung_t.insert(tk.END, f"{task['description']}")
         self.Aufgaben_Beschreibung_t.bind("<FocusIn>", self.Aufgaben_erstelle_deak)
         self.Notizen_feld.bind("<FocusIn>", self.Aufgaben_erstelle_deak)
-        
+
+        self.warten_aktivieren_knopp = tk.CTkButton(self.todo_frame_rechts, text="warten", command=self.warten_stellen)
+        ######self.warten_aktivieren_knopp.place(x=100,y=100)
+        self.warten_lb.bind("<<ListboxSelect>>",  self.LB_ausgewaehlt)
+
+
+## Das hier noch anpassen
+    def LB_ausgewaehlt(self, event):
+        print("LB_ausgewaehlt(def)")
+        auswahl = self.warten_lb.curselection()
+        print(f"Das hier wurde ausgewählt: {auswahl}")
+        if auswahl:
+            print("auswahl existiert.")
+            index = auswahl[0]
+            auswahl = self.warten_lb.get(index)
+            self.warten_aus_knopp = tk.CTkButton(self.todo_frame_links, text="freigeben", command=self.warten_nicht_stellen)
+            ######self.warten_aus_knopp.place(x=10)
+
+    def warten_stellen(self):
+        print("warten_stellen(def)")
+        self.task_übergabe["warten"] = True
+        self.neuer_eintrag = {
+            "name": self.task_übergabe["name"],
+            "description": self.task_übergabe["description"],
+            "Uhrzeit": self.task_übergabe["Uhrzeit"],
+            "notizen": self.task_übergabe["notizen"],
+            "id": self.task_übergabe["id"],
+            "fertsch": self.task_übergabe["fertsch"], # das hier wird immer auf True gesetzt weil es ja der sinn der Funktion ist.
+            "warten": self.task_übergabe["warten"]
+        }
+        self.Aufgabe_erledigt(self.tasks_pfad_datei, self.neuer_eintrag, self.task_übergabe["id"])
+        self.refresh_tasks()
+
+    def warten_nicht_stellen(self):
+        print("warten_stellen(def)")
+        self.task_übergabe["warten"] = False
+        self.neuer_eintrag = {
+            "name": self.task_übergabe["name"],
+            "description": self.task_übergabe["description"],
+            "Uhrzeit": self.task_übergabe["Uhrzeit"],
+            "notizen": self.task_übergabe["notizen"],
+            "id": self.task_übergabe["id"],
+            "fertsch": self.task_übergabe["fertsch"], # das hier wird immer auf True gesetzt weil es ja der sinn der Funktion ist.
+            "warten": self.task_übergabe["warten"]
+        }
+        self.Aufgabe_erledigt(self.tasks_pfad_datei, self.neuer_eintrag, self.task_übergabe["id"])
+        self.refresh_tasks()
     
     def auto_speichern(self):
         print("Thread fürs autospeichern läuft.")
@@ -813,6 +878,7 @@ END:VCALENDAR
         self.load_tasks()
 
     def clear_tasks_frame(self): # entfernt alle bisher gelisteteten Aufgaben (UND ALLE WIDGETS!!!!) aus Frame_einz
+        self.warten_lb.delete(0, Atk.END)
         for widget in self.todo_frame_einz.winfo_children():
             widget.destroy()
     
