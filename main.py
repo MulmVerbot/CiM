@@ -203,7 +203,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.2 (14)"
+        self.Version = "Beta 1.1.2 (15)"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -532,27 +532,36 @@ class Listendings:
         self.Bearbeiten_Menu = Menu(self.menu, tearoff=0)
         self.Suchen_Menu = Menu(self.menu, tearoff=0)
         self.Menü = Menu(self.menu, tearoff=0)
+        self.ext_Programme_menu = Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label=self.Programm_Name  + " " + self.Version, menu=self.menudings)
         self.menu.add_cascade(label="Einstellungen", menu=self.Einstellungen)
         self.menu.add_cascade(label="Bearbeiten", menu=self.Bearbeiten_Menu)
         self.menu.add_cascade(label="Speichern", menu=self.Speichern_Menu)
-        self.menu.add_cascade(label="Suchen", menu=self.Suchen_Menu)
+        self.menu.add_cascade(label="Programme", menu=self.ext_Programme_menu)
         self.menudings.add_command(label="Info", command=self.info)
         self.menudings.add_command(label="Changelog", command=self.changelog_aufmachen)
         self.menudings.add_command(label="Admin rechte aktivieren", command=self.Admin_rechte)
         self.Speichern_Menu.add_command(label="als CSV Speichern", command=self.als_csv_speichern_eigener_ort)
         self.Speichern_Menu.add_command(label="als CSV Speichern unter...", command=self.als_csv_speichern)
         self.Speichern_Menu.add_command(label="als CSV Speichern auf Netzlaufwerk", command=self.Netzlaufwerk_speichern)
-        self.Einstellungen.add_command(label="Einen neuen Kontakt hinzufügen...", command=self.zeugs1)
         self.Einstellungen.add_command(label="Domain Namen ändern...", command=self.Domain_name_setzen)
         self.Bearbeiten_Menu.add_command(label="Blacklist erweitern...", command=self.zeugs1_blacklist)
-        self.Bearbeiten_Menu.add_command(label="Alle Einträge löschen", command=self.alles_löschen)
+        self.Bearbeiten_Menu.add_command(label="Einen neuen Kontakt hinzufügen...", command=self.zeugs1)
+        self.Bearbeiten_Menu.add_separator()
         self.Bearbeiten_Menu.add_command(label="JSON Explorer öffnen", command=self.JSON_Explorer_öffnen)
-        self.Suchen_Menu.add_command(label="Ergebnisse von gerade eben öffnen...", command=self.aufmachen_results_vor)
+        self.menudings.add_separator()
         self.menudings.add_command(label="Checklisten (Demo)...", command=self.Checkboxen_dingsen)
         self.menudings.add_command(label="Email Baukasten (Demo)...", command=self.email_baukasten)
+        
+        self.ext_Programme_menu.add_command(label="Externe Programme", state="disabled")
+        self.ext_Programme_menu.add_separator()
+        self.ext_Programme_menu.add_command(label="JSON Explorer öffnen...")
+        self.ext_Programme_menu.add_command(label="Totdo öffnen...")
+        
+
         #self.menudings.add_command(label="Datenbank Migration zu v. Beta 1.1", command=self.DB_Migration)
         #self.Suchen_Menu.add_command(label="Sehr genaue Suche nutzen (Suche 3.0)(Beta)", command=self.frage_nach_string_suche3)
+        
         
         
 
