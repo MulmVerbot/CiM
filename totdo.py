@@ -26,7 +26,7 @@ import tkinter as Atk
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Beta 1.0 (11)"
+        self.Version = "Beta 1.1.0"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -805,7 +805,9 @@ END:VCALENDAR
     def K_Eintrag_vorbereiten(self):
         print("K_Eintrag_vorbereiten(def)")
         print(f"self.ausgw_zeitpunkt : {self.ausgw_zeitpunkt}")
-        print(f"self.dauer_k : {self.dauer_k}")
+        print(f"self.dauer_k : {str(self.dauer_k)}")
+        self.ausgw_zeitpunkt = self.ausgw_zeitpunkt[:5]
+        print(f"Hier kommt jetzt self.ausgw_zeitpunkt : {self.ausgw_zeitpunkt}")
 
     def Kalender_Dialog(self):
         def speichern_u_zumachen():
