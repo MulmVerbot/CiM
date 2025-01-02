@@ -1147,7 +1147,7 @@ class Listendings:
         except Exception as e:
             print(f"[-FATAL-] Irgendwas ist bei den Netzwerkeinstellungen passiert: {e}")
 
-    def Theme_Einstellungen_laden(self):
+    def Theme_Einstellungen_laden(self): # kann gelöscht werden
         try:
             print(f"[-INFO-] Ich lade nun die Theme Einstellungen...")
             with open(self.Einstellung_Theme, "r") as E_theme_gel:
@@ -1169,7 +1169,7 @@ class Listendings:
     def Einstellungen_laden(self): # hier sollen zukünftig alle Einstellungen geladen werden
         print("[-EINSTLLUNGEN LADEN- - INFO -] Lade nun alle Einstellungen")
         self.Netzlaufwerk_Einstellung_laden()
-        self.Theme_Einstellungen_laden()
+        #self.Theme_Einstellungen_laden() kann gelöscht werden
         self.eigener_suchort_Einstellung_laden()
         self.Mail_Adressbuch_laden()
         self.Domain_name_laden()
