@@ -49,12 +49,15 @@ except Exception as E:
                 try:
                     command= "pip install -r requirements.txt"
                     if sys.platform == "win32":
+                        print("Windows")
                         # Windows
                         subprocess.run(['cmd.exe', '/c', command], check=True)
                     elif sys.platform == "darwin":
+                        print("MacOS")
                         # macOS
                         subprocess.run(['open', '-a', 'Terminal', '-n', '--args', command], check=True)
                     else:
+                        print("Ja")
                         print("Unbekanntes Betriebssystem. Dieses Programm unterstützt nur Windows und macOS.")
                         sys.exit()
                     
