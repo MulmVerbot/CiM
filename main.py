@@ -217,6 +217,7 @@ class Listendings:
         self.letzter_eintrag_text = None
         self.Pause = True
         self.Menü_da = False
+        self.T_i = True
         self.beb = "0"
         self.Starface_Modul = "0"
         self.Auto_speichern_Einstellung = "0"
@@ -470,7 +471,7 @@ class Listendings:
             pass
         except Exception as Ex_tmp_bug:
             print(f"Es gibt einen Hinweis auf fehlende Schreibrechte im Programmverzeichnis. Fehlermeldung: {Ex_tmp_bug}")
-            messagebox.showerror(title="CiM Fehler", message=f"Es scheint so als hätten Sie keine Schreibrechte im Programmverzeichnis, das sollre nur mit dem Starface Modul ein Problem werden. Fehlercode: {Ex_tmp_bug}") 
+            messagebox.showerror(title="CiM Fehler", message=f"Es scheint so als hätten Sie keine Schreibrechte im Programmverzeichnis, das sollte nur mit dem Starface Modul ein Problem werden. Fehlercode: {Ex_tmp_bug}") 
         
         
         try: 
@@ -1229,8 +1230,35 @@ class Listendings:
             except Exception as exJKSOJ:
                 print(f"[ ERR - INIT - PFADE ] Fehler beim erstellen der JSON Pfade: {exJKSOJ}")
 
+    def Terminal_Thread(self):
+        print("Ich starte nun den Terminal Thread...")
+        self.T_i = True
+        self.thread_terminal_input = threading.Timer(1, self.Terminal_input_erhalten)
+        self.thread_terminal_input.daemon = True
+        self.thread_terminal_input.start()
+
+    def Terminal_input_erhalten(self):
+        print("Erhalte nun den Terminal input.")
+        e = None
+        while self.T_i == True:
+            e = input("")
+            if e:
+                if e == "Dings":
+                    print("hahah ja, Bums!")
+                    e = None
+                elif e == "": # Das hier ist dann das ende, kann man als kopiervorlage nutzen.
+                    e = ":"
+                    print(e)
+                    e = None
+                else:
+                    print(e)
+                    e = None
+        print("Schleife beendet, Terminal kann nun nicht mehr bedient werden.")
+
+
     def init_auf_wish(self):
         print("[-init-] init auf wish bestellt...")
+        self.Terminal_Thread()
         self.ordner_erstellen()
         self.Kontakte_aus_json_laden()
         self.weiterleitung_laden()
@@ -3345,6 +3373,7 @@ class Listendings:
         self.Programm_läuft = False
         Listendings.Programm_läuft = False
         self.Uhr_läuft = False
+        self.T_i = False
         self.thread_uhr.cancel()
         zeit_string = time.strftime("%H:%M:%S")
         tag_string = str(time.strftime("%d %m %Y"))
