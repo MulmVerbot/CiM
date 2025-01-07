@@ -294,7 +294,7 @@ class Listendings:
 #           |  |   ' | |   ||  .     |/ | .-.  '   .'  /  
 #           |  |   / : |   ||  |\    |  ' \  |  |.'  /__  
 #           |  '--'  / |   ||  | \   |  \  `'  /|       | 
-#           `-------'  `---'`--'  `--'   `----' `-------'  <-2023 - 2024->
+#           `-------'  `---'`--'  `--'   `----' `-------'  <-2023 - 2025->
         
         try: ## das hier sind die Bilder
             self.Bearbeiten_Bild = tk.CTkImage(Image.open(self.Asset_ordner_beb_pfad))
