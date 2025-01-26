@@ -206,7 +206,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.2 (15)"
+        self.Version = "Beta 1.1.3"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -259,6 +259,7 @@ class Listendings:
         self.Domain_name_Einstellungsdatei = os.path.join(self.Einstellungen_ordner, "Domain_Name.txt")  # //todo so langsam werden das echt viele Einstellungen, das muss mal auf eine Datei zusammengefasst werden.
         self.tasks_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Db')
         self.tasks_pfad_datei = os.path.join(self.tasks_pfad, 'tasks.json')
+        self.Einstellung_CalDav_Adresse_pfad = os.path.join(self.Einstellungen_ordner, "CalDav.txt")
 
     ## assets
         self.Asset_ordner_beb_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Bearbeiten.png')
@@ -364,6 +365,7 @@ class Listendings:
         self.f_hover_normal = "#424242"
         self.f_LB_S = self.f_e_PlH_Text
         self.f_LB_s_txt = "Black"
+        self.f_orange = "#ff7f24" # Orange
     #### Farben Ende ####
 
         root.configure(fg_color=self.Hintergrund_farbe)
@@ -727,6 +729,7 @@ class Listendings:
         self.tabview.add("SMTP")
         self.tabview.add("Speicherorte")
         self.tabview.add("Weiterleitungen")
+        self.tabview.add("Kalender")
         self.Email_Einstellungen_info = tk.CTkLabel(self.tabview.tab("SMTP"), text='Diese Einstellungen werden von der Funktion "Ticket erstellen" benötigt.', text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
         self.gel_Email_Empfänger_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Ziel Email Adresse", text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
         self.gel_Email_Sender_L = tk.CTkLabel(self.tabview.tab("SMTP"), text="Absende Email Adresse", text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
@@ -746,6 +749,10 @@ class Listendings:
         self.weiterleitungen_drei_e = tk.CTkEntry(self.tabview.tab("Weiterleitungen"), placeholder_text="drittes", width=300, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, border_color=self.f_e)
         self.weiterleitungen_vier_e = tk.CTkEntry(self.tabview.tab("Weiterleitungen"), placeholder_text="erstexs", width=300, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, border_color=self.f_e)
         self.Weiterleitungen_speichern_knopp = tk.CTkButton(self.tabview.tab("Weiterleitungen"), text="Speichern", command=self.weiterleitungen_speichern, fg_color=self.f_grün, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.aktiviert_farbe)
+        self.Caldav_name_l = tk.CTkLabel(self.tabview.tab("Kalender"), text="CalDAV Namen eintragen", text_color=self.Txt_farbe, bg_color=self.Entry_Farbe, corner_radius=3)
+        self.Caldav_e = tk.CTkEntry(self.tabview.tab("Kalender"), width=300, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, border_color=self.f_e)
+        self.Caldav_speichern_k = tk.CTkButton(self.tabview.tab("Kalender"), text="Speichern", command=self.CalDav_Name_speichern, fg_color=self.f_, border_color=self.f_orange, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
+
         #self.Speicherort_lokal_ändern_knopp = tk.CTkButton(self.tabview.tab("Speichern"), text="ändern", command=self.ListenDings_speicherort_ändern, fg=self.helle_farbe_für_knopfe, border=self.f_border)
         #self.Speicherort_lokal_ändern_l = tk.CTkLabel(self.tabview("Speichern"), text="den lokalen Speicherort ändern")
     #### todo gui ####
@@ -1593,7 +1600,9 @@ class Listendings:
         self.Weiterleitungen_speichern_knopp.place(x=10,y=240)
         self.Adressbuch_anzeigen_frame.place(x=5,y=20)
         self.Email_Einstellungen_info.place(x=10, y=100)
-
+        self.Caldav_name_l.place(x=10,y=100)
+        self.Caldav_e.place(x=10,y=130)
+        self.Caldav_speichern_k.place(x=10,y=180)
         try:
             if self.smtp_login_erfolgreich == True:
                 self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP Server war erfolgreich.", text_color="SeaGreen1")
@@ -3045,6 +3054,18 @@ class Listendings:
         else:
             print("db löschen fehler.")
             messagebox.showerror(title="Fehler", message="Kaputt")
+
+    def CalDav_Name_speichern(self):
+        print("CalDav_Name_speichern(def)")
+        self.Einstellung_CalDav_Adresse = self.Caldav_e.get()
+        if self.Einstellung_CalDav_Adresse == "" or None:
+            self.Einstellung_CalDav_Adresse = "Fehler"
+
+        try:
+            with open(self.Einstellung_CalDav_Adresse_pfad, "w+") as cl_gel:
+                cl_gel.write(self.Einstellung_CalDav_Adresse)
+        except Exception as CLDvE:
+            print(f"Beim speichern der CalDav Einstellungen ist ein Fehler aufgetreten: {CLDvE}")
 
     def pause(self):
         print("pause(def)")
