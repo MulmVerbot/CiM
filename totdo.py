@@ -26,7 +26,7 @@ import tkinter as Atk
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Beta 1.1.0"
+        self.Version = "Beta 1.2.0"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -225,8 +225,6 @@ class TodoApp:
         self.menudings.add_command(label="Info", command=self.info)
         self.menudings.add_command(label="Kalender Eintrag demo senden", command=self.Kalender_eintrag_erstellen)
 
-        self.menudings.add_command(label="Kalender Dialog (dev)", command=self.Kalender_Dialog)
-
         self.todo_frame_links = tk.CTkFrame(self.root, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
         self.todo_frame_rechts = tk.CTkScrollableFrame(self.root, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
         self.todo_frame_einz = tk.CTkScrollableFrame(self.root, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
@@ -248,6 +246,8 @@ class TodoApp:
         self.Aufgabe_hinzufuegen_Knopp = tk.CTkButton(self.root, text="Änderungen speichern", fg_color=self.f_bg, border_color=self.gruen_hell, border_width=1, text_color="White", hover_color=self.f_r_1)
         self.Aufgabe_entfernen = tk.CTkButton(self.root, text="Aufgabe entfernen", command=self.aufgabe_loeschen_frage, fg_color=self.f_bg, border_color=self.Border_Farbe, border_width=1, text_color="White", hover_color=self.f_r_1)
         self.Aufgabe_hinzufuegen_Knopp.grid(row=2, column=3, padx=(10,10), pady=(10,15), sticky="w")
+
+        self.An_Kalender_senden_start = tk.CTkButton(self.root, text="Kalender Eintrag...", command=self.Kalender_Dialog)
         
         self.Aufgabe_hinzufuegen_Knopp.bind('<Button-1>', self.task_update_knopp)
         self.root.bind('<Return>', self.create_task_button_vor)
@@ -281,52 +281,6 @@ class TodoApp:
         for task in tasks:
             self.create_task_button_fertsch(task)
         self.Erledigt_Liste_öffnen_knopp.configure(text="unerledigte Aufgaben anzeigen", command=self.load_tasks)
-
-    def Kalender_eintrag_erstellen(self):
-        print("Erstelle einen Kalendereintrag")
-        Kalender_Eintrag_zusammenfassung = "Zusammenfassung"
-        Kalender_eintag_beschreibung = "Kalenderbeschreibung"
-        Kalender_Eintrag_Ort = "Irgendwo"
-        try:
-            client = DAVClient(
-                url=f"{self.Einstellung_CalDav_Adresse}",
-                username=f"{self.sender_email}",
-                password=f"{self.pw_email}",
-                ssl_verify_cert=self.SSL_Zustand
-            )
-
-            principal = client.principal()
-
-
-            calendars = principal.calendars()
-            if not calendars:
-                raise Exception("Keine Kalender gefunden!")
-            calendar = calendars[0]  # Erster gefundener Kalender
-
-            event_start = datetime.now() + timedelta(days=1)  # Startzeit: Morgen // muss noch geändert werden, ist nur zu testzwecken
-            event_end = event_start + timedelta(hours=1)      # Dauer: 1 Stunde
-
-    # Die formatierung MUSS so sein
-            icalendar_event = f"""
-BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//CiM//Totdo//DE
-BEGIN:VEVENT
-UID:unique-id-{datetime.now().timestamp()}@example.com
-DTSTAMP:{datetime.now().strftime('%Y%m%dT%H%M%SZ')}
-DTSTART:{event_start.strftime('%Y%m%dT%H%M%SZ')}
-DTEND:{event_end.strftime('%Y%m%dT%H%M%SZ')}
-SUMMARY:{Kalender_Eintrag_zusammenfassung}
-DESCRIPTION:{Kalender_eintag_beschreibung}
-LOCATION:{Kalender_Eintrag_Ort}
-END:VEVENT
-END:VCALENDAR
-"""
-            print(f"Erstelle Kalendereintrag mit folgenden Daten:\n {icalendar_event}")
-            calendar.add_event(icalendar_event)
-            messagebox.showinfo(title=self.Programm_Name, message=f"Kalendereintrag für den {event_start.strftime('%Y%m%dT%H%M%SZ')} erstellt.")
-        except Exception as KDe1:
-            messagebox.showerror(title=self.Programm_Name, message=f"Beim erstellen des Kalendereintrages ist ein Fehler aufgreten: {KDe1}")
 
     def Uhr(self):
         print("Thread gestartet: Uhr(def)")
@@ -641,7 +595,11 @@ END:VCALENDAR
         try:
              self.warten_aktivieren_knopp.place_forget()
         except Exception as e:
-            print(f"Fehler beim Verstecken von self.warten_aktivieren_knopp: {e}") 
+            print(f"Fehler beim Verstecken von self.warten_aktivieren_knopp: {e}")
+        try:
+            self.An_Kalender_senden_start.grid_forget()
+        except:
+            pass
 
     def Aufgaben_erstelle_deak(self, event):
         print("Aufgaben_erstelle_deak(def)")
@@ -666,7 +624,7 @@ END:VCALENDAR
     def show_task(self, task): # Das hier wird jedesmal ausgeführt wenn jemand eine Aufgabe anclickt
         print("Aufgabe anzeigen")
         self.task = task
-        self.task_übergabe = task # im cim würde diese Variable jetzt "self.Eintrag_geladen_jetzt" oderso heißen
+        self.task_übergabe = task # im cim würde diese Variable jetzt "self.Eintrag_geladen_jetzt" oderso heißen << RT Danke für diese Doku, hätte jetzt wieder ewig gesucht
         ## Das hier oben ist auch wieder mega dumm gelöst weil die var drüber bereits existert, 
         ## ich bin nur gerade zu faul zu gucken ob die zu fürhezeitig wieder freigegeben wird. Sorry zukunfst Max! -- digga wie oft willst Du diese Ausrede noch bringen? 25.10
         self.todo_r_dispawn()
@@ -694,6 +652,9 @@ END:VCALENDAR
         self.warten_aktivieren_knopp = tk.CTkButton(self.todo_frame_rechts, text="warten", command=self.warten_stellen)
         ######self.warten_aktivieren_knopp.place(x=100,y=100)
         self.warten_lb.bind("<<ListboxSelect>>",  self.LB_ausgewaehlt)
+
+        
+        self.An_Kalender_senden_start.grid(row=2, column=3, padx=(150,00), pady=(10,15), sticky="w")
 
 
 ## Das hier noch anpassen
@@ -802,13 +763,59 @@ END:VCALENDAR
         print("Checklisten_editor_start(def)")
         Checklisten_Editor_Fenster = tk.CTkToplevel()
 
-    def K_Eintrag_vorbereiten(self):
-        print("K_Eintrag_vorbereiten(def)")
+    def Kalender_eintrag_erstellen(self):
+        print("Erstelle einen Kalendereintrag")
         print(f"self.ausgw_zeitpunkt : {self.ausgw_zeitpunkt}")
         print(f"self.dauer_k : {str(self.dauer_k)}")
-        self.ausgw_zeitpunkt = self.ausgw_zeitpunkt[:5]
         print(f"Hier kommt jetzt self.ausgw_zeitpunkt : {self.ausgw_zeitpunkt}")
 
+        self.icalendar_event = None
+        startzeit = self.ausgw_zeitpunkt
+        endzeit = startzeit + timedelta(minutes=self.dauer_k)
+        
+        Kalender_Eintrag_zusammenfassung = f"{self.task_übergabe['description']}"
+        Kalender_eintag_beschreibung = f"{self.task_übergabe['notizen']}"
+        Kalender_Eintrag_Ort = "Fernwartung"
+        try:
+            client = DAVClient(
+                url=f"{self.Einstellung_CalDav_Adresse}",
+                username=f"{self.sender_email}",
+                password=f"{self.pw_email}",
+                ssl_verify_cert=self.SSL_Zustand
+            )
+
+            principal = client.principal()
+
+
+            calendars = principal.calendars()
+            if not calendars:
+                raise Exception("Keine Kalender gefunden!")
+            calendar = calendars[0]  # Erster gefundener Kalender
+
+        # Die formatierung MUSS so sein!
+            self.icalendar_event = f"""
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//CiM//Totdo//DE
+BEGIN:VEVENT
+UID:unique-id-{datetime.now().timestamp()}@dings.software
+DTSTAMP:{datetime.now().strftime('%Y%m%dT%H%M%SZ')}
+DTSTART:{startzeit.strftime('%Y%m%dT%H%M%SZ')}
+DTEND:{endzeit.strftime('%Y%m%dT%H%M%SZ')}
+SUMMARY:{Kalender_Eintrag_zusammenfassung}
+DESCRIPTION:{Kalender_eintag_beschreibung}
+LOCATION:{Kalender_Eintrag_Ort}
+END:VEVENT
+END:VCALENDAR
+"""
+            
+            calendar.add_event(self.icalendar_event)
+            print( self.icalendar_event)
+            messagebox.showinfo(title=self.Programm_Name, message=f"Kalendereintrag für den {endzeit.strftime('%Y%m%dT%H%M%SZ')} erstellt.")
+        except Exception as KDe1:
+            messagebox.showerror(title=self.Programm_Name, message=f"Beim erstellen des Kalendereintrages ist ein Fehler aufgreten: {KDe1}")
+
+    
     def Kalender_Dialog(self):
         def speichern_u_zumachen():
             # Datum und Uhrzeit auslesen
@@ -821,15 +828,15 @@ END:VCALENDAR
                 self.ausgw_zeitpunkt = datetime.combine(date, ausgw_zeit)
                 self.dauer_k = int(dauer_k)
                 top.destroy()
-                self.K_Eintrag_vorbereiten()
+                self.Kalender_eintrag_erstellen()
             except ValueError:
                 fehler_l.config(text="Fehler: Bitte überprüfen Sie die Eingaben.")
 
         top = Atk.Toplevel()
         top.title("Datum, Uhrzeit und Dauer auswählen")
 
-        cal_label = Atk.Label(top, text="Wählen Sie ein Datum:")
-        cal_label.pack(pady=5)
+        cal_l = Atk.Label(top, text="Wählen Sie ein Datum:")
+        cal_l.pack(pady=5)
         cal = Calendar(top, date_pattern="yyyy-mm-dd")
         cal.pack(pady=5)
         zeit_l = Atk.Label(top, text="Uhrzeit eingeben (HH:MM):")
