@@ -26,7 +26,7 @@ import tkinter as Atk
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Beta 1.2.0"
+        self.Version = "Beta 1.2.1"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -248,7 +248,7 @@ class TodoApp:
         self.Aufgabe_hinzufuegen_Knopp.grid(row=2, column=3, padx=(10,10), pady=(10,15), sticky="w")
 
         self.An_Kalender_senden_start = tk.CTkButton(self.root, text="Kalender Eintrag...", command=self.Kalender_Dialog)
-        
+
         self.Aufgabe_hinzufuegen_Knopp.bind('<Button-1>', self.task_update_knopp)
         self.root.bind('<Return>', self.create_task_button_vor)
         self.Zhe_Clock = tk.CTkLabel(self.todo_frame_links, text=self.Zeit, text_color="White")
@@ -765,16 +765,13 @@ class TodoApp:
 
     def Kalender_eintrag_erstellen(self):
         print("Erstelle einen Kalendereintrag")
-        print(f"self.ausgw_zeitpunkt : {self.ausgw_zeitpunkt}")
-        print(f"self.dauer_k : {str(self.dauer_k)}")
-        print(f"Hier kommt jetzt self.ausgw_zeitpunkt : {self.ausgw_zeitpunkt}")
 
         self.icalendar_event = None
         startzeit = self.ausgw_zeitpunkt
         endzeit = startzeit + timedelta(minutes=self.dauer_k)
         
         Kalender_Eintrag_zusammenfassung = f"{self.task_übergabe['description']}"
-        Kalender_eintag_beschreibung = f"{self.task_übergabe['notizen']}"
+        Kalender_eintrag_beschreibung = f"{self.task_übergabe['notizen']}"
         Kalender_Eintrag_Ort = "Fernwartung"
         try:
             client = DAVClient(
@@ -785,8 +782,6 @@ class TodoApp:
             )
 
             principal = client.principal()
-
-
             calendars = principal.calendars()
             if not calendars:
                 raise Exception("Keine Kalender gefunden!")
@@ -803,7 +798,7 @@ DTSTAMP:{datetime.now().strftime('%Y%m%dT%H%M%SZ')}
 DTSTART:{startzeit.strftime('%Y%m%dT%H%M%SZ')}
 DTEND:{endzeit.strftime('%Y%m%dT%H%M%SZ')}
 SUMMARY:{Kalender_Eintrag_zusammenfassung}
-DESCRIPTION:{Kalender_eintag_beschreibung}
+DESCRIPTION:{Kalender_eintrag_beschreibung}
 LOCATION:{Kalender_Eintrag_Ort}
 END:VEVENT
 END:VCALENDAR
@@ -817,7 +812,7 @@ END:VCALENDAR
 
     
     def Kalender_Dialog(self):
-        def speichern_u_zumachen():
+        def speichern_u_zumachen(event=None):
             # Datum und Uhrzeit auslesen
             date = cal.selection_get()
             time = time_entry.get()
@@ -829,29 +824,36 @@ END:VCALENDAR
                 self.dauer_k = int(dauer_k)
                 top.destroy()
                 self.Kalender_eintrag_erstellen()
+                save_button.unbind('<Button-1>')
+                save_button.unbind('<Return>')
             except ValueError:
                 fehler_l.config(text="Fehler: Bitte überprüfen Sie die Eingaben.")
+            
 
         top = Atk.Toplevel()
         top.title("Datum, Uhrzeit und Dauer auswählen")
+        top.configure(bg=self.f_bg)
 
-        cal_l = Atk.Label(top, text="Wählen Sie ein Datum:")
+        cal_l = Atk.Label(top, text="Wählen Sie ein Datum:", bg=self.f_bg, fg=self.Txt_farbe)
         cal_l.pack(pady=5)
         cal = Calendar(top, date_pattern="yyyy-mm-dd")
         cal.pack(pady=5)
-        zeit_l = Atk.Label(top, text="Uhrzeit eingeben (HH:MM):")
+        zeit_l = Atk.Label(top, text="Uhrzeit eingeben (HH:MM):", bg=self.f_bg, fg=self.Txt_farbe)
         zeit_l.pack(pady=5)
         time_entry = Atk.Entry(top)
         time_entry.pack(pady=5)
-        dauer_k_label = Atk.Label(top, text="Dauer in Minuten eingeben:")
+        dauer_k_label = Atk.Label(top, text="Dauer in Minuten eingeben:", bg=self.f_bg, fg=self.Txt_farbe)
         dauer_k_label.pack(pady=5)
         dauer_k_entry = Atk.Entry(top)
         dauer_k_entry.pack(pady=5)
-        fehler_l = Atk.Label(top, text="", fg="red")
+        fehler_l = Atk.Label(top, text="", fg="red", bg=self.f_bg)
         fehler_l.pack(pady=5)
-        save_button = Atk.Button(top, text="Speichern", command=speichern_u_zumachen)
-        save_button.pack(pady=10)
+        save_button = Atk.Button(top, text="Speichern")
+        save_button.bind('<Button-1>', speichern_u_zumachen)
+        top.bind('<Return>', speichern_u_zumachen) 
 
+        save_button.pack(pady=10)
+        
     def save_task(self, task):
         tasks = self.load_tasks_from_file()
         tasks.append(task)
