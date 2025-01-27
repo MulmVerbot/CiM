@@ -26,7 +26,7 @@ import tkinter as Atk
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Beta 1.2.1"
+        self.Version = "Beta 1.2.2"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -772,7 +772,7 @@ class TodoApp:
         
         Kalender_Eintrag_zusammenfassung = f"{self.task_übergabe['name']}"
         Kalender_eintrag_beschreibung = f"{self.task_übergabe['description']}"
-        Kalender_Eintrag_Ort = f"{self.task_übergabe['id']}"
+        Kalender_Eintrag_Ort = f"ID: {self.task_übergabe['id']}"
         try:
             client = DAVClient(
                 url=f"{self.Einstellung_CalDav_Adresse}",
