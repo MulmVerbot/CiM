@@ -770,9 +770,9 @@ class TodoApp:
         startzeit = self.ausgw_zeitpunkt
         endzeit = startzeit + timedelta(minutes=self.dauer_k)
         
-        Kalender_Eintrag_zusammenfassung = f"{self.task_übergabe['description']}"
-        Kalender_eintrag_beschreibung = f"{self.task_übergabe['notizen']}"
-        Kalender_Eintrag_Ort = "Fernwartung"
+        Kalender_Eintrag_zusammenfassung = f"{self.task_übergabe['name']}"
+        Kalender_eintrag_beschreibung = f"{self.task_übergabe['description']}"
+        Kalender_Eintrag_Ort = f"{self.task_übergabe['id']}"
         try:
             client = DAVClient(
                 url=f"{self.Einstellung_CalDav_Adresse}",
