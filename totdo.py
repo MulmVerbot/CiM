@@ -654,7 +654,7 @@ class TodoApp:
         self.warten_lb.bind("<<ListboxSelect>>",  self.LB_ausgewaehlt)
 
         
-        self.An_Kalender_senden_start.grid(row=2, column=3, padx=(150,00), pady=(10,15), sticky="w")
+        self.An_Kalender_senden_start.grid(row=2, column=3, padx=(175,00), pady=(10,15), sticky="w")
 
 
 ## Das hier noch anpassen
