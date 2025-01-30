@@ -26,7 +26,7 @@ import tkinter as Atk
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Beta 1.2.2"
+        self.Version = "Beta 1.2.3"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -263,7 +263,7 @@ class TodoApp:
         self.Erledigt_Liste_öffnen_knopp.place(x=10,y=100)
 
         self.warten_lb = Atk.Listbox(self.todo_frame_links, width=30, height=10, background=self.f_e, activestyle="none")
-        ######self.warten_lb.place(x=10,y=350)
+        self.warten_lb.place(x=10,y=350)
 
         self.load_tasks() # lädt die akuellen Aufgaben
 
@@ -650,7 +650,7 @@ class TodoApp:
         self.Notizen_feld.bind("<FocusIn>", self.Aufgaben_erstelle_deak)
 
         self.warten_aktivieren_knopp = tk.CTkButton(self.todo_frame_rechts, text="warten", command=self.warten_stellen)
-        ######self.warten_aktivieren_knopp.place(x=100,y=100)
+        self.warten_aktivieren_knopp.place(x=100,y=100)
         self.warten_lb.bind("<<ListboxSelect>>",  self.LB_ausgewaehlt)
 
         
@@ -747,7 +747,7 @@ class TodoApp:
                             task_description = "-"
                         if not task_notizen:
                             task_notizen = "-"
-                        self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': self.ID, 'fertsch': False}
+                        self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': self.ID, 'fertsch': False, 'warten': False}
                         print(f"ich speichere jetzt das hier: {self.task}")
                         self.ID += 1
                         self.cim = None
