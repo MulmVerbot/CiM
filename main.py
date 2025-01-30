@@ -206,7 +206,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.3"
+        self.Version = "Beta 1.1.4"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -1542,7 +1542,7 @@ class Listendings:
         self.Netzwerk_Speicherort_change = tk.CTkButton(self.tabview.tab("Speicherorte"), text="ändern", command=self.ListenDings_speicherort_Netzwerk_ändern, width=100, fg_color=self.f_grün, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.aktiviert_farbe)
 
         # Adressbuch
-        self.Adressbuch_anzeige_Einstellungen_LB = Atk.Listbox(self.Adressbuch_anzeigen_frame, width=60, height=16)
+        self.Adressbuch_anzeige_Einstellungen_LB = Atk.Listbox(self.Adressbuch_anzeigen_frame, width=60, height=16, activestyle="none")
         self.Adressbuch_anzeige_Einstellungen_LB.place(x=10,y=10) 
     # Adressbuch ende
 
@@ -2391,7 +2391,7 @@ class Listendings:
         self.Zahl_anzeige.pack()
         self.Zahl_anzeige_der_fehler = tk.CTkLabel(self.suchfenster_ergebnisse, text=self.durchsucht_text_mit_fehlern)
         self.Zahl_anzeige_der_fehler.pack()
-        self.Ergebnisse_Listbox = Atk.Listbox(self.suchfenster_ergebnisse)
+        self.Ergebnisse_Listbox = Atk.Listbox(self.suchfenster_ergebnisse, activestyle="none")
         self.Ergebnisse_Listbox.pack(fill="both", expand=True)
         self.suchfenster_ergebnisse.protocol("WM_DELETE_WINDOW", self.bye_suchfenster)
         scrollbar = Atk.Scrollbar(self.Ergebnisse_Listbox, orient=Atk.VERTICAL)
