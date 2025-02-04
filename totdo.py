@@ -26,7 +26,7 @@ import tkinter as Atk
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Beta 1.2.3"
+        self.Version = "Beta 1.2.4"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -46,6 +46,13 @@ class TodoApp:
         self.Einstellung_smtp_server = os.path.join(self.Einstellungsordner_pfad, "SMTP_Server.txt")
         self.Einstellung_smtp_Passwort = os.path.join(self.Einstellungsordner_pfad, "SMTP_Passwort.txt")
         self.Einstellung_CalDav_Adresse_pfad = os.path.join(self.Einstellungsordner_pfad, "CalDav.txt")
+
+        if sys.platform == "darwin":
+            self.Windows = False
+            print("[-Plattform-] Darwin")
+        else:
+            self.Windows = True
+            print("[-Plattform-] Windows")
 
     #### Farben ####
         self.Hintergrund_farbe = "AntiqueWhite2"
@@ -73,6 +80,7 @@ class TodoApp:
         self.f_hover_normal = "#424242"
         self.gruen_hell = "LawnGreen"
         self.rot = "firebrick"
+        self.orange = "#ff7f24" # Orange
     #### Farben Ende ####
 
         self.Schriftart = ("Helvetica", 20, "bold")
@@ -247,7 +255,7 @@ class TodoApp:
         self.Aufgabe_entfernen = tk.CTkButton(self.root, text="Aufgabe entfernen", command=self.aufgabe_loeschen_frage, fg_color=self.f_bg, border_color=self.Border_Farbe, border_width=1, text_color="White", hover_color=self.f_r_1)
         self.Aufgabe_hinzufuegen_Knopp.grid(row=2, column=3, padx=(10,10), pady=(10,15), sticky="w")
 
-        self.An_Kalender_senden_start = tk.CTkButton(self.root, text="Kalender Eintrag...", command=self.Kalender_Dialog)
+        self.An_Kalender_senden_start = tk.CTkButton(self.root, text="Kalender Eintrag...", command=self.Kalender_Dialog, border_color=self.orange, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
 
         self.Aufgabe_hinzufuegen_Knopp.bind('<Button-1>', self.task_update_knopp)
         self.root.bind('<Return>', self.create_task_button_vor)
@@ -262,7 +270,11 @@ class TodoApp:
         self.Erledigt_Liste_öffnen_knopp = tk.CTkButton(self.todo_frame_links, text="erledigte Aufgaben anzeigen", command=self.erledigte_Aufgaben_laden, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
         self.Erledigt_Liste_öffnen_knopp.place(x=10,y=100)
 
-        self.warten_lb = Atk.Listbox(self.todo_frame_links, width=30, height=10, background=self.f_e, activestyle="none")
+
+        if self.Windows == True:
+            self.warten_lb = Atk.Listbox(self.todo_frame_links, width=30, height=10, background=self.f_e, activestyle="none")
+        else:
+            self.warten_lb = Atk.Listbox(self.todo_frame_links, width=20, height=10, background=self.f_e, activestyle="none")
         self.warten_lb.place(x=10,y=350)
 
         self.load_tasks() # lädt die akuellen Aufgaben
@@ -593,7 +605,7 @@ class TodoApp:
         except Exception as e:
             print(f"Fehler beim Verstecken von Aufgaben_Beschreibung_l: {e}")      
         try:
-             self.warten_aktivieren_knopp.place_forget()
+             self.warten_aktivieren_knopp.grid_forget()
         except Exception as e:
             print(f"Fehler beim Verstecken von self.warten_aktivieren_knopp: {e}")
         try:
@@ -649,13 +661,12 @@ class TodoApp:
         self.Aufgaben_Beschreibung_t.bind("<FocusIn>", self.Aufgaben_erstelle_deak)
         self.Notizen_feld.bind("<FocusIn>", self.Aufgaben_erstelle_deak)
 
-        self.warten_aktivieren_knopp = tk.CTkButton(self.todo_frame_rechts, text="warten", command=self.warten_stellen)
-        self.warten_aktivieren_knopp.place(x=100,y=100)
+        self.warten_aktivieren_knopp = tk.CTkButton(self.root, text="warten", command=self.warten_stellen, width=100, border_color=self.helle_farbe_für_knopfe, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
         self.warten_lb.bind("<<ListboxSelect>>",  self.LB_ausgewaehlt)
 
         
-        self.An_Kalender_senden_start.grid(row=2, column=3, padx=(175,00), pady=(10,15), sticky="w")
-
+        self.An_Kalender_senden_start.grid(row=2, column=3, padx=(170,00), pady=(10,15), sticky="w")
+        self.warten_aktivieren_knopp.grid(row=2, column=3, padx=(320,00), pady=(10,15), sticky="w")
 
 ## Das hier noch anpassen
     def LB_ausgewaehlt(self, event):
