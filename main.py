@@ -2488,7 +2488,7 @@ class Listendings:
         self.Ergebnisse_Listbox.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=self.Ergebnisse_Listbox.yview)
         
-        if self.Ort_wo_gesucht_wird == "":
+        if self.Ort_wo_gesucht_wird == "" or None:
             self.Ort_wo_gesucht_wird = filedialog.askdirectory(initialdir=self.eigener_Suchort, title="Suchpfad auswählen")
         print("[ SUCHE 2.0 - INFO ] Pfad wurde ausgewählt")
         such_dialog = tk.CTkInputDialog(title="CiM Suche", text="Wonach suchst Du? Es werden die bisher noch gespeichertern Liste aus dem Programmverzeichnis durchsucht. (Groß-und Kleinschreibung wird ignoriert)")
@@ -2536,6 +2536,9 @@ class Listendings:
 
             folder_path = self.Ort_wo_gesucht_wird
             content_to_search = self.Suche_suche.lower()  # Konvertiere den Suchinhalt in Kleinbuchstaben
+            if content_to_search = "" or None:
+                self.suchfenster_ergebnisse.destroy()
+                messabebox.showerror(title=self.Programm_Name, message="Suche Abgebrochen!")
             results = []
             try:
                 for root, dirs, files in os.walk(folder_path):
@@ -2612,6 +2615,7 @@ class Listendings:
             self.etwas_suchen1 = False
             results = None
             self.results = None
+            self.suchfenster_ergebnisse.destroy()
             try:
                 self.thread_suche.join()
                 print("[ SUCHE 2.0 - INFO ] Thread wurde erfolgreich beendet. (else des gab nüscht)")
