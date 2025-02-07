@@ -2536,9 +2536,9 @@ class Listendings:
 
             folder_path = self.Ort_wo_gesucht_wird
             content_to_search = self.Suche_suche.lower()  # Konvertiere den Suchinhalt in Kleinbuchstaben
-            if content_to_search = "" or None:
+            if content_to_search == "" or None:
                 self.suchfenster_ergebnisse.destroy()
-                messabebox.showerror(title=self.Programm_Name, message="Suche Abgebrochen!")
+                messagebox.showerror(title=self.Programm_Name, message="Suche Abgebrochen!")
             results = []
             try:
                 for root, dirs, files in os.walk(folder_path):
