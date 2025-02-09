@@ -206,7 +206,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.5"
+        self.Version = "Beta 1.1.6"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -2366,6 +2366,7 @@ class Listendings:
         self.gesucht_zahl = 0
         self.gesucht_zahl_mit_fehlern = 0
         self.Ergebnise_zahl = 0
+        self.Ort_wo_gesucht_wird = ""
         try:
             self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500, fg_color=self.Hintergrund_farbe_Text_Widget, text_color=self.Textfarbe, border_color=self.f_border, border_width=2)
         except:
