@@ -206,7 +206,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.6"
+        self.Version = "Beta 1.1.7"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -2366,7 +2366,6 @@ class Listendings:
         self.gesucht_zahl = 0
         self.gesucht_zahl_mit_fehlern = 0
         self.Ergebnise_zahl = 0
-        self.Ort_wo_gesucht_wird = ""
         try:
             self.Ergebnisse_des_scans_feld = tk.CTkTextbox(self.suchfenster_ergebnisse, width=500, height=500, fg_color=self.Hintergrund_farbe_Text_Widget, text_color=self.Textfarbe, border_color=self.f_border, border_width=2)
         except:
@@ -2426,8 +2425,10 @@ class Listendings:
                     self.Suche_algo()
                 except Exception as esisx:
                     print("[ SUCHE 2.0 - ERR ] fehler161: ",esisx)
+                    self.Ort_wo_gesucht_wird = ""
         else:
             messagebox.showinfo(message="Suche abgebrochen.")
+            self.Ort_wo_gesucht_wird = ""
             self.suchfenster_ergebnisse.destroy()
 
     def Eintrag_aufmachen(self, event):
@@ -2616,6 +2617,7 @@ class Listendings:
             self.etwas_suchen1 = False
             results = None
             self.results = None
+            self.Ort_wo_gesucht_wird = ""
             self.suchfenster_ergebnisse.destroy()
             try:
                 self.thread_suche.join()
