@@ -206,7 +206,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.7"
+        self.Version = "Beta 1.1.8"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -562,8 +562,10 @@ class Listendings:
         
         self.ext_Programme_menu.add_command(label="Externe Programme", state="disabled")
         self.ext_Programme_menu.add_separator()
-        self.ext_Programme_menu.add_command(label="JSON Explorer öffnen...")
-        self.ext_Programme_menu.add_command(label="Totdo öffnen...")
+        self.ext_Programme_menu.add_command(label="JSON Explorer öffnen...", command=self.JSONExplorer_aufmachen)
+        self.ext_Programme_menu.add_command(label="Totdo öffnen...", command=self.todo_aufmachen)
+        self.ext_Programme_menu.add_command(label="HW-Mon öffnen...", command=self.HWMon_aufmachen)
+        self.ext_Programme_menu.add_command(label="QR-Code Generator öffnen...", command=self.QRCodeGen_aufmachen)
         
 
         #self.menudings.add_command(label="Datenbank Migration zu v. Beta 1.1", command=self.DB_Migration)
@@ -1891,6 +1893,54 @@ class Listendings:
             print("Totdo wurde unter Unix geöffnet.")
         except Exception as ejkhlsdf:
             print(f"[-FATAL-] Beim öffnen vom Totdo ist ein Fehler aufgetreten. Fehlercode: {ejkhlsdf}")
+
+    def JSONExplorer_aufmachen(self):
+        try:
+            script_path = "json_explorer.py"
+            subprocess.Popen([sys.executable, script_path],creationflags=subprocess.CREATE_NO_WINDOW) # Windoof
+        except AttributeError as e:
+            print(f"Fehler beim Starten des Skripts: {e}")
+            # Unix (macOS, Linux)
+            subprocess.Popen([sys.executable, script_path],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            print("json_explorer wurde unter Unix geöffnet.")
+        except ModuleNotFoundError:
+            # Unix (macOS, Linux)
+            subprocess.Popen([sys.executable, script_path],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            print("json_explorer wurde unter Unix geöffnet.")
+        except Exception as ejkhlsdf:
+            print(f"[-FATAL-] Beim öffnen vom json_explorer ist ein Fehler aufgetreten. Fehlercode: {ejkhlsdf}")
+
+    def HWMon_aufmachen(self):
+        try:
+            script_path = "HW-Mon.py"
+            subprocess.Popen([sys.executable, script_path],creationflags=subprocess.CREATE_NO_WINDOW) # Windoof
+        except AttributeError as e:
+            print(f"Fehler beim Starten des Skripts: {e}")
+            # Unix (macOS, Linux)
+            subprocess.Popen([sys.executable, script_path],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            print("HW-Mon wurde unter Unix geöffnet.")
+        except ModuleNotFoundError:
+            # Unix (macOS, Linux)
+            subprocess.Popen([sys.executable, script_path],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            print("HW-Mon wurde unter Unix geöffnet.")
+        except Exception as ejkhlsdf:
+            print(f"[-FATAL-] Beim öffnen vom HW-Mon ist ein Fehler aufgetreten. Fehlercode: {ejkhlsdf}")
+
+    def QRCodeGen_aufmachen(self):
+        try:
+            script_path = "QRCodeGen.py"
+            subprocess.Popen([sys.executable, script_path],creationflags=subprocess.CREATE_NO_WINDOW) # Windoof
+        except AttributeError as e:
+            print(f"Fehler beim Starten des Skripts: {e}")
+            # Unix (macOS, Linux)
+            subprocess.Popen([sys.executable, script_path],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            print("QRCodeGen wurde unter Unix geöffnet.")
+        except ModuleNotFoundError:
+            # Unix (macOS, Linux)
+            subprocess.Popen([sys.executable, script_path],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            print("QRCodeGen wurde unter Unix geöffnet.")
+        except Exception as ejkhlsdf:
+            print(f"[-FATAL-] Beim öffnen vom QRCodeGen ist ein Fehler aufgetreten. Fehlercode: {ejkhlsdf}")
 
     
     def SMTP_Anmeldung_Manuell(self):
