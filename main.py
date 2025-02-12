@@ -206,7 +206,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.8"
+        self.Version = "Beta 1.1.9"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -647,7 +647,7 @@ class Listendings:
         self.E_T_l = tk.CTkLabel(root, text="Telefonnummer:", text_color=self.Txt_farbe_deak)
         self.E_N_l = tk.CTkLabel(root, text="Notizen:", text_color=self.Txt_farbe_deak)
         self.E_B_l = tk.CTkLabel(root, text="Beschreibung:", text_color=self.Txt_farbe_deak)
-        self.E_ws_l = tk.CTkLabel(root, text="Weiterleitung an:", text_color=self.Txt_farbe_deak)
+        self.E_ws_l = tk.CTkLabel(root, text="Mit wem sprechen:", text_color=self.Txt_farbe_deak)
         self.E_aw_l = tk.CTkLabel(root, text="An wen weitergeleitet:", text_color=self.Txt_farbe_deak)
 
         self.E_U_l.place(x=420,y=340)
