@@ -231,7 +231,6 @@ class TodoApp:
         self.menu.add_cascade(label="Einstellungen", menu=self.Einstellungen)
         self.Einstellungen.add_command(label="Listenmamen ändern", command=self.Listenname_change)
         self.menudings.add_command(label="Info", command=self.info)
-        self.menudings.add_command(label="Kalender Eintrag demo senden", command=self.Kalender_eintrag_erstellen)
 
         self.todo_frame_links = tk.CTkFrame(self.root, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
         self.todo_frame_rechts = tk.CTkScrollableFrame(self.root, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
