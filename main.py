@@ -206,7 +206,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.9"
+        self.Version = "Beta 1.1.10"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -1194,7 +1194,7 @@ class Listendings:
                 self.sender_email = Email_S_Datei.read()
                 print(f"[-EINSTLLUNGEN LADEN-] Sender Email geladen: {self.sender_email}")
         except Exception as EmailEx3_l:
-            print(f"Fehler beim laden der Maileinstellungen: {EmailEx3_l}")
+            print(f"[-EINSTLLUNGEN LADEN-] Fehler beim laden der Maileinstellungen: {EmailEx3_l}")
             self.sender_email = "Fehler"
         try:
             print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail Empfänger Einstellungen")
@@ -1202,7 +1202,7 @@ class Listendings:
                 self.empfänger_email = Email_E_Datei.read()
                 print(f"[-EINSTLLUNGEN LADEN-] Empfänger Adresse geladen: {self.empfänger_email}")
         except Exception as EmailEx3_l:
-            print(f"Fehler beim laden der Maileinstellungen: {EmailEx3_l}")
+            print(f"[-EINSTLLUNGEN LADEN-] Fehler beim laden der Maileinstellungen: {EmailEx3_l}")
             self.empfänger_email = "Fehler"
         try:
             print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail SMTP Einstellungen")
@@ -1210,7 +1210,7 @@ class Listendings:
                 self.smtp_server = SMTP_Server_Datei.read()
                 print("[-EINSTLLUNGEN LADEN-] SMTP Server Adresse geladen.")
         except Exception as EmailEx3_l:
-            print(f"Fehler beim laden der Maileinstellungen: {EmailEx3_l}")
+            print(f"[-EINSTLLUNGEN LADEN-] Fehler beim laden der Maileinstellungen: {EmailEx3_l}")
             self.smtp_server = "Fehler"
         try:
             print(f"[-EINSTLLUNGEN LADEN-] ich lade nun die EMail Passwörters")
@@ -1218,8 +1218,16 @@ class Listendings:
                 self.pw_email = SMTP_Server_Passwort_Datei.read()
                 print(f"[-EINSTLLUNGEN LADEN-] Absender Kennwort geladen. {self.pw_email}")
         except Exception as EmailEx3_l:
-            print(f"Fehler beim laden der Passwort Maileinstellungen: {EmailEx3_l}")
+            print(f"[-EINSTLLUNGEN LADEN-] Fehler beim laden der Passwort Maileinstellungen: {EmailEx3_l}")
             self.pw_email = ""
+
+        ## Caldav, wird momentan nur geladen um die Adresse in den Einstellungen anzuzeigen.
+        try:
+            with open(self.Einstellung_CalDav_Adresse_pfad, "r") as cl_gel:
+                self.Einstellung_CalDav_Adresse = cl_gel.read()
+            print("[-EINSTLLUNGEN LADEN-] Die Caldav Adresse wurde erfolgreich geladen.")
+        except Exception as CLDvE:
+            print(f"[-EINSTLLUNGEN LADEN-] Beim laden der CalDav Einstellungen ist ein Fehler aufgetreten: {CLDvE}")
 
         
     def eigener_suchort_Einstellung_laden(self):
@@ -1658,6 +1666,16 @@ class Listendings:
         except Exception as e:
             print(e)
             messagebox.showerror(title=self.Programm_Name_lang, message=f"Beim laden des Adressbuchs ist ein Fehler aufgetreten: {e}")
+
+        
+        try:
+            self.Caldav_e.delete()
+        except:
+            pass
+        try:
+            self.Caldav_e.insert(0, self.Einstellung_CalDav_Adresse)
+        except:
+            pass
 
 
     def Einstellungen_schließen(self):
@@ -3085,7 +3103,7 @@ class Listendings:
         else:
             print(f"Kein Eintrag mit ID_L {id_l} gefunden.")
 
-    def alles_löschen(self):
+    def alles_löschen(self): #  Das hier braucht doch auch keiner mehr oder?
         print("alles_löschen(def)")
         abfrage_wegen_löschen_db = messagebox.askquestion(title='Information', message="möchten Sie wirklich die gesamte Kontaktliste unwiderruflich löschen?")
         if abfrage_wegen_löschen_db == "yes":  
@@ -3122,10 +3140,13 @@ class Listendings:
         try:
             with open(self.Einstellung_CalDav_Adresse_pfad, "w+") as cl_gel:
                 cl_gel.write(self.Einstellung_CalDav_Adresse)
+                print("[ - EINSTELLUNGEN - ] Caldav Einstellung erfolgreich gespeichert.")
+                messagebox.showinfo(title=self.Programm_Name_lang, message="Die Caldav Einstellung wurde erfolgreich gespeichert.")
         except Exception as CLDvE:
-            print(f"Beim speichern der CalDav Einstellungen ist ein Fehler aufgetreten: {CLDvE}")
+            print(f"[ - EINSTELLUNGEN - ] Beim speichern der CalDav Einstellungen ist ein Fehler aufgetreten: {CLDvE}")
+            messagebox.showerror(title=self.Programm_Name_lang, message=f"Beim Speichern der Caldav Einstellung ist ein Fehler aufgetreten. Fehlermeldung: {CLDvE}")
 
-    def pause(self):
+    def pause(self): ## das hier könnten wir eigentlich mal raushauen oder wenigstens mal ausbauen.
         print("pause(def)")
         try:
             self.kunde_entry.grid_forget()
