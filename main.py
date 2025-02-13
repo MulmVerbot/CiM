@@ -30,7 +30,7 @@ try:
     #from collections import defaultdict
     #from nltk.corpus import wordnet
     import re
-    #import matplotlib.pyplot as plt
+    import matplotlib.pyplot as plt
     import pyperclip
     import numpy as np
     from reportlab.lib.pagesizes import letter
@@ -206,7 +206,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.10"
+        self.Version = "Beta 1.1.11"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -555,7 +555,6 @@ class Listendings:
         self.Bearbeiten_Menu.add_command(label="Blacklist erweitern...", command=self.zeugs1_blacklist)
         self.Bearbeiten_Menu.add_command(label="Einen neuen Kontakt hinzufügen...", command=self.zeugs1)
         self.Bearbeiten_Menu.add_separator()
-        self.Bearbeiten_Menu.add_command(label="JSON Explorer öffnen", command=self.JSON_Explorer_öffnen)
         self.menudings.add_separator()
         self.menudings.add_command(label="Checklisten (Demo)...", command=self.Checkboxen_dingsen)
         self.menudings.add_command(label="Email Baukasten (Demo)...", command=self.email_baukasten)
@@ -726,7 +725,7 @@ class Listendings:
         self.Berichtsheft_knopp = tk.CTkButton(self.Pause_menu, text="Berichtsheft öffnen", command=self.Berichtsheft_aufmachen, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
         self.Einstellungen_Frame = tk.CTkFrame(root, width=600, height=380, border_color="Pink", border_width=3, fg_color="transparent")
         self.tabview = tk.CTkTabview(self.Einstellungen_Frame, width=600, height=380, fg_color=self.f_e, segmented_button_fg_color=self.f_bg, segmented_button_selected_hover_color=self.f_hover_normal, segmented_button_unselected_hover_color=self.f_hover_normal, segmented_button_selected_color=self.f_grün, text_color=self.Txt_farbe, segmented_button_unselected_color=self.f_e)
-        self.tabview.add("Starface Modul")
+        self.tabview.add("Allgemein")
         self.tabview.add("Adressbuch")
         self.tabview.add("Speichern")
         self.tabview.add("SMTP")
@@ -761,7 +760,7 @@ class Listendings:
     #### todo gui ####
         self.Todo_aufmachen_main_knopp = tk.CTkButton(root, text="Totdo öffnen", command=self.todo_aufmachen, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.totdo_Bild)
         self.Todo_aufmachen_main_knopp.place(x=1260,y=480)
-        self.Adressbuch_anzeigen_frame = tk.CTkFrame(self.tabview.tab("Adressbuch"), width=575, height=300, fg_color=self.Hintergrund_farbe, border_color=self.Ja_UI_Farbe, border_width=1, corner_radius=0)
+        self.Adressbuch_anzeigen_frame = tk.CTkFrame(self.tabview.tab("Adressbuch"), width=575, height=300, fg_color=self.Hintergrund_farbe, corner_radius=0)
         
     #### ende todo gui ####
         self.init_auf_wish()
@@ -813,7 +812,7 @@ class Listendings:
                 self.Eintrag_an_weitergeleitet_e.insert(0, f"{self.Eintrag_geladen_jetzt["an_wen_gegeben"]}")
                 self.LB_auswahl_index = self.Eintrags_Liste.curselection()
             else:
-                print("Bearbeiten war aus, habe die Werte nicht ersetz.")
+                print("Bearbeiten war aus, habe die Werte nicht ersetzt.")
             if eintrag:
                 self.Anrufer_Bezeichnung_l.configure(text=f"Anrufer: {eintrag["name"]}")
                 self.Zeit_aus_JSON.configure(text=f"Uhrzeit: {eintrag["Uhrzeit"]}")
@@ -1530,8 +1529,11 @@ class Listendings:
         self.tabview.place(x=0, y=0)
         self.Auto_speichern_ändern_knopp = tk.CTkButton(self.tabview.tab("Speichern"), text="Auto Speichern umschalten", command=self.autospeichern_ä_c, hover_color=self.f_hover_normal)
         
-        self.Starface_Modul_Einstellung_Knopp = tk.CTkButton(self.tabview.tab("Starface Modul"), text="Starface Modul umschalten", command=self.Starface_Modul_umschalten, hover_color=self.f_hover_normal)
-        self.Starface_Modul_Einstellung_Knopp.pack()
+        self.Starface_Modul_Einstellung_Knopp = tk.CTkButton(self.tabview.tab("Allgemein"), text="Starface Modul umschalten", command=self.Starface_Modul_umschalten, hover_color=self.f_hover_normal, corner_radius=2)
+        self.Starface_Modul_Einstellung_Knopp.place(x=200,y=20)
+        self.Starface_Modul_Einstellung_Knopp_text = tk.CTkLabel(self.tabview.tab("Allgemein"), text="Starface Modul umschalten", text_color=self.Txt_farbe, bg_color=self.Entry_Farbe)
+        self.Starface_Modul_Einstellung_Knopp_text.place(x=10,y=20)
+
         if self.Starface_Modul == "1":
             self.Starface_Modul_Einstellung_Knopp.configure(text="Starface Modul ist aktiviert.", fg_color=self.f_grün, text_color=self.Txt_farbe)
         else:
@@ -1637,7 +1639,7 @@ class Listendings:
             self.gel_Email_Sender_E.insert(0, self.sender_email)
             self.gel_Email_Absender_Passwort_E.insert(0, self.pw_email)
             self.gel_SMTP_Server_E.insert(0, self.smtp_server)
-            print("[-INFO-] Alles was mit den Email Einstellungen zu tun hat wurde erfolgreich gelade")
+            print("[-INFO-] Alles was mit den Email Einstellungen zu tun hat wurde erfolgreich geladen")
             self.Ereignislog_insert(nachricht_f_e="Alles was mit den Email Einstellungen zu tun hat wurde erfolgreich geladen")
         except Exception as ExGelEm1:
             print("[-ERR-] Fehler beim einfügen der Email Daten in die Entrys. Fehlercode: ", ExGelEm1)
@@ -1681,7 +1683,7 @@ class Listendings:
     def Einstellungen_schließen(self):
         print("[-INFO-] Einstellungen_schließen(def)")
         self.Einstellungsseite_Knopp.configure(command=self.Einstellungen_öffnen, text="Einstellungen", fg_color=self.f_e, hover_color=self.f_hover_normal)
-        self.Starface_Modul_Einstellung_Knopp.pack_forget()
+        self.Starface_Modul_Einstellung_Knopp.place_forget()
         self.Email_Einstellungen_info.place_forget()
         self.Einstellungen_Frame.place_forget()
         self.tabview.place_forget()
@@ -2156,8 +2158,8 @@ class Listendings:
             self.smtp_login_erfolgreich_l.place_forget()
             self.Einstellung_Design_auswahl.place_forget()
             self.Berichtsheft_knopp.place_forget()
-            #self.Statistiken_anzeigen_linie_knopp.place_forget()
-            #self.Statistiken_anzeigen_saeule_knopp.place_forget()
+            self.Statistiken_anzeigen_linie_knopp.place_forget()
+            self.Statistiken_anzeigen_saeule_knopp.place_forget()
             self.Stat_ID_l.place_forget()
         elif self.Menü_da == False:
             # Menu wird jetzt angezeigt (Ja, wirklich.)
@@ -2165,17 +2167,16 @@ class Listendings:
             self.Pause_menu.place(x=300,y=10)
             self.Menü_da = True
             self.Menü_Knopp.configure(text="Statistik schließen", fg_color="aquamarine", hover_color="aquamarine3")
-            self.Berichtsheft_knopp.place(x=400,y=100)
+            self.Berichtsheft_knopp.place(x=300,y=10)
             self.Einstellung_Design_auswahl.place(x=10,y=200)
             self.Einstellung_Design_L.place(x=10,y=170)
-            #self.Statistiken_anzeigen_linie_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Liniendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_linie, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
-            #self.Statistiken_anzeigen_saeule_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Säulendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_saeule, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
-            #self.Statistiken_anzeigen_linie_knopp.place(x=10,y=100)
-            #self.Statistiken_anzeigen_saeule_knopp.place(x=10,y=140)
+            self.Statistiken_anzeigen_linie_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Liniendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_linie, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
+            self.Statistiken_anzeigen_saeule_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Säulendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_saeule, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
+            self.Statistiken_anzeigen_linie_knopp.place(x=10,y=100)
+            self.Statistiken_anzeigen_saeule_knopp.place(x=10,y=140)
             self.Stat_ID_l = Atk.Label(self.Pause_menu, text=f"Einträge heute: {self.ID_v}")
             self.Stat_ID_l.place(x=10,y=50)
-            self.HWMon_anzeigen_wechsel = tk.CTkButton(self.Pause_menu, text="Hardware Monitor starten", command=self.HW_Mon_menü_anzeigen)
-            self.HWMon_anzeigen_wechsel.place(x=400,y=140)
+            
             try:
                 try:
                     self.gel_Email_Empfänger_E.delete(0, tk.END)
@@ -2426,6 +2427,93 @@ class Listendings:
             
             button_loeschen = Atk.Button(frame, text="Löschen", command=loeschen_kontakt)
             button_loeschen.grid(row=2, column=1, padx=5, pady=5)
+
+    def Anrufstatistiken_anzeigen_saeule(self):
+        # Muster, um die Uhrzeit zu extrahieren
+        uhrzeit_muster = re.compile(r'bis (\d{2}:\d{2}:\d{2})')
+
+        # Funktion zum Durchsuchen eines Verzeichnisses und seiner Unterverzeichnisse
+        def durchsuche_ordner(pfad):
+            ergebnisse = {}
+            
+            # Durchlaufe alle Dateien und Unterordner
+            for root, dirs, files in os.walk(pfad):
+                uhrzeiten = []
+                for file in files:
+                    dateipfad = os.path.join(root, file)
+                    # Nur Textdateien durchsuchen
+                    if file.endswith('.txt'):
+                        with open(dateipfad, 'r') as datei:
+                            for zeile in datei:
+                                uhrzeit_match = uhrzeit_muster.search(zeile)
+                                if uhrzeit_match:
+                                    uhrzeit = uhrzeit_match.group(1)
+                                    uhrzeiten.append(uhrzeit)
+                
+                # Speichere die Anzahl der gefundenen Uhrzeiten für diesen Ordner
+                if uhrzeiten:
+                    ordnername = os.path.basename(root)
+                    ergebnisse[ordnername] = len(uhrzeiten)
+            
+            return ergebnisse
+
+        # Hauptverzeichnis, das durchsucht werden soll
+        hauptverzeichnis = self.Listen_Speicherort_standard
+
+        # Durchsuche das Hauptverzeichnis und Unterordner
+        ergebnisse = durchsuche_ordner(hauptverzeichnis)
+
+        # Bereite Daten für das Diagramm vor
+        ordner = list(ergebnisse.keys())
+        anzahl = list(ergebnisse.values())
+
+        # Erstelle ein Diagramm mit matplotlib
+        plt.figure(figsize=(12, 8))
+        plt.bar(ordner, anzahl, color=self.Starface_Farbe)
+        plt.xlabel('Monat')
+        plt.ylabel('Anrufe')
+        plt.title('Anrufstatistiken nach Monaten (Angaben können ungenau sein)')
+        plt.grid(True, axis='both')
+        max_y = max(anzahl)
+        plt.yticks(np.arange(0, max_y + 1, 1.0))
+
+        # Zeige das Diagramm an
+        plt.tight_layout()  # Optimiere das Layout
+        plt.show()
+
+    def Anrufstatistiken_anzeigen_linie(self):
+        uhrzeit_muster = re.compile(r'bis (\d{2}:\d{2}:\d{2})')
+        def durchsuche_ordner(pfad):
+            ergebnisse = {}
+            for root, dirs, files in os.walk(pfad):
+                uhrzeiten = []
+                for file in files:
+                    dateipfad = os.path.join(root, file)
+                    if file.endswith('.txt'):
+                        with open(dateipfad, 'r') as datei:
+                            for zeile in datei:
+                                uhrzeit_match = uhrzeit_muster.search(zeile)
+                                if uhrzeit_match:
+                                    uhrzeit = uhrzeit_match.group(1)
+                                    uhrzeiten.append(uhrzeit)
+                if uhrzeiten:
+                    ordnername = os.path.basename(root)
+                    ergebnisse[ordnername] = len(uhrzeiten)
+            return ergebnisse
+        hauptverzeichnis = self.Listen_Speicherort_standard
+        ergebnisse = durchsuche_ordner(hauptverzeichnis)
+        ordner = list(ergebnisse.keys())
+        anzahl = list(ergebnisse.values())
+        plt.figure(figsize=(12, 8))
+        plt.plot(ordner, anzahl, marker='o', linestyle='-', color='blue')
+        plt.xlabel('Monat')
+        plt.ylabel('Anrufe')
+        plt.title('Anrufstatistiken nach Monaten (Angaben können ungenau sein)')
+        max_y = max(anzahl) if anzahl else 1
+        plt.yticks(np.arange(0, max_y + 1, 1.0))
+        plt.grid(True, axis='y')
+        plt.tight_layout()
+        plt.show()
 
 
     def Suche1(self):
