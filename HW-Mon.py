@@ -57,7 +57,7 @@ def display_metrics_in_gui(metrics):
                 labels[category][key]['text'] = f"{key}: {value_str}"
 
         # Funktion erneut nach 1 Sekunde ausführen
-        root.after(100, update_metrics)
+        root.after(500, update_metrics)
 
     root = tk.Tk()
     root.title("Systeminfos")
