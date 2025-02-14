@@ -1585,7 +1585,7 @@ class Listendings:
 
         def rückruf_speichern():
             print(f"self.mitspeichern.get() = : {self.mitspeichern.get()}")
-            self.Kontakt_soll_gleich_mitgespeichert_werden = True
+            self.Kontakt_soll_gleich_mitgespeichert_werden = True ## ey Kollege hast Du ernsthaft vergessen das mit zu implementieren!???? Kein wunder dass es nicht geht!
 
         self.mitspeichern = tk.StringVar(value="on")
         try:
