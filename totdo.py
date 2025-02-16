@@ -13,6 +13,15 @@ from datetime import datetime, timedelta
 from tkcalendar import Calendar
 import tkinter as Atk
 
+#
+# 
+# VERGISS DEN BUG NICHT BEI DEM UMLAUTE FALSCH KODIERT GELADEN UND VERÄNDERT WERDEN + DIE DUPLIZIEREN SICH NACH JEDER SPEICHERUNG!!! + DIE SOLLEN ANGEBLICH KORREKT GESPEICHERT WERDEN.
+# 
+# 
+# 
+# 
+# #
+
 #            _ .-') _             .-') _                   
 #           ( (  OO) )           ( OO ) )                  
 #           \     .'_  .---.,--./ ,--,'   ,--.   .-----.  
