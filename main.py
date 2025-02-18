@@ -206,7 +206,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.11"
+        self.Version = "Beta 1.1.12"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -1385,8 +1385,11 @@ class Listendings:
         self.Db_Ordner_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Db')
         self.Json_pfad = os.path.join(self.Db_Ordner_pfad, 'Db.json')
         file_path = self.Json_pfad
-        with open(file_path, 'r+') as f:
-            self.Kontakte_aus_json_gel = json.load(f)
+        try:
+            with open(file_path, 'r+') as f:
+                self.Kontakte_aus_json_gel = json.load(f)
+        except Exception as e12:
+            messagebox.showerror(title=self.Programm_Name_lang, message=f"Die Kontakte konnten nicht geladen werden. Fehlermeldung: {e12}")
     
     def weiterleitung_laden(self):
         print("[-INFO-] Weiterleitungenladen(def)")
