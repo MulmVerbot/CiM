@@ -35,7 +35,7 @@ import tkinter as Atk
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Beta 1.2.6"
+        self.Version = "Beta 1.2.7"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -386,6 +386,7 @@ class TodoApp:
         task_description = None
         task_name = self.Aufgaben_Titel_e.get().strip()
         fertsch_var = False
+        warten_seit_var = None
         if task_name == None:
             task_name = self.Aufgaben_Titel_t.get()
         try:
@@ -399,6 +400,8 @@ class TodoApp:
             print("Notizen war leer")
             task_notizen = ""
         self.Zeit = time.strftime("%H:%M:%S")
+        jetzt = time.localtime()
+        self.Zeit_mit_Datum = time.strftime("%d.%m.%Y %H:%M:%S", jetzt)
         try:
             self.Datum_fertsch = self.Datum_fertsch_e.get()
         except:
@@ -412,8 +415,19 @@ class TodoApp:
                 task_notizen = "-"
             if fertsch_var == "" or None:
                 fertsch_var = False
+            if warten_seit_var == "" or None:
+                warten_seit_var = "-"
+
+            
             warten_var = False
-            self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': self.ID, 'fertsch': fertsch_var, 'warten': warten_var}
+            self.task = {'name': task_name, 
+                         'description': task_description, 
+                         'Uhrzeit': self.Zeit_mit_Datum, 
+                         'notizen': task_notizen, 
+                         'id': self.ID, 
+                         'fertsch': fertsch_var, 
+                         'warten': warten_var,
+                         'warten_seit': warten_seit_var}
             self.ID += 1
             self.ID_speichern()
             self.Aufgaben_Titel_e.delete(0, tk.END) # das hier wird immmer klappen weil... naja. ohne Aufgabentitel auch keine Aufgabe!
@@ -458,13 +472,20 @@ class TodoApp:
         task_description = self.Aufgaben_Beschreibung_t.get("0.0", "end").strip()
         task_notizen = self.Notizen_feld.get("0.0", "end").strip()
         self.Zeit = self.task['Uhrzeit']
-        print(f"Die Uhrzeit sollte bei {self.task['Uhrzeit']} stehen.")
+        #print(f"Die Uhrzeit sollte bei {self.task['Uhrzeit']} stehen.")
 
         if task_description == "" or None:
             task_description = "-"
         if task_notizen == "" or None:
             task_notizen = "-"
-        self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': ID_der_gewählten_Aufgabe, 'fertsch': task["fertsch"], 'warten': task['warten']}
+        self.task = {'name': task_name, 
+                     'description': task_description, 
+                     'Uhrzeit': self.Zeit, 
+                     'notizen': task_notizen, 
+                     'id': ID_der_gewählten_Aufgabe, 
+                     'fertsch': task["fertsch"], 
+                     'warten': task['warten'],
+                     'warten_seit': task['warten_seit']}
         self.save_task(self.task)
         self.create_task_button(self.task)
         self.refresh_tasks()
@@ -548,7 +569,8 @@ class TodoApp:
             "Uhrzeit": self.task_übergabe["Uhrzeit"],
             "notizen": self.task_übergabe["notizen"],
             "id": self.task_übergabe["id"],
-            "fertsch": False # das hier wird immer auf False gesetzt, weil es ja der Sinn der Funktion ist.
+            "fertsch": False, # das hier wird immer auf False gesetzt, weil es ja der Sinn der Funktion ist.
+            "warten_seit": self.task_übergabe["warten_seit"]
         }
         self.Aufgabe_erledigt(self.tasks_pfad_datei, self.neuer_eintrag, self.task_übergabe["id"])
         self.refresh_tasks()
@@ -619,6 +641,10 @@ class TodoApp:
             self.warten_aus_knopp.grid_forget()
         except:
             pass
+        try:
+            self.warten_seit_l.grid_forget()
+        except:
+            pass
 
     def Aufgaben_erstelle_deak(self, event):
         print("Aufgaben_erstelle_deak(def)")
@@ -678,6 +704,14 @@ class TodoApp:
         else:
             self.warten_aktivieren_knopp.grid(row=2, column=3, padx=(320,00), pady=(10,15), sticky="w")
 
+    ### neue Teile der GUI, wird noch nicht verwendet
+        try:
+            self.warten_seit_l = tk.CTkLabel(self.todo_frame_rechts, text=f"Warten seit: {task['warten_seit']}")
+        except KeyError:
+            print("Key Error für task['warten_seit']")
+            self.warten_seit_l = tk.CTkLabel(self.todo_frame_rechts, text="Warten seit: -")
+        self.warten_seit_l.grid(row=2, column=0, padx=10, pady=(55, 15), sticky="w") 
+
 
     def lade_eintrag_aus_json_nach_id(self, aufgaben_id):
         Eintrag_v = self.load_tasks_from_file()
@@ -705,6 +739,8 @@ class TodoApp:
 
     def warten_stellen(self):
         print("warten_stellen(def)")
+        jetzt = time.localtime()
+        self.Zeit_mit_Datum = time.strftime("%d.%m.%Y %H:%M:%S", jetzt)
         self.neuer_eintrag = {
             "name": self.task_übergabe["name"],
             "description": self.task_übergabe["description"],
@@ -712,7 +748,8 @@ class TodoApp:
             "notizen": self.task_übergabe["notizen"],
             "id": self.task_übergabe["id"],
             "fertsch": self.task_übergabe["fertsch"], 
-            "warten": True # das hier wird immer auf True gesetzt weil es ja der sinn der Funktion ist.
+            "warten": True, # das hier wird immer auf True gesetzt weil es ja der sinn der Funktion ist.
+            "warten_seit": self.Zeit_mit_Datum
         }
         self.Aufgabe_erledigt(self.tasks_pfad_datei, self.neuer_eintrag, self.task_übergabe["id"])
         self.refresh_tasks()
@@ -726,7 +763,8 @@ class TodoApp:
             "notizen": self.task_übergabe["notizen"],
             "id": self.task_übergabe["id"],
             "fertsch": self.task_übergabe["fertsch"], # das hier wird immer auf True gesetzt weil es ja der sinn der Funktion ist.
-            "warten": False
+            "warten": False,
+            "warten_seit": "nicht warten"
         }
         self.Aufgabe_erledigt(self.tasks_pfad_datei, self.neuer_eintrag, self.task_übergabe["id"])
         self.refresh_tasks()
@@ -779,7 +817,13 @@ class TodoApp:
                             task_description = "-"
                         if not task_notizen:
                             task_notizen = "-"
-                        self.task = {'name': task_name, 'description': task_description, 'Uhrzeit': self.Zeit, 'notizen': task_notizen, 'id': self.ID, 'fertsch': False, 'warten': False}
+                        self.task = {'name': task_name, 
+                                     'description': task_description, 
+                                     'Uhrzeit': self.Zeit, 
+                                     'notizen': task_notizen, 
+                                     'id': self.ID, 
+                                     'fertsch': False, 
+                                     'warten': False}
                         print(f"ich speichere jetzt das hier: {self.task}")
                         self.ID += 1
                         self.cim = None
