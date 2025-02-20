@@ -13,14 +13,6 @@ from datetime import datetime, timedelta
 from tkcalendar import Calendar
 import tkinter as Atk
 
-#
-# 
-# VERGISS DEN BUG NICHT BEI DEM UMLAUTE FALSCH KODIERT GELADEN UND VERÄNDERT WERDEN + DIE DUPLIZIEREN SICH NACH JEDER SPEICHERUNG!!! + DIE SOLLEN ANGEBLICH KORREKT GESPEICHERT WERDEN.
-# 
-# 
-# 
-# 
-# #
 
 #            _ .-') _             .-') _                   
 #           ( (  OO) )           ( OO ) )                  
@@ -35,7 +27,7 @@ import tkinter as Atk
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Beta 1.2.7"
+        self.Version = "Beta 1.2.8"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -314,7 +306,7 @@ class TodoApp:
     def Aufgabe_erledigt(self, jdb_pfad, neue_daten, id_a):
         print("beb_speichern_mit_JSON(def)")
         print(f"Bearbeite nun den Eintrag mit folgender ID: {self.task_übergabe["id"]}")
-        with open(jdb_pfad, 'r', encoding='utf-8') as f:
+        with open(jdb_pfad, 'r') as f:
             daten = json.load(f)
         # Eintrag suchen und ersetzen
         ersetzt = False
@@ -325,7 +317,7 @@ class TodoApp:
                 break
         if ersetzt:
             # Datei mit den neuen Daten speichern
-            with open(jdb_pfad, 'w', encoding='utf-8') as f:
+            with open(jdb_pfad, 'w') as f:
                 json.dump(daten, f, ensure_ascii=False, indent=4)
             print(f"Eintrag mit ID_L {id_a} erfolgreich ersetzt.")
         else:
