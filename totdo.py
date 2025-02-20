@@ -1,6 +1,5 @@
 import customtkinter as tk
 from tkinter import Menu
-from tkinter import font
 from tkinter import messagebox
 import json
 import os
@@ -27,7 +26,7 @@ import tkinter as Atk
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Beta 1.2.8"
+        self.Version = "Beta 1.2.9"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -250,10 +249,10 @@ class TodoApp:
         self.root.grid_rowconfigure(1, weight=10)    # Erste Zeile (Frames) passt sich der Fenstergröße an
         self.root.grid_rowconfigure(2, weight=0)     # Zweite Zeile (Entry) bleibt fest
 
-        self.Aufgabe_hinzufuegen_Knopp = tk.CTkButton(self.root, text="Änderungen speichern", fg_color=self.f_bg, border_color=self.gruen_hell, border_width=1, text_color="White", hover_color=self.f_r_1)
-        self.Aufgabe_entfernen = tk.CTkButton(self.root, text="Aufgabe entfernen", command=self.aufgabe_loeschen_frage, fg_color=self.f_bg, border_color=self.Border_Farbe, border_width=1, text_color="White", hover_color=self.f_r_1)
+        self.Aufgabe_hinzufuegen_Knopp = tk.CTkButton(self.root, text="Änderungen speichern", fg_color=self.f_bg, border_color=self.gruen_hell, border_width=1, text_color="White", hover_color=self.f_r_1, cursor="hand2")
+        self.Aufgabe_entfernen = tk.CTkButton(self.root, text="Aufgabe entfernen", command=self.aufgabe_loeschen_frage, fg_color=self.f_bg, border_color=self.Border_Farbe, border_width=1, text_color="White", hover_color=self.f_r_1, cursor="hand2")
         self.Aufgabe_hinzufuegen_Knopp.grid(row=2, column=3, padx=(10,10), pady=(10,15), sticky="w")
-        self.An_Kalender_senden_start = tk.CTkButton(self.root, text="Kalender Eintrag...", command=self.Kalender_Dialog, border_color=self.orange, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
+        self.An_Kalender_senden_start = tk.CTkButton(self.root, text="Kalender Eintrag...", command=self.Kalender_Dialog, border_color=self.orange, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1, cursor="hand2")
         self.Aufgabe_hinzufuegen_Knopp.bind('<Button-1>', self.task_update_knopp)
         self.root.bind('<Return>', self.create_task_button_vor)
         self.Zhe_Clock = tk.CTkLabel(self.todo_frame_links, text=self.Zeit, text_color="White")
@@ -262,7 +261,7 @@ class TodoApp:
         self.root.bind("<Double-1>", self.entry_rein)
         self.Datum_fertsch_e = tk.CTkEntry(self.todo_frame_rechts, text_color="White") # hier hinter noch die ganze funktionalität mit einbauen
         self.Datum_fertsch_e.place(x=250,y=840)
-        self.Erledigt_Liste_öffnen_knopp = tk.CTkButton(self.todo_frame_links, text="zeige erledigte", command=self.erledigte_Aufgaben_laden, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
+        self.Erledigt_Liste_öffnen_knopp = tk.CTkButton(self.todo_frame_links, text="zeige erledigte", command=self.erledigte_Aufgaben_laden, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, cursor="hand2")
         self.Erledigt_Liste_öffnen_knopp.place(x=10,y=100)
 
         if self.Windows == True:
@@ -355,7 +354,7 @@ class TodoApp:
             y = (fenster_hoehe - height) // 2
             self.top_ln_f.geometry(f"{width}x{height}+{x}+{y}")
         mittig_fenster(width, height)
-        self.sp_ln = tk.CTkButton(self.top_ln_f, text="Speichern", command=self.Listennamen_speichern)
+        self.sp_ln = tk.CTkButton(self.top_ln_f, text="Speichern", command=self.Listennamen_speichern, cursor="hand2")
         self.sp_ln.pack(pady=10,padx=10)
         #btn und dann die funktion
 
@@ -391,7 +390,7 @@ class TodoApp:
         except:
             print("Notizen war leer")
             task_notizen = ""
-        self.Zeit = time.strftime("%H:%M:%S")
+        #self.Zeit = time.strftime("%H:%M:%S")
         jetzt = time.localtime()
         self.Zeit_mit_Datum = time.strftime("%d.%m.%Y %H:%M:%S", jetzt)
         try:
@@ -463,7 +462,7 @@ class TodoApp:
             task_name = "Aufgabe"
         task_description = self.Aufgaben_Beschreibung_t.get("0.0", "end").strip()
         task_notizen = self.Notizen_feld.get("0.0", "end").strip()
-        self.Zeit = self.task['Uhrzeit']
+        self.Zeit_var = self.task['Uhrzeit']
         #print(f"Die Uhrzeit sollte bei {self.task['Uhrzeit']} stehen.")
 
         if task_description == "" or None:
@@ -472,7 +471,7 @@ class TodoApp:
             task_notizen = "-"
         self.task = {'name': task_name, 
                      'description': task_description, 
-                     'Uhrzeit': self.Zeit, 
+                     'Uhrzeit': self.Zeit_var, 
                      'notizen': task_notizen, 
                      'id': ID_der_gewählten_Aufgabe, 
                      'fertsch': task["fertsch"], 
@@ -504,16 +503,16 @@ class TodoApp:
                 else:
                     self.Knopp_frame = tk.CTkFrame(self.todo_frame_einz, fg_color="transparent")
                     self.Knopp_frame.pack(padx=10, pady=1)
-                    self.button = tk.CTkButton(self.Knopp_frame, text=f"ID: {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w")
-                    self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="▢", width=10, command=weghauen, border_color=self.rot, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
+                    self.button = tk.CTkButton(self.Knopp_frame, text=f"ID: {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w", cursor="hand2")
+                    self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="▢", width=10, command=weghauen, border_color=self.rot, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1, cursor="hand2")
                     self.fertsch_knopp.pack(side=tk.LEFT)
                     self.button.pack(side=tk.LEFT)
         except KeyError:
             print("task['fertsch'] war noch nicht in der DB vorhanden.")
             self.Knopp_frame = tk.CTkFrame(self.todo_frame_einz, fg_color="transparent")
             self.Knopp_frame.pack(padx=10, pady=1)
-            self.button = tk.CTkButton(self.Knopp_frame, text=f"ID: {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w")
-            self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="▢", width=10, command=weghauen, border_color=self.rot, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
+            self.button = tk.CTkButton(self.Knopp_frame, text=f"ID: {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w", cursor="hand2")
+            self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="▢", width=10, command=weghauen, border_color=self.rot, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1, cursor="hand2")
             self.fertsch_knopp.pack(side=tk.LEFT)
             self.button.pack(side=tk.LEFT)
 
@@ -531,16 +530,16 @@ class TodoApp:
                     print("Es wird gewartet und diese task in die treeview gepackt")
                 self.Knopp_frame = tk.CTkFrame(self.todo_frame_einz, fg_color="transparent")
                 self.Knopp_frame.pack(padx=10, pady=1)
-                self.button = tk.CTkButton(self.Knopp_frame, text=f"ID: {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w")
-                self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="☑", width=10, command=weghauen_fertsch, border_color=self.gruen_hell, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
+                self.button = tk.CTkButton(self.Knopp_frame, text=f"ID: {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w", cursor="hand2")
+                self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="☑", width=10, command=weghauen_fertsch, border_color=self.gruen_hell, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1, cursor="hand2")
                 self.fertsch_knopp.pack(side=tk.LEFT)
                 self.button.pack(side=tk.LEFT)
         except KeyError:
             print("task['fertsch'] war noch nicht in der DB vorhanden und wird dennoch angezeigt.")
             self.Knopp_frame = tk.CTkFrame(self.todo_frame_einz, fg_color="transparent")
             self.Knopp_frame.pack(padx=10, pady=1)
-            self.button = tk.CTkButton(self.Knopp_frame, text=f"ID: {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w")
-            self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="X", width=10, command=weghauen_fertsch, border_color=self.gruen_hell, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
+            self.button = tk.CTkButton(self.Knopp_frame, text=f"ID: {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w", cursor="hand2")
+            self.fertsch_knopp = tk.CTkButton(self.Knopp_frame, text="X", width=10, command=weghauen_fertsch, border_color=self.gruen_hell, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1, cursor="hand2")
             self.fertsch_knopp.pack(side=tk.LEFT)
             self.button.pack(side=tk.LEFT)
 
@@ -686,8 +685,8 @@ class TodoApp:
         self.Aufgaben_Beschreibung_t.bind("<FocusIn>", self.Aufgaben_erstelle_deak)
         self.Notizen_feld.bind("<FocusIn>", self.Aufgaben_erstelle_deak)
 
-        self.warten_aktivieren_knopp = tk.CTkButton(self.root, text="warten", command=self.warten_stellen, width=100, border_color=self.helle_farbe_für_knopfe, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
-        self.warten_aus_knopp = tk.CTkButton(self.root, text="freigeben", command=self.warten_nicht_stellen, width=100, border_color=self.helle_farbe_für_knopfe, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1)
+        self.warten_aktivieren_knopp = tk.CTkButton(self.root, text="warten", command=self.warten_stellen, width=100, border_color=self.helle_farbe_für_knopfe, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1, cursor="hand2")
+        self.warten_aus_knopp = tk.CTkButton(self.root, text="freigeben", command=self.warten_nicht_stellen, width=100, border_color=self.helle_farbe_für_knopfe, fg_color=self.f_e, border_width=1, text_color="White", hover_color=self.f_r_1, cursor="hand2")
         self.warten_lb.bind("<<ListboxSelect>>",  self.LB_ausgewaehlt)
         
         self.An_Kalender_senden_start.grid(row=2, column=3, padx=(170,00), pady=(10,15), sticky="w")
@@ -778,8 +777,7 @@ class TodoApp:
                 self.l_nein()
         
     def Mod_suche(self): # Das hier ist die Funktion die jede sekunde nachschaut ob es vom CiM eine neue Aufgabe gibt.
-        print("Mod suche läuft") # Das ist mega fehleranfällig und manchmal stürzt das ding auch einfach so krass ab dass sich das ganze Programm schließt aber ich bin zu faul einfach die JSON zu bearbeiten.
-        print(self.cim_txt_pfad)
+        print(f"Mod suche läuft, suche unter {self.cim_txt_pfad}") # Das ist mega fehleranfällig und manchmal stürzt das ding auch einfach so krass ab dass sich das ganze Programm schließt aber ich bin zu faul einfach die JSON zu bearbeiten.
         while self.Mod_Suche_aktiv == True:
             try:
                 with open(self.cim_txt_pfad, "r") as cim_g:
@@ -803,7 +801,7 @@ class TodoApp:
                     task_name = anrufer_info
                     task_description = self.cim
                     task_notizen = "Aufgabe aus dem M.U.L.M"
-                    self.Zeit = time.strftime("%H:%M:%S")
+                    self.Zeit_var = time.strftime("%H:%M:%S")
                     if task_name:
                         if not task_description:
                             task_description = "-"
@@ -811,7 +809,7 @@ class TodoApp:
                             task_notizen = "-"
                         self.task = {'name': task_name, 
                                      'description': task_description, 
-                                     'Uhrzeit': self.Zeit, 
+                                     'Uhrzeit': self.Zeit_var, 
                                      'notizen': task_notizen, 
                                      'id': self.ID, 
                                      'fertsch': False, 
@@ -919,7 +917,6 @@ END:VCALENDAR
         save_button = Atk.Button(top, text="Speichern")
         save_button.bind('<Button-1>', speichern_u_zumachen)
         top.bind('<Return>', speichern_u_zumachen) 
-
         save_button.pack(pady=10)
         
     def save_task(self, task):
