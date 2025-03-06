@@ -26,7 +26,7 @@ import tkinter as Atk
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Beta 1.2.9"
+        self.Version = "Beta 1.2.10"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -813,7 +813,8 @@ class TodoApp:
                                      'notizen': task_notizen, 
                                      'id': self.ID, 
                                      'fertsch': False, 
-                                     'warten': False}
+                                     'warten': False,
+                                     'warten_seit': "-"}
                         print(f"ich speichere jetzt das hier: {self.task}")
                         self.ID += 1
                         self.cim = None
