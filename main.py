@@ -206,7 +206,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.1.12"
+        self.Version = "Beta 1.2.0"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -673,14 +673,10 @@ class Listendings:
         self.Menü_Knopp = tk.CTkButton(master, text="Statistik", command=self.Menu_anzeige_wechseln, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Menü_Bild)
         self.Menü_Knopp.place(x=1260, y=160)
         self.Pause_menu = tk.CTkFrame(master, width=769, height=420, fg_color="LightSlateGray", border_color="White", border_width=1, corner_radius=1)
-        self.Ereignislog = tk.CTkTextbox(root, width=220, height=80, wrap="word", text_color=self.Txt_farbe, fg_color=self.Ereignislog_farbe, border_color=self.f_border, border_width=2, font=("Bangla MN", 12))
+        self.Ereignislog = tk.CTkTextbox(root, width=220, height=80, wrap="word", text_color=self.Txt_farbe, fg_color=self.Ereignislog_farbe, border_color=self.f_border, border_width=2, font=("Courier", 12))
         self.Ereignislog.place(x=1210,y=10)
         self.Ereignislog_insert(nachricht_f_e="[-Ereignislog-]")
-        #self.Ereignislog_insert(nachricht_f_e="[-Ereignislog-]\n")
 
-        # jetzt kommen die ganzen stat Sachen des Pause Menüs.
-        # jetzt kommen die ganzen stat Sachen des Pause Menüs.
-        # jetzt kommen die ganzen stat Sachen des Pause Menüs.
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
         # jetzt kommen die ganzen stat Sachen des Pause Menüs.
@@ -859,7 +855,7 @@ class Listendings:
             print("auswahl existiert NICHT.")
 
     def Eintrag_per_Mail_weiterleiten_vor(self):
-        print("Eintrag_per_Mail_weiterleiten(def)")
+        print("Eintrag_per_Mail_weiterleiten_vor(def)")
         self.Fenster_Frage = tk.CTkToplevel()
         width = 420
         height = 400
@@ -2432,91 +2428,116 @@ class Listendings:
             button_loeschen.grid(row=2, column=1, padx=5, pady=5)
 
     def Anrufstatistiken_anzeigen_saeule(self):
-        # Muster, um die Uhrzeit zu extrahieren
         uhrzeit_muster = re.compile(r'bis (\d{2}:\d{2}:\d{2})')
+        def durchsuche_ordner(pfad, jahr):
+            monatliche_ergebnisse = {f"{jahr}-{str(m).zfill(2)}": 0 for m in range(1, 13)}
 
-        # Funktion zum Durchsuchen eines Verzeichnisses und seiner Unterverzeichnisse
-        def durchsuche_ordner(pfad):
-            ergebnisse = {}
-            
-            # Durchlaufe alle Dateien und Unterordner
-            for root, dirs, files in os.walk(pfad):
-                uhrzeiten = []
-                for file in files:
-                    dateipfad = os.path.join(root, file)
-                    # Nur Textdateien durchsuchen
-                    if file.endswith('.txt'):
-                        with open(dateipfad, 'r') as datei:
-                            for zeile in datei:
-                                uhrzeit_match = uhrzeit_muster.search(zeile)
-                                if uhrzeit_match:
-                                    uhrzeit = uhrzeit_match.group(1)
-                                    uhrzeiten.append(uhrzeit)
+            jahr_pfad = os.path.join(pfad, str(jahr))
+            if not os.path.exists(jahr_pfad):
+                print(f"Das Jahr {jahr} wurde nicht gefunden.")
+                return monatliche_ergebnisse
+
+            for monat in os.listdir(jahr_pfad):  
+                monat_pfad = os.path.join(jahr_pfad, monat)
+                if not os.path.isdir(monat_pfad) or not monat.isdigit():  
+                    continue  
+
+                gesamtanzahl = 0
+
+                for tag in os.listdir(monat_pfad):  
+                    tag_pfad = os.path.join(monat_pfad, tag)
+                    if not os.path.isdir(tag_pfad) or not tag.isdigit():
+                        continue  
+
+                    for file in os.listdir(tag_pfad):
+                        if file.endswith('.txt'):
+                            dateipfad = os.path.join(tag_pfad, file)
+                            with open(dateipfad, 'r') as datei:
+                                for zeile in datei:
+                                    if uhrzeit_muster.search(zeile):
+                                        gesamtanzahl += 1
                 
-                # Speichere die Anzahl der gefundenen Uhrzeiten für diesen Ordner
-                if uhrzeiten:
-                    ordnername = os.path.basename(root)
-                    ergebnisse[ordnername] = len(uhrzeiten)
-            
-            return ergebnisse
+                monatliche_ergebnisse[f"{jahr}-{monat}"] = gesamtanzahl  
 
-        # Hauptverzeichnis, das durchsucht werden soll
-        hauptverzeichnis = self.Listen_Speicherort_standard
+            return monatliche_ergebnisse
 
-        # Durchsuche das Hauptverzeichnis und Unterordner
-        ergebnisse = durchsuche_ordner(hauptverzeichnis)
+        hauptverzeichnis = self.Listen_Speicherort_standard 
+        jahr = simpledialog.askstring(title="Programm", prompt="Geben Sie eine Jahreszahl im vollen Format an (z.B. 2025).")
 
-        # Bereite Daten für das Diagramm vor
-        ordner = list(ergebnisse.keys())
-        anzahl = list(ergebnisse.values())
+        if jahr:
+            ergebnisse = durchsuche_ordner(hauptverzeichnis, jahr)
 
-        # Erstelle ein Diagramm mit matplotlib
-        plt.figure(figsize=(12, 8))
-        plt.bar(ordner, anzahl, color=self.Starface_Farbe)
-        plt.xlabel('Monat')
-        plt.ylabel('Anrufe')
-        plt.title('Anrufstatistiken nach Monaten (Angaben können ungenau sein)')
-        plt.grid(True, axis='both')
-        max_y = max(anzahl)
-        plt.yticks(np.arange(0, max_y + 1, 1.0))
+            monatsnamen = ["Januar", "Februar", "März", "April", "Mai", "Juni", 
+                        "Juli", "August", "September", "Oktober", "November", "Dezember"]
+            x_werte = monatsnamen
+            y_werte = [ergebnisse[f"{jahr}-{str(i+1).zfill(2)}"] for i in range(12)]
 
-        # Zeige das Diagramm an
-        plt.tight_layout()  # Optimiere das Layout
-        plt.show()
+            plt.figure(figsize=(12, 6))
+            plt.bar(x_werte, y_werte, color='skyblue', width=0.6)
+
+            plt.xlabel('Monat')
+            plt.ylabel('Anzahl der Anrufe')
+            plt.title(f'Anrufstatistiken für {jahr}')
+            plt.xticks(rotation=45)
+            plt.grid(axis='y', linestyle='--', alpha=0.7)
+
+            plt.tight_layout()
+            plt.show()
 
     def Anrufstatistiken_anzeigen_linie(self):
         uhrzeit_muster = re.compile(r'bis (\d{2}:\d{2}:\d{2})')
-        def durchsuche_ordner(pfad):
-            ergebnisse = {}
-            for root, dirs, files in os.walk(pfad):
-                uhrzeiten = []
-                for file in files:
-                    dateipfad = os.path.join(root, file)
-                    if file.endswith('.txt'):
-                        with open(dateipfad, 'r') as datei:
-                            for zeile in datei:
-                                uhrzeit_match = uhrzeit_muster.search(zeile)
-                                if uhrzeit_match:
-                                    uhrzeit = uhrzeit_match.group(1)
-                                    uhrzeiten.append(uhrzeit)
-                if uhrzeiten:
-                    ordnername = os.path.basename(root)
-                    ergebnisse[ordnername] = len(uhrzeiten)
-            return ergebnisse
+        def durchsuche_ordner(pfad, jahr):
+            monatliche_ergebnisse = {f"{jahr}-{str(m).zfill(2)}": 0 for m in range(1, 13)}  # Alle Monate auf 0 setzen
+
+            jahr_pfad = os.path.join(pfad, str(jahr))
+            if not os.path.exists(jahr_pfad):
+                print(f"Das Jahr {jahr} wurde nicht gefunden.")
+                return monatliche_ergebnisse
+
+            for monat in os.listdir(jahr_pfad):  
+                monat_pfad = os.path.join(jahr_pfad, monat)
+                if not os.path.isdir(monat_pfad) or not monat.isdigit():  
+                    continue  
+
+                gesamtanzahl = 0
+
+                for tag in os.listdir(monat_pfad):  
+                    tag_pfad = os.path.join(monat_pfad, tag)
+                    if not os.path.isdir(tag_pfad) or not tag.isdigit():
+                        continue  
+
+                    for file in os.listdir(tag_pfad):
+                        if file.endswith('.txt'):
+                            dateipfad = os.path.join(tag_pfad, file)
+                            with open(dateipfad, 'r') as datei:
+                                for zeile in datei:
+                                    if uhrzeit_muster.search(zeile):
+                                        gesamtanzahl += 1
+                    
+                monatliche_ergebnisse[f"{jahr}-{monat}"] = gesamtanzahl  
+
+            return monatliche_ergebnisse
+
         hauptverzeichnis = self.Listen_Speicherort_standard
-        ergebnisse = durchsuche_ordner(hauptverzeichnis)
-        ordner = list(ergebnisse.keys())
-        anzahl = list(ergebnisse.values())
-        plt.figure(figsize=(12, 8))
-        plt.plot(ordner, anzahl, marker='o', linestyle='-', color='blue')
-        plt.xlabel('Monat')
-        plt.ylabel('Anrufe')
-        plt.title('Anrufstatistiken nach Monaten (Angaben können ungenau sein)')
-        max_y = max(anzahl) if anzahl else 1
-        plt.yticks(np.arange(0, max_y + 1, 1.0))
-        plt.grid(True, axis='y')
-        plt.tight_layout()
-        plt.show()
+        jahr = simpledialog.askstring(title=self.Programm_Name, prompt="Geben Sie eine Jahrezahl im vollen Format an (z.B. 2025).")
+        if jahr != "" or None:
+            ergebnisse = durchsuche_ordner(hauptverzeichnis, jahr)
+
+            monatsnamen = ["Januar", "Februar", "März", "April", "Mai", "Juni", 
+                        "Juli", "August", "September", "Oktober", "November", "Dezember"]
+            x_werte = monatsnamen
+            y_werte = [ergebnisse[f"{jahr}-{str(i+1).zfill(2)}"] for i in range(12)] # richtig sortieren
+
+            plt.figure(figsize=(12, 6))
+            plt.plot(x_werte, y_werte, marker='o', linestyle='-', color='blue')
+            plt.xlabel('Monat')
+            plt.ylabel('Anzahl der Anrufe')
+            plt.title(f'Anrufstatistiken für {jahr}')
+            plt.xticks(rotation=45)
+            plt.grid(True, axis='y')
+            plt.tight_layout()
+            plt.show()
+        
 
 
     def Suche1(self):
