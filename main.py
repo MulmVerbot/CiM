@@ -206,7 +206,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.2.0"
+        self.Version = "Beta 1.2.1"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -2726,7 +2726,10 @@ class Listendings:
                 for root, dirs, files in os.walk(folder_path):
                     for file_name in files:
                         try:
-                            if file_name.endswith('.txt') or file_name.endswith('.md') or file_name.endswith('.html') or file_name.endswith('.xml') or file_name.endswith('.csv') or file_name.endswith('.js'):
+                            text_formate = {'.txt', '.md', '.html', '.xml', '.csv', '.js', '.rtf', 
+                                            '.json', '.log', '.ini', '.yml', '.yaml', '.bat', '.sh', 
+                                            '.php', '.py', '.java', '.cpp', '.cs', '.rb', '.go', '.tex'}
+                            if any(file_name.endswith(ext) for ext in text_formate):
                                 file_path = os.path.join(root, file_name)
                                 file_content = read_text_file(file_path).lower()# Konvertiere den Dateiinhalt in Kleinbuchstaben
                                 self.gesucht_zahl += 1
