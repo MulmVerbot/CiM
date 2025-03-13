@@ -330,7 +330,8 @@ class TodoApp:
             "notizen": self.task_übergabe["notizen"],
             "id": self.task_übergabe["id"],
             "fertsch": True, # das hier wird immer auf True gesetzt weil es ja der sinn der Funktion ist.
-            "warten": self.task_übergabe["warten"]
+            "warten": self.task_übergabe["warten"],
+            'warten_seit': "-"
         }
         self.Aufgabe_erledigt(self.tasks_pfad_datei, self.neuer_eintrag, self.task_übergabe["id"])
         self.refresh_tasks()
