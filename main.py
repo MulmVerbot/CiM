@@ -206,7 +206,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.2.2"
+        self.Version = "Beta 1.2.3"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -711,13 +711,10 @@ class Listendings:
         self.Einstellungsseite_Knopp.place(x=1260,y=420)
         self.Ticket_erstellen_Knopp = tk.CTkButton(root, text="Ticket erstellen", command=self.Ticket_erstellen, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Ticket_Bild)
         self.Ticket_erstellen_Knopp.place(x=1260,y=450)
-        self.Eintrag_raus_kopieren_knopp = tk.CTkButton(root, text="Letztes kopieren", command=self.Eintrag_raus_kopieren, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Kopieren_Bild)
-        self.Eintrag_raus_kopieren_knopp.place(x=1260,y=390)
         self.Notizen_knopp = tk.CTkButton(root, text="Schnellnotiz", fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Schnellnotiz_Bild)
-        self.Notizen_knopp.place(x=1260,y=360)
+        self.Notizen_knopp.place(x=1260,y=390)
         self.Notizen_knopp.bind('<Button-1>', self.schnellnotizen_öffnen)
 
-        self.Berichtsheft_knopp = tk.CTkButton(self.Pause_menu, text="Berichtsheft öffnen", command=self.Berichtsheft_aufmachen, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
         self.Einstellungen_Frame = tk.CTkFrame(root, width=600, height=380, border_color="Pink", border_width=3, fg_color="transparent")
         self.tabview = tk.CTkTabview(self.Einstellungen_Frame, width=600, height=380, fg_color=self.f_e, segmented_button_fg_color=self.f_bg, segmented_button_selected_hover_color=self.f_hover_normal, segmented_button_unselected_hover_color=self.f_hover_normal, segmented_button_selected_color=self.f_grün, text_color=self.Txt_farbe, segmented_button_unselected_color=self.f_e)
         self.tabview.add("Allgemein")
@@ -833,7 +830,8 @@ class Listendings:
                     self.Eintrag_verstecken_Knopp.place_forget()
                     self.Anruf_starten_LB_Knopp.place_forget()
                     self.per_mail_weitereiten.place_forget()
-                    self.ans_totdo_senden_knopp.place_forget()   
+                    self.ans_totdo_senden_knopp.place_forget()  
+                    self.Eintrag_raus_kopieren_knopp.place_forget() 
                 except:
                     print("war wohl nicht da")
 
@@ -846,6 +844,8 @@ class Listendings:
                 self.per_mail_weitereiten.place(x=10,y=360)
                 self.ans_totdo_senden_knopp = tk.CTkButton(root, text="An TotDo senden", command=self.Eintrag_ans_totdo, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Menü_Bild)
                 self.ans_totdo_senden_knopp.place(x=160,y=360)
+                self.Eintrag_raus_kopieren_knopp = tk.CTkButton(root, text="Eintrag kopieren", command=self.Eintrag_raus_kopieren, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, image=self.Kopieren_Bild)
+                self.Eintrag_raus_kopieren_knopp.place(x=10,y=400)
             ###
             else:
                 messagebox.showwarning(title=self.Programm_Name, message=f"Kein Eintrag mit ID {eintrag_id} gefunden.")
@@ -1682,15 +1682,19 @@ class Listendings:
         self.Email_Einstellungen_info.place_forget()
         self.Einstellungen_Frame.place_forget()
         self.tabview.place_forget()
-        
 
     def Eintrag_raus_kopieren(self): # kopiert den letzten in der Liste stehenden Eintrag in die Zwischenablage.
         print("[-INFO-] Eintrag_raus_kopieren(def)")
-        self.letzten_text_erhalten()
-        kopierter_text = f"Gesprächinfos: ID: {self.Eintrag_geladen_jetzt["ID_L"]}\n{self.letzter_eintrag_text}"
-        pyperclip.copy(kopierter_text)
-        print(f"Text in der Zwischenablage: {kopierter_text}")
-        self.Ereignislog_insert(nachricht_f_e="- letzte Nachricht kopiert. -")
+        try:
+            self.letzter_eintrag_text = f"Uhrzeit: {self.Eintrag_geladen_jetzt["Uhrzeit"]}\nAnrufer: {self.Eintrag_geladen_jetzt["name"]}\nProblem: {self.Eintrag_geladen_jetzt["description"]}\nInfo: {self.Eintrag_geladen_jetzt["notizen"]}\nTelefonnummer: {self.Eintrag_geladen_jetzt["Telefonnummer"]}\nJemand bestimmtes sprechen: {self.Eintrag_geladen_jetzt["wen_sprechen"]}\nWeiterleitung: {self.Eintrag_geladen_jetzt["an_wen_gegeben"]}"
+        except:
+            print("Es wurde kein Eintrag ausgewählt.")
+        if self.letzter_eintrag_text == None or "":
+            messagebox.showerror(title=self.Programm_Name, message="Bitte zuerst einen Eintrag zum kopieren auswählen!")
+            return
+        else:
+            pyperclip.copy(self.letzter_eintrag_text)
+        self.Ereignislog_insert(nachricht_f_e="-ausgewählten Eintrag kopiert. -")
         
 
     def Eintrag_ans_totdo(self):
@@ -1806,37 +1810,15 @@ class Listendings:
         else:
             print("Suche wurde abgebrochen.")
 
-    def Berichtsheft_aufmachen(self):
-        print("öffne nun Berichtsheft...")
-        url = "https://bildung.ihk.de/webcomponent/dibe/AUSZUBILDENDER/berichtsheft/wochenansicht"
-        try:
-            webbrowser.get("chrome").open(url)
-        except:
-            messagebox.showerror(title=self.Programm_Name_lang, message="Konnte die Seite nicht öffnen.")
-
     def anhang_suchen_ticket(self):
         print("[-INFO-] anhang_suchen_ticket(def)")
         self.Mail_Anhang = filedialog.askopenfilename()
         if self.Mail_Anhang:
             self.Mail_Anhang_status_l.configure(text=f"Anhang: {self.Mail_Anhang}")
 
-    def letzten_text_erhalten(self):
-        print("[-INFO-] letzten_importieren(def)")
-        with open(self.Liste_mit_datum, "r") as gel_t:
-            self.geladener_Text = gel_t.read()
-        self.einzelner_Eintrag = self.geladener_Text.split("\n\n")
-        if self.einzelner_Eintrag:
-            for eintrag in reversed(self.einzelner_Eintrag):
-                if eintrag.startswith("Uhrzeit:") and "Telefonnummer:" in eintrag:
-                    self.letzter_eintrag_text = eintrag
-                    break # das break weil wir einfach die liste umdrehen und mit dem dadurch ersten Eintrag zufrieden sind.
-            else:
-                print("[-ERR-] Kein passender Eintrag gefunden")
-        else:
-            print("[-ERR-] Die Liste ist leer")
 
-    def letzten_importieren(self):
-        self.letzten_text_erhalten()
+    def letzten_importieren(self): # nach Umstellung: Importiert nichtmehr das letzte sondern das in der LB ausgewählte
+        self.Eintrag_raus_kopieren()
         self.Nachricht_Ticket_e.insert(tk.END, self.letzter_eintrag_text)
         self.letzter_eintrag_text = None
 
@@ -2085,67 +2067,6 @@ class Listendings:
             except Exception as o1:
                 print("Es ist ein fehler aufgetreten: ",o1)
 
-    def HW_Mon_menü_anzeigen(self):
-        print("HW_Mon_menü_anzeigen(def)")
-        self.HW_Mon_refresh()
-
-    def HW_Mon_refresh(self):
-        print("HW_refresh")
-        metrics = {}
-        metrics['System'] = {
-            'Platform': platform.system(),
-            'Platform Version': platform.version(),
-            'Platform Release': platform.release(),
-            'Architecture': platform.architecture(),
-            'Machine': platform.machine(),
-            'Processor': platform.processor(),
-        }
-
-        metrics['CPU'] = {
-            'Cores': psutil.cpu_count(logical=False),
-            'Logical CPUs': psutil.cpu_count(logical=True),
-            'CPU Frequency': psutil.cpu_freq().current if psutil.cpu_freq() else 'N/A',
-            'CPU Usage (%)': psutil.cpu_percent(interval=0),
-        }
-
-        vm = psutil.virtual_memory()
-        metrics['Memory'] = {
-            'Total Memory': f"{vm.total / (1024 ** 3):.2f} GB",
-            'Available Memory': f"{vm.available / (1024 ** 3):.2f} GB",
-            'Used Memory': f"{vm.used / (1024 ** 3):.2f} GB",
-            'Memory Usage (%)': vm.percent,
-        }
-
-        disk = psutil.disk_usage('/')
-        metrics['Disk'] = {
-            'Total Disk Space': f"{disk.total / (1024 ** 3):.2f} GB",
-            'Used Disk Space': f"{disk.used / (1024 ** 3):.2f} GB",
-            'Free Disk Space': f"{disk.free / (1024 ** 3):.2f} GB",
-            'Disk Usage (%)': disk.percent,
-        }
-
-        net = psutil.net_if_addrs()
-        metrics['Network'] = {
-            'Network Interfaces': list(net.keys()),
-        }
-
-        row = 0
-        for category, sub_metrics in metrics.items():
-            # Kategorie Label
-            category_label = tk.CTkLabel(self.Pause_menu, text=f"{category}", font=("Arial", 16, "bold"))
-            category_label.grid(row=row, column=0, columnspan=2, pady=(10, 5), sticky="w")
-            row += 1
-
-            # Sub-Metrics Labels
-            for key, value in sub_metrics.items():
-                metric_label = tk.CTkLabel(self.Pause_menu, text=f"{key}:", anchor="w")
-                metric_label.grid(row=row, column=0, padx=10, pady=2, sticky="w")
-
-                value_label = tk.CTkLabel(self.Pause_menu, text=f"{value}", anchor="w")
-                value_label.grid(row=row, column=1, padx=10, pady=2, sticky="w")
-                row += 1
-    
-
     def Menu_anzeige_wechseln(self): ############# Hier kommt der ganze Text für das Menü rein.
         print("Menu_anzeige_wechseln(def)")
         if self.Menü_da == True:
@@ -2156,7 +2077,6 @@ class Listendings:
             self.Menü_Knopp.configure(text="Statistik", fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
             self.smtp_login_erfolgreich_l.place_forget()
             self.Einstellung_Design_auswahl.place_forget()
-            self.Berichtsheft_knopp.place_forget()
             self.Statistiken_anzeigen_linie_knopp.place_forget()
             self.Statistiken_anzeigen_saeule_knopp.place_forget()
             self.Stat_ID_l.place_forget()
@@ -2166,7 +2086,6 @@ class Listendings:
             self.Pause_menu.place(x=300,y=10)
             self.Menü_da = True
             self.Menü_Knopp.configure(text="Statistik schließen", fg_color="aquamarine", hover_color="aquamarine3")
-            self.Berichtsheft_knopp.place(x=300,y=10)
             self.Einstellung_Design_auswahl.place(x=10,y=200)
             self.Einstellung_Design_L.place(x=10,y=170)
             self.Statistiken_anzeigen_linie_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Liniendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_linie, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
