@@ -206,7 +206,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.2.1"
+        self.Version = "Beta 1.2.2"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -407,7 +407,6 @@ class Listendings:
         self.pfad_der_suche = None
         self.Suchwort = None
         self.kopie_der_mail_erhalten = True
-        self.Windows = False # denkt dran dafür noch eine richtige erkenung zu schreiben!!! // fuck vergessen.
         self.Einf_aktiv = True
         self.ausgewaehlter_Eintrag = None
         self.Eintrag_geladen_jetzt = None
@@ -870,15 +869,15 @@ class Listendings:
 
         f_l = tk.CTkLabel(self.Fenster_Frage, text="Empfänger Adresse:")
         f_l.place(x=10,y=10)
-        self.Empf_e = tk.CTkEntry(self.Fenster_Frage, width=200)  ## //todo soll dann auch per pre konfig. Liste auswählbar sein.
+        self.Empf_e = tk.CTkEntry(self.Fenster_Frage, width=300)  ## //todo soll dann auch per pre konfig. Liste auswählbar sein.
         self.Empf_e.place(x=10,y=50)
 
         self.Domain_einsetzen = tk.CTkButton(self.Fenster_Frage, text="Domäne einfügen", command=self.Domain_einsetzen_Email_weiterleitung, fg_color=self.f_grün, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal) #  einen Knopf daneben mit "Firmendomäne einsetzen" um die Domains der Email Adressen einzufügen
-        self.Domain_einsetzen.place(x=10,y=220)
+        self.Domain_einsetzen.place(x=10,y=300)
         # standard_empf_knopp = tk.CTkButton(self.Fenster_Frage, text="Standard Empfänger", command=self.stnd_true) //todo: gui feedback wenn das gedrückt wurde
 
         senden_knopp = tk.CTkButton(self.Fenster_Frage, text="senden", command=self.Eintrag_per_Mail_weiterleiten, fg_color=self.rot, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
-        senden_knopp.place(x=100,y=100)
+        senden_knopp.place(x=120,y=100)
 
     def Mail_Adressbuch_laden(self):
         try:
@@ -904,7 +903,7 @@ class Listendings:
             print("[-EINSTLLUNGEN LADEN-] Es gibt keinen Domänennamen zum laden.")
             self.Domain_name = None
         except Exception as exuz:
-            print(f"{exuz}")
+            print(f"[-EINSTLLUNGEN LADEN-] Fehler beim laden des Domain Namens: {exuz}")
             self.Domain_name = None
 
     def Domain_name_setzen(self):
@@ -940,15 +939,13 @@ class Listendings:
     def Eintrag_per_Mail_weiterleiten(self):
         print("Eintrag_per_Mail_weiterleiten(def)")
         Mail_Anhang = None
-        if self.Standard_addr == False:
-            print("Eigener Empfänger wird gezogen..")
-            empfänger_adresse = self.Empf_e.get()
-            print("Eigener Empfänger wurde gezogen.")
-        else:
-            empfänger_adresse = self.empfänger_email
+        empfänger_adresse = self.Empf_e.get()
+
+        if empfänger_adresse == "" or None:
+            messagebox.showwarning(title=self.Programm_Name, message="Empfänger Adresse war leer. Vorgang wird abgebrochen.")
+            return
 
         self.Betreff_Mail = f"Anruf von {self.Eintrag_geladen_jetzt["name"]}"
-        self.alternative_empfänger_adresse = self.sender_email
         self.Nachricht_Mail_Inhalt = f"Guten Tag,\nfolgenden Anruf habe ich erhalten: \n\n\nUhrzeit: {self.Eintrag_geladen_jetzt["Uhrzeit"]}\nTelefonnummer: {self.Eintrag_geladen_jetzt["Telefonnummer"]}\n\n\nAnrufer: {self.Eintrag_geladen_jetzt["name"]}\n\nBeschreibung: {self.Eintrag_geladen_jetzt["description"]}\n\nNotizen/ weitere Infos: {self.Eintrag_geladen_jetzt["notizen"]}\n\nWen sprechen: {self.Eintrag_geladen_jetzt["wen_sprechen"]}\nweitergeleitet an: {self.Eintrag_geladen_jetzt["an_wen_gegeben"]}\nID: {self.Eintrag_geladen_jetzt["ID_L"]}\n\n\nDiese Email wurde automatisch erstellt."
         self.Fenster_Frage.destroy()
 
@@ -975,10 +972,12 @@ class Listendings:
                 print("Fehler beim Anhängen der Datei: ", ez3)
                 messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim Anhängen der Datei. Fehlercode: {ez3}")
                 return
+        else:
+            print("Es gab keinen Email Anhang zum anhängen.")
 
         with smtplib.SMTP_SSL(self.smtp_server, 465) as server: # Das hier kann man bestimmt einfach so machen dass es eine funktion gibt bei der sich am Server angemeldet wird.
             try:
-                ###server.set_debuglevel(1)
+                #server.set_debuglevel(1)
                 server.login(self.sender_email, self.pw_email)
                 self.smtp_login_erfolgreich = True
             except Exception as EmailEx1:
@@ -988,31 +987,25 @@ class Listendings:
                     self.smtp_login_erfolgreich_l.configure(text="Anmeldung am SMTP fehlgeschlagen.", text_color="Red")
                     self.Ereignislog_insert(nachricht_f_e="-Anmeldung am SMTP fehlgeschlagen.-")
                 except:
-                    pass
+                    pass # das ist drin falls man in einer Sitzung die Einstellungen noch nicht offen hatte, Sparrt wahrscheinlich weniger Ram als dieser Kommentar hier verbraucht
                 messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim Anmelden am Mailserver. Fehlercode: {self.smtp_server}")
-            if self.alternative_empfänger_adresse == "":
-                try:
-                    server.sendmail(self.sender_email, self.empfänger_email, msg.as_string())
-                    if self.kopie_der_mail_erhalten == True:
-                        server.sendmail(self.sender_email, self.sender_email, msg.as_string())
-                        self.Ereignislog_insert(nachricht_f_e="-Email Kopie an SMTP Server versendet.-")
-                    self.Ereignislog_insert(nachricht_f_e="-Email an SMTP Server versendet.-")
-                except Exception as EmailEx2:
-                    print("Fehler beim anmelden beim senden an den Mailserver. Fehlercode: ", EmailEx2)
-                    self.Ereignislog_insert(nachricht_f_e="-Anmeldung am SMTP fehlgeschlagen.-")
-                    messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der Nachricht an den Mailserver. Fehlercode: {EmailEx2}")
-                messagebox.showinfo(title="CiM", message="Der Eintrag wurde erfolgreich weitergeleitet.")
-                print("E-Mail erfolgreich gesendet!")
-            elif self.alternative_empfänger_adresse != "":
-                try:
-                    server.sendmail(self.sender_email, self.alternative_empfänger_adresse, msg.as_string())
-                    self.Ereignislog_insert(nachricht_f_e="-Email an SMTP Server versendet.-")
-                except Exception as EmailEx2:
-                    print("Fehler beim anmelden beim senden an den Mailserver. Fehlercode: ", EmailEx2)
-                    self.Ereignislog_insert(nachricht_f_e="-Anmeldung am SMTP fehlgeschlagen.-")
-                    messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der Nachricht an den Mailserver. Fehlercode: {EmailEx2}")
-                messagebox.showinfo(title="CiM", message="Der Eintrag wurde erfolgreich weitergeleitet.")
-                print("E-Mail erfolgreich gesendet!")
+                return
+            try:
+                server.sendmail(self.sender_email, empfänger_adresse, msg.as_string())
+                self.Ereignislog_insert(nachricht_f_e="-Email an SMTP Server versendet.-")
+            except:
+                print(f"Fehler beim Senden der E-Mail: {e}")
+                messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der Nachrichten an den Mailserver. Fehlercode: {e}")
+            try:
+                server.sendmail(self.sender_email, self.sender_email, msg.as_string())
+                self.Ereignislog_insert(nachricht_f_e="-Email KOPIE an SMTP Server versendet.-")
+            except smtplib.SMTPException as e:
+                print(f"Fehler beim Senden der E-Mail KOPIE: {e}")
+                messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der NachrichtenKOPIE an den Mailserver. Fehlercode: {e}")
+                return
+            
+            print("E-Mail erfolgreich gesendet!")
+            messagebox.showinfo(title="CiM", message="Der Eintrag wurde erfolgreich weitergeleitet.")
     
     def eigenen_suchort_einstellen(self):
         print("eigenen_suchort_einstellen(def)")
@@ -1261,7 +1254,10 @@ class Listendings:
             if e:
                 if e == "Dings":
                     print("hahah ja, Bums!")
+                    print("'Einstellungen_laden' lädt die Einstellungen neu.")
                     e = None
+                elif e == "Einstellungen_laden":
+                    self.Einstellungen_laden()
                 elif e == "": # Das hier ist dann das ende, kann man als kopiervorlage nutzen.
                     e = ":"
                     print(e)
@@ -1759,6 +1755,7 @@ class Listendings:
                 except:
                     pass
                 messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim Anmelden am Mailserver. Fehlercode: {self.smtp_server}")
+
             if self.alternative_empfänger_adresse == "":
                 try:
                     server.sendmail(self.sender_email, self.empfänger_email, msg.as_string())
@@ -1777,6 +1774,9 @@ class Listendings:
                 try:
                     server.sendmail(self.sender_email, self.alternative_empfänger_adresse, msg.as_string())
                     self.Ereignislog_insert(nachricht_f_e="-Email an SMTP Server versendet.-")
+                    if self.kopie_der_mail_erhalten == True:
+                        server.sendmail(self.sender_email, self.sender_email, msg.as_string())
+                        self.Ereignislog_insert(nachricht_f_e="-Email Kopie an SMTP Server versendet.-")
                 except Exception as EmailEx2:
                     print("Fehler beim anmelden beim senden an den Mailserver. Fehlercode: ", EmailEx2)
                     self.Ereignislog_insert(nachricht_f_e="-Anmeldung am SMTP fehlgeschlagen.-")
