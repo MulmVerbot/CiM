@@ -206,7 +206,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.2.3"
+        self.Version = "Beta 1.2.4"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -852,6 +852,15 @@ class Listendings:
                 print(f"Kein Eintrag mit ID {eintrag_id} gefunden.")
         else:
             print("auswahl existiert NICHT.")
+            try:
+                print("despawn des LB_GUI zeugs weil auswahl nicht existiert.")
+                self.Eintrag_verstecken_Knopp.place_forget()
+                self.Anruf_starten_LB_Knopp.place_forget()
+                self.per_mail_weitereiten.place_forget()
+                self.ans_totdo_senden_knopp.place_forget()  
+                self.Eintrag_raus_kopieren_knopp.place_forget() 
+            except:
+                print("war wohl nicht da")
 
     def Eintrag_per_Mail_weiterleiten_vor(self):
         print("Eintrag_per_Mail_weiterleiten_vor(def)")
