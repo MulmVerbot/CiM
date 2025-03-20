@@ -260,13 +260,13 @@ class TodoApp:
         self.Zhe_Clock.place(x=10,y=10)
         self.Aufgaben_Titel_e.bind("<FocusIn>", self.entry_rein)
         self.root.bind("<Double-1>", self.entry_rein)
-        self.Datum_fertsch_e = tk.CTkEntry(self.todo_frame_rechts, text_color="White") # hier hinter noch die ganze funktionalität mit einbauen
+        self.Datum_fertsch_e = tk.CTkEntry(self.todo_frame_rechts, text_color="White") # hier hinter noch die ganze funktionalität mit einbauen  ### woher kommt das uns seit wann wird das dings aktiv gespawned!?
         self.Datum_fertsch_e.place(x=250,y=840)
         self.Erledigt_Liste_öffnen_knopp = tk.CTkButton(self.todo_frame_links, text="zeige erledigte", command=self.erledigte_Aufgaben_laden, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, cursor="hand2")
         self.Erledigt_Liste_öffnen_knopp.place(x=10,y=100)
 
         if self.Windows == True:
-            self.warten_lb = Atk.Listbox(self.todo_frame_links, width=40, height=10, background=self.f_e, activestyle="none", fg=self.Txt_farbe)
+            self.warten_lb = Atk.Listbox(self.todo_frame_links, width=35, height=10, background=self.f_e, activestyle="none", fg=self.Txt_farbe)
         else:
             self.warten_lb = Atk.Listbox(self.todo_frame_links, width=30, height=10, background=self.f_e, activestyle="none", fg=self.Txt_farbe)
         self.warten_lb.place(x=10,y=350)
