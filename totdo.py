@@ -26,7 +26,7 @@ import tkinter as Atk
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Beta 1.2.10"
+        self.Version = "Beta 1.2.11"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -231,11 +231,11 @@ class TodoApp:
         self.Einstellungen.add_command(label="Listenmamen ändern", command=self.Listenname_change)
         self.menudings.add_command(label="Info", command=self.info)
 
-        self.todo_frame_links = tk.CTkFrame(self.root, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
+        self.todo_frame_links = tk.CTkFrame(self.root, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5, width=240)
         self.todo_frame_rechts = tk.CTkScrollableFrame(self.root, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
         self.todo_frame_einz = tk.CTkScrollableFrame(self.root, fg_color=self.f_bg, border_color=self.f_border, border_width=1, corner_radius=5)
         self.todo_frame_links.grid(row=1, column=1, padx=(0,0), pady=0, sticky="nsw")  # Links von oben nach unten
-        self.todo_frame_einz.grid(row=1, column=2, padx=(0,0), pady=0, sticky="nsew")  # Mittlerer Frame ohne Abstand zu den Seiten
+        self.todo_frame_einz.grid(row=1, column=2, padx=(0,0), pady=0, sticky="nswe")  # Mittlerer Frame ohne Abstand zu den Seiten
         self.todo_frame_rechts.grid(row=1, column=3, padx=(0,0), pady=0, sticky="nswe")  # Rechts ohne Lücke, füllt bis zum Rand
 
         # Entry unterm mittleren Frame
@@ -243,11 +243,12 @@ class TodoApp:
         self.Aufgaben_Titel_e.grid(row=2, column=2, padx=(0,0), pady=(10,15), sticky="ew")  # Entry unter dem mittleren Frame
 
         # Konfiguriere das Grid, damit es sich bei Größenänderungen anpasst
-        self.root.grid_columnconfigure(1, weight=0)  # Linker Frame bleibt fest
-        self.root.grid_columnconfigure(2, weight=3)  # Mittlerer Frame (self.todo_frame_einz) bekommt den meisten Platz
-        self.root.grid_columnconfigure(3, weight=1)  # Rechter Frame passt sich an und füllt bis zum Fensterrand
+        self.root.grid_columnconfigure(1, weight=2)  # Linker Frame bleibt fest
+        self.root.grid_columnconfigure(2, weight=100)  # Mittlerer Frame (self.todo_frame_einz) bekommt den meisten Platz
+        self.root.grid_columnconfigure(3, weight=2)  # Rechter Frame passt sich an und füllt bis zum Fensterrand
         self.root.grid_rowconfigure(1, weight=10)    # Erste Zeile (Frames) passt sich der Fenstergröße an
         self.root.grid_rowconfigure(2, weight=0)     # Zweite Zeile (Entry) bleibt fest
+        
 
         self.Aufgabe_hinzufuegen_Knopp = tk.CTkButton(self.root, text="Änderungen speichern", fg_color=self.f_bg, border_color=self.gruen_hell, border_width=1, text_color="White", hover_color=self.f_r_1, cursor="hand2")
         self.Aufgabe_entfernen = tk.CTkButton(self.root, text="Aufgabe entfernen", command=self.aufgabe_loeschen_frage, fg_color=self.f_bg, border_color=self.Border_Farbe, border_width=1, text_color="White", hover_color=self.f_r_1, cursor="hand2")
@@ -265,9 +266,9 @@ class TodoApp:
         self.Erledigt_Liste_öffnen_knopp.place(x=10,y=100)
 
         if self.Windows == True:
-            self.warten_lb = Atk.Listbox(self.todo_frame_links, width=30, height=10, background=self.f_e, activestyle="none", fg=self.Txt_farbe)
+            self.warten_lb = Atk.Listbox(self.todo_frame_links, width=40, height=10, background=self.f_e, activestyle="none", fg=self.Txt_farbe)
         else:
-            self.warten_lb = Atk.Listbox(self.todo_frame_links, width=20, height=10, background=self.f_e, activestyle="none", fg=self.Txt_farbe)
+            self.warten_lb = Atk.Listbox(self.todo_frame_links, width=30, height=10, background=self.f_e, activestyle="none", fg=self.Txt_farbe)
         self.warten_lb.place(x=10,y=350)
 
         self.load_tasks() # lädt die akuellen Aufgaben
@@ -637,6 +638,10 @@ class TodoApp:
             self.warten_seit_l.grid_forget()
         except:
             pass
+        try:
+            self.kalender_eintrag_am_l.grid_forget()
+        except:
+            pass
 
     def Aufgaben_erstelle_deak(self, event):
         print("Aufgaben_erstelle_deak(def)")
@@ -663,11 +668,18 @@ class TodoApp:
         self.task = task
         self.task_übergabe = task # im cim würde diese Variable jetzt "self.Eintrag_geladen_jetzt" oderso heißen << RT Danke für diese Doku, hätte jetzt wieder ewig gesucht
         ## Das hier oben ist auch wieder mega dumm gelöst weil die var drüber bereits existert, 
-        ## ich bin nur gerade zu faul zu gucken ob die zu fürhezeitig wieder freigegeben wird. Sorry zukunfst Max! -- digga wie oft willst Du diese Ausrede noch bringen? 25.10
+        ## ich bin nur gerade zu faul zu gucken ob die zu fürhezeitig wieder freigegeben wird.
         self.todo_r_dispawn()
 
-        self.Notizen_feld = tk.CTkTextbox(self.todo_frame_rechts, text_color="White", fg_color=self.f_r_1, wrap="word", border_width=0)
+        self.Notizen_feld = tk.CTkTextbox(self.todo_frame_rechts, text_color="White", fg_color=self.f_r_1, wrap="word", border_width=0, width=380)  # Das hier ist das einzige, das in der breite angepasst werden muss.
         self.ID_label = tk.CTkLabel(self.todo_frame_rechts, text=f"Aufgaben-ID:  {task['id']}", text_color="White", font=self.Schriftart_n)
+        
+        try:
+            self.kalender_eintrag_am_l = tk.CTkLabel(self.todo_frame_rechts, text=f"Kalendereintrag am: {task['Kalendereintrag_am']}", text_color="White") 
+        except KeyError:
+            print("Key Error für task['Kalendereintrag_am']")
+            self.kalender_eintrag_am_l = tk.CTkLabel(self.todo_frame_rechts, text=f"Kalendereintrag am: -", text_color="White") 
+
         self.Aufgaben_Titel_t = tk.CTkTextbox(self.todo_frame_rechts, width=330, height=40, text_color="White", fg_color=self.f_r_1, wrap="word", border_width=0, activate_scrollbars=False)
         self.Aufgaben_Beschreibung_t = tk.CTkTextbox(self.todo_frame_rechts, width=330, height=120, text_color="White", fg_color=self.f_r_1, wrap="word", border_width=0)
         self.Aufgaben_Beschreibung_l = tk.CTkLabel(self.todo_frame_rechts, text="Beschreibung:", text_color="White")
@@ -675,9 +687,10 @@ class TodoApp:
         self.Uhrzeit_text_l = tk.CTkLabel(self.todo_frame_rechts, text=f"Aufgabe von: {task['Uhrzeit']}Uhr", text_color="White")
         self.Notizen_feld.insert(tk.END, f"{task['notizen']}")
         self.Aufgaben_Titel_t.insert(tk.END, f"{task['name']}")
-        self.Aufgaben_Titel_t.grid(row=0, column=0, padx=10, pady=(10, 5), sticky="ew")   # Aufgaben-Titel oben
-        self.ID_label.grid(row=1, column=0, padx=10, pady=(5, 5), sticky="w")             # ID unter dem Titel
-        self.Uhrzeit_text_l.grid(row=2, column=0, padx=10, pady=(5, 5), sticky="w")       # Uhrzeit unter der ID
+        self.Aufgaben_Titel_t.grid(row=0, column=0, padx=10, pady=(0, 20), sticky="ew")   # Aufgaben-Titel oben
+        self.ID_label.grid(row=1, column=0, padx=10, pady=(0, 5), sticky="w")             # ID unter dem Titel
+        self.kalender_eintrag_am_l.grid(row=1, column=0, padx=10, pady=(45, 0), sticky="w")  
+        self.Uhrzeit_text_l.grid(row=0, column=0, padx=10, pady=(50, 0), sticky="w")       # Uhrzeit unter der ID
         self.Aufgaben_Beschreibung_l.grid(row=3, column=0, padx=10, pady=(5, 5), sticky="w")  # "Beschreibung"-Label
         self.Aufgaben_Beschreibung_t.grid(row=4, column=0, padx=10, pady=(5, 5), sticky="ew") # Beschreibungstextfeld
         self.Aufgaben_Notizen_l.grid(row=5, column=0, padx=10, pady=(5, 5), sticky="w")   # "Notizen"-Label
@@ -696,13 +709,14 @@ class TodoApp:
         else:
             self.warten_aktivieren_knopp.grid(row=2, column=3, padx=(320,00), pady=(10,15), sticky="w")
 
-    ### neue Teile der GUI, wird noch nicht verwendet
         try:
-            self.warten_seit_l = tk.CTkLabel(self.todo_frame_rechts, text=f"Warten seit: {task['warten_seit']}")
+            self.warten_seit_l = tk.CTkLabel(self.todo_frame_rechts, text=f"Warten seit: {task['warten_seit']}", text_color="White")
         except KeyError:
             print("Key Error für task['warten_seit']")
-            self.warten_seit_l = tk.CTkLabel(self.todo_frame_rechts, text="Warten seit: -")
-        self.warten_seit_l.grid(row=2, column=0, padx=10, pady=(55, 15), sticky="w") 
+            self.warten_seit_l = tk.CTkLabel(self.todo_frame_rechts, text="Warten seit: -", text_color="White")
+        self.warten_seit_l.grid(row=2, column=0, padx=10, pady=(0, 5), sticky="w") 
+
+        
 
 
     def lade_eintrag_aus_json_nach_id(self, aufgaben_id):
