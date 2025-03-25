@@ -3189,30 +3189,6 @@ class Listendings:
             print(f"[ - EINSTELLUNGEN - ] Beim speichern der CalDav Einstellungen ist ein Fehler aufgetreten: {CLDvE}")
             messagebox.showerror(title=self.Programm_Name_lang, message=f"Beim Speichern der Caldav Einstellung ist ein Fehler aufgetreten. Fehlermeldung: {CLDvE}")
 
-    def pause(self): ## das hier könnten wir eigentlich mal raushauen oder wenigstens mal ausbauen.
-        print("pause(def)")
-        try:
-            self.kunde_entry.grid_forget()
-            self.problem_entry.grid_forget()
-            self.info_entry.grid_forget()
-            self.senden_button.grid_forget()
-            #self.ausgabe_text.grid_forget()
-        except:
-            pass
-        self.p_text = tk.CTkLabel(root, text="Jetzt ist gerade Pause und mit vollem Mund spricht man nicht!")
-        self.Zeit_text = tk.CTkLabel(root, text=" ")
-        custom_font = ("Helvetica", 64)
-        self.Zeit_text.configure(font=custom_font)
-        self.pause_ende = tk.CTkButton(root, text="Pause beenden", command=self.pause_beenden_c)
-        self.zeit_string = time.strftime("%H:%M:%S")
-        self.start_der_pause = tk.CTkLabel(root, text=self.zeit_string, font=("Helvetica", 12))
-        self.start_der_pause.place(x=100,y=350)
-
-        self.p_text.place(x=300,y=100)
-        self.pause_ende.place(x=100,y=300)
-        self.Zeit_text.place(x=420,y=420)
-
-
     def Uhr(self):
         print("Thread gestartet: Uhr(def)")
         while self.Uhr_läuft == True:
@@ -3220,7 +3196,7 @@ class Listendings:
             self.Zeit = time.strftime("%H:%M:%S")
             try:
                 self.Zhe_Clock.configure(text=self.Zeit)
-                root.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
+                root.title(f"{self.Programm_Name}         {self.Version}                                                                               🕙 {self.Zeit}")
                 if self.Zeit == "17:30:00":
                     root.title(self.Programm_Name + " " + self.Version + " FEIERABEND!!")
                     messagebox.showinfo(title="Fertsch", message="Dings, es ist Feierabend.")
