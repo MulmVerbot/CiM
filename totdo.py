@@ -269,12 +269,12 @@ class TodoApp:
 
         self.Warten_lb_info_l = tk.CTkLabel(self.todo_frame_links, text="wartende Aufgaben:", text_color=self.Txt_farbe)
         self.Warten_lb_info_l.place(x=10,y=320)
-
-        self.anzahl_aufgaben_erledigt_info_l = tk.CTkLabel(self.todo_frame_links, text="bereits erledigt", text_color=self.Txt_farbe)
-        self.anzahl_aufgaben_erledigt_info_l.place(x=10,y=80)
         
         self.anzahl_aufgaben_info_l = tk.CTkLabel(self.todo_frame_links, text=f"Zu erledigen: {self.Aufgaben_Zahl}", text_color=self.Txt_farbe)
         self.anzahl_aufgaben_info_l.place(x=10,y=50)
+        self.anzahl_aufgaben_erledigt_info_l = tk.CTkLabel(self.todo_frame_links, text="bereits erledigt", text_color=self.Txt_farbe)
+        self.anzahl_aufgaben_erledigt_info_l.place(x=10,y=70)
+
         if self.Windows == True:
             self.warten_lb = Atk.Listbox(self.todo_frame_links, width=35, height=10, background=self.f_e, activestyle="none", fg=self.Txt_farbe)
         else:
@@ -285,7 +285,7 @@ class TodoApp:
 
     def info(self):
         print("Programmiert von Maximilian Becker")
-        messagebox.showinfo(title=self.Programm_Name, message=f"{self.Programm_Name}\nProgrammiert von: Maximilian Becker\nVersion: {self.Version}\nTeil des Listendings Sets\n2024")
+        messagebox.showinfo(title=self.Programm_Name, message=f"{self.Programm_Name}\nProgrammiert von: Maximilian Becker\nVersion: {self.Version}\nTeil des Listendings Sets\n2024/25")
 
     def task_update_knopp(self, event):
         self.task_update()
@@ -700,7 +700,7 @@ class TodoApp:
             print("Key Error für task['Kalendereintrag_am']")
             self.kalender_eintrag_am_l = tk.CTkLabel(self.todo_frame_rechts, text=f"Kalendereintrag am: -", text_color="White") 
 
-        self.Aufgaben_Titel_t = tk.CTkTextbox(self.todo_frame_rechts, width=330, height=40, text_color="White", fg_color=self.f_r_1, wrap="word", border_width=0, activate_scrollbars=False)
+        self.Aufgaben_Titel_t = tk.CTkTextbox(self.todo_frame_rechts, width=330, height=45, text_color="White", fg_color=self.f_r_1, wrap="word", border_width=0, activate_scrollbars=False)
         self.Aufgaben_Beschreibung_t = tk.CTkTextbox(self.todo_frame_rechts, width=330, height=120, text_color="White", fg_color=self.f_r_1, wrap="word", border_width=0)
         self.Aufgaben_Beschreibung_l = tk.CTkLabel(self.todo_frame_rechts, text="Beschreibung:", text_color="White")
         self.Aufgaben_Notizen_l = tk.CTkLabel(self.todo_frame_rechts, text="Notizen:", text_color="White")
