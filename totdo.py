@@ -575,16 +575,21 @@ class TodoApp:
         else:
             print("Wiederherstellung vom Nutzer abgebrochen.")
 
-    def Aufgabe_wiederherstellen(self):
-        self.neuer_eintrag = {
-            "name": self.task_übergabe["name"],
-            "description": self.task_übergabe["description"],
-            "Uhrzeit": self.task_übergabe["Uhrzeit"],
-            "notizen": self.task_übergabe["notizen"],
-            "id": self.task_übergabe["id"],
-            "fertsch": False, # das hier wird immer auf False gesetzt, weil es ja der Sinn der Funktion ist.
-            "warten_seit": self.task_übergabe["warten_seit"]
-        }
+    def Aufgabe_wiederherstellen(self):  ### jetzt hab ich hier schonwieder nachträglich was ändern müssen, können wir das nicht mal in EINE methode auslagern statt drei?
+        try:
+            self.neuer_eintrag = {
+                "name": self.task_übergabe["name"],
+                "description": self.task_übergabe["description"],
+                "Uhrzeit": self.task_übergabe["Uhrzeit"],
+                "notizen": self.task_übergabe["notizen"],
+                "id": self.task_übergabe["id"],
+                "fertsch": False, # das hier wird immer auf False gesetzt, weil es ja der Sinn der Funktion ist.
+                "warten": False,
+                "warten_seit": self.task_übergabe["warten_seit"]
+            }
+        except KeyError:
+            messagebox.showerror(title=self.Programm_Name, message="Schwerer Fehler beim schreiben in die Datenbank: KeyError, Vorgang wird abgebrochen.")
+            return
         self.Aufgabe_erledigt(self.tasks_pfad_datei, self.neuer_eintrag, self.task_übergabe["id"])
         self.refresh_tasks()
     
