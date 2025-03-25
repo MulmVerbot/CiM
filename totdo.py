@@ -26,7 +26,7 @@ import tkinter as Atk
 class TodoApp:
     def __init__(self, root):
         self.root = root
-        self.Version = "Beta 1.2.11"
+        self.Version = "Beta 1.2.12"
         self.Programm_Name = "TotDo Liste"
         self.Zeit = "Die Zeit ist eine Illusion."
         self.Zeit_text = None
@@ -105,6 +105,8 @@ class TodoApp:
 
         self.ausgw_zeitpunkt = None
         self.dauer_k = None
+        self.Aufgaben_Zahl = 0
+        self.Aufgaben_Zahl_erledigt = 0
 
         try:
             if not os.path.exists(self.tasks_pfad):
@@ -262,9 +264,17 @@ class TodoApp:
         self.root.bind("<Double-1>", self.entry_rein)
         self.Datum_fertsch_e = tk.CTkEntry(self.todo_frame_rechts, text_color="White") # hier hinter noch die ganze funktionalität mit einbauen  ### woher kommt das uns seit wann wird das dings aktiv gespawned!?
         self.Datum_fertsch_e.place(x=250,y=840)
-        self.Erledigt_Liste_öffnen_knopp = tk.CTkButton(self.todo_frame_links, text="zeige erledigte", command=self.erledigte_Aufgaben_laden, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, cursor="hand2")
-        self.Erledigt_Liste_öffnen_knopp.place(x=10,y=100)
+        self.Erledigt_Liste_öffnen_knopp = tk.CTkButton(self.root, text="zeige erledigte", command=self.erledigte_Aufgaben_laden, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal, cursor="hand2")
+        self.Erledigt_Liste_öffnen_knopp.grid(row=2, column=1, padx=(10,10), pady=(10,15), sticky="w")
 
+        self.Warten_lb_info_l = tk.CTkLabel(self.todo_frame_links, text="wartende Aufgaben:", text_color=self.Txt_farbe)
+        self.Warten_lb_info_l.place(x=10,y=320)
+
+        self.anzahl_aufgaben_erledigt_info_l = tk.CTkLabel(self.todo_frame_links, text="bereits erledigt", text_color=self.Txt_farbe)
+        self.anzahl_aufgaben_erledigt_info_l.place(x=10,y=80)
+        
+        self.anzahl_aufgaben_info_l = tk.CTkLabel(self.todo_frame_links, text=f"Zu erledigen: {self.Aufgaben_Zahl}", text_color=self.Txt_farbe)
+        self.anzahl_aufgaben_info_l.place(x=10,y=50)
         if self.Windows == True:
             self.warten_lb = Atk.Listbox(self.todo_frame_links, width=35, height=10, background=self.f_e, activestyle="none", fg=self.Txt_farbe)
         else:
@@ -294,7 +304,7 @@ class TodoApp:
             lokaler_zeit_string = time.strftime("%H:%M:%S")
             self.Zeit = time.strftime("%H:%M:%S")
             try:
-                self.Zhe_Clock.configure(text=self.Zeit)
+                self.Zhe_Clock.configure(text=f"🕙 {self.Zeit} Uhr")
                 root.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
             except Exception as e:
                 print(e)
@@ -492,17 +502,25 @@ class TodoApp:
             self.show_task(task)
             self.aufgabe_loeschen_frage()
 
+        
+
         try:
             if task['fertsch'] == True:
-                pass
+                self.Aufgaben_Zahl_erledigt += 1
+                self.anzahl_aufgaben_erledigt_info_l.configure(text=f"bereits erledigt: {self.Aufgaben_Zahl_erledigt}")
                 #print(f"Aufgabe wird versteckt weil task['fertsch'] == {task['fertsch']} ist.")
             else:
-                #wenn es fertsch ist müsen wir es nicht im warten fenster lassen, also kein elif
+                #wenn es fertsch ist müssen wir es nicht im warten fenster lassen, also kein elif
+
                 if task['warten'] == True:
                     self.warten_lb.insert(tk.END, f"ID: {task['id']}    {task['name']}")
                     self.warten_lb.bind("<<ListboxSelect>>", self.show_task(task))
                     #self.warten_lb.bind("<<ListboxSelect>>", lambda t=task: self.show_task(t))
+                    self.Aufgaben_Zahl += 1
+                    self.anzahl_aufgaben_info_l.configure(text=f"Zu erledigen: {self.Aufgaben_Zahl}")
                 else:
+                    self.Aufgaben_Zahl += 1
+                    self.anzahl_aufgaben_info_l.configure(text=f"Zu erledigen: {self.Aufgaben_Zahl}")
                     self.Knopp_frame = tk.CTkFrame(self.todo_frame_einz, fg_color="transparent")
                     self.Knopp_frame.pack(padx=10, pady=1)
                     self.button = tk.CTkButton(self.Knopp_frame, text=f"ID: {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w", cursor="hand2")
@@ -511,6 +529,8 @@ class TodoApp:
                     self.button.pack(side=tk.LEFT)
         except KeyError:
             print("task['fertsch'] war noch nicht in der DB vorhanden.")
+            self.Aufgaben_Zahl += 1
+            self.anzahl_aufgaben_info_l.configure(text=f"Zu erledigen: {self.Aufgaben_Zahl}")
             self.Knopp_frame = tk.CTkFrame(self.todo_frame_einz, fg_color="transparent")
             self.Knopp_frame.pack(padx=10, pady=1)
             self.button = tk.CTkButton(self.Knopp_frame, text=f"ID: {task['id']}    {task['name']}", command=lambda t=task: self.show_task(t), fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color="White", hover_color=self.f_r_1, width=1290, anchor="w", cursor="hand2")
@@ -942,6 +962,8 @@ END:VCALENDAR
             json.dump(tasks, file, indent=4)
 
     def load_tasks(self):
+        self.Aufgaben_Zahl = 0
+        self.Aufgaben_Zahl_erledigt = 0
         try:
             self.Erledigt_Liste_öffnen_knopp.configure(text="erledigte Aufgaben anzeigen", command=self.erledigte_Aufgaben_laden)
         except Exception as Ex678:
