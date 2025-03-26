@@ -10,3 +10,6 @@ pymupdf
 psutil
 caldav
 tkcalendar
+pytesseract
+pdf2imag
+fitz

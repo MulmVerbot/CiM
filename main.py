@@ -27,17 +27,15 @@ try:
     from email import encoders
     from tkinterdnd2 import DND_FILES
     from PIL import Image
-    #from collections import defaultdict
-    #from nltk.corpus import wordnet
     import re
     import matplotlib.pyplot as plt
     import pyperclip
     import numpy as np
     from reportlab.lib.pagesizes import letter
     from reportlab.pdfgen import canvas
-    import psutil
-    #import shutil
-    #import fitz  # Das ist dieses PyMuPDF für die Checklisten, bitte frag mich nicht wie man auf so einen Namen kommt (ich weiß, meine Namen sind auch nicht besser *Hust* M.U.L.M *Hust* )
+    import pytesseract
+    from pdf2image import convert_from_path
+    import fitz  # Das ist dieses PyMuPDF für die OCR Suche, bitte frag mich nicht wie man auf so einen Namen kommt (ich weiß, meine Namen sind auch nicht besser *Hust* M.U.L.M *Hust* )
 except Exception as E:
     print(f"(FATAL) Fehler beim laden der Bibliotheken, Fehlermeldung: {E}")
     try:
@@ -206,7 +204,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.2.4"
+        self.Version = "Beta 1.2.5"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -425,19 +423,6 @@ class Listendings:
             self.Windows = True
             print("[-Plattform-] Windows")
         
-
-        try:
-            p1 = Atk.PhotoImage(file = "CiM_icon.png")
-            root.iconphoto(False, p1)
-        except Exception as exci1:
-            print(f"Fehlschlag beim setzen des Icons, versuche es nun erneut. Fehlercode: {exci1}")
-            try:
-                root.iconphoto(False, Atk.PhotoImage(file = self.icon_pfad))
-            except Exception as err:
-                err1 = "[-ERR-] Es ist ein Fehler beim setzen des Icons aufgetreten. Fehlerlode: ", err
-                messagebox.showinfo(message=err1)
-                print("icon gibt heute nicht.")
-        
         try:
             if not os.path.exists(self.Db_Ordner_pfad):
                 print("[-INFO-] Der Db Ordner scheint nicht zu existieren. Erstelle ihn nun.")
@@ -453,31 +438,6 @@ class Listendings:
                 print("[-INFO-] Ordner ", {self.Monat_ordner_pfad}, "Erfolgreich erstellt.")
             except Exception as EX1_Monat_ordn:
                 print(f"[-ERR-] Fehler beim erstellen der Ordner. Fehlercode: {EX1_Monat_ordn}")
-
-        try:
-            with open(self.Auto_speichern_Einstellungsdatei, "r") as einst_gel_autsp:
-                self.Auto_speichern_Einstellungsdatei_var = einst_gel_autsp.read()
-                print("[-EINSTELLUNGEN-] Einstellunsgdatei zum Autospeichern geladen. Dateipfad: ", self.Auto_speichern_Einstellungsdatei)
-                if self.Auto_speichern_Einstellungsdatei_var == "1":
-                    print("[-EINSTELLUNGEN-] Die Autospeichern Var welche aus den Einstellungen zum Programmstart geladen wurde ist: ", self.Auto_speichern_Einstellungsdatei_var)
-                else:
-                    print("[-EINSTELLUNGEN-] Die Autospeichern Var welche aus den Einstellungen zum Programmstart geladen wurde ist: ", self.Auto_speichern_Einstellungsdatei_var)
-                    self.Auto_speichern_Einstellungsdatei_var = "0"
-        except Exception as autpsp_err:
-            print("[-EINSTELLUNGEN-] Fehler beim Laden des Autospeicherns. Funktion wurde deaktiviert. self.Auto_speichern_Einstellungsdatei = 0. Fehlercode: ", autpsp_err)
-            self.Auto_speichern_Einstellungsdatei_var = "0"
-                
-                
-        try:  # vehrindern das n bug geschieht
-            os.remove("tmp.txt")
-            os.remove("tmp1.txt")
-            print("[-INFO-] fehlerhafte Dateien wurden bereinigt.")
-        except FileNotFoundError:
-            pass
-        except Exception as Ex_tmp_bug:
-            print(f"Es gibt einen Hinweis auf fehlende Schreibrechte im Programmverzeichnis. Fehlermeldung: {Ex_tmp_bug}")
-            messagebox.showerror(title="CiM Fehler", message=f"Es scheint so als hätten Sie keine Schreibrechte im Programmverzeichnis, das sollte nur mit dem Starface Modul ein Problem werden. Fehlercode: {Ex_tmp_bug}") 
-        
         
         try: 
             if not os.path.exists(self.Einstellungen_ordner):
@@ -547,6 +507,7 @@ class Listendings:
         self.menudings.add_command(label="Info", command=self.info)
         self.menudings.add_command(label="Changelog", command=self.changelog_aufmachen)
         self.menudings.add_command(label="Admin rechte aktivieren", command=self.Admin_rechte)
+        self.menudings.add_command(label="PDF Dateien via OCR durchsuchen (Beta)...", command=self.OCR_Suche_Multithreading)
         self.Speichern_Menu.add_command(label="als CSV Speichern", command=self.als_csv_speichern_eigener_ort)
         self.Speichern_Menu.add_command(label="als CSV Speichern unter...", command=self.als_csv_speichern)
         self.Speichern_Menu.add_command(label="als CSV Speichern auf Netzlaufwerk", command=self.Netzlaufwerk_speichern)
@@ -563,9 +524,7 @@ class Listendings:
         self.ext_Programme_menu.add_command(label="JSON Explorer öffnen...", command=self.JSONExplorer_aufmachen)
         self.ext_Programme_menu.add_command(label="Totdo öffnen...", command=self.todo_aufmachen)
         self.ext_Programme_menu.add_command(label="HW-Mon öffnen...", command=self.HWMon_aufmachen)
-        self.ext_Programme_menu.add_command(label="QR-Code Generator öffnen...", command=self.QRCodeGen_aufmachen)
-        
-
+        self.ext_Programme_menu.add_command(label="QR-Code Generator öffnen...", command=self.QRCodeGen_aufmachen)        
         #self.menudings.add_command(label="Datenbank Migration zu v. Beta 1.1", command=self.DB_Migration)
         #self.Suchen_Menu.add_command(label="Sehr genaue Suche nutzen (Suche 3.0)(Beta)", command=self.frage_nach_string_suche3)
         
@@ -595,7 +554,7 @@ class Listendings:
         self.Listen_Liste_frame.place(x=0,y=100)
 ######## Eintrags LB
         if self.Windows == False: # unter windows ist die LB sonst nicht breit genug.
-            self.Eintrags_Liste = Atk.Listbox(self.Listen_Liste_frame, bg=self.Ereignislog_farbe, fg=self.Txt_farbe, height=12, width=40, selectbackground=self.f_LB_S, selectforeground=self.f_LB_s_txt, activestyle="none")
+            self.Eintrags_Liste = Atk.Listbox(self.Listen_Liste_frame, bg=self.Ereignislog_farbe, fg=self.Txt_farbe, height=12, width=44, selectbackground=self.f_LB_S, selectforeground=self.f_LB_s_txt, activestyle="none")
         else:
             self.Eintrags_Liste = Atk.Listbox(self.Listen_Liste_frame, bg=self.Ereignislog_farbe, fg=self.Txt_farbe, height=12, width=60, selectbackground=self.f_LB_S, selectforeground=self.f_LB_s_txt, activestyle="none")
         self.Eintrags_Liste.bind("<<ListboxSelect>>", self.LB_ausgewaehlt)
@@ -917,7 +876,6 @@ class Listendings:
 
     def Domain_name_setzen(self):
         print("Domain Namen setzen")
-
         self.zu_verschenken = simpledialog.askstring(title=self.Programm_Name, prompt="Bitte geben Sie nun den Domain Namen ein.")
         if self.zu_verschenken:
             print(f"erhaltener wert: {self.zu_verschenken}")
@@ -1176,9 +1134,24 @@ class Listendings:
                     print("[-INFO-] Die System Design Einstellung wurde geladen.")
         except Exception as exko:
             print(f"[-ERR-] Es ist ein Fehler beim Laden der Theme Einstellungen aufgetreten. Fehlercode: {exko}")
+    
+    def Auto_speichern_Einstellung_laden(self):
+        try:
+            with open(self.Auto_speichern_Einstellungsdatei, "r") as einst_gel_autsp:
+                self.Auto_speichern_Einstellungsdatei_var = einst_gel_autsp.read()
+                print("[-EINSTELLUNGEN-] Einstellunsgdatei zum Autospeichern geladen. Dateipfad: ", self.Auto_speichern_Einstellungsdatei)
+                if self.Auto_speichern_Einstellungsdatei_var == "1":
+                    print("[-EINSTELLUNGEN-] Die Autospeichern Var welche aus den Einstellungen zum Programmstart geladen wurde ist: ", self.Auto_speichern_Einstellungsdatei_var)
+                else:
+                    print("[-EINSTELLUNGEN-] Die Autospeichern Var welche aus den Einstellungen zum Programmstart geladen wurde ist: ", self.Auto_speichern_Einstellungsdatei_var)
+                    self.Auto_speichern_Einstellungsdatei_var = "0"
+        except Exception as autpsp_err:
+            print("[-EINSTELLUNGEN-] Fehler beim Laden des Autospeicherns. Funktion wurde deaktiviert. self.Auto_speichern_Einstellungsdatei = 0. Fehlercode: ", autpsp_err)
+            self.Auto_speichern_Einstellungsdatei_var = "0"
 
     def Einstellungen_laden(self): # hier sollen zukünftig alle Einstellungen geladen werden
         print("[-EINSTLLUNGEN LADEN- - INFO -] Lade nun alle Einstellungen")
+        self.Auto_speichern_Einstellung_laden()
         self.Netzlaufwerk_Einstellung_laden()
         #self.Theme_Einstellungen_laden() kann gelöscht werden
         self.eigener_suchort_Einstellung_laden()
@@ -1248,6 +1221,19 @@ class Listendings:
             except Exception as exJKSOJ:
                 print(f"[ ERR - INIT - PFADE ] Fehler beim erstellen der JSON Pfade: {exJKSOJ}")
 
+
+#
+# 
+# 
+# 
+# 
+#       Terminal dings
+# 
+# 
+# 
+# 
+# #
+
     def Terminal_Thread(self):
         print("Ich starte nun den Terminal Thread...")
         self.T_i = True
@@ -1276,9 +1262,45 @@ class Listendings:
                     e = None
         print("Schleife beendet, Terminal kann nun nicht mehr bedient werden.")
 
+#
+# 
+# 
+# 
+# 
+#       Terminal dings
+# 
+# 
+# 
+# 
+# #
+    def Totdo_bug_verhindern(self):
+        try:  # vehrindern das n bug geschieht
+            os.remove("tmp.txt")
+            os.remove("tmp1.txt")
+            print("[-INFO-] fehlerhafte Dateien wurden bereinigt.")
+        except FileNotFoundError:
+            pass
+        except Exception as Ex_tmp_bug:
+            print(f"Es gibt einen Hinweis auf fehlende Schreibrechte im Programmverzeichnis. Fehlermeldung: {Ex_tmp_bug}")
+            messagebox.showerror(title="CiM Fehler", message=f"Es scheint so als hätten Sie keine Schreibrechte im Programmverzeichnis, das sollte nur mit dem Starface Modul ein Problem werden. Fehlercode: {Ex_tmp_bug}") 
+
+    def Programmicon_laden(self):
+        try:
+            p1 = Atk.PhotoImage(file = "CiM_icon.png")
+            root.iconphoto(False, p1)
+        except Exception as exci1:
+            print(f"Fehlschlag beim setzen des Icons, versuche es nun erneut. Fehlercode: {exci1}")
+            try:
+                root.iconphoto(False, Atk.PhotoImage(file = self.icon_pfad))
+            except Exception as err:
+                err1 = "[-ERR-] Es ist ein Fehler beim setzen des Icons aufgetreten. Fehlerlode: ", err
+                messagebox.showinfo(message=err1)
+                print("icon gibt heute nicht.")
 
     def init_auf_wish(self):
         print("[-init-] init auf wish bestellt...")
+        self.Programmicon_laden()
+        self.Totdo_bug_verhindern()
         self.Terminal_Thread()
         self.ordner_erstellen()
         self.Kontakte_aus_json_laden()
@@ -1733,6 +1755,10 @@ class Listendings:
             msg["To"] = self.alternative_empfänger_adresse
             print("[-TICKET ERSTELLEN-] Ticket wird an alternative Emailadresse versendet...")
             self.Ereignislog_insert(nachricht_f_e="[-TICKET ERSTELLEN-] Ticket wird an alternative Emailadresse versendet...")
+
+        if self.Blindkopie_e.get() != "" or None:
+            print(f"self.Blindkopie_e.get() ist: {self.Blindkopie_e.get()}")
+            Blindkopie_an = self.Blindkopie_e.get()
         msg["Subject"] = self.Betreff_Mail
         msg.attach(MIMEText(self.Nachricht_Mail_Inhalt, "plain"))
 
@@ -1780,8 +1806,8 @@ class Listendings:
                     print("Fehler beim anmelden beim senden an den Mailserver. Fehlercode: ", EmailEx2)
                     self.Ereignislog_insert(nachricht_f_e="-Anmeldung am SMTP fehlgeschlagen.-")
                     messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der Nachricht an den Mailserver. Fehlercode: {EmailEx2}")
+                    return
                 self.Ticket_Fenster.destroy()
-                messagebox.showinfo(title="CiM", message="Das Ticket wurde erfolgreich erstellt.")
                 print("E-Mail erfolgreich gesendet!")
             elif self.alternative_empfänger_adresse != "":
                 try:
@@ -1794,9 +1820,25 @@ class Listendings:
                     print("Fehler beim anmelden beim senden an den Mailserver. Fehlercode: ", EmailEx2)
                     self.Ereignislog_insert(nachricht_f_e="-Anmeldung am SMTP fehlgeschlagen.-")
                     messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der Nachricht an den Mailserver. Fehlercode: {EmailEx2}")
+                    return
                 self.Ticket_Fenster.destroy()
-                messagebox.showinfo(title="CiM", message="Das Ticket wurde erfolgreich erstellt.")
                 print("E-Mail erfolgreich gesendet!")
+
+            if Blindkopie_an != "" or None:
+                try:
+                    server.sendmail(self.sender_email, Blindkopie_an, msg.as_string())
+                    self.Ereignislog_insert(nachricht_f_e="-Email an SMTP Server versendet.-")
+                except Exception as EmailEx2:
+                    print("Fehler beim anmelden beim senden an den Mailserver. Fehlercode: ", EmailEx2)
+                    self.Ereignislog_insert(nachricht_f_e="-Anmeldung am SMTP fehlgeschlagen.-")
+                    messagebox.showerror(title="CiM Fehler", message=f"Es gab einen Fehler beim senden der Blindkopie an den Mailserver. Fehlercode: {EmailEx2}")
+                    return
+                self.Ticket_Fenster.destroy()
+                print("Blindkopie_an erfolgreich gesendet!")
+                
+            messagebox.showinfo(title="CiM", message="Das Ticket wurde erfolgreich erstellt.") 
+            
+
 
     def Ticket_erstellen_api(self): # Ich denke nicht, dass ich das hier so schnell hinbekommen werde, da das Ding immer wieder nen fehler schmeißt den ich nicht mal verstehe haha.
         print("Ticket_erstellen_api")
@@ -1853,10 +1895,14 @@ class Listendings:
         self.Ticket_abschicken_mail = tk.CTkButton(self.Ticket_Fenster, text="Ticket erstellen und versenden", command=self.Ticket_erstellen_mail, fg_color=self.f_grün, border_color=self.f_e, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
         self.alternative_empfänger_adresse_e = tk.CTkEntry(self.Ticket_Fenster, placeholder_text="Alternative Empfänger", width=300, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite", border_color=self.f_e)
         self.Ticket_erstellen_anhang_suchen_knopp = tk.CTkButton(self.Ticket_Fenster, text="Anhang hinzufügen", command=self.anhang_suchen_ticket, fg_color=self.f_e, border_color=self.f_e, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
-        self.Mail_Anhang_status_l = tk.CTkLabel(self.Ticket_Fenster, text=f"Anhang: ", text_color=self.Txt_farbe, bg_color=self.Hintergrund_farbe, corner_radius=3)
-        self.letztes_einfügen_knopp = tk.CTkButton(self.Ticket_Fenster, text="Letzten Anruf Importieren", command=self.letzten_importieren, fg_color=self.f_e, border_color=self.f_e, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
-        self.letztes_einfügen_knopp.place(x=330,y=230)
+        self.Mail_Anhang_status_l = tk.CTkLabel(self.Ticket_Fenster, text=f"Anhang: Kein Anhang", text_color=self.Txt_farbe, bg_color=self.Hintergrund_farbe, corner_radius=3)
+        self.letztes_einfügen_knopp = tk.CTkButton(self.Ticket_Fenster, text="ausgwählten Eintrag einfügen", command=self.letzten_importieren, fg_color=self.f_e, border_color=self.f_e, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
+        self.Blindkopie_info_l = tk.CTkLabel(self.Ticket_Fenster, text=f"Blindkopie senden an:", text_color=self.Txt_farbe, bg_color=self.Hintergrund_farbe, corner_radius=3)
+        self.Blindkopie_e = tk.CTkEntry(self.Ticket_Fenster, placeholder_text="Blindkopie", width=300, fg_color=self.Entry_Farbe, text_color=self.Txt_farbe, placeholder_text_color="FloralWhite", border_color=self.f_e)
 
+        self.Blindkopie_info_l.place(x=330,y=10)
+        self.Blindkopie_e.place(x=330,y=50)
+        self.letztes_einfügen_knopp.place(x=330,y=230)
         self.alternative_empfänger_adresse_e.place(x=330,y=120)
         self.Ticket_abschicken_mail.place(x=330,y=420)
         self.Betreff_Ticket_e.place(x=10,y=50)
@@ -2099,6 +2145,9 @@ class Listendings:
             self.Einstellung_Design_L.place(x=10,y=170)
             self.Statistiken_anzeigen_linie_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Liniendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_linie, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
             self.Statistiken_anzeigen_saeule_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Säulendiagramm anzeigen", command=self.Anrufstatistiken_anzeigen_saeule, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
+            self.Statistiken_anzeigen_linie_nach_Tag_knopp = tk.CTkButton(self.Pause_menu, text="Statistiken als Liniendiagramm nach Tag anzeigen", command=self.Anrufstatistiken_anzeigen_saeule_nach_tag, fg_color=self.f_e, border_color=self.f_border, border_width=1, text_color=self.Txt_farbe, hover_color=self.f_hover_normal)
+            
+            self.Statistiken_anzeigen_linie_nach_Tag_knopp.place(x=10,y=240)
             self.Statistiken_anzeigen_linie_knopp.place(x=10,y=100)
             self.Statistiken_anzeigen_saeule_knopp.place(x=10,y=140)
             self.Stat_ID_l = Atk.Label(self.Pause_menu, text=f"Einträge heute: {self.ID_v}")
@@ -2355,6 +2404,58 @@ class Listendings:
             button_loeschen = Atk.Button(frame, text="Löschen", command=loeschen_kontakt)
             button_loeschen.grid(row=2, column=1, padx=5, pady=5)
 
+    def Anrufstatistiken_anzeigen_saeule_nach_tag(self):
+        def durchsuche_ordner(pfad, jahr):
+            tage_ergebnisse = {}
+            
+            jahr_pfad = os.path.join(pfad, str(jahr))
+            if not os.path.exists(jahr_pfad):
+                print(f"Das Jahr {jahr} wurde nicht gefunden.")
+                return tage_ergebnisse
+            
+            for monat in sorted(os.listdir(jahr_pfad)):  
+                monat_pfad = os.path.join(jahr_pfad, monat)
+                if not os.path.isdir(monat_pfad) or not monat.isdigit():  
+                    continue  
+                
+                for tag in sorted(os.listdir(monat_pfad)):  
+                    tag_pfad = os.path.join(monat_pfad, tag)
+                    if not os.path.isdir(tag_pfad) or not tag.isdigit():
+                        continue  
+                    
+                    dateipfad = os.path.join(tag_pfad, "M_ID.txt")
+                    if os.path.exists(dateipfad):
+                        with open(dateipfad, 'r') as datei:
+                            try:
+                                wert = int(datei.read().strip())
+                            except ValueError:
+                                wert = 0
+                        tage_ergebnisse[f"{jahr}-{monat}-{tag}"] = wert  
+            
+            return tage_ergebnisse
+
+        hauptverzeichnis = self.Listen_Speicherort_standard
+        jahr = simpledialog.askstring(title="Programm", prompt="Geben Sie eine Jahreszahl im vollen Format an (z.B. 2025).")
+
+        if jahr:
+            ergebnisse = durchsuche_ordner(hauptverzeichnis, jahr)
+            
+            tage = sorted(ergebnisse.keys())
+            werte = [ergebnisse[tag] for tag in tage]
+            
+            plt.figure(figsize=(15, 6))
+            plt.plot(tage, werte, marker='o', linestyle='-', color='b')
+            plt.gcf().canvas.manager.set_window_title("Anrufstatistiken des Anrufedings")
+            plt.xlabel('Tag')
+            plt.ylabel('Wert aus M_ID.txt')
+            plt.title(f'Anrufe nach Tag für {jahr}')
+            plt.xticks(rotation=90, fontsize=8)
+            plt.grid(axis='y', linestyle='--', alpha=0.7)
+            
+            plt.tight_layout()
+            plt.show()
+            self.Programmicon_laden()
+
     def Anrufstatistiken_anzeigen_saeule(self):
         uhrzeit_muster = re.compile(r'bis (\d{2}:\d{2}:\d{2})')
         def durchsuche_ordner(pfad, jahr):
@@ -2411,6 +2512,7 @@ class Listendings:
 
             plt.tight_layout()
             plt.show()
+            self.Programmicon_laden()
 
     def Anrufstatistiken_anzeigen_linie(self):
         uhrzeit_muster = re.compile(r'bis (\d{2}:\d{2}:\d{2})')
@@ -2465,8 +2567,7 @@ class Listendings:
             plt.grid(True, axis='y')
             plt.tight_layout()
             plt.show()
-        
-
+            self.Programmicon_laden()
 
     def Suche1(self):
         print("[ SUCHE 2.0 - INFO ] Suchen(def)")
@@ -2556,7 +2657,6 @@ class Listendings:
         self.Ergebnisse_Listbox.unbind("<Double-1>")
         self.suchfenster_ergebnisse.destroy()
         self.thread_suche.join()
-
 
     def Suche_KDabl(self):
         print("[ SUCHE 2.0 - INFO ] Suchen(def)")
@@ -2764,6 +2864,56 @@ class Listendings:
             print(f"[ SUCHE 2.0 - INFO ] Es sind weniger als 20 Suchergbnisse.{self.Anzahl_der_Ergebnisse}")
             self.aufmachen_results()
 
+    def OCR_Suche_Multithreading(self):
+        def search_pdf(pdf_path, keyword, found_files):
+            try:
+                print(f"Suche in {pdf_path}")
+                doc = fitz.open(pdf_path)
+                text_found = any(keyword.lower() in page.get_text("text").lower() for page in doc)
+                if text_found:
+                    found_files.append(pdf_path)
+                    return
+                images = convert_from_path(pdf_path)
+                for img in images:
+                    text = pytesseract.image_to_string(img)
+                    if keyword.lower() in text.lower():
+                        found_files.append(pdf_path)
+                        return  # Stop OCR search once a match is found
+            except Exception as e:
+                print(f"Fehler bei der Verarbeitung von {pdf_path}: {e}")
+
+        def search_pdfs_in_folder(folder_path, keyword):
+            found_files = []
+            threads = []
+            
+            for root, dirs, files in os.walk(folder_path):
+                for filename in files:
+                    if filename.lower().endswith(".pdf"):
+                        pdf_path = os.path.join(root, filename)
+                        
+                        thread = threading.Thread(target=search_pdf, args=(pdf_path, keyword, found_files))
+                        threads.append(thread)
+                        thread.start()
+            
+            for thread in threads:
+                thread.join()
+            
+            keyword = None
+            folder_path = None
+            return found_files if found_files else ["Kein Treffer gefunden"]
+
+        folder_path = filedialog.askdirectory()
+        if folder_path:
+            keyword = simpledialog.askstring(title="Programm", prompt="Geben Sie einen Wert ein nachdem gesucht werden soll (Groß & Kleinschreibung wird NICHT beachtet).")
+            if keyword:
+                def kacke_geloest():
+                    print(search_pdfs_in_folder(folder_path, keyword)) #// hier muss dann noch ne richtige ausgabe hin
+                self.thread_OCR_Suche_Multithreading = threading.Timer(1, kacke_geloest)
+                self.thread_OCR_Suche_Multithreading.daemon = True
+                self.thread_OCR_Suche_Multithreading.start()
+                print("Thread gestartet: self.thread_OCR_Suche_Multithreading ")
+                
+    
     def bereits_aktiver_anruf(self):
         print("bereits_aktiver_anruf(def)")
         try:
