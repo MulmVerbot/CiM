@@ -36,6 +36,7 @@ try:
     import pytesseract
     from pdf2image import convert_from_path
     import fitz  # Das ist dieses PyMuPDF für die OCR Suche, bitte frag mich nicht wie man auf so einen Namen kommt (ich weiß, meine Namen sind auch nicht besser *Hust* M.U.L.M *Hust* )
+    from datetime import datetime, timedelta
 except Exception as E:
     print(f"(FATAL) Fehler beim laden der Bibliotheken, Fehlermeldung: {E}")
     try:
@@ -103,8 +104,9 @@ class Listendings:
             print("[- Starface-Modul - HTTP - INFO -] Angeforderter Pfad:", parsed_path.path)
             besserer_pfad = parsed_path.path.replace("/", "")
             print("[- Starface-Modul - HTTP - INFO -] Nummer die angerufen hat/wurde: ", besserer_pfad)
-            if besserer_pfad == "b":
+            if besserer_pfad == "b": # anruf wurde beendet
                 ende_des_anrufs = time.strftime("%H:%M:%S")
+                self.endzeit_datei_str = time.strftime("%H:%M:%S")
                 
                 try:
                     with open("tmp1.txt", "w+") as tmp:
@@ -112,10 +114,11 @@ class Listendings:
                 except Exception as e:
                     print(f"Fehler beim Schreiben in tmp1.txt: {e}")
                 print("[- Starface-Modul - HTTP - INFO -] Der Anruf war wohl fertig. var: ", besserer_pfad)
-            elif besserer_pfad == "a":
+            elif besserer_pfad == "a":# wird das hier überhaupt genutzt?
                 print("[- Starface-Modul - HTTP - INFO -] Der bessere Pfad ist ein a.")
-            else:
+            else: # anruf wurde gestartet
                 try:
+                    self.startzeit_datei_str = time.strftime("%H:%M:%S")
                     with open("tmp.txt", "w+") as tmp:
                         tmp.write(besserer_pfad)
                 except Exception as e:
@@ -123,6 +126,22 @@ class Listendings:
             self.wfile.write(b"<html><head><title>Starface Modul</title></head>")
             self.wfile.write(b"<meta name='viewport' content='width=device-width, initial-scale=1.0'><style>body {margin: 0;padding: 0;background-color: #293136;}.content {padding: 20px;color: white;font-family: Arial, sans-serif;}</style></head><body><div class='content'></div></body></html>")
             
+        def evaluierung(self):
+            startzeit_datei = datetime.strptime(self.startzeit_datei_str, "%H:%M:%S")
+            endzeit_datei = datetime.strptime(self.endzeit_datei_str, "%H:%M:%S")
+
+            unterschied = endzeit_datei - startzeit_datei
+
+            # Prüfen, ob die Differenz größer als 2 Sekunden ist, wenn Nein wird der Anruf nicht eingefügt
+            if unterschied > timedelta(seconds=2):
+                print("Weiter mit if!")
+                self.startzeit_datei_str = None
+                self.endzeit_datei_str = None
+            else:
+                print("Nicht weiter")
+                self.startzeit_datei_str = None
+                self.endzeit_datei_str = None
+                
     class WebServerThread(threading.Thread):
         def run(self):
             port = 8080
@@ -204,7 +223,7 @@ class Listendings:
         self.master = master
         self.Programm_Name = "M.U.L.M" # -> sowas nennt man übrigens ein Apronym, ist einem Akronym sehr ähnlich aber nicht gleich << Danke Du klugscheißer
         self.Programm_Name_lang = "Multifunktionaler Unternehmens-Logbuch-Manager"
-        self.Version = "Beta 1.2.5"
+        self.Version = "Beta 1.2.6"
         print(f"[-VERSION-] {self.Version}")
         self.Zeit = "Die Zeit ist eine Illusion."
         master.title(self.Programm_Name + " " + self.Version + "                                                                          " + self.Zeit)
@@ -790,7 +809,7 @@ class Listendings:
                     self.Anruf_starten_LB_Knopp.place_forget()
                     self.per_mail_weitereiten.place_forget()
                     self.ans_totdo_senden_knopp.place_forget()  
-                    self.Eintrag_raus_kopieren_knopp.place_forget() 
+                    self.Eintrag_raus_kopieren_knopp.place_forget()
                 except:
                     print("war wohl nicht da")
 
@@ -818,6 +837,13 @@ class Listendings:
                 self.per_mail_weitereiten.place_forget()
                 self.ans_totdo_senden_knopp.place_forget()  
                 self.Eintrag_raus_kopieren_knopp.place_forget() 
+                ##self.Anrufer_Bezeichnung_l.configure(text=f"Anrufer:  ")
+                ##self.Zeit_aus_JSON.configure(text=f"Uhrzeit:  ")
+                ##self.ID_M_l.configure(text=f"ID: ")
+                ##self.Problem_text_neu.configure(state="normal")
+                ##self.Problem_text_neu.delete("0.0", Atk.END) 
+                ##self.Problem_text_neu.configure(state="disabled")
+                ##self.Eintrag_Telefonnummer_l.configure(text=f"  Tel.:  ")
             except:
                 print("war wohl nicht da")
 
@@ -2953,7 +2979,7 @@ class Listendings:
                             self.Ereignislog_insert(nachricht_f_e="-Konnte die Blacklist nicht laden-")
                             daten_blacklist = ""
                         for Gesperrte_kontakt in daten_blacklist.get("Kontakte", []):
-                            print(f"ich durchsuche die Blacklist... mit {Gesperrte_kontakt.get("Telefonnummer_jsn_gesperrt")}")
+                            #print(f"ich durchsuche die Blacklist... mit {Gesperrte_kontakt.get("Telefonnummer_jsn_gesperrt")}")
                             if str(Gesperrte_kontakt.get("Telefonnummer_jsn_gesperrt")) == str(self.Anruf_Telefonnummer):
                                 print("if f")
                                 self.Ereignislog_insert(nachricht_f_e="-Telefonnummer in Blacklist gefunden!\n Nummer wurde nicht eingefügt.")
@@ -2990,7 +3016,11 @@ class Listendings:
                     tmp1_ld.close()
                     self.Anruf_Zeit.configure(text=f"  Kein akiver Anruf  ")
                     try:
+                        self.Eintrag_verstecken_Knopp.place_forget()
                         self.Anruf_starten_LB_Knopp.place_forget()
+                        self.per_mail_weitereiten.place_forget()
+                        self.ans_totdo_senden_knopp.place_forget()  
+                        self.Eintrag_raus_kopieren_knopp.place_forget() 
                     except:
                         pass
                     try:
