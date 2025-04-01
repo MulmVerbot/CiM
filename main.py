@@ -837,13 +837,6 @@ class Listendings:
                 self.per_mail_weitereiten.place_forget()
                 self.ans_totdo_senden_knopp.place_forget()  
                 self.Eintrag_raus_kopieren_knopp.place_forget() 
-                ##self.Anrufer_Bezeichnung_l.configure(text=f"Anrufer:  ")
-                ##self.Zeit_aus_JSON.configure(text=f"Uhrzeit:  ")
-                ##self.ID_M_l.configure(text=f"ID: ")
-                ##self.Problem_text_neu.configure(state="normal")
-                ##self.Problem_text_neu.delete("0.0", Atk.END) 
-                ##self.Problem_text_neu.configure(state="disabled")
-                ##self.Eintrag_Telefonnummer_l.configure(text=f"  Tel.:  ")
             except:
                 print("war wohl nicht da")
 
