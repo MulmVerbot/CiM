@@ -33,9 +33,8 @@ try:
     import numpy as np
     from reportlab.lib.pagesizes import letter
     from reportlab.pdfgen import canvas
-    import pytesseract
-    from pdf2image import convert_from_path
-    import fitz  # Das ist dieses PyMuPDF für die OCR Suche, bitte frag mich nicht wie man auf so einen Namen kommt (ich weiß, meine Namen sind auch nicht besser *Hust* M.U.L.M *Hust* )
+    
+    
     from datetime import datetime, timedelta
 except Exception as E:
     print(f"(FATAL) Fehler beim laden der Bibliotheken, Fehlermeldung: {E}")
@@ -88,11 +87,21 @@ except Exception as E:
         sys.exit()
     sys.exit()
 
+ ### Jetzt die Expirementellen Bibliotheken
+try:
+    import pytesseract
+    from pdf2image import convert_from_path
+    import fitz  # Das ist dieses PyMuPDF für die OCR Suche, bitte frag mich nicht wie man auf so einen Namen kommt (ich weiß, meine Namen sind auch nicht besser *Hust* M.U.L.M *Hust* )
+    print("[-INFO- OCR SCAN-] OCR Scan ist aktiviert")
+    OCR_Scan = True
+except:
+    messagebox.showerror(title="Fehler", message="Die PDF OCR Scan Funktion erforder extern Installierte Programme, installieren Sie bitte 'Tesseract' und starten Sie dann das Programm neu.")
+    OCR_Scan = False
+
 class Listendings:
     Programm_läuft = True
     class ChangelogLeer(Exception): # Die Exception die kommt, wenn der Changelog leer ist.
         "[-INFO-] Der Changelog ist leer -"
-
     class RequestHandler(BaseHTTPRequestHandler):
         def do_GET(self):
             # saite = "<!DOCTYPE html><html lang='de'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Ganzflächiger Hintergrund</title><style>body {margin: 0;padding: 0;background-color: #40444c;}.content {padding: 20px;color: white;font-family: Arial, sans-serif;}</style></head><body><div class='content'><h1>Meine Seite mit ganzflächigem Hintergrund</h1><p>Hier ist etwas Text auf der Seite.</p></div></body></html>"
@@ -278,7 +287,6 @@ class Listendings:
         self.tasks_pfad = os.path.join(self.Benutzerordner, 'CiM', 'Db')
         self.tasks_pfad_datei = os.path.join(self.tasks_pfad, 'tasks.json')
         self.Einstellung_CalDav_Adresse_pfad = os.path.join(self.Einstellungen_ordner, "CalDav.txt")
-
     ## assets
         self.Asset_ordner_beb_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Bearbeiten.png')
         self.Asset_ordner_dur_pfad = os.path.join(self.Asset_ordner, 'Bilder', 'Durchsuchen.png') 
@@ -308,6 +316,9 @@ class Listendings:
         self.ID_speicherort_L_pfad = self.Db_Ordner_pfad
         self.ID_speicherort_L = os.path.join(self.Eintrags_DB_ordnerpfad, "M_ID.txt")
         self.eigener_Suchort_Einstellungsdatei = os.path.join(self.Einstellungen_ordner, "eigener_suchort.txt")
+
+       
+
 
 #            _ .-') _             .-') _                   
 #           ( (  OO) )           ( OO ) )                  
@@ -2884,53 +2895,56 @@ class Listendings:
             self.aufmachen_results()
 
     def OCR_Suche_Multithreading(self):
-        def search_pdf(pdf_path, keyword, found_files):
-            try:
-                print(f"Suche in {pdf_path}")
-                doc = fitz.open(pdf_path)
-                text_found = any(keyword.lower() in page.get_text("text").lower() for page in doc)
-                if text_found:
-                    found_files.append(pdf_path)
-                    return
-                images = convert_from_path(pdf_path)
-                for img in images:
-                    text = pytesseract.image_to_string(img)
-                    if keyword.lower() in text.lower():
+        if OCR_Scan == True:
+            def search_pdf(pdf_path, keyword, found_files):
+                try:
+                    print(f"Suche in {pdf_path}")
+                    doc = fitz.open(pdf_path)
+                    text_found = any(keyword.lower() in page.get_text("text").lower() for page in doc)
+                    if text_found:
                         found_files.append(pdf_path)
-                        return  # Stop OCR search once a match is found
-            except Exception as e:
-                print(f"Fehler bei der Verarbeitung von {pdf_path}: {e}")
+                        return
+                    images = convert_from_path(pdf_path)
+                    for img in images:
+                        text = pytesseract.image_to_string(img)
+                        if keyword.lower() in text.lower():
+                            found_files.append(pdf_path)
+                            return  # Stop OCR search once a match is found
+                except Exception as e:
+                    print(f"Fehler bei der Verarbeitung von {pdf_path}: {e}")
 
-        def search_pdfs_in_folder(folder_path, keyword):
-            found_files = []
-            threads = []
-            
-            for root, dirs, files in os.walk(folder_path):
-                for filename in files:
-                    if filename.lower().endswith(".pdf"):
-                        pdf_path = os.path.join(root, filename)
-                        
-                        thread = threading.Thread(target=search_pdf, args=(pdf_path, keyword, found_files))
-                        threads.append(thread)
-                        thread.start()
-            
-            for thread in threads:
-                thread.join()
-            
-            keyword = None
-            folder_path = None
-            return found_files if found_files else ["Kein Treffer gefunden"]
+            def search_pdfs_in_folder(folder_path, keyword):
+                found_files = []
+                threads = []
+                
+                for root, dirs, files in os.walk(folder_path):
+                    for filename in files:
+                        if filename.lower().endswith(".pdf"):
+                            pdf_path = os.path.join(root, filename)
+                            
+                            thread = threading.Thread(target=search_pdf, args=(pdf_path, keyword, found_files))
+                            threads.append(thread)
+                            thread.start()
+                
+                for thread in threads:
+                    thread.join()
+                
+                keyword = None
+                folder_path = None
+                return found_files if found_files else ["Kein Treffer gefunden"]
 
-        folder_path = filedialog.askdirectory()
-        if folder_path:
-            keyword = simpledialog.askstring(title="Programm", prompt="Geben Sie einen Wert ein nachdem gesucht werden soll (Groß & Kleinschreibung wird NICHT beachtet).")
-            if keyword:
-                def kacke_geloest():
-                    print(search_pdfs_in_folder(folder_path, keyword)) #// hier muss dann noch ne richtige ausgabe hin
-                self.thread_OCR_Suche_Multithreading = threading.Timer(1, kacke_geloest)
-                self.thread_OCR_Suche_Multithreading.daemon = True
-                self.thread_OCR_Suche_Multithreading.start()
-                print("Thread gestartet: self.thread_OCR_Suche_Multithreading ")
+            folder_path = filedialog.askdirectory()
+            if folder_path:
+                keyword = simpledialog.askstring(title="Programm", prompt="Geben Sie einen Wert ein nachdem gesucht werden soll (Groß & Kleinschreibung wird NICHT beachtet).")
+                if keyword:
+                    def kacke_geloest():
+                        print(search_pdfs_in_folder(folder_path, keyword)) #// hier muss dann noch ne richtige ausgabe hin
+                    self.thread_OCR_Suche_Multithreading = threading.Timer(1, kacke_geloest)
+                    self.thread_OCR_Suche_Multithreading.daemon = True
+                    self.thread_OCR_Suche_Multithreading.start()
+                    print("Thread gestartet: self.thread_OCR_Suche_Multithreading ")
+        else:
+            messagebox.showerror(title=self.Programm_Name_lang, message="OCR Scan ist deaktiviert da benötigte Drittanbieterprogramme wie Tesseract fehlen oder sich nicht im PATH befinden")
                 
     
     def bereits_aktiver_anruf(self):
